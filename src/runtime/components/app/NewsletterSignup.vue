@@ -18,7 +18,6 @@ const {
         name="email"
         :label="fieldLabel"
         :description="description"
-        class="max-w-96"
     >
       <UFieldGroup class="pt-2">
         <UInput type="email" :placeholder="placeholder" />
