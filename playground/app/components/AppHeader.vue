@@ -200,9 +200,6 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
             </div>
           </UContainer>
         </template>
-        <template #entry1-content="{ item }">
-
-        </template>
         <template #megamenu2-content="{ item }">
           <UContainer>
             <ul class="grid gap-2 p-4 lg:w-[500px] lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]">

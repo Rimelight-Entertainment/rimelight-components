@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ["@nuxt/image", "@nuxt/ui"],
+  modules: ["@nuxt/ui", "@nuxt/image"],
   ui: {
     prefix: "U",
     theme: {
