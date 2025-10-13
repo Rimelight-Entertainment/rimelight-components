@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     strict: true,
     typeCheck: true
   },
-  modules: ['../src/module'],
+  modules: ['@nuxt/ui', '../src/module'],
   css: ["~/assets/css/main.css"],
   icon: {
     provider: "server",
