@@ -1,4 +1,4 @@
-import { defineNuxtModule, addComponentsDir, createResolver } from '@nuxt/kit'
+import { defineNuxtModule, addComponentsDir, addImportsDir, createResolver } from '@nuxt/kit'
 
 export interface ModuleOptions {}
 
@@ -30,8 +30,10 @@ export default defineNuxtModule<ModuleOptions>({
       prefix: 'RC',
       global: true
     })
+
+    addImportsDir(resolver.resolve('./runtime/composables'))
   },
-  onInstall(nuxt) {
+  onInstall() {
     console.log('Setting up rimelight-components for the first time!')
   },
   onUpgrade() {
