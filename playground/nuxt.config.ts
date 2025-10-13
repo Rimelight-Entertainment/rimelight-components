@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     typeCheck: true
   },
   modules: ['../src/module'],
-  css: ["./assets/css/main.css"],
+  css: ["~/assets/css/main.css"],
   icon: {
     provider: "server",
     class: "icon",
@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     customCollections: [
       {
         prefix: "first-party",
-        dir: "./assets/icons/first-party",
+        dir: "./app/assets/icons/first-party",
         normalizeIconName: false
       }
     ]

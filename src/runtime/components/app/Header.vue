@@ -3,25 +3,25 @@
 </script>
 
 <template>
-  <header>
-    <UContainer>
-      <div class="flex flex-row items-center justify-between p-sm">
-        <div class="hidden sm:block">
+  <header class="h-[var(--ui-header-height)]">
+    <UContainer class="h-full">
+      <div class="flex flex-row items-center justify-between p-sm h-full">
+        <div class="sm:hidden">
           <slot name="collapsed-left" />
         </div>
-        <div class="hidden sm:block">
+        <div class="sm:hidden">
           <slot name="collapsed-center" />
         </div>
-        <div class="hidden sm:block">
+        <div class="sm:hidden">
           <slot name="collapsed-right" />
         </div>
-        <div class="sm:hidden">
+        <div class="hidden sm:block">
           <slot name="left" />
         </div>
-        <div class="sm:hidden">
+        <div class="hidden sm:block">
           <slot name="center" />
         </div>
-        <div class="sm:hidden">
+        <div class="hidden sm:block">
           <slot name="right" />
         </div>
       </div>

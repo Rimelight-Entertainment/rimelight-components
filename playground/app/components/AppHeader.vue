@@ -3,12 +3,15 @@ import type { NavigationMenuItem, DropdownMenuItem } from "@nuxt/ui"
 
 const route = useRoute()
 
+const leftDrawerOpen = ref(false)
+const rightDrawerOpen = ref(false)
+
 const items = computed<NavigationMenuItem[]>(() => {
   const baseItems: NavigationMenuItem[] = [
     {
-      label: "Franchises",
-      active: route.path.startsWith("/franchises"),
-      slot: "franchises" as const,
+      label: "Megamenu",
+      active: route.path.startsWith("/megamenu"),
+      slot: "megamenu" as const,
       children: [
         {
           label: "Overview",
@@ -28,9 +31,9 @@ const items = computed<NavigationMenuItem[]>(() => {
       ]
     },
     {
-      label: "Forums",
-      to: "/forums",
-      active: route.path.startsWith("/forums")
+      label: "Link 1",
+      to: "/link-1",
+      active: route.path.startsWith("/link-1")
     },
     {
       label: "Events",
@@ -43,9 +46,10 @@ const items = computed<NavigationMenuItem[]>(() => {
       active: route.path.startsWith("/store")
     },
     {
-      label: "Company",
-      to: "/company",
-      active: route.path.startsWith("/company"),
+      label: "Megamenu 2",
+      to: "/megamenu2",
+      active: route.path.startsWith("/megamenu2"),
+      slot: "megamenu2" as const,
       children: [
         {
           label: "History",
@@ -176,31 +180,72 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
       <RCLogo variant="mark" class="h-6 w-auto" />
     </template>
     <template #center>
-      <UNavigationMenu :items="items" variant="link">
-        <template #franchises-content="{ item }">
-          <ul
-              class="grid gap-2 p-4 lg:w-[500px] lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]"
-          >
-            <li class="row-span-3">
-              <RCPlaceholder class="size-full min-h-48" />
-            </li>
+      <UNavigationMenu :items="items" variant="link" :ui="{ viewportWrapper: 'top-0 flex fixed w-screen mt-[var(--ui-header-height)]', viewport: 'rounded-none' }">
+        <template #megamenu-content="{ item }">
+          <UContainer>
+            <div class="flex flex-row gap-xl h-full">
+              <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
+              <ul>
+                <li v-for="child in item.children" :key="child.label">
+                  <ULink class="text-sm text-left rounded-md p-3 transition-colors hover:bg-elevated/50">
+                    <p class="font-medium text-highlighted">
+                      {{ child.label }}
+                    </p>
+                    <p class="text-muted line-clamp-2">
+                      {{ child.description }}
+                    </p>
+                  </ULink>
+                </li>
+              </ul>
+            </div>
+          </UContainer>
+        </template>
+        <template #entry1-content="{ item }">
 
-          </ul>
+        </template>
+        <template #megamenu2-content="{ item }">
+          <UContainer>
+            <ul class="grid gap-2 p-4 lg:w-[500px] lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]">
+              <li class="row-span-3">
+                <RCPlaceholder class="size-full min-h-48" />
+              </li>
+
+              <li v-for="child in item.children" :key="child.label">
+                <ULink class="text-sm text-left rounded-md p-3 transition-colors hover:bg-elevated/50">
+                  <p class="font-medium text-highlighted">
+                    {{ child.label }}
+                  </p>
+                  <p class="text-muted line-clamp-2">
+                    {{ child.description }}
+                  </p>
+                </ULink>
+              </li>
+            </ul>
+          </UContainer>
         </template>
       </UNavigationMenu>
     </template>
-    <template #right> </template>
+    <template #right>
+      <div class="flex flex-row gap-md">
+        <UButton variant="solid" color="primary" label="Button 1" />
+        <UButton variant="outline" color="primary" label="Button 2"/>
+      </div>
+    </template>
     <template #collapsed-left>
-      <UDrawer direction="left" :handle="false" :ui="{ content: 'w-full max-w-2/3'}">
+      <UDrawer v-model:open="leftDrawerOpen" direction="left" :handle="false" :ui="{ header: 'flex items-center justify-between', content: 'w-full max-w-2/3' }">
         <UButton
-            label="Open"
             color="neutral"
-            variant="subtle"
-            trailing-icon="i-lucide-chevron-up"
+            variant="ghost"
+            icon="lucide:menu"
         />
-
-        <template #content>
-          <RCPlaceholder class="m-4 h-48" />
+        <template #header>
+          <h2 class="text-highlighted font-semibold">Drawer 1</h2>
+          <UButton color="neutral" variant="ghost" icon="lucide:x" @click="leftDrawerOpen = false" />
+        </template>
+        <template #body>
+          <div class="flex flex-col gap-md size-full items-start">
+            <UNavigationMenu :items="items" variant="link" orientation="vertical"/>
+          </div>
         </template>
       </UDrawer>
     </template>
@@ -212,16 +257,23 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
       />
     </template>
     <template #collapsed-right>
-      <UDrawer direction="right" :handle="false" :ui="{ content: 'w-full max-w-2/3 p-xl'}">
+      <UDrawer v-model:open="rightDrawerOpen" direction="right" :handle="false" :ui="{ header: 'flex items-center justify-between', content: 'w-full max-w-2/3' }">
         <UButton
-            label="Open"
             color="neutral"
-            variant="subtle"
-            trailing-icon="i-lucide-chevron-up"
+            variant="ghost"
+            icon="lucide:user"
         />
-
-        <template #content>
-          <RCPlaceholder class="w-full h-full" />
+        <template #header>
+          <h2 class="text-highlighted font-semibold">Drawer 2</h2>
+          <UButton color="neutral" variant="ghost" icon="lucide:x" @click="rightDrawerOpen = false" />
+        </template>
+        <template #body>
+          <div class="flex flex-col gap-md size-full">
+            <div class="flex flex-col gap-sm">
+              <UButton size="xl" variant="solid" color="primary" label="Button 1" block/>
+              <UButton size="xl" variant="outline" color="primary" label="Button 2" block/>
+            </div>
+          </div>
         </template>
       </UDrawer>
     </template>

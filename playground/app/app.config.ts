@@ -16,5 +16,14 @@ export default defineAppConfig({
             ideation: "ideation",
             source: "source"
         },
+        navigationMenu: {
+            variants: {
+                orientation: {
+                    horizontal: {
+                        content: 'w-screen'
+                    }
+                }
+            }
+        }
     }
 })

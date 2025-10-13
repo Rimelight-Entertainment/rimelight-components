@@ -14,6 +14,12 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {},
   hooks: {},
   moduleDependencies: {
+    '@nuxt/image': {
+      version: '>=1.0.0',
+      optional: false,
+      overrides: {},
+      defaults: {}
+    },
     '@nuxt/ui': {
       version: '>=4.0.0',
       optional: false,
