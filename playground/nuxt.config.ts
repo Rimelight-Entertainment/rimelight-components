@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     strict: true,
     typeCheck: true
   },
-  modules: ['@nuxt/ui', '../src/module'],
+  modules: ['../src/module'],
   css: ["~/assets/css/main.css"],
   icon: {
     provider: "server",
@@ -24,24 +24,5 @@ export default defineNuxtConfig({
         normalizeIconName: false
       }
     ]
-  },
-  ui: {
-    prefix: "U",
-    theme: {
-      colors: [
-        "neutral",
-        "primary",
-        "secondary",
-        "tertiary",
-        "info",
-        "success",
-        "warning",
-        "error",
-        "commentary",
-        "ideation",
-        "creator",
-        "source"
-      ]
-    }
   }
 })

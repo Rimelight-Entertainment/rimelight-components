@@ -1,48 +1,69 @@
-import { defineNuxtModule, addComponentsDir, addImportsDir, createResolver } from '@nuxt/kit'
+import {
+  defineNuxtModule,
+  addComponentsDir,
+  addImportsDir,
+  createResolver
+} from "@nuxt/kit"
 
 export interface ModuleOptions {}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'rimelight-components',
-    version: '0.0.1',
-    configKey: 'rimelightComponents',
+    name: "rimelight-components",
+    version: "0.0.1",
+    configKey: "rimelightComponents",
     compatibility: {
-      nuxt: '>=4.0.0',
-    },
+      nuxt: ">=4.0.0"
+    }
   },
   defaults: {},
   hooks: {},
   moduleDependencies: {
-    '@nuxt/image': {
-      version: '>=1.0.0',
+    "@nuxt/image": {
+      version: ">=1.0.0",
       optional: false,
       overrides: {},
       defaults: {}
     },
-    '@nuxt/ui': {
-      version: '>=4.0.0',
+    "@nuxt/ui": {
+      version: ">=4.0.0",
       optional: false,
       overrides: {},
-      defaults: {}
+      defaults: {
+        prefix: "U",
+        theme: {
+          colors: [
+            "neutral",
+            "primary",
+            "secondary",
+            "info",
+            "success",
+            "warning",
+            "error",
+            "commentary",
+            "ideation",
+            "source"
+          ]
+        }
+      }
     }
   },
-  async setup() {
+  setup() {
     const resolver = createResolver(import.meta.url)
 
     addComponentsDir({
-      path: resolver.resolve('./runtime/components/'),
+      path: resolver.resolve("./runtime/components/"),
       pathPrefix: false,
-      prefix: 'RC',
+      prefix: "RC",
       global: true
     })
 
-    addImportsDir(resolver.resolve('./runtime/composables'))
+    addImportsDir(resolver.resolve("./runtime/composables"))
   },
   onInstall() {
-    console.log('Setting up rimelight-components for the first time!')
+    console.log("Setting up rimelight-components for the first time!")
   },
   onUpgrade() {
-    console.log('Upgrading rimelight-components.')
+    console.log("Upgrading rimelight-components.")
   }
 })

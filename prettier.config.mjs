@@ -6,7 +6,7 @@ const config = {
   tabWidth: 2,
   trailingComma: "none",
   plugins: ["@prettier/plugin-oxc", "prettier-plugin-tailwindcss"],
-  tailwindStylesheet: "./src/runtime/css/main.css"
+  tailwindStylesheet: "./playground/app/assets/css/main.css"
 }
 
 export default config

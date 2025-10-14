@@ -16,17 +16,17 @@ const items = computed<NavigationMenuItem[]>(() => {
         {
           label: "Overview",
           description:
-              "You have nothing to do, @nuxt/icon will handle it automatically."
+            "You have nothing to do, @nuxt/icon will handle it automatically."
         },
         {
           label: "Characters",
           description:
-              "Choose a primary and a neutral color from your Tailwind CSS theme."
+            "Choose a primary and a neutral color from your Tailwind CSS theme."
         },
         {
           label: "Tales",
           description:
-              'You can customize components by using the "class" / "ui" props or in your app.config.ts.'
+            'You can customize components by using the "class" / "ui" props or in your app.config.ts.'
         }
       ]
     },
@@ -61,7 +61,7 @@ const items = computed<NavigationMenuItem[]>(() => {
           label: "Jobs",
           icon: "lucide:briefcase",
           description:
-              "Check out our currently open positions and their requirements.!",
+            "Check out our currently open positions and their requirements.!",
           to: "/company/jobs"
         },
         {
@@ -74,7 +74,7 @@ const items = computed<NavigationMenuItem[]>(() => {
           label: "Benefits",
           icon: "lucide:hand-heart",
           description:
-              "Discover what benefits and compensations are available to our employees.",
+            "Discover what benefits and compensations are available to our employees.",
           to: "/company/benefits"
         }
       ]
@@ -180,15 +180,25 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
       <RCLogo variant="mark" class="h-6 w-auto" />
     </template>
     <template #center>
-      <UNavigationMenu :items="items" variant="link" :ui="{ viewportWrapper: 'top-0 flex fixed w-screen mt-[var(--ui-header-height)]', viewport: 'rounded-none' }">
+      <UNavigationMenu
+        :items="items"
+        variant="link"
+        :ui="{
+          viewportWrapper:
+            'top-0 flex fixed w-screen mt-[var(--ui-header-height)]',
+          viewport: 'rounded-none'
+        }"
+      >
         <template #megamenu-content="{ item }">
           <UContainer>
-            <div class="flex flex-row gap-xl h-full">
+            <div class="gap-xl flex h-full flex-row">
               <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
               <ul>
                 <li v-for="child in item.children" :key="child.label">
-                  <ULink class="text-sm text-left rounded-md p-3 transition-colors hover:bg-elevated/50">
-                    <p class="font-medium text-highlighted">
+                  <ULink
+                    class="hover:bg-elevated/50 rounded-md p-3 text-left text-sm transition-colors"
+                  >
+                    <p class="text-highlighted font-medium">
                       {{ child.label }}
                     </p>
                     <p class="text-muted line-clamp-2">
@@ -202,14 +212,18 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
         </template>
         <template #megamenu2-content="{ item }">
           <UContainer>
-            <ul class="grid gap-2 p-4 lg:w-[500px] lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]">
+            <ul
+              class="grid gap-2 p-4 lg:w-[500px] lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]"
+            >
               <li class="row-span-3">
                 <RCPlaceholder class="size-full min-h-48" />
               </li>
 
               <li v-for="child in item.children" :key="child.label">
-                <ULink class="text-sm text-left rounded-md p-3 transition-colors hover:bg-elevated/50">
-                  <p class="font-medium text-highlighted">
+                <ULink
+                  class="hover:bg-elevated/50 rounded-md p-3 text-left text-sm transition-colors"
+                >
+                  <p class="text-highlighted font-medium">
                     {{ child.label }}
                   </p>
                   <p class="text-muted line-clamp-2">
@@ -223,52 +237,82 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
       </UNavigationMenu>
     </template>
     <template #right>
-      <div class="flex flex-row gap-md">
+      <div class="gap-md flex flex-row">
         <UButton variant="solid" color="primary" label="Button 1" />
-        <UButton variant="outline" color="primary" label="Button 2"/>
+        <UButton variant="outline" color="primary" label="Button 2" />
       </div>
     </template>
     <template #collapsed-left>
-      <UDrawer v-model:open="leftDrawerOpen" direction="left" :handle="false" :ui="{ header: 'flex items-center justify-between', content: 'w-full max-w-2/3' }">
-        <UButton
-            color="neutral"
-            variant="ghost"
-            icon="lucide:menu"
-        />
+      <UDrawer
+        v-model:open="leftDrawerOpen"
+        direction="left"
+        :handle="false"
+        :ui="{
+          header: 'flex items-center justify-between',
+          content: 'w-full max-w-2/3'
+        }"
+      >
+        <UButton color="neutral" variant="ghost" icon="lucide:menu" />
         <template #header>
           <h2 class="text-highlighted font-semibold">Drawer 1</h2>
-          <UButton color="neutral" variant="ghost" icon="lucide:x" @click="leftDrawerOpen = false" />
+          <UButton
+            color="neutral"
+            variant="ghost"
+            icon="lucide:x"
+            @click="leftDrawerOpen = false"
+          />
         </template>
         <template #body>
-          <div class="flex flex-col gap-md size-full items-start">
-            <UNavigationMenu :items="items" variant="link" orientation="vertical"/>
+          <div class="gap-md flex size-full flex-col items-start">
+            <UNavigationMenu
+              :items="items"
+              variant="link"
+              orientation="vertical"
+            />
           </div>
         </template>
       </UDrawer>
     </template>
     <template #collapsed-center>
-      <UIcon
-          name="first-party:logomark-white"
-          color="primary"
-          class="text-neutral fill-neutral inline-block h-12"
-      />
+      <RCLogo variant="mark" class="h-12" />
     </template>
     <template #collapsed-right>
-      <UDrawer v-model:open="rightDrawerOpen" direction="right" :handle="false" :ui="{ header: 'flex items-center justify-between', content: 'w-full max-w-2/3' }">
-        <UButton
-            color="neutral"
-            variant="ghost"
-            icon="lucide:user"
-        />
+      <UDrawer
+        v-model:open="rightDrawerOpen"
+        direction="right"
+        :handle="false"
+        :ui="{
+          header: 'flex items-center justify-between',
+          content: 'w-full max-w-2/3'
+        }"
+      >
+        <UButton color="neutral" variant="ghost" icon="lucide:user" />
         <template #header>
           <h2 class="text-highlighted font-semibold">Drawer 2</h2>
-          <UButton color="neutral" variant="ghost" icon="lucide:x" @click="rightDrawerOpen = false" />
+          <UButton
+            color="neutral"
+            variant="ghost"
+            icon="lucide:x"
+            @click="rightDrawerOpen = false"
+          />
         </template>
         <template #body>
-          <div class="flex flex-col gap-md size-full">
-            <div class="flex flex-col gap-sm">
-              <UButton size="xl" variant="solid" color="primary" label="Button 1" block/>
-              <UButton size="xl" variant="outline" color="primary" label="Button 2" block/>
+          <div class="gap-md flex size-full flex-col">
+            <div class="gap-sm flex flex-col">
+              <UButton
+                size="xl"
+                variant="solid"
+                color="primary"
+                label="Button 1"
+                block
+              />
+              <UButton
+                size="xl"
+                variant="outline"
+                color="primary"
+                label="Button 2"
+                block
+              />
             </div>
           </div>
         </template>
@@ -277,6 +321,4 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
   </RCHeader>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

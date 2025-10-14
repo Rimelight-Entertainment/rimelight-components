@@ -1,27 +1,25 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <header class="h-[var(--ui-header-height)]">
+  <header class="sticky top-0 z-50 h-[var(--ui-header-height)]">
     <UContainer class="h-full">
-      <div class="flex flex-row items-center justify-between p-sm h-full">
-        <div class="sm:hidden">
+      <div class="flex h-full flex-row items-center justify-between p-sm">
+        <div class="lg:hidden">
           <slot name="collapsed-left" />
         </div>
-        <div class="sm:hidden">
+        <div class="lg:hidden">
           <slot name="collapsed-center" />
         </div>
-        <div class="sm:hidden">
+        <div class="lg:hidden">
           <slot name="collapsed-right" />
         </div>
-        <div class="hidden sm:block">
+        <div class="hidden lg:flex">
           <slot name="left" />
         </div>
-        <div class="hidden sm:block">
+        <div class="hidden lg:flex">
           <slot name="center" />
         </div>
-        <div class="hidden sm:block">
+        <div class="hidden lg:flex">
           <slot name="right" />
         </div>
       </div>
@@ -29,6 +27,4 @@
   </header>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
