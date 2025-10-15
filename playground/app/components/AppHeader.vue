@@ -191,17 +191,17 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
       >
         <template #megamenu-content="{ item }">
           <UContainer>
-            <div class="gap-xl flex h-full flex-row">
+            <div class="flex h-full flex-row gap-xl">
               <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
               <ul>
                 <li v-for="child in item.children" :key="child.label">
                   <ULink
-                    class="hover:bg-elevated/50 rounded-md p-3 text-left text-sm transition-colors"
+                    class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
                   >
-                    <p class="text-highlighted font-medium">
+                    <p class="font-medium text-highlighted">
                       {{ child.label }}
                     </p>
-                    <p class="text-muted line-clamp-2">
+                    <p class="line-clamp-2 text-muted">
                       {{ child.description }}
                     </p>
                   </ULink>
@@ -221,12 +221,12 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
 
               <li v-for="child in item.children" :key="child.label">
                 <ULink
-                  class="hover:bg-elevated/50 rounded-md p-3 text-left text-sm transition-colors"
+                  class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
                 >
-                  <p class="text-highlighted font-medium">
+                  <p class="font-medium text-highlighted">
                     {{ child.label }}
                   </p>
-                  <p class="text-muted line-clamp-2">
+                  <p class="line-clamp-2 text-muted">
                     {{ child.description }}
                   </p>
                 </ULink>
@@ -237,7 +237,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
       </UNavigationMenu>
     </template>
     <template #right>
-      <div class="gap-md flex flex-row">
+      <div class="flex flex-row gap-md">
         <UButton variant="solid" color="primary" label="Button 1" />
         <UButton variant="outline" color="primary" label="Button 2" />
       </div>
@@ -254,7 +254,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
       >
         <UButton color="neutral" variant="ghost" icon="lucide:menu" />
         <template #header>
-          <h2 class="text-highlighted font-semibold">Drawer 1</h2>
+          <h2 class="font-semibold text-highlighted">Drawer 1</h2>
           <UButton
             color="neutral"
             variant="ghost"
@@ -263,7 +263,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
           />
         </template>
         <template #body>
-          <div class="gap-md flex size-full flex-col items-start">
+          <div class="flex size-full flex-col items-start gap-md">
             <UNavigationMenu
               :items="items"
               variant="link"
@@ -288,7 +288,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
       >
         <UButton color="neutral" variant="ghost" icon="lucide:user" />
         <template #header>
-          <h2 class="text-highlighted font-semibold">Drawer 2</h2>
+          <h2 class="font-semibold text-highlighted">Drawer 2</h2>
           <UButton
             color="neutral"
             variant="ghost"
@@ -297,8 +297,8 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
           />
         </template>
         <template #body>
-          <div class="gap-md flex size-full flex-col">
-            <div class="gap-sm flex flex-col">
+          <div class="flex size-full flex-col gap-md">
+            <div class="flex flex-col gap-sm">
               <UButton
                 size="xl"
                 variant="solid"

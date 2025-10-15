@@ -44,7 +44,6 @@
     "vue": "^3.5.22"
   },
   "devDependencies": {
-    "@nuxt/image": "1.11.0",
     "@nuxt/devtools": "^2.6.5",
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.1.3",
