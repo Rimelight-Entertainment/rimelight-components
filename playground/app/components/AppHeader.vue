@@ -80,15 +80,6 @@ const items = computed<NavigationMenuItem[]>(() => {
       ]
     }
   ]
-
-  if (/*apiUser.value?.role === "employee"*/ true) {
-    baseItems.push({
-      label: "Internal",
-      to: "/internal",
-      active: route.path.startsWith("/internal")
-    })
-  }
-
   return baseItems
 })
 const accountMenuItems = ref<DropdownMenuItem[][]>([
@@ -184,8 +175,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
         :items="items"
         variant="link"
         :ui="{
-          viewportWrapper:
-            'top-0 flex fixed w-screen mt-[var(--ui-header-height)]',
+          viewportWrapper: 'top-0 flex fixed w-screen mt-(--ui-header-height)',
           viewport: 'rounded-none'
         }"
       >
