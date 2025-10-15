@@ -48,10 +48,8 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
   },
-  setup(options, nuxt) {
+  setup() {
     const resolver = createResolver(import.meta.url)
-
-    nuxt.options.css.push(resolver.resolve("./index.css"))
 
     addComponentsDir({
       path: resolver.resolve("./runtime/components/"),
