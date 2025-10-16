@@ -65,7 +65,6 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addImportsDir(resolver.resolve("./runtime/composables"))
-    addImportsDir(resolver.resolve("./runtime/utils"))
   },
   onInstall() {
     console.log("Setting up rimelight-components for the first time!")

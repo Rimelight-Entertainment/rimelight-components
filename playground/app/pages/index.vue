@@ -3,41 +3,40 @@ useHead({
   title: "Home"
 })
 
-const logoPool: { logo: string; href: string; iconClass?: string }[] = [
-  { logo: "logos:typescript-icon", href: "https://www.typescriptlang.org/" },
-  { logo: "logos:vue", href: "https://vuejs.org/" },
-  { logo: "logos:nuxt-icon", href: "https://nuxt.com/" },
-  { logo: "logos:tailwindcss-icon", href: "https://tailwindcss.com/" },
-  { logo: "logos:vitejs", href: "https://vite.dev/" },
-  { logo: "logos:bun", href: "https://bun.com/" },
-  { logo: "vscode-icons:file-type-oxlint", href: "https://oxc.rs/" },
-  { logo: "logos:webstorm", href: "https://www.jetbrains.com/webstorm/" },
-  { logo: "logos:c-plusplus", href: "https://isocpp.org/" },
-  { logo: "logos:rider", href: "https://www.jetbrains.com/rider/" },
+const iconPool: { icon: string; href: string; iconClass?: string }[] = [
+  { icon: "logos:typescript-icon", href: "https://www.typescriptlang.org/" },
+  { icon: "logos:vue", href: "https://vuejs.org/" },
+  { icon: "logos:nuxt-icon", href: "https://nuxt.com/" },
+  { icon: "logos:tailwindcss-icon", href: "https://tailwindcss.com/" },
+  { icon: "logos:vitejs", href: "https://vite.dev/" },
+  { icon: "logos:bun", href: "https://bun.com/" },
+  { icon: "vscode-icons:file-type-oxlint", href: "https://oxc.rs/" },
+  { icon: "logos:git-icon", href: "https://git-scm.com/" },
+  { icon: "logos:c-plusplus", href: "https://isocpp.org/" },
   {
-    logo: "logos:unrealengine-icon",
+    icon: "logos:unrealengine-icon",
     href: "https://www.unrealengine.com/",
     iconClass: "fill-white"
   },
   {
-    logo: "simple-icons:perforce",
-    href: "https://www.perforce.com/products/helix-core/"
+    icon: "simple-icons:perforce",
+    href: "https://www.perforce.com/products/helix-core/",
+    iconClass: "text-[#3805F2]"
   },
-  { logo: "logos:postgresql", href: "https://www.postgresql.org/" },
-  { logo: "catppuccin:drizzle-orm", href: "https://orm.drizzle.team/" },
-  { logo: "logos:neon-icon", href: "https://neon.com/" },
-  { logo: "logos:git-icon", href: "https://git-scm.com/" },
-  { logo: "mdi:github", href: "https://github.com/" },
-  { logo: "third-party:youtrack", href: "https://www.jetbrains.com/youtrack/" }
+  { icon: "logos:postgresql", href: "https://www.postgresql.org/" },
+  { icon: "catppuccin:drizzle-orm", href: "https://orm.drizzle.team/" },
+  { icon: "logos:neon-icon", href: "https://neon.com/" },
+  { icon: "mdi:github", href: "https://github.com/" },
+  { icon: "logos:webstorm", href: "https://www.jetbrains.com/webstorm/" },
+  { icon: "logos:rider", href: "https://www.jetbrains.com/rider/" },
+  { icon: "third-party:youtrack", href: "https://www.jetbrains.com/youtrack/" }
 ]
 
-const CARD_COUNT = 18
-
-const cards = Array.from({ length: CARD_COUNT }, (_, index) => {
-  const item = logoPool[index % logoPool.length]
+const cards = Array.from({ length: iconPool.length }, (_, index) => {
+  const item = iconPool[index % iconPool.length]
 
   return {
-    logo: item!.logo,
+    icon: item!.icon,
     href: item!.href,
     iconClass: item!.iconClass
   }
@@ -74,30 +73,9 @@ const projectsLinks = ref([
   }
 ])
 
-const musicFeatures = ref([
+const ctaLinks = ref([
   {
-    title: "DJ",
-    description:
-      "I'm a DJ specializing in Hyperpop, Glitchcore, and Hyperflip.",
-    icon: "lucide:disc-3"
-  },
-  {
-    title: "Guitarist",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    icon: "lucide:guitar"
-  },
-  {
-    title: "Pianist",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    icon: "lucide:piano"
-  }
-])
-
-const hiringLinks = ref([
-  {
-    label: "Explore Careers",
+    label: "Call to Action",
     to: ""
   }
 ])
@@ -105,25 +83,32 @@ const hiringLinks = ref([
 
 <template>
   <UPage>
-    <UPageHero
-      title="Rimelight Entertainment"
-      description="Welcome to Rimelight Entertainment."
-      headline="Tell your story."
-      orientation="horizontal"
-      reverse
-    >
-      <NuxtImg
-        src="https://cdn.idantity.me/images/logos/logomark-white.webp"
-        alt="idantity.me"
+    <div class="relative grid h-[500px] place-content-center overflow-hidden">
+      <UPageHero
+        title="Rimelight Components"
+        description="Welcome to Rimelight Entertainment."
+        headline="Tell your story."
+        orientation="horizontal"
+        reverse
+        class="pointer-events-none z-20"
+      >
+        <NuxtImg
+          src="https://cdn.idantity.me/images/logos/logomark-white.webp"
+          alt="idantity.me"
+        />
+      </UPageHero>
+
+      <RCInteractiveGrid
+        squares-class-name="hover:fill-primary-500"
+        :height="48"
+        :width="48"
+        :squares="[80, 80]"
+        :class="[
+          '[mask-image:radial-gradient(512px_192px_ellipse_at_70%_50%,white,transparent)]',
+          'inset-0 z-0 h-[200%] skew-y-12'
+        ]"
       />
-    </UPageHero>
-    <RCInteractiveGridPattern
-      squares-class-name="hover:fill-primary-400"
-      :class="[
-        '[mask-image:radial-gradient(350px_circle_at_center,white,transparent)]',
-        'inset-right h-[200%] skew-y-12'
-      ]"
-    />
+    </div>
     <UPageSection
       variant="outline"
       title="me.projects"
@@ -133,22 +118,32 @@ const hiringLinks = ref([
       orientation="horizontal"
     >
       <div class="flex items-center justify-center p-4">
-        <RCAnimateGrid
-          :cards
-          text-glow-end-color="#DBEAFEFF"
-          text-glow-start-color="#1C398EFF"
-        >
-          <template #logo="{ logo }">
-            <UIcon :name="logo" class="logo mx-auto h-10 w-auto" />
-          </template>
-        </RCAnimateGrid>
+        <RCAnimateGrid :cards />
       </div>
     </UPageSection>
-    <UPageCTA
-      title="We're hiring!"
-      description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-      :links="hiringLinks"
-    />
+    <ClientOnly>
+      <div
+        class="relative grid h-128 w-full place-content-center justify-center overflow-hidden"
+      >
+        <RCFlickeringGrid
+          class="absolute z-0 w-full [mask-image:radial-gradient(512px_256px_ellipse_at_center,white,transparent)] lg:[mask-image:radial-gradient(1280px_256px_ellipse_at_center,white,transparent)]"
+          :square-size="40"
+          :grid-gap="6"
+          color="#60A5FA"
+          :max-opacity="0.5"
+          :flicker-chance="0.05"
+          :width="5120"
+          :height="512"
+        />
+        <UPageCTA
+          variant="naked"
+          title="Rimelight Components"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+          :links="ctaLinks"
+          class="z-10 max-w-128"
+        />
+      </div>
+    </ClientOnly>
   </UPage>
 </template>
 

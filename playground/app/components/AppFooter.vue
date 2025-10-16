@@ -5,44 +5,33 @@ const appConfig = useAppConfig()
 
 const columns: FooterColumn[] = [
   {
-    label: `Resources`,
+    label: "Resources",
     children: [
       {
-        label: `Rimelight Companion App`,
-        to: `/companion/`
+        label: "Branding"
       },
       {
-        label: `Branding`,
-        to: `/branding/`
-      },
-      {
-        label: `API`,
-        to: `/api/`
+        label: "API"
       }
     ]
   },
   {
-    label: `Documents`,
+    label: "Documents",
     children: [
       {
-        label: `Privacy Policy`,
-        to: `/documents/policies/privacy-policy/`
+        label: "Privacy Policy"
       },
       {
-        label: `Cookie Policy`,
-        to: `/documents/policies/cookie-policy/`
+        label: "Cookie Policy"
       },
       {
-        label: `Terms of Service`,
-        to: `/documents/policies/terms-of-service/`
+        label: "Terms of Service"
       },
       {
-        label: `Code of Conduct`,
-        to: `/documents/policies/code-of-conduct/`
+        label: "Code of Conduct"
       },
       {
-        label: `Other Documents`,
-        to: `/documents/policies/other-documents/`
+        label: "Other Documents"
       }
     ]
   }
@@ -73,35 +62,20 @@ const columns: FooterColumn[] = [
           variant="ghost"
           color="neutral"
           icon="mdi:instagram"
-          to="https://www.instagram.com/idantity.me"
         />
         <UButton
           size="xl"
           variant="ghost"
           color="neutral"
           icon="ic:baseline-discord"
-          to="https://discord.com/users/682049695173836979"
         />
-        <UButton
-          size="xl"
-          variant="ghost"
-          color="neutral"
-          icon="mdi:spotify"
-          to="https://open.spotify.com/user/v5m4qoc9j35ccc6nbzqcookvj?si=d795f9bc1cb34222"
-        />
-        <UButton
-          size="xl"
-          variant="ghost"
-          color="neutral"
-          icon="mdi:github"
-          to="https://www.github.com/idantitydotme"
-        />
+        <UButton size="xl" variant="ghost" color="neutral" icon="mdi:spotify" />
+        <UButton size="xl" variant="ghost" color="neutral" icon="mdi:github" />
         <UButton
           size="xl"
           variant="ghost"
           color="neutral"
           icon="mdi:linkedin"
-          to="https://www.linkedin.com/daniel-marchi"
         />
       </div>
     </template>

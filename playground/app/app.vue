@@ -91,6 +91,9 @@ onMounted(() => {
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <ClientOnly>
+      <RCScrollToTop />
+    </ClientOnly>
   </UApp>
 </template>
 
