@@ -117,9 +117,7 @@ const ctaLinks = ref([
       :links="projectsLinks"
       orientation="horizontal"
     >
-      <div class="flex items-center justify-center p-4">
-        <RCAnimateGrid :cards />
-      </div>
+      <RCAnimateGrid :cards />
     </UPageSection>
     <ClientOnly>
       <div

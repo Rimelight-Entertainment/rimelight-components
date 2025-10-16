@@ -61,7 +61,7 @@ function handleMouseLeave() {
 <template>
   <svg :width="gridWidth" :height="gridHeight" :class="svgClass">
     <rect
-      v-for="index in totalSquares"
+      v-for="(_, index) in totalSquares"
       :key="index"
       :x="getX(index)"
       :y="getY(index)"
