@@ -46,9 +46,15 @@ export default defineNuxtModule<ModuleOptions>({
           ]
         }
       }
+    },
+    "motion-v/nuxt": {
+      version: ">=1.7.2",
+      optional: false,
+      overrides: {},
+      defaults: {}
     }
   },
-  setup() {
+  setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
     addComponentsDir({
@@ -59,6 +65,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addImportsDir(resolver.resolve("./runtime/composables"))
+    addImportsDir(resolver.resolve("./runtime/utils"))
   },
   onInstall() {
     console.log("Setting up rimelight-components for the first time!")
