@@ -47,6 +47,12 @@ export default defineNuxtModule<ModuleOptions>({
         }
       }
     },
+    "@vueuse/nuxt": {
+      version: ">=13.9.0",
+      optional: false,
+      overrides: {},
+      defaults: {}
+    },
     "motion-v/nuxt": {
       version: ">=1.7.2",
       optional: false,

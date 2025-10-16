@@ -83,6 +83,14 @@ const ctaLinks = ref([
 
 <template>
   <UPage>
+    <div class="size-64 bg-white" />
+    <div class="flex w-full flex-col items-center gap-md">
+      <RCColorSwatch
+        hex="#E12AFBFF"
+        rgb="rgb(225, 42, 251)"
+        oklch="oklch(66.7% 0.295 322.15)"
+      />
+    </div>
     <div class="relative grid h-[500px] place-content-center overflow-hidden">
       <UPageHero
         title="Rimelight Components"
@@ -119,6 +127,7 @@ const ctaLinks = ref([
     >
       <RCAnimateGrid :cards />
     </UPageSection>
+
     <ClientOnly>
       <div
         class="relative grid h-128 w-full place-content-center justify-center overflow-hidden"
