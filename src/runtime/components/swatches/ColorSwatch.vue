@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useClipboard } from "#imports"
 import { useToast } from "#imports"
+import { computed } from "#imports"
 
 const { copy } = useClipboard()
 const toast = useToast()
