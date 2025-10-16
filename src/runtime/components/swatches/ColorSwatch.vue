@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useClipboard } from "@vueuse/core"
+import { useClipboard } from "#imports"
+import { useToast } from "#imports"
 
 const { copy } = useClipboard()
 const toast = useToast()
