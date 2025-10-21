@@ -82,7 +82,7 @@ const durationInSeconds = computed(() => `${props.duration}s`)
     <div v-if="isVisible">
       <UButton
         variant="ghost"
-        class="fixed right-4 bottom-4 z-50 size-20 lg:size-16"
+        class="fixed bottom-4 right-4 z-50 size-20 lg:size-16"
         @click="scrollToTop"
       >
         <div class="progress-circle-base size-full">
