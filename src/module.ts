@@ -5,7 +5,55 @@ import {
   createResolver
 } from "@nuxt/kit"
 
-export interface ModuleOptions {}
+interface CalloutOptions {
+  icon: string
+  title: string
+}
+
+interface ModuleOptions {
+  callouts: {
+    info: CalloutOptions
+    success: CalloutOptions
+    warning: CalloutOptions
+    error: CalloutOptions
+    commentary: CalloutOptions
+    ideation: CalloutOptions
+    source: CalloutOptions
+  }
+}
+
+const defaultOptions = {
+  callouts: {
+    info: {
+      icon: "lucide:shield-alert",
+      title: "Note"
+    },
+    success: {
+      icon: "lucide:circle-alert",
+      title: "Tip"
+    },
+    warning: {
+      icon: "lucide:triangle-alert",
+      title: "Warning"
+    },
+    error: {
+      icon: "lucide:octagon-alert",
+      title: "Danger"
+    },
+    commentary: {
+      icon: "lucide:message-circle-warning",
+      title: "Commentary"
+    },
+    ideation: {
+      icon: "lucide:badge-alert",
+      title: "Ideation"
+    },
+    source: {
+      icon: "lucide:book-alert",
+      title: "Creator's Remarks"
+    }
+  }
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -16,7 +64,7 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt: ">=4.0.0"
     }
   },
-  defaults: {},
+  defaults: defaultOptions,
   hooks: {},
   moduleDependencies: {
     "@nuxt/image": {
@@ -62,6 +110,8 @@ export default defineNuxtModule<ModuleOptions>({
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
+
+    nuxt.options.appConfig.rimelightComponents = options
 
     addComponentsDir({
       path: resolver.resolve("./runtime/components/"),
