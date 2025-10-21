@@ -83,14 +83,26 @@ const ctaLinks = ref([
 
 <template>
   <UPage>
-    <div class="size-64 bg-white" />
-    <div class="flex w-full flex-col items-center gap-md">
-      <RCColorSwatch
-        hex="#E12AFBFF"
-        rgb="rgb(225, 42, 251)"
-        oklch="oklch(66.7% 0.295 322.15)"
-      />
-    </div>
+    <RCColorSwatch
+      hex="#E12AFBFF"
+      rgb="rgb(225, 42, 251)"
+      oklch="oklch(66.7% 0.295 322.15)"
+    />
+    <UContainer class="gap-lg flex flex-col">
+      <RCSection title="Callout">
+        <div class="gap-md flex flex-col">
+          <RCCallout variant="info"> Lorem ipsum dolor sit amet. </RCCallout>
+          <RCCallout variant="success">Lorem ipsum dolor sit amet.</RCCallout>
+          <RCCallout variant="warning">Lorem ipsum dolor sit amet.</RCCallout>
+          <RCCallout variant="error">Lorem ipsum dolor sit amet.</RCCallout>
+          <RCCallout variant="commentary"
+            >Lorem ipsum dolor sit amet.</RCCallout
+          >
+          <RCCallout variant="ideation">Lorem ipsum dolor sit amet.</RCCallout>
+          <RCCallout variant="source">Lorem ipsum dolor sit amet.</RCCallout>
+        </div>
+      </RCSection>
+    </UContainer>
     <div class="relative grid h-[500px] place-content-center overflow-hidden">
       <UPageHero
         title="Rimelight Components"
@@ -130,7 +142,7 @@ const ctaLinks = ref([
 
     <ClientOnly>
       <div
-        class="relative grid h-128 w-full place-content-center justify-center overflow-hidden"
+        class="h-128 relative grid w-full place-content-center justify-center overflow-hidden"
       >
         <RCFlickeringGrid
           class="absolute z-0 w-full [mask-image:radial-gradient(512px_256px_ellipse_at_center,white,transparent)] lg:[mask-image:radial-gradient(1280px_256px_ellipse_at_center,white,transparent)]"
@@ -147,7 +159,7 @@ const ctaLinks = ref([
           title="Rimelight Components"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
           :links="ctaLinks"
-          class="z-10 max-w-128"
+          class="max-w-128 z-10"
         />
       </div>
     </ClientOnly>
