@@ -127,6 +127,31 @@ const ctaLinks = ref([
           title="Swatches"
           description="Lorem ipsum dolor sit amet."
         >
+          <RCSection :level="3" title="Logotype">
+            <div class="gap-lg flex flex-col lg:flex-row">
+              <RCImageSwatch
+                name="Monochrome White"
+                jpg="https://cdn.idantity.me/images/logos/logomark-white.webp"
+                png="https://cdn.idantity.me/images/logos/logomark-white.webp"
+                webp="https://cdn.idantity.me/images/logos/logomark-white.webp"
+                svg="https://cdn.idantity.me/images/logos/logomark-white.webp"
+              />
+              <RCImageSwatch
+                name="Monochrome Black"
+                jpg="https://cdn.idantity.me/images/logos/logomark-white.webp"
+                png="https://cdn.idantity.me/images/logos/logomark-white.webp"
+                webp="https://cdn.idantity.me/images/logos/logomark-white.webp"
+                svg="https://cdn.idantity.me/images/logos/logomark-white.webp"
+              />
+              <RCImageSwatch
+                name="Color"
+                jpg="https://cdn.idantity.me/images/logos/logomark-white.webp"
+                png="https://cdn.idantity.me/images/logos/logomark-white.webp"
+                webp="https://cdn.idantity.me/images/logos/logomark-white.webp"
+                svg="https://cdn.idantity.me/images/logos/logomark-white.webp"
+              />
+            </div>
+          </RCSection>
           <RCSection
             :level="3"
             title="Color"

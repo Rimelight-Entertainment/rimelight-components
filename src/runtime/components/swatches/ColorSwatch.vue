@@ -44,20 +44,20 @@ const color = computed(() => {
 </script>
 
 <template>
-  <UCard variant="subtle" class="w-fit rounded-none">
+  <UCard variant="subtle" class="w-full rounded-none xl:w-fit">
     <template #header v-if="name">
       <h3 class="text-lg font-bold">{{ name }}</h3>
     </template>
-    <div class="gap-sm flex flex-row">
+    <div class="gap-sm flex flex-col items-center xl:flex-row xl:items-start">
       <div class="aspect-square size-48" :style="{ backgroundColor: color }" />
-      <div class="gap-sm flex flex-col justify-center">
+      <div class="gap-sm flex w-full flex-col justify-center">
         <UButton
           v-if="hex"
           variant="outline"
           size="sm"
           icon="lucide:copy"
           label="Copy HEX"
-          class="w-36"
+          class="w-full xl:w-36"
           @click="copyToClipboard(hex)"
         />
         <UButton
@@ -66,7 +66,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy RGB"
-          class="w-36"
+          class="w-full xl:w-36"
           @click="copyToClipboard(rgb)"
         />
         <UButton
@@ -75,7 +75,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy HSL"
-          class="w-36"
+          class="w-full xl:w-36"
           @click="copyToClipboard(hsl)"
         />
         <UButton
@@ -84,7 +84,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy OKLCH"
-          class="w-36"
+          class="w-full xl:w-36"
           @click="copyToClipboard(oklch)"
         />
         <UButton
@@ -93,7 +93,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy CMYK"
-          class="w-36"
+          class="w-full xl:w-36"
           @click="copyToClipboard(cmyk)"
         />
       </div>
