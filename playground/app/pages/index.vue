@@ -129,9 +129,12 @@ const ctaLinks = ref([
         >
           <RCSection :level="3" title="Swatches">
             <RCColorSwatch
-              hex="#E12AFBFF"
-              rgb="rgb(225, 42, 251)"
-              oklch="oklch(66.7% 0.295 322.15)"
+              name="Color"
+              hex="#1d6ebe"
+              rgb="rgb(29, 110, 190)"
+              hsl="hsl(209.82 73% 43%)"
+              oklch="oklch(0.5338 0.1455 252.53)"
+              cmyk="cmyk(84.74%, 42.11%, 0%, 25.49%)"
             />
           </RCSection>
         </RCSection>

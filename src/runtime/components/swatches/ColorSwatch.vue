@@ -6,7 +6,8 @@ import { computed } from "#imports"
 const { copy } = useClipboard()
 const toast = useToast()
 
-const { hex, rgb, hsl, oklch, cmyk } = defineProps<{
+const { name, hex, rgb, hsl, oklch, cmyk } = defineProps<{
+  name?: string
   hex?: string
   rgb?: string
   hsl?: string
@@ -38,22 +39,25 @@ const color = computed(() => {
   if (cmyk) return cmyk
   if (oklch) return oklch
 
-  return "primary-500"
+  return "var(--color-primary-500)"
 })
 </script>
 
 <template>
-  <UCard>
-    <div class="flex flex-row gap-sm">
-      <div class="aspect-square size-64" :class="`bg-[${color}]`" />
-      <div class="flex flex-col justify-center gap-sm">
+  <UCard variant="subtle" class="w-fit rounded-none">
+    <template #header v-if="name">
+      <h3 class="text-lg font-bold">{{ name }}</h3>
+    </template>
+    <div class="gap-sm flex flex-row">
+      <div class="aspect-square size-48" :style="{ backgroundColor: color }" />
+      <div class="gap-sm flex flex-col justify-center">
         <UButton
           v-if="hex"
           variant="outline"
           size="sm"
           icon="lucide:copy"
           label="Copy HEX"
-          class="w-32"
+          class="w-28"
           @click="copyToClipboard(hex)"
         />
         <UButton
@@ -62,7 +66,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy RGB"
-          class="w-32"
+          class="w-28"
           @click="copyToClipboard(rgb)"
         />
         <UButton
@@ -71,7 +75,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy HSL"
-          class="w-32"
+          class="w-28"
           @click="copyToClipboard(hsl)"
         />
         <UButton
@@ -80,7 +84,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy OKLCH"
-          class="w-32"
+          class="w-28"
           @click="copyToClipboard(oklch)"
         />
         <UButton
@@ -89,7 +93,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy CMYK"
-          class="w-32"
+          class="w-28"
           @click="copyToClipboard(cmyk)"
         />
       </div>
