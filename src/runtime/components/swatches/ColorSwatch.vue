@@ -57,7 +57,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy HEX"
-          class="w-28"
+          class="w-36"
           @click="copyToClipboard(hex)"
         />
         <UButton
@@ -66,7 +66,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy RGB"
-          class="w-28"
+          class="w-36"
           @click="copyToClipboard(rgb)"
         />
         <UButton
@@ -75,7 +75,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy HSL"
-          class="w-28"
+          class="w-36"
           @click="copyToClipboard(hsl)"
         />
         <UButton
@@ -84,7 +84,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy OKLCH"
-          class="w-28"
+          class="w-36"
           @click="copyToClipboard(oklch)"
         />
         <UButton
@@ -93,7 +93,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy CMYK"
-          class="w-28"
+          class="w-36"
           @click="copyToClipboard(cmyk)"
         />
       </div>

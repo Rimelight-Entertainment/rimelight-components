@@ -124,10 +124,14 @@ const ctaLinks = ref([
         </RCSection>
         <RCSection
           :level="2"
-          title="Lorem"
+          title="Swatches"
           description="Lorem ipsum dolor sit amet."
         >
-          <RCSection :level="3" title="Swatches">
+          <RCSection
+            :level="3"
+            title="Color"
+            description="Lorem ipsum dolor sit amet."
+          >
             <RCColorSwatch
               name="Color"
               hex="#1d6ebe"
@@ -135,6 +139,19 @@ const ctaLinks = ref([
               hsl="hsl(209.82 73% 43%)"
               oklch="oklch(0.5338 0.1455 252.53)"
               cmyk="cmyk(84.74%, 42.11%, 0%, 25.49%)"
+            />
+          </RCSection>
+          <RCSection
+            :level="3"
+            title="Image"
+            description="Lorem ipsum dolor sit amet."
+          >
+            <RCImageSwatch
+              name="Image"
+              jpg="https://placehold.co/1024x512"
+              png="https://placehold.co/1024x512"
+              webp="https://placehold.co/1024x512"
+              svg="https://placehold.co/1024x512"
             />
           </RCSection>
         </RCSection>
