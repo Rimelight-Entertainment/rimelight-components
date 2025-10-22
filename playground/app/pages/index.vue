@@ -83,26 +83,62 @@ const ctaLinks = ref([
 
 <template>
   <UPage>
-    <RCColorSwatch
-      hex="#E12AFBFF"
-      rgb="rgb(225, 42, 251)"
-      oklch="oklch(66.7% 0.295 322.15)"
-    />
-    <UContainer class="gap-lg flex flex-col">
-      <RCSection title="Callout">
-        <div class="gap-md flex flex-col">
-          <RCCallout variant="info"> Lorem ipsum dolor sit amet. </RCCallout>
-          <RCCallout variant="success">Lorem ipsum dolor sit amet.</RCCallout>
-          <RCCallout variant="warning">Lorem ipsum dolor sit amet.</RCCallout>
-          <RCCallout variant="error">Lorem ipsum dolor sit amet.</RCCallout>
-          <RCCallout variant="commentary"
-            >Lorem ipsum dolor sit amet.</RCCallout
+    <UContainer>
+      <RCSection
+        :level="1"
+        title="Components"
+        description="Lorem ipsum dolor sit amet."
+      >
+        <RCSection
+          :level="2"
+          title="Content"
+          description="Lorem ipsum dolor sit amet."
+        >
+          <RCSection
+            :level="3"
+            title="Callout"
+            description="Callouts are used to highlight important information."
           >
-          <RCCallout variant="ideation">Lorem ipsum dolor sit amet.</RCCallout>
-          <RCCallout variant="source">Lorem ipsum dolor sit amet.</RCCallout>
-        </div>
+            <div class="gap-md flex flex-col">
+              <RCCallout variant="info">
+                Lorem ipsum dolor sit amet.
+              </RCCallout>
+              <RCCallout variant="success"
+                >Lorem ipsum dolor sit amet.</RCCallout
+              >
+              <RCCallout variant="warning"
+                >Lorem ipsum dolor sit amet.</RCCallout
+              >
+              <RCCallout variant="error">Lorem ipsum dolor sit amet.</RCCallout>
+              <RCCallout variant="commentary"
+                >Lorem ipsum dolor sit amet.</RCCallout
+              >
+              <RCCallout variant="ideation"
+                >Lorem ipsum dolor sit amet.</RCCallout
+              >
+              <RCCallout variant="source"
+                >Lorem ipsum dolor sit amet.</RCCallout
+              >
+            </div>
+          </RCSection>
+        </RCSection>
+        <RCSection
+          :level="2"
+          title="Lorem"
+          description="Lorem ipsum dolor sit amet."
+        >
+          <RCSection :level="3" title="Swatches">
+            <RCColorSwatch
+              hex="#E12AFBFF"
+              rgb="rgb(225, 42, 251)"
+              oklch="oklch(66.7% 0.295 322.15)"
+            />
+          </RCSection>
+        </RCSection>
       </RCSection>
     </UContainer>
+    <UPageSection> </UPageSection>
+
     <div class="relative grid h-[500px] place-content-center overflow-hidden">
       <UPageHero
         title="Rimelight Components"
