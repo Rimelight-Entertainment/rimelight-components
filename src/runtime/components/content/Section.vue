@@ -32,9 +32,9 @@ const sectionVariants = tv({
 
 export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6
 
-const { level = 1, title = `H${level}` } = defineProps<{
+const { level = 1 } = defineProps<{
   level?: SectionLevel
-  title?: string
+  title: string
 }>()
 
 const { sectionSlot, headingSlot } = sectionVariants({ level })
