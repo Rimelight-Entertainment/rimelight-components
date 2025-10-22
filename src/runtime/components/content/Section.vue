@@ -42,7 +42,7 @@ const { sectionSlot, headingSlot } = sectionVariants({ level })
 
 <template>
   <section :class="sectionSlot()" v-bind="$attrs">
-    <component :is="`h${level}`" :class="headingSlot()" v-if="title">
+    <component :is="`h${level}`" :class="headingSlot()">
       {{ title }}
     </component>
     <USeparator />
