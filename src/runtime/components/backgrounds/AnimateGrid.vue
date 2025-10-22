@@ -67,7 +67,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :class="cn('relative block', props.class)">
+  <UContainer :class="cn('relative block', props.class)">
     <div
       :class="
         cn(
@@ -91,13 +91,13 @@ onMounted(() => {
         <NuxtLink :to="item.href" target="_blank" :index="index">
           <UIcon
             :name="item.icon"
-            class="icon mx-auto h-16 w-auto p-3"
+            class="icon mx-auto h-12 w-auto p-2 lg:h-16 lg:p-3"
             :class="item.iconClass"
           />
         </NuxtLink>
       </div>
     </div>
-  </div>
+  </UContainer>
 </template>
 
 <style scoped>
