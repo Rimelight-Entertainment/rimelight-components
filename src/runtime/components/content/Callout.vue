@@ -49,7 +49,7 @@ const tooltip = computed(() => config.value.tooltip)
     </template>
     <template #close>
       <UTooltip :text="tooltip">
-        <UIcon name="lucide:circle-question-mark" class="size-4" />
+        <UIcon name="lucide:circle-question-mark" class="size-5" />
       </UTooltip>
     </template>
   </UAlert>
