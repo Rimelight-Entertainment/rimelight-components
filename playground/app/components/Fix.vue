@@ -41,7 +41,7 @@
   <!-- prettier-ignore -->
   <div class="items-end sm:items-end md:items-end lg:items-end xl:items-end"/>
   <!-- prettier-ignore -->
-  <div class="scroll-mt-24"/>
+  <div class="relative absolute scroll-mt-24 group lg:ps-2 lg:-ms-2 -ms-8 hidden absolute top-0 -ms-8 hidden rounded-md p-1 opacity-0 transition top-1 group-hover:opacity-100 group-focus:opacity-100 lg:flex rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"/>
 </template>
 
 <style scoped></style>

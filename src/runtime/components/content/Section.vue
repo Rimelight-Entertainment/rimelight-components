@@ -92,8 +92,25 @@ const sectionId = computed(() => slugify(title))
 
 <template>
   <section :id="sectionId" :class="sectionSlot()" v-bind="$attrs">
-    <component :id="sectionId" :is="`h${level}`" :class="headingSlot()">
-      <NuxtLink :href="`#${sectionId}`" :class="linkSlot()" :id="id">
+    <component
+      :id="sectionId"
+      :is="`h${level}`"
+      :class="headingSlot()"
+      class="relative"
+    >
+      <NuxtLink
+        :href="`#${sectionId}`"
+        :class="linkSlot()"
+        :id="sectionId"
+        class="group lg:-ms-2 lg:ps-2"
+      >
+        <UButton
+          variant="soft"
+          color="primary"
+          leading-icon="lucide:hash"
+          :to="`#${sectionId}`"
+          class="absolute top-1 -ms-8 hidden rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"
+        />
         {{ title }}
       </NuxtLink>
     </component>
