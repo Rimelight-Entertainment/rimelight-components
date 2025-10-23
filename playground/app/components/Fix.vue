@@ -40,6 +40,8 @@
   <div class="items-center sm:items-center md:items-center lg:items-center xl:items-center"/>
   <!-- prettier-ignore -->
   <div class="items-end sm:items-end md:items-end lg:items-end xl:items-end"/>
+  <!-- prettier-ignore -->
+  <div class="scroll-mt-24"/>
 </template>
 
 <style scoped></style>
