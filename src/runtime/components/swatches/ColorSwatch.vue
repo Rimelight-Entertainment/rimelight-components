@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { useClipboard } from "#imports"
-import { useToast } from "#imports"
-import { computed } from "#imports"
+import { useClipboard, useToast, computed } from "#imports"
 
 const { copy } = useClipboard()
 const toast = useToast()
@@ -19,15 +17,15 @@ const copyToClipboard = async (text: string) => {
   try {
     await copy(`${text}`)
     toast.add({
-      title: `Color copied to clipboard!`,
+      title: "Color copied to clipboard!",
       description: text,
-      color: `success`
+      color: "success"
     })
   } catch {
     toast.add({
-      title: `Failed to copy color to clipboard.`,
-      description: `An unexpected error occurred. Please try again.`,
-      color: `error`
+      title: "Failed to copy color to clipboard.",
+      description: "An unexpected error occurred. Please try again.",
+      color: "error"
     })
   }
 }

@@ -1,7 +1,28 @@
 <script setup lang="ts">
-import { computed } from "#imports"
+import { useClipboard, useToast, useRoute, computed } from "#imports"
 import { tv } from "tailwind-variants"
 import { slugify } from "../../utils"
+
+const { copy } = useClipboard()
+const toast = useToast()
+const route = useRoute()
+
+const copyToClipboard = async (text: string) => {
+  try {
+    await copy(`${text}`)
+    toast.add({
+      title: "Heading copied to clipboard!",
+      description: text,
+      color: "success"
+    })
+  } catch {
+    toast.add({
+      title: "Failed to copy heading to clipboard.",
+      description: "An unexpected error occurred. Please try again.",
+      color: "error"
+    })
+  }
+}
 
 const sectionVariants = tv({
   slots: {
@@ -88,6 +109,13 @@ const {
 } = sectionVariants({ level })
 
 const sectionId = computed(() => slugify(title))
+const sectionHash = computed(() => `#${sectionId.value}`)
+const fullSectionUrl = computed(() => {
+  // We use window.location.origin to ensure the link is an absolute URL,
+  // which is best practice for shareable links in a production environment.
+  if (typeof window === "undefined") return sectionHash.value
+  return `${window.location.origin}${route.path}${sectionHash.value}`
+})
 </script>
 
 <template>
@@ -107,9 +135,10 @@ const sectionId = computed(() => slugify(title))
         <UButton
           variant="soft"
           color="primary"
-          leading-icon="lucide:hash"
+          leading-icon="lucide:link"
           :to="`#${sectionId}`"
           class="absolute top-1 -ms-8 hidden rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"
+          @click="copyToClipboard(fullSectionUrl)"
         />
         {{ title }}
       </NuxtLink>
