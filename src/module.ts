@@ -8,7 +8,7 @@ import {
 interface CalloutOptions {
   icon: string
   title: string
-  tooltip: string
+  description: string
 }
 
 interface ModuleOptions {
@@ -27,38 +27,38 @@ const defaultOptions = {
   callouts: {
     info: {
       icon: "lucide:shield-alert",
-      title: "Note",
-      tooltip: "This callout is used for general notes."
+      title: "",
+      description: ""
     },
     success: {
       icon: "lucide:circle-alert",
-      title: "Tip",
-      tooltip: "This callout is used for tips and useful information."
+      title: "",
+      description: ""
     },
     warning: {
       icon: "lucide:triangle-alert",
-      title: "Warning",
-      tooltip: "This callout is used for important information."
+      title: "",
+      description: ""
     },
     error: {
       icon: "lucide:octagon-alert",
-      title: "Danger",
-      tooltip: "This callout is used for critical information and prohibitions."
+      title: "",
+      description: ""
     },
     commentary: {
       icon: "lucide:message-circle-warning",
-      title: "Commentary",
-      tooltip: "This callout is used for developer commentary."
+      title: "",
+      description: ""
     },
     ideation: {
       icon: "lucide:badge-alert",
-      title: "Ideation",
-      tooltip: "This alert is used for ideas and brainstorming."
+      title: "",
+      description: ""
     },
     source: {
       icon: "lucide:book-alert",
-      title: "Creator's Remarks",
-      tooltip: "This alert is used for direct commentary of the author."
+      title: "",
+      description: ""
     }
   }
 }
