@@ -60,7 +60,7 @@ const color = computed(() => {
         :style="{ backgroundColor: color }"
       >
         <div class="gap-xs flex flex-col justify-end text-xs">
-          <span v-if="name">{{ formatColor(name) }}</span>
+          <span v-if="name" class="text-sm">{{ formatColor(name) }}</span>
           <span v-if="hex">HEX {{ formatColor(hex) }}</span>
           <span v-if="rgb">{{ formatColor(rgb) }}</span>
           <span v-if="hsl">{{ formatColor(hsl) }}</span>
