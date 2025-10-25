@@ -13,7 +13,7 @@
   <!-- prettier-ignore -->
   <div class="size-full size-fit size-auto size-1 size-2 size-3 size-4 size-4.5 size-6 size-8 size-10 size-12 size-16 size-20 size-24 size-32 size-40 size-48 size-56 size-64 size-96 size-128 size-256 lg:size-1 lg:size-2 lg:size-3 lg:size-4 lg:size-6 lg:size-8 lg:size-10 lg:size-12 lg:size-16 lg:size-20 lg:size-24 lg:size-32 lg:size-40 lg:size-48 lg:size-56 lg:size-64 lg:size-96 lg:size-128 lg:size-256"/>
   <!-- prettier-ignore -->
-  <div class="p-1 p-2 p-3 p-4 p-6 p-8 p-10 p-12 p-16 p-20 p-24 p-32 p-40 p-48 p-56 p-64 p-96 p-128 p-256 lg:p-1 lg:p-2 lg:p-3 lg:p-4 lg:p-6 lg:p-8 lg:p-10 lg:p-12 lg:p-16 lg:p-20 lg:p-24 lg:p-32 lg:p-40 lg:p-48 lg:p-56 lg:p-64 lg:p-96 lg:p-128 lg:p-256"/>
+  <div class="p-xs p-sm p-md p-lg p-xl p-1 p-2 p-3 p-4 p-6 p-8 p-10 p-12 p-16 p-20 p-24 p-32 p-40 p-48 p-56 p-64 p-96 p-128 p-256 lg:p-1 lg:p-2 lg:p-3 lg:p-4 lg:p-6 lg:p-8 lg:p-10 lg:p-12 lg:p-16 lg:p-20 lg:p-24 lg:p-32 lg:p-40 lg:p-48 lg:p-56 lg:p-64 lg:p-96 lg:p-128 lg:p-256"/>
   <!-- prettier-ignore -->
   <div class="pt-1 pt-2 pt-3 pt-4 pt-6 pt-8 pt-10 pt-12 pt-16 pt-20 pt-24 pt-32 pt-40 pt-48 pt-56 pt-64 pt-96 pt-128 pt-256 lg:pt-1 lg:pt-2 lg:pt-3 lg:pt-4 lg:pt-6 lg:pt-8 lg:pt-10 lg:pt-12 lg:pt-16 lg:pt-20 lg:pt-24 lg:pt-32 lg:pt-40 lg:pt-48 lg:pt-56 lg:pt-64 lg:pt-96 lg:pt-128 lg:pt-256"/>
   <!-- prettier-ignore -->
@@ -40,6 +40,8 @@
   <div class="items-center sm:items-center md:items-center lg:items-center xl:items-center"/>
   <!-- prettier-ignore -->
   <div class="items-end sm:items-end md:items-end lg:items-end xl:items-end"/>
+  <!-- prettier-ignore -->
+  <div class="align-baseline sm:align-baseline md:align-baseline lg:align-baseline xl:align-baseline"/>
   <!-- prettier-ignore -->
   <div class="relative absolute scroll-mt-24 group lg:ps-2 lg:-ms-2 -ms-8 hidden absolute top-0 -ms-8 hidden rounded-md p-1 opacity-0 transition top-1 group-hover:opacity-100 group-focus:opacity-100 lg:flex rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"/>
 </template>

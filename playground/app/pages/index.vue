@@ -163,7 +163,7 @@ const ctaLinks = ref([
               rgb="rgb(29, 110, 190)"
               hsl="hsl(209.82 73% 43%)"
               oklch="oklch(0.5338 0.1455 252.53)"
-              cmyk="cmyk(84.74%, 42.11%, 0%, 25.49%)"
+              cmyk="cmyk(84%, 42%, 0%, 25%)"
             />
           </RCSection>
           <RCSection
@@ -178,6 +178,13 @@ const ctaLinks = ref([
               webp="https://placehold.co/1024x512"
               svg="https://placehold.co/1024x512"
             />
+          </RCSection>
+          <RCSection
+            :level="3"
+            title="Font"
+            description="Lorem ipsum dolor sit amet."
+          >
+            <RCFontSwatch />
           </RCSection>
         </RCSection>
       </RCSection>

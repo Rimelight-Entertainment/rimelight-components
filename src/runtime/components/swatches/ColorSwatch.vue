@@ -30,6 +30,14 @@ const copyToClipboard = async (text: string) => {
   }
 }
 
+function formatColor(color: string) {
+  return color
+    .toUpperCase()
+    .replace(/[)]/g, "")
+    .replace(/[(]/g, " ")
+    .replace(/%/g, "")
+}
+
 const color = computed(() => {
   if (hex) return hex
   if (rgb) return rgb
@@ -47,7 +55,19 @@ const color = computed(() => {
       <h3 class="text-lg font-bold">{{ name }}</h3>
     </template>
     <div class="gap-sm flex flex-col items-center xl:flex-row xl:items-start">
-      <div class="aspect-square size-48" :style="{ backgroundColor: color }" />
+      <div
+        class="p-sm flex aspect-square size-48"
+        :style="{ backgroundColor: color }"
+      >
+        <div class="gap-xs flex flex-col justify-end text-xs">
+          <span v-if="name">{{ formatColor(name) }}</span>
+          <span v-if="hex">HEX {{ formatColor(hex) }}</span>
+          <span v-if="rgb">{{ formatColor(rgb) }}</span>
+          <span v-if="hsl">{{ formatColor(hsl) }}</span>
+          <span v-if="oklch">{{ formatColor(oklch) }}</span>
+          <span v-if="cmyk">{{ formatColor(cmyk) }}</span>
+        </div>
+      </div>
       <div class="gap-sm flex w-full flex-col justify-center">
         <UButton
           v-if="hex"
