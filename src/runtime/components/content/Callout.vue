@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAppConfig } from "nuxt/app"
+import { useAppConfig } from "#imports"
 import { computed } from "#imports"
 
 export type CalloutVariant =
@@ -34,7 +34,7 @@ const tooltip = computed(() => config.value.tooltip)
 
 <template>
   <UAlert
-    :title="title"
+    :title="$t(title)"
     :color="variant"
     variant="subtle"
     :close="{
@@ -48,7 +48,7 @@ const tooltip = computed(() => config.value.tooltip)
       <slot />
     </template>
     <template #close>
-      <UTooltip :text="tooltip">
+      <UTooltip :text="$t(tooltip)">
         <UIcon name="lucide:circle-question-mark" class="size-5" />
       </UTooltip>
     </template>

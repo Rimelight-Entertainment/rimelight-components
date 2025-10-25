@@ -81,6 +81,12 @@ export default defineNuxtModule<ModuleOptions>({
       overrides: {},
       defaults: {}
     },
+    "@nuxtjs/i18n": {
+      version: ">=10.1.1",
+      optional: false,
+      overrides: {},
+      defaults: {}
+    },
     "@nuxt/ui": {
       version: ">=4.0.0",
       optional: false,

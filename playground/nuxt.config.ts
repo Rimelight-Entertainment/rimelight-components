@@ -31,5 +31,8 @@ export default defineNuxtConfig({
         normalizeIconName: false
       }
     ]
+  },
+  i18n: {
+    defaultLocale: "en"
   }
 })

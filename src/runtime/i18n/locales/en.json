@@ -1,0 +1,17 @@
+{
+  "placeholder": "Placeholder",
+  "callout_info_title": "Note",
+  "callout_info_description": "This callout is used for general notes.",
+  "callout_success_title": "Tip",
+  "callout_success_description": "This callout is used for tips and useful information.",
+  "callout_warning_title": "Warning",
+  "callout_warning_description": "This callout is used for important information.",
+  "callout_error_title": "Error",
+  "callout_error_description": "This callout is used for critical information and prohibitions.",
+  "callout_commentary_title": "Commentary",
+  "callout_commentary_description": "This callout is used for developer commentary.",
+  "callout_ideation_title": "Ideation",
+  "callout_ideation_description": "This alert is used for ideas and brainstorming.",
+  "callout_source_title": "Source",
+  "callout_source_description": "This alert is used for direct commentary of the author."
+}
