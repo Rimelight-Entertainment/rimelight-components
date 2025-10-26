@@ -31,10 +31,6 @@
     "./utils/*": {
       "types": "./dist/runtime/utils/*.d.mts",
       "import": "./dist/runtime/utils/*.js"
-    },
-    "./locale": {
-      "types": "./dist/runtime/locale/index.d.mts",
-      "import": "./dist/runtime/locale/index.js"
     }
   },
   "main": "./dist/module.mjs",
