@@ -29,11 +29,11 @@
     "./components/*": "./dist/runtime/components/*",
     "./composables/*": "./dist/runtime/composables/*",
     "./utils/*": {
-      "types": "./dist/runtime/utils/*.d.ts",
+      "types": "./dist/runtime/utils/*.d.mts",
       "import": "./dist/runtime/utils/*.js"
     },
     "./locale": {
-      "types": "./dist/runtime/locale/index.d.ts",
+      "types": "./dist/runtime/locale/index.d.mts",
       "import": "./dist/runtime/locale/index.js"
     }
   },
