@@ -161,7 +161,7 @@ const ctaLinks = ref([
               name="Color"
               hex="#1d6ebe"
               rgb="rgb(29, 110, 190)"
-              hsl="hsl(209.82 73% 43%)"
+              hsl="hsl(209 73% 43%)"
               oklch="oklch(0.5338 0.1455 252.53)"
               cmyk="cmyk(84%, 42%, 0%, 25%)"
             />
