@@ -1,7 +1,7 @@
 {
   "name": "rimelight-components",
   "description": "My new Nuxt module",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight-components.git"
