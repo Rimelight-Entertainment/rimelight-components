@@ -20,10 +20,10 @@ const {
 
 <template>
   <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
-    <ULink v-if="previousTitle" :to="previousTo">
+    <ULink v-if="previousTitle" :to="previousTo" class="h-full">
       <UCard
         variant="outline"
-        class="hover:bg-elevated/50 focus-visible:outline-primary group block bg-transparent"
+        class="hover:bg-elevated/50 focus-visible:outline-primary group block h-full bg-transparent"
       >
         <div class="gap-md flex flex-col">
           <div class="gap-xs flex flex-col">
@@ -48,10 +48,10 @@ const {
         </div>
       </UCard>
     </ULink>
-    <ULink v-if="nextTitle" :to="nextTo">
+    <ULink v-if="nextTitle" :to="nextTo" class="h-full">
       <UCard
         variant="outline"
-        class="hover:bg-elevated/50 focus-visible:outline-primary group block bg-transparent"
+        class="hover:bg-elevated/50 focus-visible:outline-primary group block h-full bg-transparent"
       >
         <div class="gap-md flex flex-col items-end">
           <div class="gap-xs flex flex-col items-end">
