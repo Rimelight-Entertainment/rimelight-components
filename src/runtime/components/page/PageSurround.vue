@@ -66,10 +66,10 @@ const {
             >
           </div>
           <div class="gap-xs flex flex-col items-end">
-            <p class="text-primary group-hover:text-highlighted">
+            <p class="text-primary group-hover:text-highlighted text-right">
               {{ nextTitle }}
             </p>
-            <p class="text-toned">
+            <p class="text-toned text-right">
               {{ nextDescription }}
             </p>
           </div>
