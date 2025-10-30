@@ -28,14 +28,14 @@ const config = computed(() => {
     appConfig.rimelightComponents?.callouts?.[variant] ?? {
       icon: "lucide:alert-circle",
       title: "Callout",
-      description: "Callout"
+      tooltip: "Callout"
     }
   )
 })
 
 const icon = computed(() => config.value.icon)
 const title = computed(() => config.value.title)
-const description = computed(() => config.value.description)
+const tooltip = computed(() => config.value.tooltip)
 </script>
 
 <template>
@@ -51,11 +51,11 @@ const description = computed(() => config.value.description)
       <template #leading>
         <UIcon :name="icon" class="size-6" />
       </template>
-      <template #description>
+      <template #content>
         <slot />
       </template>
       <template #close>
-        <UTooltip v-if="description" :text="$t(description)">
+        <UTooltip v-if="tooltip" :text="$t(tooltip)">
           <UIcon name="lucide:circle-question-mark" class="size-5" />
         </UTooltip>
       </template>
