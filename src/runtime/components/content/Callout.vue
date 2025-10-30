@@ -51,7 +51,7 @@ const tooltip = computed(() => config.value.tooltip)
       <template #leading>
         <UIcon :name="icon" class="size-6" />
       </template>
-      <template #content>
+      <template #description>
         <slot />
       </template>
       <template #close>
