@@ -38,7 +38,7 @@ const sectionVariants = tv({
       1: {
         sectionSlot: "gap-2",
         linkSlot: "",
-        headingSlot: "text-4xl",
+        headingSlot: "",
         descriptionSlot: "text-2xl",
         separatorSlot: "",
         contentSlot: ""
@@ -46,7 +46,7 @@ const sectionVariants = tv({
       2: {
         sectionSlot: "gap-1.5",
         linkSlot: "",
-        headingSlot: "text-3xl",
+        headingSlot: "",
         descriptionSlot: "text-xl",
         separatorSlot: "",
         contentSlot: ""
@@ -54,7 +54,7 @@ const sectionVariants = tv({
       3: {
         sectionSlot: "gap-1",
         linkSlot: "",
-        headingSlot: "text-2xl",
+        headingSlot: "",
         descriptionSlot: "text-lg",
         separatorSlot: "",
         contentSlot: ""
@@ -62,7 +62,7 @@ const sectionVariants = tv({
       4: {
         sectionSlot: "gap-0.5",
         linkSlot: "",
-        headingSlot: "text-xl",
+        headingSlot: "",
         descriptionSlot: "text-md",
         separatorSlot: "",
         contentSlot: ""
@@ -70,7 +70,7 @@ const sectionVariants = tv({
       5: {
         sectionSlot: "gap-0.25",
         linkSlot: "",
-        headingSlot: "text-lg",
+        headingSlot: "",
         descriptionSlot: "text-sm",
         separatorSlot: "",
         contentSlot: ""
@@ -78,7 +78,7 @@ const sectionVariants = tv({
       6: {
         sectionSlot: "gap-0.125",
         linkSlot: "",
-        headingSlot: "text-base",
+        headingSlot: "",
         descriptionSlot: "text-xs",
         separatorSlot: "",
         contentSlot: ""
