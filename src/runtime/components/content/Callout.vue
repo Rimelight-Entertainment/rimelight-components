@@ -13,8 +13,14 @@ export type CalloutVariant =
 
 const appConfig = useAppConfig()
 
-const { variant } = defineProps<{
+const {
+  variant,
+  to = "",
+  target = ""
+} = defineProps<{
   variant: CalloutVariant
+  to?: string
+  target?: string
 }>()
 
 const config = computed(() => {
@@ -33,26 +39,28 @@ const description = computed(() => config.value.description)
 </script>
 
 <template>
-  <UAlert
-    :title="$t(title)"
-    :color="variant"
-    variant="subtle"
-    :close="{
-      class: 'pointer-events-none focus-visible:outline-none'
-    }"
-  >
-    <template #leading>
-      <UIcon :name="icon" class="size-6" />
-    </template>
-    <template #description>
-      <slot />
-    </template>
-    <template #close>
-      <UTooltip v-if="description" :text="$t(description)">
-        <UIcon name="lucide:circle-question-mark" class="size-5" />
-      </UTooltip>
-    </template>
-  </UAlert>
+  <NuxtLink :to="to" :target="target">
+    <UAlert
+      :title="$t(title)"
+      :color="variant"
+      variant="subtle"
+      :close="{
+        class: 'pointer-events-none focus-visible:outline-none'
+      }"
+    >
+      <template #leading>
+        <UIcon :name="icon" class="size-6" />
+      </template>
+      <template #description>
+        <slot />
+      </template>
+      <template #close>
+        <UTooltip v-if="description" :text="$t(description)">
+          <UIcon name="lucide:circle-question-mark" class="size-5" />
+        </UTooltip>
+      </template>
+    </UAlert>
+  </NuxtLink>
 </template>
 
 <style scoped></style>
