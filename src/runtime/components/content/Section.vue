@@ -129,7 +129,6 @@ const fullSectionUrl = computed(() => {
       <NuxtLink
         :href="`#${sectionId}`"
         :class="linkSlot()"
-        :id="sectionId"
         class="group lg:-ms-2 lg:ps-2"
       >
         <UButton
