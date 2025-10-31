@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAppConfig } from "#imports"
-import { computed, defineAsyncComponent } from "#imports"
+import { computed } from "#imports"
+import { NuxtLink } from "#components"
 
 export type CalloutVariant =
   | "info"
@@ -37,9 +38,7 @@ const icon = computed(() => config.value.icon)
 const title = computed(() => config.value.title)
 const tooltip = computed(() => config.value.tooltip)
 
-const RootComponent = computed(() =>
-  to ? resolveComponent("NuxtLink") : "div"
-)
+const RootComponent = computed(() => (to ? NuxtLink : "div"))
 
 const rootProps = computed(() => {
   const commonClasses = {
@@ -57,15 +56,6 @@ const rootProps = computed(() => {
   // Props for div
   return commonClasses
 })
-
-const resolveComponent = (name: string) => {
-  if (name === "NuxtLink") {
-    return defineAsyncComponent(() =>
-      import("#components").then((m) => m.NuxtLink || m.default)
-    )
-  }
-  return name // for 'div'
-}
 </script>
 
 <template>
