@@ -42,7 +42,7 @@ const RootComponent = computed(() => (to ? NuxtLink : "div"))
 
 const rootProps = computed(() => {
   const commonClasses = {
-    class: "w-full block"
+    class: ""
   }
 
   if (to) {
