@@ -8,7 +8,7 @@ import {
 interface CalloutOptions {
   icon: string
   title: string
-  description: string
+  tooltip: string
 }
 
 interface ModuleOptions {
@@ -28,37 +28,37 @@ const defaultOptions = {
     info: {
       icon: "lucide:shield-alert",
       title: "",
-      description: ""
+      tooltip: ""
     },
     success: {
       icon: "lucide:circle-alert",
       title: "",
-      description: ""
+      tooltip: ""
     },
     warning: {
       icon: "lucide:triangle-alert",
       title: "",
-      description: ""
+      tooltip: ""
     },
     error: {
       icon: "lucide:octagon-alert",
       title: "",
-      description: ""
+      tooltip: ""
     },
     commentary: {
       icon: "lucide:message-circle-warning",
       title: "",
-      description: ""
+      tooltip: ""
     },
     ideation: {
       icon: "lucide:badge-alert",
       title: "",
-      description: ""
+      tooltip: ""
     },
     source: {
       icon: "lucide:book-alert",
       title: "",
-      description: ""
+      tooltip: ""
     }
   }
 }

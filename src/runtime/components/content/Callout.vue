@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAppConfig } from "#imports"
-import { computed } from "#imports"
+import { computed, defineAsyncComponent } from "#imports"
 
 export type CalloutVariant =
   | "info"
@@ -36,10 +36,40 @@ const config = computed(() => {
 const icon = computed(() => config.value.icon)
 const title = computed(() => config.value.title)
 const tooltip = computed(() => config.value.tooltip)
+
+const RootComponent = computed(() =>
+  to ? resolveComponent("NuxtLink") : "div"
+)
+
+const rootProps = computed(() => {
+  const commonClasses = {
+    class: "w-full block"
+  }
+
+  if (to) {
+    // Props for NuxtLink
+    return {
+      ...commonClasses,
+      to: to,
+      target: target || undefined
+    }
+  }
+  // Props for div
+  return commonClasses
+})
+
+const resolveComponent = (name: string) => {
+  if (name === "NuxtLink") {
+    return defineAsyncComponent(() =>
+      import("#components").then((m) => m.NuxtLink || m.default)
+    )
+  }
+  return name // for 'div'
+}
 </script>
 
 <template>
-  <NuxtLink :to="to" :target="target">
+  <component :is="RootComponent" v-bind="rootProps">
     <UAlert
       :title="$t(title)"
       :color="variant"
@@ -60,7 +90,7 @@ const tooltip = computed(() => config.value.tooltip)
         </UTooltip>
       </template>
     </UAlert>
-  </NuxtLink>
+  </component>
 </template>
 
 <style scoped></style>
