@@ -35,35 +35,8 @@ const tooltip = computed(() => config.value.tooltip)
 </script>
 
 <template>
-  <div class="block">
-    <NuxtLink v-if="to" :to="to" :target="target" class="cursor-pointer">
-      <UAlert
-        :title="$t(title)"
-        :color="variant"
-        variant="subtle"
-        :close="{
-          class: 'pointer-events-none focus-visible:outline-none'
-        }"
-      >
-        <template #leading>
-          <UIcon :name="icon" class="size-6" />
-        </template>
-        <template #description>
-          <slot />
-        </template>
-        <template #close>
-          <UTooltip v-if="tooltip" :text="$t(tooltip)">
-            <UIcon
-              name="lucide:circle-question-mark"
-              class="pointer-events-auto size-5"
-            />
-          </UTooltip>
-        </template>
-      </UAlert>
-    </NuxtLink>
-
+  <NuxtLink :to="to" :target="target">
     <UAlert
-      v-else
       :title="$t(title)"
       :color="variant"
       variant="subtle"
@@ -79,11 +52,14 @@ const tooltip = computed(() => config.value.tooltip)
       </template>
       <template #close>
         <UTooltip v-if="tooltip" :text="$t(tooltip)">
-          <UIcon name="lucide:circle-question-mark" class="size-5" />
+          <UIcon
+            name="lucide:circle-question-mark"
+            class="pointer-events-auto size-5"
+          />
         </UTooltip>
       </template>
     </UAlert>
-  </div>
+  </NuxtLink>
 </template>
 
 <style scoped></style>
