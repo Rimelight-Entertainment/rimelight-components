@@ -40,26 +40,31 @@ const tooltip = computed(() => config.value.tooltip)
 
 const RootComponent = computed(() => (to ? NuxtLink : "div"))
 
-const rootProps = computed(() => {
-  const commonClasses = {
-    class: ""
-  }
+// Compute the attributes for the root component
+const rootAttributes = computed(() => {
+  // CRITICAL: Ensure the block-container class is passed *only* to the root element
+  // The 'w-full block' is necessary to fix layout consistency
+  const attrs: Record<string, any> = { class: "w-full block" }
+
+  // Attach the block type for debugging, but separate from class
+  attrs.type = "CalloutBlock"
 
   if (to) {
-    // Props for NuxtLink
-    return {
-      ...commonClasses,
-      to: to,
-      target: target || undefined
+    // Props for NuxtLink (to, target)
+    attrs.to = to
+    attrs.target = target || undefined
+    // Standard link props for external links that NuxtLink passes through to <a>
+    if (target === "_blank") {
+      attrs.rel = "noopener noreferrer"
     }
   }
-  // Props for div
-  return commonClasses
+
+  return attrs
 })
 </script>
 
 <template>
-  <component :is="RootComponent" v-bind="rootProps">
+  <component :is="RootComponent" v-bind="rootAttributes">
     <UAlert
       :title="$t(title)"
       :color="variant"
