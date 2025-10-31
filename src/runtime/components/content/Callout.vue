@@ -13,11 +13,7 @@ export type CalloutVariant =
 
 const appConfig = useAppConfig()
 
-const {
-  variant,
-  to = "",
-  target = ""
-} = defineProps<{
+const { variant, to, target } = defineProps<{
   variant: CalloutVariant
   to?: string
   target?: string
