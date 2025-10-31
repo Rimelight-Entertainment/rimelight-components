@@ -1,0 +1,32 @@
+{
+  "git": {
+    "commitMessage": "chore(release): v${version}",
+    "tagName": "v${version}",
+    "push": true,
+    "requireUpstream": false
+  },
+  "npm": {
+    "publish": true,
+    "tokenRef": "NPM_TOKEN"
+  },
+  "github": {
+    "release": true,
+    "releaseName": "v${version}",
+    "web": true,
+    "tokenRef": "GITHUB_TOKEN"
+  },
+  "hooks": {
+    "before:init": ["bun lint", "bun typecheck"],
+    "after:bump": "bun run prepack"
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": {
+        "name": "conventionalcommits"
+      },
+      "infile": "CHANGELOG.md",
+      "header": "# Changelog",
+      "ignoreRecommendedBump": true
+    }
+  }
+}

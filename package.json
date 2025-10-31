@@ -96,5 +96,8 @@
   "trustedDependencies": [
     "@parcel/watcher",
     "@tailwindcss/oxide"
-  ]
+  ],
+  "npm": {
+    "skipChecks": true
+  }
 }
