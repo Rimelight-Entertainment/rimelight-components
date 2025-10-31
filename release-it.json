@@ -7,7 +7,7 @@
   },
   "npm": {
     "publish": true,
-    "tokenRef": "NPM_TOKEN"
+    "skipChecks": true
   },
   "github": {
     "release": true,
