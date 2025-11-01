@@ -1,0 +1,195 @@
+/**
+ * All valid block types the application can render.
+ * This union type is the single source of truth for component names.
+ */
+export type BlockType =
+  | "SectionBlock"
+  | "ParagraphBlock"
+  | "CalloutBlock"
+  | "ImageBlock"
+  | "QuoteBlock"
+  | "UnorderedListBlock"
+  | "CardBlock"
+  | "CollapsibleCardBlock"
+
+/**
+ * Defines the common structure for any content block object.
+ * The 'type' must be one of the registered BlockType values.
+ */
+export interface BaseContentBlock {
+  id: string
+  type: BlockType
+  props: Record<string, any>
+}
+
+export interface SectionBlockProps {
+  level: 1 | 2 | 3 | 4 | 5 | 6
+  title: string
+  description?: string
+  children: Block[]
+}
+
+export interface ParagraphBlockProps {
+  text: RichTextContent
+}
+
+export interface CalloutBlockProps {
+  variant:
+    | "info"
+    | "success"
+    | "warning"
+    | "error"
+    | "commentary"
+    | "ideation"
+    | "source"
+  children: Block[]
+  to?: string
+  target?: string
+}
+
+export interface ImageBlockProps {
+  src: string
+  alt: string
+  caption?: string
+}
+
+export interface QuoteBlockProps {
+  quote: string
+  source?: string
+}
+
+export interface UnorderedListBlockProps {
+  items: Block[]
+}
+
+export interface CardBlockProps {
+  title: string
+  to?: string
+  target?: string
+  description?: string
+  children: Block[]
+}
+
+export interface CollapsibleCardBlockProps {
+  openText: string
+  closeText: string
+  name?: string
+  children: Block[]
+}
+
+export interface SectionContentBlock extends BaseContentBlock {
+  type: "SectionBlock"
+  props: SectionBlockProps
+}
+
+export interface ParagraphContentBlock extends BaseContentBlock {
+  type: "ParagraphBlock"
+  props: ParagraphBlockProps
+}
+
+export interface CalloutContentBlock extends BaseContentBlock {
+  type: "CalloutBlock"
+  props: CalloutBlockProps
+}
+
+export interface ImageContentBlock extends BaseContentBlock {
+  type: "ImageBlock"
+  props: ImageBlockProps
+}
+
+export interface UnorderedListContentBlock extends BaseContentBlock {
+  type: "UnorderedListBlock"
+  props: UnorderedListBlockProps
+}
+
+export interface CardBlockContent extends BaseContentBlock {
+  type: "CardBlock"
+  props: CardBlockProps
+}
+
+export interface CollapsibleCardContentBlock extends BaseContentBlock {
+  type: "CollapsibleCardBlock"
+  props: CollapsibleCardBlockProps
+}
+
+export interface QuoteContentBlock extends BaseContentBlock {
+  type: "QuoteBlock"
+  props: QuoteBlockProps
+}
+
+/**
+ * The full union type for a single block. This allows for type-checking the
+ * payload based on the block 'type'.
+ */
+export type Block =
+  | SectionContentBlock
+  | ParagraphContentBlock
+  | CalloutContentBlock
+  | ImageContentBlock
+  | QuoteContentBlock
+  | UnorderedListContentBlock
+  | CardBlockContent
+  | CollapsibleCardContentBlock
+
+// Optional: Augment the Drizzle type for the project content field
+// This assumes your Project type is available in a place where you can extend it.
+// type ProjectWithContent = Omit<Project, 'content'> & { content: ContentData };
+
+/**
+ * Text Rendering Components
+ */
+
+export type InlineContentType = "text" | "link" | "mention"
+
+/**
+ * Defines the common structure for any inline content object.
+ */
+export interface BaseInlineContent {
+  type: InlineContentType
+  id: string
+  props: Record<string, any>
+}
+
+/**
+ * Represents a segment of plain text.
+ */
+export interface InlineText extends BaseInlineContent {
+  type: "text"
+  props: {
+    content: string
+  }
+}
+
+/**
+ * Represents a hyperlink.
+ */
+export interface InlineLink extends BaseInlineContent {
+  type: "link"
+  props: {
+    href: string
+    target?: "_blank" | "_self"
+    content: string
+  }
+}
+
+/**
+ * Represents a mention of an internal page or user.
+ */
+export interface InlineMention extends BaseInlineContent {
+  type: "mention"
+  props: {
+    href: string
+    target?: "_blank" | "_self"
+    content: string
+  }
+}
+
+/**
+ * The full union type for a single inline content element.
+ */
+export type InlineContent = InlineText | InlineLink | InlineMention
+
+/**
+ * The top-level type for a block's rich text field.
+ */
+export type RichTextContent = InlineContent[]
