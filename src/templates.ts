@@ -7,8 +7,8 @@ import type { Resolver } from "@nuxt/kit"
  * @param blockNames An array of component names (e.g., ['ParagraphBlock', 'ImageBlock']).
  * @param resolver The module's resolver from createResolver(import.meta.url).
  */
-export function addBlockMapTemplates(blockNames: string[], resolver: Resolver) {
-  // --- 1. Generate the Component Map Template (MJS) ---
+export function addBlockMapTemplates(blockNames: string[]) {
+  // Generate the Component Map Template
   const template = addTemplate({
     filename: "rimelight-blocks-map.mjs",
     getContents: () => {
@@ -28,7 +28,7 @@ export function addBlockMapTemplates(blockNames: string[], resolver: Resolver) {
     write: true
   })
 
-  // --- 2. Generate the Component Map Template (D.TS) ---
+  // Generate the Component Map Template
   addTemplate({
     filename: "rimelight-blocks-map.d.ts",
     getContents: () => {

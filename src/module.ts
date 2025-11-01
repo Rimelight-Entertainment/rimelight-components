@@ -115,21 +115,18 @@ export default defineNuxtModule<ModuleOptions>({
     addImportsDir(resolver.resolve("./runtime/types"))
     addImportsDir(resolver.resolve("./runtime/utils"))
 
-    const blocksPath = resolver.resolve("./runtime/components/blocks")
+    // Scan the directory for all .vue files
+    const blockFiles = readdirSync(
+      resolver.resolve("./runtime/components/blocks")
+    ).filter((name) => name.endsWith(".vue"))
 
-    // 1. Scan the directory for all .vue files
-    const blockFiles = readdirSync(blocksPath).filter((name) =>
-      name.endsWith(".vue")
-    )
-
-    // Generate a clean list of component names (e.g., ['ParagraphBlock', 'ImageBlock'])
+    // Generate a clean list of component names
     const blockNames = blockFiles.map((file) => basename(file, ".vue"))
 
-    // --- 2. Generate the Component Map Template using the new function ---
-    const template = addBlockMapTemplates(blockNames, resolver)
+    // Generate the Component Map Template
+    const template = addBlockMapTemplates(blockNames)
 
-    // --- 3. Expose the map template to the runtime via an alias ---
-    // This allows blockMapper.ts to import the map using '#build/rimelight-blocks-map'
+    // Expose the map template to the runtime via an alias
     nuxt.options.alias["#build/rimelight-blocks-map"] = template.dst
   },
   onInstall() {

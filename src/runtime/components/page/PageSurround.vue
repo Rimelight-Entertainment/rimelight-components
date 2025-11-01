@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
+
+const { t } = useI18n()
+
 const {
   pageType,
   previousTitle,
@@ -34,8 +38,8 @@ const {
                 class="group-hover w-fit rounded-full text-primary group-hover:text-highlighted"
               />
               <span class="text-muted">
-                {{ $t("navigation_previous") }}
-                {{ $t(pageType) }}
+                {{ t("navigation_previous") }}
+                {{ t(pageType) }}
               </span>
             </div>
             <div class="flex flex-col gap-xs">
@@ -64,8 +68,8 @@ const {
                 class="w-fit rounded-full text-primary group-hover:text-highlighted"
               />
               <span class="text-muted">
-                {{ $t("navigation_next") }}
-                {{ $t(pageType) }}</span
+                {{ t("navigation_next") }}
+                {{ t(pageType) }}</span
               >
             </div>
             <div class="flex flex-col items-end gap-xs">

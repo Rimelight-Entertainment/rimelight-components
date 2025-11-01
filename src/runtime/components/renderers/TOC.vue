@@ -4,6 +4,9 @@ import type { Block } from "../../types/blocks"
 import type { SectionBlockProps } from "../../types/blocks"
 import type { HeadingLevel } from "../../types/blocks"
 import { slugify } from "../../utils"
+import { useI18n } from "vue-i18n"
+
+const { t } = useI18n()
 
 export interface TOCItem {
   id: string
@@ -80,7 +83,7 @@ const tocItems = computed<TOCItem[]>(() => {
       aria-label="Table of Contents"
     >
       <h5 class="text-highlighted">
-        {{ $t(title) }}
+        {{ t(title) }}
       </h5>
 
       <ul

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useAppConfig } from "#imports"
 import { computed } from "#imports"
+import { useI18n } from "vue-i18n"
+
+const { t } = useI18n()
 
 export type CalloutVariant =
   | "info"
@@ -37,7 +40,7 @@ const tooltip = computed(() => config.value.tooltip)
 <template>
   <NuxtLink :to="to" :target="target">
     <UAlert
-      :title="$t(title)"
+      :title="t(title)"
       :color="variant"
       variant="subtle"
       :close="{
@@ -51,7 +54,7 @@ const tooltip = computed(() => config.value.tooltip)
         <slot />
       </template>
       <template #close>
-        <UTooltip v-if="tooltip" :text="$t(tooltip)">
+        <UTooltip v-if="tooltip" :text="t(tooltip)">
           <UIcon
             name="lucide:circle-question-mark"
             class="pointer-events-auto size-5"
