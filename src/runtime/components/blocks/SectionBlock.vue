@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import type { SectionBlockProps } from "../../types/blocks"
-import { slugify } from "../../utils/slugify"
+import { slugify } from "../../utils"
 
 const { level, title, description, children } = defineProps<SectionBlockProps>()
 const headingId = computed(() => (title ? slugify(title) : undefined))

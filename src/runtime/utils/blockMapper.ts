@@ -1,23 +1,15 @@
+// src/runtime/utils/blockMapper.ts
+
 import { defineAsyncComponent, type Component } from "vue"
 import { type BlockType } from "../types/blocks"
 
-type ComponentModule = {
-  default: Component
-}
+// 💡 NEW: Import the automatically generated component map.
+// This alias is defined in module.ts and points to the generated file in .nuxt/
+import { BLOCK_COMPONENT_MAP } from "#build/rimelight-blocks-map"
 
-const BLOCK_COMPONENTS = import.meta.glob<ComponentModule>(
-  "../components/blocks/*.vue"
-)
+type ComponentImporter = () => Promise<{ default: Component }>
 
-/**
- * Converts a database BlockType string (e.g., 'ParagraphBlock') into a path
- * relative to the components/blocks directory (e.g., '/components/blocks/ParagraphBlock.vue').
- * @param type The BlockType string from the content JSON.
- * @returns The relative file path string.
- */
-const typeToRelativePath = (type: BlockType | string): string => {
-  return `/components/blocks/${type}.vue`
-}
+// We no longer need typeToRelativePath or the global BLOCK_COMPONENTS constant.
 
 /**
  * Maps the block type string from the database to a dynamically imported Vue component.
@@ -28,13 +20,13 @@ const typeToRelativePath = (type: BlockType | string): string => {
 export const getBlockComponent = (
   type: BlockType | string
 ): Component | undefined => {
-  const componentPath = typeToRelativePath(type)
-
-  const componentImporter = BLOCK_COMPONENTS[componentPath]
+  const componentImporter = BLOCK_COMPONENT_MAP[type] as
+    | ComponentImporter
+    | undefined
 
   if (!componentImporter) {
     console.warn(
-      `[BlockMapper] Block component not found for type: ${type}. Expected path: ${componentPath}`
+      `[BlockMapper] Block component not found for type: ${type}. Please check block name.`
     )
     return undefined
   }

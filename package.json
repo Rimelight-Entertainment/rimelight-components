@@ -1,13 +1,13 @@
 {
+  "type": "module",
   "name": "rimelight-components",
-  "description": "My new Nuxt module",
+  "description": "A component library by Rimelight Entertainment.",
   "version": "1.10.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight-components.git"
   },
   "homepage": "https://rimelight.com/tools/rimelight-components",
-  "type": "module",
   "license": "MIT",
   "keywords": [
     "rimelight",
@@ -25,6 +25,10 @@
       "style": "./dist/runtime/index.css",
       "import": "./dist/module.mjs"
     },
+    "./vite": {
+      "types": "./dist/vite.d.mts",
+      "import": "./dist/vite.mjs"
+    },
     "./runtime/*": "./dist/runtime/*",
     "./components/*": "./dist/runtime/components/*",
     "./composables/*": "./dist/runtime/composables/*",
@@ -33,11 +37,30 @@
       "import": "./dist/runtime/utils/*.js"
     }
   },
+  "style": "./dist/runtime/index.css",
   "main": "./dist/module.mjs",
   "typesVersions": {
     "*": {
       ".": [
-        "./dist/types.d.mts"
+        "./dist/module.d.mts"
+      ],
+      "vite": [
+        "./dist/vite.d.mts"
+      ],
+      "./runtime/*": [
+        "./dist/runtime/index.d.ts"
+      ],
+      "components/*": [
+        "./dist/runtime/components/*"
+      ],
+      "composables/*": [
+        "./dist/runtime/composables/*"
+      ],
+      "utils": [
+        "./dist/runtime/utils/index.d.ts"
+      ],
+      "utils/*": [
+        "./dist/runtime/utils/*.d.ts"
       ]
     }
   },
@@ -45,21 +68,19 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "nuxt-module-build build",
-    "dev": "bun run dev:prepare && nuxi dev playground",
-    "dev:build": "nuxi build playground",
+    "build": "nuxt-module-build build",
+    "dev": "bun run dev:prepare && nuxt dev playground",
+    "dev:build": "nuxt build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-    "release": "bun run lint && bun run test && bun run prepack && changelogen --release && bun publish && git push --follow-tags",
+    "prepack": "bun build",
     "typecheck": "vue-tsc --noEmit && nuxt typecheck",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
+    "release": "bun run lint && bun run test && bun run prepack && changelogen --release && bun publish && git push --follow-tags"
   },
-  "workspaces": [
-    "playground"
-  ],
   "dependencies": {
     "@nuxt/image": "^1.11.0",
     "@nuxt/kit": "^4.2.0",
@@ -96,5 +117,8 @@
   "trustedDependencies": [
     "@parcel/watcher",
     "@tailwindcss/oxide"
-  ]
+  ],
+  "resolutions": {
+    "rimelight-components": "workspace:*"
+  }
 }
