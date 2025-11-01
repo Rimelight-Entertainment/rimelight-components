@@ -2,9 +2,9 @@
 
 <template>
   <footer class="py-8 lg:py-12">
-    <UContainer class="gap-xl flex flex-col justify-between lg:flex-row">
+    <UContainer class="flex flex-col justify-between gap-xl lg:flex-row">
       <div
-        class="gap-xl order-last flex flex-col items-center justify-between lg:order-1 lg:items-start"
+        class="order-last flex flex-col items-center justify-between gap-xl lg:order-1 lg:items-start"
       >
         <slot name="left" />
       </div>
@@ -12,7 +12,7 @@
         <slot name="center" />
       </div>
       <div
-        class="gap-xl order-first flex flex-col items-center justify-between lg:order-3 lg:flex-1 lg:items-end"
+        class="order-first flex flex-col items-center justify-between gap-xl lg:order-3 lg:flex-1 lg:items-end"
       >
         <slot name="right" />
       </div>

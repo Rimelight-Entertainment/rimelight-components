@@ -7,7 +7,7 @@ const { src, alt, caption } = defineProps<ImageBlockProps>()
 <template>
   <figure class="mx-auto">
     <img :src="src" :alt="alt" class="h-auto w-full object-cover" />
-    <figcaption v-if="caption" class="text-muted mt-4 text-center text-sm">
+    <figcaption v-if="caption" class="mt-4 text-center text-sm text-muted">
       {{ caption }}
     </figcaption>
   </figure>

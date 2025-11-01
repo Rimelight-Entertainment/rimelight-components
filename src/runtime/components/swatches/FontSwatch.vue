@@ -25,7 +25,7 @@ const image = computed(() => {
       <h3 class="text-lg font-bold">{{ name }}</h3>
       <span></span>
     </template>
-    <div class="gap-sm flex flex-col">
+    <div class="flex flex-col gap-sm">
       <h1>H1</h1>
       <p>{{}}</p>
     </div>
@@ -34,8 +34,8 @@ const image = computed(() => {
     <p>a b c d e f g h i j k l m n o p q r s t u v w x y z</p>
     <p>A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</p>
     <p></p>
-    <div class="gap-sm flex flex-col items-center xl:flex-row xl:items-start">
-      <div class="gap-sm flex w-full flex-col justify-center">
+    <div class="flex flex-col items-center gap-sm xl:flex-row xl:items-start">
+      <div class="flex w-full flex-col justify-center gap-sm">
         <UButton
           v-if="jpg"
           variant="outline"

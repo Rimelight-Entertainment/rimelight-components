@@ -6,7 +6,6 @@
     "dev": "nuxi dev",
     "build": "nuxi build",
     "generate": "nuxi generate"
-
   },
   "dependencies": {
     "nuxt": "^4.1.3",

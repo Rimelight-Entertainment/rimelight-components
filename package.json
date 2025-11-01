@@ -76,6 +76,8 @@
     "typecheck": "vue-tsc --noEmit && nuxt typecheck",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
+    "format": "prettier . --check .",
+    "format:fix": "prettier . --write .",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",

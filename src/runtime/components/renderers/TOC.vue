@@ -3,7 +3,7 @@ import { computed } from "vue"
 import type { Block } from "../../types/blocks"
 import type { SectionBlockProps } from "../../types/blocks"
 import type { HeadingLevel } from "../../types/blocks"
-import { slugify } from "../../utils/slugify"
+import { slugify } from "../../utils"
 
 export interface TOCItem {
   id: string

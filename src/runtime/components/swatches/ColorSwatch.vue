@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { useClipboard, useToast, computed } from "#imports"
+import { computed } from "vue"
+import { useClipboard } from "@vueuse/core"
+import { useToast } from "#imports"
 
 const { copy } = useClipboard()
 const toast = useToast()
@@ -54,12 +56,12 @@ const color = computed(() => {
     <template #header v-if="name">
       <h3 class="text-lg font-bold">{{ name }}</h3>
     </template>
-    <div class="gap-sm flex flex-col items-center xl:flex-row xl:items-start">
+    <div class="flex flex-col items-center gap-sm xl:flex-row xl:items-start">
       <div
-        class="p-sm flex aspect-square size-48"
+        class="flex aspect-square size-48 p-sm"
         :style="{ backgroundColor: color }"
       >
-        <div class="gap-xs flex flex-col justify-end text-xs">
+        <div class="flex flex-col justify-end gap-xs text-xs">
           <span v-if="name" class="text-sm">{{ formatColor(name) }}</span>
           <span v-if="hex">HEX {{ formatColor(hex) }}</span>
           <span v-if="rgb">{{ formatColor(rgb) }}</span>
@@ -68,7 +70,7 @@ const color = computed(() => {
           <span v-if="cmyk">{{ formatColor(cmyk) }}</span>
         </div>
       </div>
-      <div class="gap-sm flex w-full flex-col justify-center">
+      <div class="flex w-full flex-col justify-center gap-sm">
         <UButton
           v-if="hex"
           variant="outline"

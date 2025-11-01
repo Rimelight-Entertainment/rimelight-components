@@ -7,6 +7,7 @@ import {
 } from "@nuxt/kit"
 import { name, version, homepage } from "../package.json"
 import { defaultOptions } from "./defaults"
+import { defu } from "defu"
 
 import { readdirSync } from "node:fs"
 import { basename } from "node:path"
@@ -97,7 +98,10 @@ export default defineNuxtModule<ModuleOptions>({
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    nuxt.options.appConfig.rimelightComponents = options
+    nuxt.options.appConfig.rimelightComponents = defu(
+      nuxt.options.appConfig.rimelightComponents || {},
+      options
+    )
 
     addComponentsDir({
       path: resolver.resolve("./runtime/components/"),

@@ -24,21 +24,21 @@ const {
       <ULink v-if="previousTitle" :to="previousTo" class="h-full">
         <UCard
           variant="outline"
-          class="hover:bg-elevated/50 focus-visible:outline-primary group block h-full bg-transparent"
+          class="group block h-full bg-transparent hover:bg-elevated/50 focus-visible:outline-primary"
         >
-          <div class="gap-md flex flex-col">
-            <div class="gap-xs flex flex-col">
+          <div class="flex flex-col gap-md">
+            <div class="flex flex-col gap-xs">
               <UButton
                 variant="outline"
                 icon="lucide:arrow-left"
-                class="group-hover text-primary group-hover:text-highlighted w-fit rounded-full"
+                class="group-hover w-fit rounded-full text-primary group-hover:text-highlighted"
               />
               <span class="text-muted">
                 {{ $t("navigation_previous") }}
                 {{ $t(pageType) }}
               </span>
             </div>
-            <div class="gap-xs flex flex-col">
+            <div class="flex flex-col gap-xs">
               <p class="text-primary group-hover:text-highlighted">
                 {{ previousTitle }}
               </p>
@@ -54,25 +54,25 @@ const {
       <ULink v-if="nextTitle" :to="nextTo" class="h-full">
         <UCard
           variant="outline"
-          class="hover:bg-elevated/50 focus-visible:outline-primary group block h-full bg-transparent"
+          class="group block h-full bg-transparent hover:bg-elevated/50 focus-visible:outline-primary"
         >
-          <div class="gap-md flex flex-col items-end">
-            <div class="gap-xs flex flex-col items-end">
+          <div class="flex flex-col items-end gap-md">
+            <div class="flex flex-col items-end gap-xs">
               <UButton
                 variant="outline"
                 icon="lucide:arrow-right"
-                class="text-primary group-hover:text-highlighted w-fit rounded-full"
+                class="w-fit rounded-full text-primary group-hover:text-highlighted"
               />
               <span class="text-muted">
                 {{ $t("navigation_next") }}
                 {{ $t(pageType) }}</span
               >
             </div>
-            <div class="gap-xs flex flex-col items-end">
-              <p class="text-primary group-hover:text-highlighted text-right">
+            <div class="flex flex-col items-end gap-xs">
+              <p class="text-right text-primary group-hover:text-highlighted">
                 {{ nextTitle }}
               </p>
-              <p class="text-toned text-right">
+              <p class="text-right text-toned">
                 {{ nextDescription }}
               </p>
             </div>

@@ -25,7 +25,7 @@ const getComponent = (block: Block): Component | null => {
 </script>
 
 <template>
-  <div class="gap-lg flex flex-col">
+  <div class="flex flex-col gap-lg">
     <UEmpty
       v-if="!blocks || blocks.length === 0"
       variant="naked"

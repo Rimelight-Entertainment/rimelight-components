@@ -14,11 +14,7 @@ const {
 
 <template>
   <UForm>
-    <UFormField
-        name="email"
-        :label="fieldLabel"
-        :description="description"
-    >
+    <UFormField name="email" :label="fieldLabel" :description="description">
       <UFieldGroup class="pt-2">
         <UInput type="email" :placeholder="placeholder" />
         <UButton type="submit" :label="buttonLabel" />

@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { useClipboard, useToast, useRoute, computed } from "#imports"
+import { useRoute } from "#imports"
+import { computed } from "vue"
+import { useClipboard } from "@vueuse/core"
+import useToast from "@nuxt/ui"
 import { tv } from "tailwind-variants"
 import { slugify } from "../../utils"
 

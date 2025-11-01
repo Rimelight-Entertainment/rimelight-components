@@ -24,9 +24,9 @@ const image = computed(() => {
     <template #header v-if="name">
       <h3 class="text-lg font-bold">{{ name }}</h3>
     </template>
-    <div class="gap-sm flex flex-col items-center xl:flex-row xl:items-start">
+    <div class="flex flex-col items-center gap-sm xl:flex-row xl:items-start">
       <NuxtImg :src="image" class="size-48" />
-      <div class="gap-sm flex w-full flex-col justify-center">
+      <div class="flex w-full flex-col justify-center gap-sm">
         <UButton
           v-if="jpg"
           variant="outline"
