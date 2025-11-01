@@ -1,4 +1,9 @@
 /**
+ * Defines the allowed heading levels (h2 through h6) for the Table of Contents.
+ */
+export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
+
+/**
  * All valid block types the application can render.
  * This union type is the single source of truth for component names.
  */
@@ -23,7 +28,7 @@ export interface BaseContentBlock {
 }
 
 export interface SectionBlockProps {
-  level: 1 | 2 | 3 | 4 | 5 | 6
+  level: HeadingLevel
   title: string
   description?: string
   children: Block[]
