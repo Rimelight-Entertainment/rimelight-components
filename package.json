@@ -2,7 +2,7 @@
   "type": "module",
   "name": "rimelight-components",
   "description": "A component library by Rimelight Entertainment.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight-components.git"
