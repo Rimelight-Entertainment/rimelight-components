@@ -16,7 +16,7 @@ export function addBlockMapTemplates(blockNames: string[], resolver: Resolver) {
 
       blockNames.forEach((name) => {
         // Use the module's alias and the 'runtime' path for dynamic import.
-        const componentPath = `rimelight-components/runtime/components/blocks/${name}.vue`
+        const componentPath = `rimelight-components/components/blocks/${name}.vue`
 
         // The dynamic import function
         content += `  '${name}': () => import('${componentPath}'),\n`
