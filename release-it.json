@@ -2,7 +2,8 @@
   "git": {
     "commitMessage": "chore(release): v${version}",
     "tagName": "v${version}",
-    "requireCleanWorkingDir": false
+    "requireCleanWorkingDir": false,
+    "addUntrackedFiles": true
   },
   "npm": {
     "publish": true,
@@ -15,10 +16,7 @@
     "web": true,
     "tokenRef": "GITHUB_TOKEN"
   },
-  "hooks": {
-    "before:init": ["bun lint"],
-    "after:bump": "bun run prepack"
-  },
+  "hooks": {},
   "plugins": {
     "@release-it/conventional-changelog": {
       "preset": {
