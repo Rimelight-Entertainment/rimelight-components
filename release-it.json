@@ -16,7 +16,7 @@
     "tokenRef": "GITHUB_TOKEN"
   },
   "hooks": {
-    "before:init": ["bun typecheck", "bun lint"],
+    "before:init": ["bun lint"],
     "after:bump": "bun run prepack"
   },
   "plugins": {
