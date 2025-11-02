@@ -75,7 +75,7 @@
     "format": "prettier . --check .",
     "format:fix": "prettier . --write .",
     "test": "vitest",
-    "release": "release-it"
+    "release": "release- --ci"
   },
   "dependencies": {
     "@nuxt/image": "^1.11.0",
