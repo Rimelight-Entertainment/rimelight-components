@@ -7,14 +7,12 @@
   "npm": {
     "publish": true,
     "access": "public",
-    "publishPackageManager": "bun",
-    "skipChecks": true
+    "publishPackageManager": "bun"
   },
   "github": {
     "release": true,
     "releaseName": "Release v${version}",
-    "autoGenerate": true,
-    "skipChecks": true
+    "autoGenerate": true
   },
   "hooks": {},
   "plugins": {
