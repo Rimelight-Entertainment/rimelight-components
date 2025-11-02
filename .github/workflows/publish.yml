@@ -24,19 +24,6 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Configure git
-        run: |
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      - name: Configure npm
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
@@ -56,7 +43,7 @@ jobs:
         run: bun run build
 
       - name: Release
-        run: npm run release
+        run: bun run release
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
