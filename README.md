@@ -1,81 +1,121 @@
-<!--
-Get your module up and running quickly.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/91ceab67-89ce-4ef4-8678-4402a92baca5">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/51526d6d-e5ec-41b4-aa37-242dec1cdb27">
+  <img alt="Nuxt UI" src="https://github.com/user-attachments/assets/51526d6d-e5ec-41b4-aa37-242dec1cdb27">
+</picture>
 
-Find and replace all on all files (CMD+SHIFT+F):
-- Name: My Module
-- Package name: my-module
-- Description: My new Nuxt module
--->
-
-# My Module
+# Rimelight Components
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-My new Nuxt module for doing amazing things.
+A Nuxt module with components and utilities used internally at Rimelight Entertainment.
 
-- [✨ &nbsp;Release Notes](/CHANGELOG.md)
-  <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/my-module?file=playground%2Fapp.vue) -->
-  <!-- - [📖 &nbsp;Documentation](https://example.com) -->
+> [!WARNING]
+> This module is in early development and may contain placeholders and not strictly adhere to best practices.
+
+- [Documentation](https://ui.nuxt.com/docs)
+- [Playground](https://ui3-playground.nuxt.dev)
+- [Release Notes](/CHANGELOG.md)
 
 ## Features
 
 <!-- Highlight some of the features your module provide here -->
 
-- ⛰ &nbsp;Foo
+- Block-based Page Rendering
 - 🚠 &nbsp;Bar
 - 🌲 &nbsp;Baz
 
-## Quick Setup
+## Setup
 
-Install the module to your Nuxt application with one command:
+Install the package from npm:
 
-```bash
-npx nuxi module add my-module
+```bash [bun]
+bun add rimelight-components
 ```
 
-That's it! You can now use My Module in your Nuxt app ✨
+Add the module to your `nuxt.config.js`:
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  modules: ['rimelight-components']
+})
+```
+
+Learn more in the [installation guide](https://ui.nuxt.com/docs/getting-started/installation/nuxt).
 
 ## Contribution
 
-<details>
-  <summary>Local development</summary>
-  
-  ```bash
+Thank you for considering contributing to Rimelight Components. Here are a few ways you can get involved:
+
+- Reporting Bugs: If you come across any bugs or issues, please check out the reporting bugs guide to learn how to submit a bug report.
+- Suggestions: Have any thoughts to enhance Rimelight Components? We'd love to hear them! Check out the [contribution guide](https://ui.nuxt.com/docs/getting-started/contribution) to share your suggestions.
+
+## Local Development
+
+  ```bash [bun]
   # Install dependencies
-  npm install
+  bun install
+  ```
   
+  ```bash [bun]
   # Generate type stubs
-  npm run dev:prepare
+  bun dev:prepare
+  ```
   
+  ```bash [bun]
   # Develop with the playground
-  npm run dev
+  bun dev
+  ```
   
+  ```bash [bun]
   # Build the playground
-  npm run dev:build
+  bun dev:build
+  ```
   
-  # Run ESLint
-  npm run lint
+  ```bash [bun]
+  # Run Typecheck
+  bun typecheck
+  ```
   
+  ```bash [bun]
+  # Run Oxlint
+  bun lint
+  ```
+  
+  ```bash [bun]
+  # Run Prettier
+  bun format
+  ```
+  
+  ```bash [bun]
   # Run Vitest
   npm run test
-  npm run test:watch
+  ```
   
+  ```bash [bun]
   # Release new version
-  npm run release
+  bun release
   ```
 
-</details>
+Learn more in the [development guide](https://ui.nuxt.com/docs/getting-started/contribution#local-development).
+
+## Sponshorship
+
+
+## License
+
+Licensed under the [MIT license](https://github.com/nuxt/ui/blob/v4/LICENSE.md).
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/my-module/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/my-module
-[npm-downloads-src]: https://img.shields.io/npm/dm/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-downloads-href]: https://npm.chart.dev/my-module
-[license-src]: https://img.shields.io/npm/l/my-module.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/my-module
+[npm-version-src]: https://img.shields.io/npm/v/rimelight-components/latest.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-version-href]: https://npmjs.com/package/rimelight-components
+[npm-downloads-src]: https://img.shields.io/npm/dm/rimelight-components.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-downloads-href]: https://npm.chart.dev/rimelight-components
+[license-src]: https://img.shields.io/npm/l/rimelight-components.svg?style=flat&colorA=020420&colorB=00DC82
+[license-href]: https://npmjs.com/package/rimelight-components
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js
 [nuxt-href]: https://nuxt.com
