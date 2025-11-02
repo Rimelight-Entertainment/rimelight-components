@@ -42,8 +42,12 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Update npm
-        run: bun install npm@latest
+      - name: Configure NPM for OIDC
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'bun'
 
       - name: Release
         run: bunx release-it --ci
