@@ -19,10 +19,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: latest
+      ##- name: Setup Bun
+      ##  uses: oven-sh/setup-bun@v1
+      ##  with:
+      ##    bun-version: latest
+
+      - name: Configure git
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
       - name: Configure npm
         uses: actions/setup-node@v4
@@ -33,30 +38,29 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Install Dependencies
-        run: bun install --frozen-lockfile
+        ##run: bun install --frozen-lockfile
+        run: npm ci
 
       - name: Prepare
-        run: bun run dev:prepare
+        ##run: bun run dev:prepare
+        run: npm run dev:prepare
 
       ##- name: Typecheck
       ##  run: bun run typecheck
 
       - name: Lint
-        run: bun run lint
+      ##  run: bun run lint
+        run: npm run lint
 
       ##- name: Test
       ##  run: bun run test
 
       - name: Build
-        run: bun run build
-
-      - name: Initialize npm config
-        run: npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        ##run: bun run build
+        run: npm run build
 
       - name: Release
-        run: npm run release --npm.skipChecks
+        run: npm run release --ci
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
