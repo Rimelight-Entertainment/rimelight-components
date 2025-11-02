@@ -1,6 +1,8 @@
 {
   "git": {
-    "commitMessage": "chore(release): v${version}",
+    "commit": true,
+    "commitMessage": "chore:(release): v${version}",
+    "tag": true,
     "tagName": "v${version}",
     "requireCleanWorkingDir": false
   },
@@ -13,7 +15,7 @@
     "release": true,
     "releaseName": "Release v${version}",
     "autoGenerate": true,
-    "tokenRef": "PERSONAL_ACCESS_TOKEN"
+    "tokenRef": "GITHUB_TOKEN"
   },
   "hooks": {},
   "plugins": {
