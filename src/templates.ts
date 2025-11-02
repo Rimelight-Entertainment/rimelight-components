@@ -1,11 +1,9 @@
 import { addTemplate } from "@nuxt/kit"
-import type { Resolver } from "@nuxt/kit"
 
 /**
  * Generates and adds the component map templates (JS and DTS) to the Nuxt build.
  *
  * @param blockNames An array of component names (e.g., ['ParagraphBlock', 'ImageBlock']).
- * @param resolver The module's resolver from createResolver(import.meta.url).
  */
 export function addBlockMapTemplates(blockNames: string[]) {
   // Generate the Component Map Template

@@ -44,7 +44,7 @@ export default defineNuxtModule<ModuleOptions>().with({
   },
   hooks: {},
   defaults: defaultOptions,
-  moduleDependencies(nuxt) {
+  moduleDependencies(_nuxt) {
     const dependencies: Record<string, any> = {
       "@nuxt/image": {
         version: ">=1.0.0",
@@ -95,10 +95,10 @@ export default defineNuxtModule<ModuleOptions>().with({
     }
     return dependencies
   },
-  onInstall(nuxt) {
+  onInstall(_nuxt) {
     console.log(`Setting up ${name}.`)
   },
-  onUpgrade(nuxt: Nuxt, options: ModuleOptions, previousVersion: string) {
+  onUpgrade(_nuxt: Nuxt, _options: ModuleOptions, previousVersion: string) {
     console.log(`Upgrading ${name} from ${previousVersion} to ${version}.`)
   },
   setup(options, nuxt) {
