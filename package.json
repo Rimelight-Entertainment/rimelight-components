@@ -1,7 +1,7 @@
 {
   "name": "rimelight-components",
   "description": "A component library by Rimelight Entertainment.",
-  "version": "2.0.26",
+  "version": "2.0.27",
   "type": "module",
   "repository": {
     "type": "git",
