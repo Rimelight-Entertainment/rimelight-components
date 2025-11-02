@@ -48,12 +48,12 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Clean up Generated Files
+      - name: Clean Up Generated Files
         run: |
           git clean -f -d
           git reset --hard
 
-      - name: Configure Git Identity 👈 NEW STEP
+      - name: Configure Git Identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
