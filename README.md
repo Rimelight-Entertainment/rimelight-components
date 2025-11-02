@@ -25,8 +25,6 @@ A Nuxt module with components and utilities used internally at Rimelight Enterta
 <!-- Highlight some of the features your module provide here -->
 
 - Block-based Page Rendering
-- 🚠 &nbsp;Bar
-- 🌲 &nbsp;Baz
 
 ## Setup
 
