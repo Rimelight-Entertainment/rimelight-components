@@ -1,4 +1,11 @@
+export interface CalloutOptions {
+  icon: string
+  title: string
+  tooltip: string
+}
+
 export const defaultOptions = {
+  enabled: true,
   prefix: "RC",
   callouts: {
     info: {

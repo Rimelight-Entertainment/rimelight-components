@@ -5,19 +5,14 @@ import {
   createResolver
 } from "@nuxt/kit"
 import { name, version, homepage } from "../package.json"
-import { defaultOptions } from "./defaults"
+import { type CalloutOptions, defaultOptions } from "./defaults"
 import { defu } from "defu"
 
 import { addBlockMapTemplates } from "./templates"
 
 import { readdirSync } from "node:fs"
 import { basename } from "node:path"
-
-interface CalloutOptions {
-  icon: string
-  title: string
-  tooltip: string
-}
+import type { Nuxt } from "@nuxt/schema"
 
 export interface ModuleOptions {
   /**
@@ -36,7 +31,8 @@ export interface ModuleOptions {
   }
 }
 
-export default defineNuxtModule<ModuleOptions>({
+//TODO Populate the schema: {} field
+export default defineNuxtModule<ModuleOptions>().with({
   meta: {
     name,
     version,
@@ -46,58 +42,67 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt: ">=4.0.0"
     }
   },
-  defaults: defaultOptions,
   hooks: {},
-  moduleDependencies: {
-    "@nuxt/image": {
-      version: ">=1.0.0",
-      optional: false,
-      overrides: {},
-      defaults: {}
-    },
-    "@nuxtjs/i18n": {
-      version: ">=10.1.1",
-      optional: false,
-      overrides: {},
-      defaults: {}
-    },
-    "@nuxt/ui": {
-      version: ">=4.0.0",
-      optional: false,
-      overrides: {},
-      defaults: {
-        prefix: "U",
-        theme: {
-          colors: [
-            "neutral",
-            "primary",
-            "secondary",
-            "info",
-            "success",
-            "warning",
-            "error",
-            "commentary",
-            "ideation",
-            "source"
-          ]
+  defaults: defaultOptions,
+  moduleDependencies(nuxt) {
+    const dependencies: Record<string, any> = {
+      "@nuxt/image": {
+        version: ">=1.0.0",
+        optional: false,
+        overrides: {},
+        defaults: {}
+      },
+      "@nuxtjs/i18n": {
+        version: ">=10.1.1",
+        optional: false,
+        overrides: {},
+        defaults: {}
+      },
+      "@nuxt/ui": {
+        version: ">=4.0.0",
+        optional: false,
+        overrides: {},
+        defaults: {
+          prefix: "U",
+          theme: {
+            colors: [
+              "neutral",
+              "primary",
+              "secondary",
+              "info",
+              "success",
+              "warning",
+              "error",
+              "commentary",
+              "ideation",
+              "source"
+            ]
+          }
         }
+      },
+      "@vueuse/nuxt": {
+        version: ">=13.9.0",
+        optional: false,
+        overrides: {},
+        defaults: {}
+      },
+      "motion-v/nuxt": {
+        version: ">=1.7.2",
+        optional: false,
+        overrides: {},
+        defaults: {}
       }
-    },
-    "@vueuse/nuxt": {
-      version: ">=13.9.0",
-      optional: false,
-      overrides: {},
-      defaults: {}
-    },
-    "motion-v/nuxt": {
-      version: ">=1.7.2",
-      optional: false,
-      overrides: {},
-      defaults: {}
     }
+    return dependencies
+  },
+  onInstall(nuxt) {
+    console.log(`Setting up ${name}.`)
+  },
+  onUpgrade(nuxt: Nuxt, options: ModuleOptions, previousVersion: string) {
+    console.log(`Upgrading ${name} from ${previousVersion} to ${version}.`)
   },
   setup(options, nuxt) {
-    const resolver = createResolver(import.meta.url)
+    const { resolve } = createResolver(import.meta.url)
 
     nuxt.options.appConfig.rimelightComponents = defu(
       nuxt.options.appConfig.rimelightComponents || {},
@@ -105,19 +110,20 @@ export default defineNuxtModule<ModuleOptions>({
     )
 
     addComponentsDir({
-      path: resolver.resolve("./runtime/components/"),
+      path: resolve("./runtime/components/"),
       pathPrefix: false,
-      prefix: options.prefix,
+      //TODO Figure out if this can be typed better
+      prefix: options.prefix ?? undefined,
       global: true
     })
 
-    addImportsDir(resolver.resolve("./runtime/composables"))
-    addImportsDir(resolver.resolve("./runtime/types"))
-    addImportsDir(resolver.resolve("./runtime/utils"))
+    addImportsDir(resolve("./runtime/composables"))
+    addImportsDir(resolve("./runtime/types"))
+    addImportsDir(resolve("./runtime/utils"))
 
     // Scan the directory for all .vue files
     const blockFiles = readdirSync(
-      resolver.resolve("./runtime/components/blocks")
+      resolve("./runtime/components/blocks")
     ).filter((name) => name.endsWith(".vue"))
 
     // Generate a clean list of component names
@@ -128,11 +134,5 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Expose the map template to the runtime via an alias
     nuxt.options.alias["#build/rimelight-blocks-map"] = template.dst
-  },
-  onInstall() {
-    console.log("Setting up rimelight-components for the first time!")
-  },
-  onUpgrade() {
-    console.log("Upgrading rimelight-components.")
   }
 })
