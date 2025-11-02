@@ -1,9 +1,6 @@
-import type { ModuleOptions } from "../../module"
+declare module '#build/app.config' {
+  import type { AppConfig } from '@nuxt/schema'
 
-declare module "@nuxt/schema" {
-  interface AppConfig {
-    rimelightComponents: ModuleOptions
-  }
+  const _default: AppConfig
+  export default _default
 }
-
-export {}
