@@ -14,6 +14,8 @@ import { readdirSync } from "node:fs"
 import { basename } from "node:path"
 import type { Nuxt } from "@nuxt/schema"
 
+export type * from './runtime/types'
+
 export interface ModuleOptions {
   /**
    * Prefix for components
@@ -118,7 +120,6 @@ export default defineNuxtModule<ModuleOptions>().with({
     })
 
     addImportsDir(resolve("./runtime/composables"))
-    addImportsDir(resolve("./runtime/types"))
     addImportsDir(resolve("./runtime/utils"))
 
     // Scan the directory for all .vue files
