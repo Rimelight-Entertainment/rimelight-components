@@ -15,7 +15,9 @@
     "web": true,
     "tokenRef": "GITHUB_TOKEN"
   },
-  "hooks": {},
+  "hooks": {
+    "before:init": ["make build", "git update-index -q --refresh"]
+  },
   "plugins": {
     "@release-it/conventional-changelog": {
       "preset": {
