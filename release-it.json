@@ -12,7 +12,8 @@
   "github": {
     "release": true,
     "releaseName": "Release v${version}",
-    "autoGenerate": true
+    "autoGenerate": true,
+    "tokenRef": "PERSONAL_ACCESS_TOKEN"
   },
   "hooks": {},
   "plugins": {
