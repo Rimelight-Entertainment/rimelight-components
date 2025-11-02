@@ -5,6 +5,7 @@
   },
   "npm": {
     "publish": true,
+    "publishPackageManager": "bun",
     "skipChecks": true
   },
   "github": {
