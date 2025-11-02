@@ -32,7 +32,7 @@ export interface ModuleOptions {
 }
 
 //TODO Populate the schema: {} field
-export default defineNuxtModule<ModuleOptions>().with({
+export default defineNuxtModule<ModuleOptions>({
   meta: {
     name,
     version,
@@ -44,8 +44,7 @@ export default defineNuxtModule<ModuleOptions>().with({
   },
   hooks: {},
   defaults: defaultOptions,
-  moduleDependencies(_nuxt) {
-    const dependencies: Record<string, any> = {
+  moduleDependencies: {
       "@nuxt/image": {
         version: ">=1.0.0",
         optional: false,
@@ -92,10 +91,8 @@ export default defineNuxtModule<ModuleOptions>().with({
         overrides: {},
         defaults: {}
       }
-    }
-    return dependencies
   },
-  onInstall(_nuxt) {
+  onInstall(_nuxt: Nuxt) {
     console.log(`Setting up ${name}.`)
   },
   onUpgrade(_nuxt: Nuxt, _options: ModuleOptions, previousVersion: string) {
