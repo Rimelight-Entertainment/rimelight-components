@@ -12,13 +12,11 @@
   },
   "github": {
     "release": true,
-    "releaseName": "v${version}",
-    "web": true,
-    "tokenRef": "GITHUB_TOKEN"
+    "releaseName": "Release v${version}",
+    "autoGenerate": true,
+    "web": true
   },
-  "hooks": {
-    "before:init": ["make build", "git update-index -q --refresh"]
-  },
+  "hooks": {},
   "plugins": {
     "@release-it/conventional-changelog": {
       "preset": {
