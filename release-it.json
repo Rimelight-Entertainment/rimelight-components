@@ -14,7 +14,8 @@
     "release": true,
     "releaseName": "Release v${version}",
     "autoGenerate": true,
-    "web": true
+    "web": true,
+    "skipChecks": true
   },
   "hooks": {},
   "plugins": {
