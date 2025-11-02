@@ -34,9 +34,7 @@ jobs:
           bun-version: latest
 
       - name: Install Dependencies
-        run: npm ci
-        ##
-        ##run: bun install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Prepare
         run: bun run dev:prepare
@@ -54,6 +52,7 @@ jobs:
         run: bun run build
 
       - name: Release
-        run: npx release-it --ci
+        run: bunx release-it --ci
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
