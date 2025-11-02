@@ -1,7 +1,7 @@
 {
   "name": "rimelight-components",
   "description": "A component library by Rimelight Entertainment.",
-  "version": "2.0.22",
+  "version": "2.0.24",
   "type": "module",
   "repository": {
     "type": "git",
@@ -75,7 +75,7 @@
     "format": "prettier . --check .",
     "format:fix": "prettier . --write .",
     "test": "vitest",
-    "release": "release-it"
+    "release": "release-it --ci"
   },
   "dependencies": {
     "@nuxt/image": "^1.11.0",
