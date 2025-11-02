@@ -43,7 +43,7 @@ jobs:
         run: bun run build
 
       - name: Update npm
-        run: npm install -g npm@latest
+        run: bun install npm@latest
 
       - name: Release
         run: bunx release-it --ci
