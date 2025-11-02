@@ -74,9 +74,7 @@
     "lint:fix": "oxlint . --fix",
     "format": "prettier . --check .",
     "format:fix": "prettier . --write .",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
+    "test": "vitest",
     "release": "release-it"
   },
   "dependencies": {
