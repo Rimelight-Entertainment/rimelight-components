@@ -51,6 +51,9 @@ jobs:
       - name: Clean up Generated Files
         run: git clean -f -d ; git reset --hard
 
+      - name: Configure Git Identity 👈 NEW STEP
+        run: git config user.name "github-actions[bot]" ; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Release
         run: bun run release
         env:
