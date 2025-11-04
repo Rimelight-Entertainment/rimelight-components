@@ -4,13 +4,13 @@ import { tv } from "tailwind-variants"
 const header = tv({
   slots: {
     root: "sticky top-0 z-50 h-(--ui-header-height)",
-    container: "h-full flex flex-row items-center justify-between p-sm",
-    left: "hidden lg:flex",
-    center: "hidden lg:flex",
-    right: "hidden lg:flex",
-    collapsedLeft: "lg:hidden",
-    collapsedCenter: "lg:hidden",
-    collapsedRight: "lg:hidden"
+    container: "h-full flex flex-row items-center p-sm",
+    left: "hidden lg:flex flex-1 justify-start",
+    center: "hidden lg:flex flex-none",
+    right: "hidden lg:flex flex-1 justify-end",
+    collapsedLeft: "lg:hidden flex-1 justify-start",
+    collapsedCenter: "lg:hidden flex-none",
+    collapsedRight: "lg:hidden flex-1 justify-end"
   }
 })
 
