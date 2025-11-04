@@ -20,7 +20,7 @@ const {
   title = "table_of_contents",
   levels = [2, 3, 4]
 } = defineProps<{
-  pageBlocks: Block[]
+  pageBlocks: Block[] | null
   title?: string
   levels?: HeadingLevel[]
 }>()
@@ -77,9 +77,8 @@ const tocItems = computed<TOCItem[]>(() => {
 </script>
 
 <template>
-  <div class="z-10 flex flex-col gap-md">
     <nav
-      class="sticky top-(--ui-header-height) z-50 flex flex-col gap-md pt-lg"
+      class="flex flex-col gap-md pt-lg"
       aria-label="Table of Contents"
     >
       <h5 class="text-highlighted">
@@ -115,5 +114,4 @@ const tocItems = computed<TOCItem[]>(() => {
 
       <slot name="bottom" />
     </nav>
-  </div>
 </template>
