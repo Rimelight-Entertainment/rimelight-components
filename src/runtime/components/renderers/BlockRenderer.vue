@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Component } from "vue"
-import { getBlockComponent } from "../../utils/blockMapper"
+import { getBlockRendererComponent } from "../../utils/blockMapper"
 import type { Block } from "../../types/blocks"
 
 const { blocks } = defineProps<{
@@ -13,7 +13,7 @@ const getComponent = (block: Block): Component | null => {
     return null
   }
 
-  const resolvedComponent = getBlockComponent(block.type)
+  const resolvedComponent = getBlockRendererComponent(block.type)
 
   if (!resolvedComponent) {
     console.error(`Component resolution failed for block type: ${block.type}`)
@@ -55,3 +55,7 @@ const getComponent = (block: Block): Component | null => {
     </template>
   </div>
 </template>
+
+<style scoped>
+
+</style>

@@ -95,11 +95,13 @@ export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6
 const {
   level = 1,
   title,
-  description
+  description,
+  isEditing = false
 } = defineProps<{
   level?: SectionLevel
   title: string
   description?: string
+  isEditing?: boolean
 }>()
 
 const {
@@ -114,8 +116,6 @@ const {
 const sectionId = computed(() => slugify(title))
 const sectionHash = computed(() => `#${sectionId.value}`)
 const fullSectionUrl = computed(() => {
-  // We use window.location.origin to ensure the link is an absolute URL,
-  // which is best practice for shareable links in a production environment.
   if (typeof window === "undefined") return sectionHash.value
   return `${window.location.origin}${route.path}${sectionHash.value}`
 })
@@ -130,6 +130,7 @@ const fullSectionUrl = computed(() => {
       class="relative"
     >
       <NuxtLink
+        v-if="!isEditing"
         :href="`#${sectionId}`"
         :class="linkSlot()"
         class="group lg:-ms-2 lg:ps-2"
@@ -142,10 +143,13 @@ const fullSectionUrl = computed(() => {
           class="absolute top-1 -ms-8 hidden rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"
           @click="copyToClipboard(fullSectionUrl)"
         />
-        {{ title }}
+        <slot name="title">{{ title }}</slot>
       </NuxtLink>
+      <slot v-else name="title">{{ title }}</slot>
     </component>
-    <p v-if="description" :class="descriptionSlot()">{{ description }}</p>
+    <p v-if="description" :class="descriptionSlot()">
+      <slot name="description">{{ description }}</slot>
+    </p>
     <USeparator :class="separatorSlot()" />
     <div :class="contentSlot()">
       <slot />

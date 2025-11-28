@@ -7,7 +7,7 @@ const header = tv({
     container: "h-full flex flex-row items-center p-sm",
     left: "hidden lg:flex flex-1 justify-start",
     center: "hidden lg:flex flex-none",
-    right: "hidden lg:flex flex-1 justify-end",
+    right: "hidden lg:flex flex-1 justify-end items-end",
     collapsedLeft: "lg:hidden flex-1 justify-start",
     collapsedCenter: "lg:hidden flex-none",
     collapsedRight: "lg:hidden flex-1 justify-end"

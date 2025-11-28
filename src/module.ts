@@ -8,7 +8,7 @@ import { name, version, homepage } from "../package.json"
 import { type CalloutOptions, defaultOptions } from "./defaults"
 import { defu } from "defu"
 
-import { addBlockMapTemplates } from "./templates"
+import { addBlockMapTemplates, addEditorBlockMapTemplates } from "./templates"
 
 import { readdirSync } from "node:fs"
 import { basename } from "node:path"
@@ -123,17 +123,30 @@ export default defineNuxtModule<ModuleOptions>().with({
     addImportsDir(resolve("./runtime/utils"))
 
     // Scan the directory for all .vue files
-    const blockFiles = readdirSync(
-      resolve("./runtime/components/blocks")
+    const blockRendererFiles = readdirSync(
+      resolve("./runtime/components/blocks/renderer")
     ).filter((name) => name.endsWith(".vue"))
 
     // Generate a clean list of component names
-    const blockNames = blockFiles.map((file) => basename(file, ".vue"))
+    const blockRendererNames = blockRendererFiles.map((file) => basename(file, ".vue"))
 
     // Generate the Component Map Template
-    const template = addBlockMapTemplates(blockNames)
+    const blockRendererTemplate = addBlockMapTemplates(blockRendererNames)
 
     // Expose the map template to the runtime via an alias
-    nuxt.options.alias["#build/rimelight-blocks-map"] = template.dst
+    nuxt.options.alias["#build/rimelight-blocks-renderer-map"] = blockRendererTemplate.dst
+
+    const blockEditorFiles = readdirSync(
+      resolve("./runtime/components/blocks/editor")
+    ).filter((name) => name.endsWith(".vue"))
+
+    // Generate a clean list of component names
+    const blockEditorNames = blockEditorFiles.map((file) => basename(file, ".vue"))
+
+    // Generate the Component Map Template
+    const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames)
+
+    // Expose the map template to the runtime via an alias
+    nuxt.options.alias["#build/rimelight-blocks-editor-map"] = blockEditorTemplate.dst
   }
 })
