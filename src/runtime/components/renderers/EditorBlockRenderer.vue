@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { type Component } from "vue"
+import { type Component, inject, provide } from "vue"
 import { getBlockEditorComponent } from "../../utils/blockMapper"
 import type { Block } from "../../types/blocks"
 
 const { blocks } = defineProps<{
   blocks: Block[]
 }>()
+
+const { removeBlock, moveBlock } = inject('blockEditorMutators', {
+  removeBlock: (id: string) => console.warn(`[Renderer] removeBlock not provided. Cannot delete block ${id}.`),
+  moveBlock: (id: string, newIndex: number) => console.warn(`[Renderer] moveBlock not provided. Cannot move block ${id}.`),
+})
+
+// --- 2. Provide Mutators to Child Editor Blocks ---
+// The editor blocks (like SectionBlockEditor) will inject these.
+provide('blockEditorMutators', { removeBlock, moveBlock })
 
 /**
  * Resolves the appropriate editor component for a given block object.
