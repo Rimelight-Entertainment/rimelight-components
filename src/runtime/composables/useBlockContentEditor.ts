@@ -1,4 +1,4 @@
-import { ref, watch, computed, type Ref } from "vue"
+import { ref, watch, type Ref } from "vue"
 import { useDebounceFn } from "@vueuse/core"
 import { type Block } from "../types/blocks"
 
@@ -110,7 +110,7 @@ export const useBlockContentEditor = ({
     if (oldIndex === -1) return
 
     // Remove the block from its old position
-    const [blockToMove] = blocks.value.splice(oldIndex, 1)
+    const [blockToMove] = blocks.value.splice(oldIndex, 1) as [Block]
 
     // Insert it at the new position
     blocks.value.splice(newIndex, 0, blockToMove)
