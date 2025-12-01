@@ -1,8 +1,8 @@
 import { defineAsyncComponent, type Component } from "vue"
 import { type BlockType } from "../types/blocks"
 
-import { BLOCK_RENDERER_COMPONENT_MAP } from "#build/rimelight-blocks-renderer-map"
-import { BLOCK_EDITOR_COMPONENT_MAP } from "#build/rimelight-blocks-editor-map"
+import { BLOCK_RENDERER_COMPONENT_MAP } from "#build/rimelight-block-renderer-map"
+import { BLOCK_EDITOR_COMPONENT_MAP } from "#build/rimelight-block-editor-map"
 
 type ComponentImporter = () => Promise<{ default: Component }>
 
