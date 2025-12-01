@@ -128,7 +128,10 @@ export default defineNuxtModule<ModuleOptions>().with({
     ).filter((name) => name.endsWith(".vue"))
 
     // Generate a clean list of component names
-    const blockRendererNames = blockRendererFiles.map((file) => basename(file, ".vue"))
+    const blockRendererNames = blockRendererFiles.map((file) => {
+      const baseName = basename(file, ".vue") // e.g., 'SectionBlockRenderer'
+      return baseName.replace(/Renderer$/, '') // e.g., 'SectionBlock'
+    })
 
     // Generate the Component Map Template
     const blockRendererTemplate = addBlockMapTemplates(blockRendererNames)
@@ -141,7 +144,10 @@ export default defineNuxtModule<ModuleOptions>().with({
     ).filter((name) => name.endsWith(".vue"))
 
     // Generate a clean list of component names
-    const blockEditorNames = blockEditorFiles.map((file) => basename(file, ".vue"))
+    const blockEditorNames = blockEditorFiles.map((file) => {
+      const baseName = basename(file, ".vue") // e.g., 'SectionBlockEditor'
+      return baseName.replace(/Editor$/, '') // e.g., 'SectionBlock'
+    })
 
     // Generate the Component Map Template
     const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames)
