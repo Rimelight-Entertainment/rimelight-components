@@ -13,8 +13,8 @@ export function addBlockMapTemplates(blockNames: string[]) {
       let content = "export const BLOCK_RENDERER_COMPONENT_MAP = {\n"
 
       blockNames.forEach((name) => {
-        // Use the module's alias and the 'runtime' path for dynamic import.
-        const componentPath = `rimelight-components/components/blocks/renderer/${name}.vue`
+        const fullComponentName = `${name}Renderer` // e.g., 'SectionBlockRenderer'
+        const componentPath = `rimelight-components/components/blocks/renderer/${fullComponentName}.vue`
 
         // The dynamic import function
         content += `  '${name}': () => import('${componentPath}'),\n`
@@ -71,9 +71,8 @@ export function addEditorBlockMapTemplates(blockNames: string[]) {
       let content = "export const BLOCK_EDITOR_COMPONENT_MAP = {\n"
 
       blockNames.forEach((name) => {
-        // Use the module's alias and the 'runtime' path for dynamic import.
-        // **Updated path to include 'editor' subdirectory**
-        const componentPath = `rimelight-components/components/blocks/editor/${name}.vue`
+        const fullComponentName = `${name}Editor` // e.g., 'SectionBlockEditor'
+        const componentPath = `rimelight-components/components/blocks/editor/${fullComponentName}.vue`
 
         // The dynamic import function
         content += `  '${name}': () => import('${componentPath}'),\n`
