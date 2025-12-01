@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UnorderedListBlockProps } from "../../types/blocks"
+import type { UnorderedListBlockProps } from "~~/src/runtime/types/blocks"
 
 const { items } = defineProps<UnorderedListBlockProps>()
 </script>

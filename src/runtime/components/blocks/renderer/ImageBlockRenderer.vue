@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImageBlockProps } from "../../types/blocks"
+import type { ImageBlockProps } from "~~/src/runtime/types/blocks"
 
 const { src, alt, caption } = defineProps<ImageBlockProps>()
 </script>
