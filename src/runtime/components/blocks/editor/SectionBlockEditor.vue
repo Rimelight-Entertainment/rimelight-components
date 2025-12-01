@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject } from "vue"
 import type { SectionBlockProps } from "~~/src/runtime/types/blocks"
-import { slugify } from "../../../utils"
+import { slugify } from "~~/src/runtime/utils"
 
 // --- NEW PROPS CONTRACT ---
 const props = defineProps<{
