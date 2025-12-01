@@ -37,7 +37,7 @@ export const getBlockRendererComponent = (
  * Maps the block type string from the database to a dynamically imported Vue component
  * specifically for the editor view.
  *
- * @param type The BlockType string from the content JSON (e.g., 'EditorParagraphBlock').
+ * @param type The BlockType string from the content JSON.
  * @returns A lazily loaded Vue component reference, or undefined if not found.
  */
 export const getBlockEditorComponent = (
