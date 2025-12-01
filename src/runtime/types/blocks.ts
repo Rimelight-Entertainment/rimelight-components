@@ -34,6 +34,13 @@ export interface SectionBlockProps {
   children: Block[]
 }
 
+export interface SectionBlockEditorProps extends SectionBlockProps {
+  /** A unique ID used by the editor to track, move, and delete the block. */
+  blockId: string
+  /** Optional context for editor behavior (e.g., is the block currently focused). */
+  isFocused?: boolean
+}
+
 export interface ParagraphBlockProps {
   text: RichTextContent
 }
