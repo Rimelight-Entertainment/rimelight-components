@@ -61,7 +61,7 @@ const childrenBlocks = computed(() => props.props.children || [])
       </template>
 
       <div class="mt-4">
-        <RCEditorBlockRenderer :blocks="childrenBlocks" />
+        <RCBlockEditor :blocks="childrenBlocks" />
       </div>
     </RCSection>
   </div>
