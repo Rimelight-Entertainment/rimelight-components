@@ -21,7 +21,7 @@ export type BlockType =
  * Defines the common structure for any content block object.
  * The 'type' must be one of the registered BlockType values.
  */
-export interface BaseContentBlock {
+export interface BaseBlock {
   id: string
   type: BlockType
   props: Record<string, any>
@@ -32,13 +32,6 @@ export interface SectionBlockProps {
   title: string
   description?: string
   children: Block[]
-}
-
-export interface SectionBlockEditorProps extends SectionBlockProps {
-  /** A unique ID used by the editor to track, move, and delete the block. */
-  blockId: string
-  /** Optional context for editor behavior (e.g., is the block currently focused). */
-  isFocused?: boolean
 }
 
 export interface ParagraphBlockProps {
@@ -89,42 +82,42 @@ export interface CollapsibleCardBlockProps {
   children: Block[]
 }
 
-export interface SectionContentBlock extends BaseContentBlock {
+export interface SectionBlock extends BaseBlock {
   type: "SectionBlock"
   props: SectionBlockProps
 }
 
-export interface ParagraphContentBlock extends BaseContentBlock {
+export interface ParagraphContentBlock extends BaseBlock {
   type: "ParagraphBlock"
   props: ParagraphBlockProps
 }
 
-export interface CalloutContentBlock extends BaseContentBlock {
+export interface CalloutContentBlock extends BaseBlock {
   type: "CalloutBlock"
   props: CalloutBlockProps
 }
 
-export interface ImageContentBlock extends BaseContentBlock {
+export interface ImageContentBlock extends BaseBlock {
   type: "ImageBlock"
   props: ImageBlockProps
 }
 
-export interface UnorderedListContentBlock extends BaseContentBlock {
+export interface UnorderedListContentBlock extends BaseBlock {
   type: "UnorderedListBlock"
   props: UnorderedListBlockProps
 }
 
-export interface CardBlockContent extends BaseContentBlock {
+export interface CardBlockContent extends BaseBlock {
   type: "CardBlock"
   props: CardBlockProps
 }
 
-export interface CollapsibleCardContentBlock extends BaseContentBlock {
+export interface CollapsibleCardContentBlock extends BaseBlock {
   type: "CollapsibleCardBlock"
   props: CollapsibleCardBlockProps
 }
 
-export interface QuoteContentBlock extends BaseContentBlock {
+export interface QuoteContentBlock extends BaseBlock {
   type: "QuoteBlock"
   props: QuoteBlockProps
 }
@@ -134,7 +127,7 @@ export interface QuoteContentBlock extends BaseContentBlock {
  * payload based on the block 'type'.
  */
 export type Block =
-  | SectionContentBlock
+  | SectionBlock
   | ParagraphContentBlock
   | CalloutContentBlock
   | ImageContentBlock
@@ -142,10 +135,6 @@ export type Block =
   | UnorderedListContentBlock
   | CardBlockContent
   | CollapsibleCardContentBlock
-
-// Optional: Augment the Drizzle type for the project content field
-// This assumes your Project type is available in a place where you can extend it.
-// type ProjectWithContent = Omit<Project, 'content'> & { content: ContentData };
 
 /**
  * Text Rendering Components

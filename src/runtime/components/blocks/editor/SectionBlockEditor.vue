@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { computed, inject } from "vue"
 import type {
-  SectionBlockEditorProps
+  SectionBlock
 } from "~~/src/runtime/types/blocks"
 import { slugify } from "../../../utils"
 
-const props = defineProps<SectionBlockEditorProps>()
+const props = defineProps<SectionBlock>()
 
-const headingId = computed(() => (props.title ? slugify(props.title) : undefined))
+const headingId = computed(() => (props.props.title ? slugify(props.props.title) : undefined))
 
 const { removeBlock } = inject('blockEditorMutators', {
   removeBlock: (id: string) => console.warn(`removeBlock not implemented for ${id}`),
 })
 
 const handleRemove = () => {
-  removeBlock(props.blockId)
+  removeBlock(props.id)
 }
 
-const childrenBlocks = computed(() => props.children || [])
+const childrenBlocks = computed(() => props.props.children || [])
 </script>
 
 <template>
@@ -36,24 +36,24 @@ const childrenBlocks = computed(() => props.children || [])
     </div>
 
     <RCSection
-      :level="level"
-      :title="title"
-      :description="description"
+      :level="props.props.level"
+      :title="props.props.title"
+      :description="props.props.description"
       :id="headingId"
       is-editing
     >
       <template #title>
         <input
-          :value="title"
-          :class="`text-${level === 1 ? '3xl' : 'xl'} pointer-events-auto w-full bg-transparent font-bold focus:outline-none`"
+          :value="props.props.title"
+          :class="`text-${props.props.level === 1 ? '3xl' : 'xl'} pointer-events-auto w-full bg-transparent font-bold focus:outline-none`"
           placeholder="Enter section title..."
         />
       </template>
 
       <template #description>
         <textarea
-          v-if="description !== undefined"
-          :value="description"
+          v-if="props.props.description !== undefined"
+          :value="props.props.description"
           class="text-md pointer-events-auto w-full resize-none bg-transparent text-muted focus:outline-none"
           placeholder="Optional description..."
           rows="2"
