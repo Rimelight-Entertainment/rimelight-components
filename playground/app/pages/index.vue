@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Block } from "../../../src/runtime/types"
+import type { AccordionItem } from '@nuxt/ui'
 
 useHead({
   title: "Home"
@@ -82,13 +83,15 @@ const ctaLinks = ref([
   }
 ])
 
+// Mock blocks for showcase purpose.
 const blocks = ref<Block[]>([
   {
     id: "8a4d8g97-8h5e-7224-j000-016c141d5ef0",
     type: "SectionBlock",
     props: {
       level: 2,
-      title: "Overview",
+      title: "Section 1 Title",
+      description: "Section 1 Description.",
       children: [
         {
           id: "9b5e9h08-9i6f-7225-k000-016c141d5ef1",
@@ -127,8 +130,8 @@ const blocks = ref<Block[]>([
           id: "0c6f0i19-0j7g-7226-l000-016c141d5ef2",
           type: "ImageBlock",
           props: {
-            alt: "Undercharge Main Menu",
-            src: "https://cdn.idantity.me/images/projects/undercharge/undercharge-menu.webp"
+            alt: "Placeholder Image",
+            src: "https://placehold.co/1920x1080"
           }
         }
       ]
@@ -184,8 +187,8 @@ const blocks = ref<Block[]>([
                 id: "5h1k5n64-5o2l-722b-q000-016c141d5ef7",
                 type: "ImageBlock",
                 props: {
-                  alt: "Undercharge Gameplay 1",
-                  src: "https://cdn.idantity.me/images/projects/undercharge/undercharge-gameplay_01.webp"
+                  alt: "Placeholder Image",
+                  src: "https://placehold.co/768x1152"
                 }
               }
             ]
@@ -234,8 +237,8 @@ const blocks = ref<Block[]>([
                 id: "9l5o9r08-9s6p-722f-u000-016c141d5f01",
                 type: "ImageBlock",
                 props: {
-                  alt: "Undercharge Gameplay 2",
-                  src: "https://cdn.idantity.me/images/projects/undercharge/undercharge-gameplay_02.webp"
+                  alt: "Placeholder Image",
+                  src: "https://placehold.co/256x256"
                 }
               }
             ]
@@ -243,27 +246,10 @@ const blocks = ref<Block[]>([
         },
         {
           id: "0m6p0s19-0t7q-7230-v000-016c141d5f02",
-          type: "SectionBlock",
+          type: "CalloutBlock",
           props: {
-            level: 3,
-            title: "Mental Health Awareness",
+            variant: "info",
             children: [
-              {
-                id: "1n7q1t20-1u8r-7231-w000-016c141d5f03",
-                type: "ParagraphBlock",
-                props: {
-                  text: [
-                    {
-                      id: "text-f1",
-                      type: "text",
-                      props: {
-                        content:
-                          "The game's design is intended to illustrate the effects of Burnout Syndrome, which is most commonly caused by severe and sequential periods of overwork."
-                      }
-                    }
-                  ]
-                }
-              },
               {
                 id: "2o8r2u31-2v9s-7232-x000-016c141d5f04",
                 type: "ParagraphBlock",
@@ -274,39 +260,7 @@ const blocks = ref<Block[]>([
                       type: "text",
                       props: {
                         content:
-                          "The reduction in score for gathering pickups with high Stress acts as a parallel to how the symptoms of burnout include a drop in performance and enjoyment of activities."
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                id: "3p9s3v42-3w0t-7233-y000-016c141d5f05",
-                type: "ParagraphBlock",
-                props: {
-                  text: [
-                    {
-                      id: "text-h1",
-                      type: "text",
-                      props: {
-                        content:
-                          "The game's instructions and mechanics and purposefully kept vague as the design's objective is to cause a natural realisation on part of the player that the best strategy to accumulate points is to alternate between moments of action and moments of rest."
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                id: "4q0t4w53-4x1u-7234-z000-016c141d5f06",
-                type: "ParagraphBlock",
-                props: {
-                  text: [
-                    {
-                      id: "text-i1",
-                      type: "text",
-                      props: {
-                        content:
-                          "Akin to the preventative measures to the disease, continuous movement will exponentially slow down the ball and prevent point accumulation."
+                          "Lorem ipsum dolor sit amet consectetur, adipiscing elit non vestibulum lobortis suscipit, parturient semper massa lacus. Dis eu blandit viverra sodales commodo turpis sapien conubia, pharetra nam vestibulum lobortis risus nascetur congue cras ultricies, taciti condimentum imperdiet fusce habitant fermentum non. Nibh lacinia donec neque placerat vestibulum penatibus, fringilla aliquam dictum viverra fermentum mauris aenean, facilisi massa phasellus morbi odio."
                       }
                     }
                   ]
@@ -319,13 +273,31 @@ const blocks = ref<Block[]>([
     }
   }
 ])
+
+const blocksItems: AccordionItem[] = [
+  {
+    label: "Renderer Blocks",
+    slot: "renderer" as const
+  },
+  {
+    label: "Editor Blocks",
+    slot: "editor" as const
+  }
+]
 </script>
 
 <template>
   <UPage>
     <UContainer>
       <RCSection :level="1" title="Blocks">
-        <RCBlockEditor :blocks="blocks" />
+        <UAccordion :items="blocksItems">
+          <template #renderer>
+            <RCBlockRenderer :blocks="blocks" />
+          </template>
+          <template #editor>
+            <RCBlockEditor :blocks="blocks" />
+          </template>
+        </UAccordion>
       </RCSection>
       <RCSection
         :level="1"

@@ -42,26 +42,26 @@ watch(fileToUpload, (newFile) => {
 </script>
 
 <template>
-  <figure class="mx-auto space-y-4 max-w-lg">
+  <figure class="mx-auto space-y-4 flex flex-col gap-xs w-full">
     <UFileUpload
       v-slot="{ open }"
       v-model="fileToUpload"
       accept="image/*"
-      class="min-h-48"
+      class="min-h-48 w-full"
       variant="area"
       color="neutral"
       label="Drop image here"
       description="JPG, PNG, GIF or WEBP. Click to select."
     >
       <div class="flex flex-col items-center justify-center space-y-3 p-4">
-        <div class="w-full relative rounded-lg border border-default overflow-hidden aspect-video">
+        <div class="w-full relative rounded-lg border border-default overflow-hidden">
           <img
             v-if="previewSrc"
             :src="previewSrc"
             :alt="localAlt || 'Image preview'"
-            class="w-full h-full object-cover transition-opacity duration-300"
+            class="w-full h-auto object-contain transition-opacity duration-300"
           />
-          <div v-else class="w-full h-full flex items-center justify-center bg-elevated/25">
+          <div v-else class="w-full h-48 flex items-center justify-center bg-elevated/25">
             <UIcon name="i-lucide-image" class="w-10 h-10 text-muted" />
           </div>
 
@@ -86,31 +86,45 @@ watch(fileToUpload, (newFile) => {
             </div>
           </div>
         </div>
-
-        <UInput
-          v-model="localAlt"
-          type="text"
-          placeholder="Alt text (for accessibility)"
-          class="w-full"
-          variant="outline"
-        >
-          <template #leading>
-            <span class="text-xs text-muted">Alt</span>
-          </template>
-        </UInput>
-
-        <UTextarea
-          v-model="localCaption"
-          autoresize
-          placeholder="Caption (optional)"
-          class="w-full"
-          variant="outline"
-        >
-          <template #leading>
-            <span class="text-xs text-muted">Caption</span>
-          </template>
-        </UTextarea>
       </div>
     </UFileUpload>
+
+    <UInput
+      v-model="localAlt"
+      type="text"
+      placeholder="Alt text (accessibility)"
+      class="w-full"
+      variant="outline"
+    >
+      <template #leading>
+        <UTooltip>
+          <template #default>
+            <span class="text-xs text-muted">Alt</span>
+          </template>
+          <template #content>
+            The text description for the image used by screen readers.
+          </template>
+        </UTooltip>
+      </template>
+    </UInput>
+
+    <UTextarea
+      v-model="localCaption"
+      autoresize
+      placeholder="Caption (optional)"
+      class="w-full"
+      variant="outline"
+    >
+      <template #leading>
+        <UTooltip>
+          <template #default>
+            <span class="text-xs text-muted">Caption</span>
+          </template>
+          <template #content>
+            The text description for the image used by screen readers.
+          </template>
+        </UTooltip>
+      </template>
+    </UTextarea>
   </figure>
 </template>

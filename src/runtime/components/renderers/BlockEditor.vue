@@ -53,7 +53,7 @@ const getComponent = (block: Block): Component | null => {
         title="Start adding content blocks."
         description="There is no content yet. Use the '+' button below to add your first block."
     />
-    <div v-else class="flex flex-col gap-md ml-8">
+    <div v-else class="flex flex-col gap-md ml-10">
       <template v-for="block in blocks" :key="block.id">
         <RCBlock v-if="getComponent(block)" :id="block.id">
           <component
