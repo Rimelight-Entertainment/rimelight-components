@@ -18,20 +18,33 @@ const headingId = computed(() => (title ? slugify(title) : undefined))
       :id="headingId"
   >
     <template #title>
-      <input
-          :value="title"
-          :class="`text-${level === 1 ? '3xl' : 'xl'} pointer-events-auto w-full bg-transparent font-bold focus:outline-none`"
-          placeholder="Enter section title..."
-      />
+      <UInput :v-model="title" :maxlength="128" type="text" variant="ghost" placeholder="Section title">
+        <template #trailing>
+          <div
+            id="character-count"
+            class="text-xs text-muted tabular-nums"
+            aria-live="polite"
+            role="status"
+          >
+            {{ description?.length }}/{{ 256 }}
+          </div>
+        </template>
+      </UInput>
     </template>
 
     <template #description>
-        <textarea
-            :value="description"
-            class="text-md pointer-events-auto w-full resize-none bg-transparent text-muted focus:outline-none"
-            placeholder="Optional description..."
-            rows="2"
-        />
+      <UTextarea :v-model="description" :maxlength="256" variant="ghost" autoresize placeholder="Section description">
+        <template #trailing>
+          <div
+            id="character-count"
+            class="text-xs text-muted tabular-nums"
+            aria-live="polite"
+            role="status"
+          >
+            {{ description?.length }}/{{ 256 }}
+          </div>
+        </template>
+      </UTextarea>
     </template>
     <RCBlockEditor :blocks="children" />
   </RCSection>

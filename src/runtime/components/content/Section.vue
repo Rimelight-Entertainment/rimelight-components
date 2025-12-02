@@ -147,9 +147,11 @@ const fullSectionUrl = computed(() => {
       </NuxtLink>
       <slot v-else name="title">{{ title }}</slot>
     </component>
-    <p v-if="description" :class="descriptionSlot()">
-      <slot name="description">{{ description }}</slot>
-    </p>
+    <slot name="description">
+      <p v-if="description" :class="descriptionSlot()">
+        {{ description }}
+      </p>
+    </slot>
     <USeparator :class="separatorSlot()" />
     <div :class="contentSlot()">
       <slot />
