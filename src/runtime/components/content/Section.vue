@@ -29,9 +29,9 @@ const copyToClipboard = async (text: string) => {
 
 const sectionVariants = tv({
   slots: {
-    sectionSlot: "flex flex-col py-4 scroll-mt-24",
+    sectionSlot: "flex flex-col scroll-mt-24 w-full",
     linkSlot: "",
-    headingSlot: "font-bold",
+    headingSlot: "font-bold w-full",
     descriptionSlot: "text-muted",
     separatorSlot: "py-2",
     contentSlot: "flex flex-col gap-md mt-2"
@@ -127,7 +127,6 @@ const fullSectionUrl = computed(() => {
       :id="sectionId"
       :is="`h${level}`"
       :class="headingSlot()"
-      class="relative"
     >
       <NuxtLink
         v-if="!isEditing"

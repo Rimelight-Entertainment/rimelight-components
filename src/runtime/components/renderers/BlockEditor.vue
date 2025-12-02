@@ -53,36 +53,32 @@ const getComponent = (block: Block): Component | null => {
         title="Start adding content blocks."
         description="There is no content yet. Use the '+' button below to add your first block."
     />
-    <template v-else v-for="block in blocks" :key="block.id">
-      <template v-if="getComponent(block)">
-        <component
-            :is="getComponent(block)"
-            v-bind="block.props"
-            :key="block.id"
-            :type="block.type"
-            class="block-editor-container"
-        />
-      </template>
-      <template v-else>
-        <UAlert
+    <div v-else class="flex flex-col gap-md ml-8">
+      <template v-for="block in blocks" :key="block.id">
+        <RCBlock v-if="getComponent(block)" :id="block.id">
+          <component
+              :is="getComponent(block)"
+              v-bind="block.props"
+              :is-editing="true"
+              :key="block.id"
+              :type="block.type"
+              class="block-editor-container"
+          />
+        </RCBlock>
+        <template v-else>
+          <UAlert
             color="warning"
             variant="subtle"
             icon="lucide:octagon-alert"
             title="Editor Rendering Error"
             :description="`Editor component for type '${block.type || 'UNKNOWN_OR_MISSING'}' was not found. Please ensure the block name is correct and the editor component exists in the 'editor' subdirectory.`"
-        />
+          />
+        </template>
       </template>
-    </template>
+    </div>
   </div>
 </template>
 
 <style scoped>
-/* Scoped styles can be added here, for example to add a clear border/outline
-   to the entire editor area */
-.editor-block-renderer {
-  min-height: 200px;
-  padding: 1rem;
-  /* Example style: A light visual distinction for the editable area */
-  /* border: 1px dashed var(--color-gray-300); */
-}
+
 </style>

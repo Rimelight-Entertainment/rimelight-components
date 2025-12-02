@@ -1,4 +1,5 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+</script>
 
 <template>
   <span
@@ -43,7 +44,7 @@
   <!-- prettier-ignore -->
   <div class="align-baseline sm:align-baseline md:align-baseline lg:align-baseline xl:align-baseline"/>
   <!-- prettier-ignore -->
-  <div class="relative absolute scroll-mt-24 group lg:ps-2 lg:-ms-2 -ms-8 hidden absolute top-0 -ms-8 hidden rounded-md p-1 opacity-0 transition top-1 group-hover:opacity-100 group-focus:opacity-100 lg:flex rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"/>
+  <div class="relative absolute -ms-12 -ms-16 -ms-10 scroll-mt-24 group lg:ps-2 lg:-ms-2 -ms-8 hidden absolute top-0 -ms-8 hidden rounded-md p-1 opacity-0 transition top-1 group-hover:opacity-100 group-focus:opacity-100 lg:flex rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"/>
 </template>
 
 <style scoped></style>

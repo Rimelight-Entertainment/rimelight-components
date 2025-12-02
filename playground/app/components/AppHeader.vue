@@ -32,50 +32,42 @@ const items = computed<NavigationMenuItem[]>(() => {
     },
     {
       label: "Link 1",
-      to: "/link-1",
       active: route.path.startsWith("/link-1")
     },
     {
       label: "Events",
-      to: "/events",
       active: route.path.startsWith("/events")
     },
     {
       label: "Store",
-      to: "/store",
       active: route.path.startsWith("/store")
     },
     {
       label: "Megamenu 2",
-      to: "/megamenu2",
       active: route.path.startsWith("/megamenu2"),
       slot: "megamenu2" as const,
       children: [
         {
           label: "History",
           icon: "lucide:book",
-          description: "Learn about our beginnings and our mission.",
-          to: "/company/history"
+          description: "Learn about our beginnings and our mission."
         },
         {
           label: "Jobs",
           icon: "lucide:briefcase",
           description:
-            "Check out our currently open positions and their requirements.!",
-          to: "/company/jobs"
+            "Check out our currently open positions and their requirements.!"
         },
         {
           label: "Studios",
           icon: "lucide:building-2",
-          description: "Take a tour of our facilities.",
-          to: "/company/studios"
+          description: "Take a tour of our facilities."
         },
         {
           label: "Benefits",
           icon: "lucide:hand-heart",
           description:
-            "Discover what benefits and compensations are available to our employees.",
-          to: "/company/benefits"
+            "Discover what benefits and compensations are available to our employees."
         }
       ]
     }

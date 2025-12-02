@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Block } from "../../../src/runtime/types"
+
 useHead({
   title: "Home"
 })
@@ -323,7 +325,7 @@ const blocks = ref<Block[]>([
   <UPage>
     <UContainer>
       <RCSection :level="1" title="Blocks">
-        <RCBlockRenderer :blocks="blocks" />
+        <RCBlockEditor :blocks="blocks" />
       </RCSection>
       <RCSection
         :level="1"
