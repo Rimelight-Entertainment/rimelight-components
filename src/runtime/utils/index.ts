@@ -1,12 +1,3 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
-
-export type ObjectValues<T> = T[keyof T]
-
 /**
  * Converts a string into a URL-friendly slug.
  * - Converts to lowercase.
