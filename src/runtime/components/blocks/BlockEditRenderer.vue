@@ -25,7 +25,7 @@ const getComponent = (block: Block): Component | null => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-lg">
+  <div class="flex flex-col gap-lg w-full">
     <UEmpty
       v-if="!blocks || blocks.length === 0"
       variant="naked"
@@ -36,14 +36,13 @@ const getComponent = (block: Block): Component | null => {
     <template v-else>
       <template v-for="block in blocks" :key="block.id">
         <template v-if="getComponent(block)">
-          <RCBlock :id="block.id" :type="block.type">
+          <RCBlock :id="block.id" :type="block.type" class="w-full">
             <component
               :is="getComponent(block)"
               :id="block.id"
               v-bind="block.props"
               :type="block.type"
-              class="block-container"
-
+              class="w-full"
             />
           </RCBlock>
         </template>

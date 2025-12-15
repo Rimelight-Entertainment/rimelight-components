@@ -32,7 +32,9 @@ const handleSave = () => {
 </script>
 
 <template>
-  <RCBlockEditRenderer :blocks="blocks" />
+  <div class="pl-8">
+    <RCBlockEditRenderer :blocks="blocks" />
+  </div>
 </template>
 
 <style scoped></style>

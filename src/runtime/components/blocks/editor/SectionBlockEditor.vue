@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { inject, ref, computed, watch } from "vue"
-import type { SectionBlockProps } from "../../../types/blocks"
+import { inject, ref, type Ref, computed, watch } from "vue"
+import type { SectionBlockProps, HeadingLevel } from "../../../types/blocks"
+
+interface SelectItem {
+  label: string;
+  value: HeadingLevel;
+}
 
 const { level, title, description, children, id } = defineProps<
   SectionBlockProps & { id: string }
@@ -9,21 +14,15 @@ const hasChildren = computed(() => children && children.length > 0)
 
 const editorApi = inject<any>("block-editor-api")
 
-const localLevel = ref(level)
+const localLevel: Ref<HeadingLevel> = ref(level as HeadingLevel)
 const localTitle = ref(title)
 const localDescription = ref(description)
 
-/**
- * Commits the new level immediately on change (dropdown commitment).
- */
-const commitLevelOnChange = (e: Event) => {
-  const newVal = parseInt((e.target as HTMLSelectElement).value)
-  localLevel.value = newVal
-
-  if (editorApi && id && newVal !== level) {
-    editorApi.updateBlockProps(id, { level: newVal })
-  }
-}
+const levelItems: SelectItem[] = [
+  { label: "H1", value: 1 },
+  { label: "H2", value: 2 },
+  { label: "H3", value: 3 }
+]
 
 /**
  * Updates the local title buffer on every keystroke for instant feedback.
@@ -50,6 +49,12 @@ const commitDescriptionOnBlur = () => {
     editorApi.updateBlockProps(id, { description: localDescription.value })
   }
 }
+
+watch(localLevel, (newLocalLevel) => {
+  if (editorApi && id && newLocalLevel !== level) {
+    editorApi.updateBlockProps(id, { level: newLocalLevel })
+  }
+})
 
 watch(
   () => title,
@@ -81,16 +86,6 @@ watch(
 
 <template>
   <div class="flex flex-col gap-sm">
-    <select
-      :value="localLevel"
-      @change="commitLevelOnChange"
-      class="rounded border-none bg-gray-100 p-1 text-sm font-bold text-gray-600 focus:ring-2 focus:ring-blue-500"
-    >
-      <option :value="1">H1</option>
-      <option :value="2">H2</option>
-      <option :value="3">H3</option>
-    </select>
-
     <RCSection
       :level="localLevel"
       :title="localTitle"
@@ -98,16 +93,31 @@ watch(
       is-editing
     >
       <template #title>
+        <div class="flex flex-row gap-xs">
+        <USelect
+          v-model="localLevel"
+          :items="levelItems"
+          value-key="value"
+          label-key="label"
+          variant="ghost"
+          placeholder="Select Heading Level"
+          size="sm"
+          color="neutral"
+        />
         <UInput
           :model-value="localTitle"
+          variant="ghost"
           placeholder="Section Title..."
           @input="updateLocalTitle"
           @blur="commitTitleOnBlur"
+          class="w-full"
         />
+        </div>
       </template>
       <template #description>
         <UInput
-          :model-value="description"
+          :model-value="localDescription"
+          variant="ghost"
           placeholder="Section Description..."
           @input="updateLocalDescription"
           @blur="commitDescriptionOnBlur"

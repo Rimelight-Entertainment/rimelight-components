@@ -55,6 +55,7 @@ watch(
         placeholder="Type here..."
         @input="updateLocalText"
         @blur="commitOnBlur"
+        class="w-full"
       />
     </template>
   </RCTest>

@@ -8,7 +8,7 @@ const { title, to, target, children } = defineProps<CardBlockProps>()
   <NuxtLink :to="to" :target="target">
     <UCard class="flex h-full flex-col">
       <h3>{{ title }}</h3>
-      <RCBlockRenderer :blocks="children" />
+      <RCBlockEditRenderer :blocks="children" />
     </UCard>
   </NuxtLink>
 </template>

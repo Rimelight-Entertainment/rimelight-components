@@ -134,14 +134,19 @@ const fullSectionUrl = computed(() => {
         :class="linkSlot()"
         class="group lg:-ms-2 lg:ps-2"
       >
-        <UButton
-          variant="soft"
-          color="primary"
-          leading-icon="lucide:link"
-          :to="`#${sectionId}`"
-          class="absolute top-1 -ms-8 hidden rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"
-          @click="copyToClipboard(fullSectionUrl)"
-        />
+        <ClientOnly>
+          <UButton
+            variant="soft"
+            color="primary"
+            leading-icon="lucide:link"
+            :to="`#${sectionId}`"
+            class="absolute top-1 -ms-8 hidden rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"
+            @click="copyToClipboard(fullSectionUrl)"
+          />
+          <template #fallback>
+            <div class="absolute top-1 -ms-8 w-6 h-6 rounded-md p-1 opacity-0 transition lg:flex" />
+          </template>
+        </ClientOnly>
         <slot name="title">{{ title }}</slot>
       </NuxtLink>
       <slot v-else name="title">{{ title }}</slot>

@@ -5,7 +5,5 @@ const { text } = defineProps<ParagraphBlockProps>()
 </script>
 
 <template>
-  <p>
-    <RCTextRenderer :content="text" />
-  </p>
+  <RCTextRenderer :content="text" />
 </template>
