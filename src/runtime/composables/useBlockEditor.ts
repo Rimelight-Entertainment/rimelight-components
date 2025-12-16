@@ -3,8 +3,6 @@ import { type Ref, computed, shallowRef } from "vue"
 import { v7 as uuidv7 } from "uuid"
 import type { Block } from "../types/blocks"
 
-const MAX_HISTORY_SIZE = 100
-
 /**
  * Helper: Recursively finds the parent array and index of a block by ID.
  */
@@ -13,12 +11,19 @@ function findBlockLocation(
   id: string
 ): { parentArray: Block[]; index: number } | null {
   for (let i = 0; i < blocks.length; i++) {
-    if (blocks[i].id === id) {
+    const block = blocks[i];
+
+    if (!block) continue;
+
+    if (block.id === id) {
       return { parentArray: blocks, index: i }
     }
 
-    if (Array.isArray(blocks[i].props.children)) {
-      const result = findBlockLocation(blocks[i].props.children as Block[], id)
+    // Since the children property only exists on certain block types,
+    // we use the type guard established in the previous step.
+    if ('children' in block.props && Array.isArray(block.props.children)) {
+      // Recursion: TS knows block.props.children is Block[] here.
+      const result = findBlockLocation(block.props.children as Block[], id)
       if (result) return result
     }
   }
@@ -31,12 +36,20 @@ function findBlockLocation(
  */
 function regenerateIds(block: Block): void {
   block.id = uuidv7()
-  if (Array.isArray(block.props.children)) {
+
+  // 💡 FIX: Apply the type guard to ensure 'children' property exists on 'props'.
+  // This satisfies TypeScript that we are only accessing 'children' on container blocks.
+  if ('children' in block.props && Array.isArray(block.props.children)) {
+    // TypeScript now knows block.props.children is safe to access and iterate over (as Block[])
+
+    // We can remove the redundant ': Block[]' cast here since the guard is strong enough,
+    // but the following is also safe and clear:
     block.props.children.forEach((child: Block) => regenerateIds(child))
   }
+  // No need for an 'else' block, as blocks without children simply terminate the recursion here.
 }
 
-export function useBlockEditor(initialBlocks: Ref<Block[]>) {
+export function useBlockEditor(initialBlocks: Ref<Block[]>, maxHistorySize: number = 100) {
   const history = shallowRef<Block[][]>([])
   const future = shallowRef<Block[][]>([])
 
@@ -58,8 +71,9 @@ export function useBlockEditor(initialBlocks: Ref<Block[]>) {
     // 💡 FIX 1: Force a new history array reference when pushing
     const newHistory = [...history.value, snapshot]
 
-    // 2. Enforce the size limit
-    if (newHistory.length > MAX_HISTORY_SIZE) {
+    // Enforce the size limit
+    if (newHistory.length > maxHistorySize) {
+      // Remove the oldest entry
       newHistory.shift()
     }
 
@@ -84,21 +98,14 @@ export function useBlockEditor(initialBlocks: Ref<Block[]>) {
   const undo = () => {
     if (history.value.length === 0) return
 
-    // 1. Save the current state to future
     const currentState: Block[] = JSON.parse(JSON.stringify(initialBlocks.value))
+    future.value = [currentState, ...future.value]
 
-    // 💡 FIX 2: Force a new future array reference when unshifting
-    const newFuture = [currentState, ...future.value]
-    future.value = newFuture
-
-    // 2. Retrieve the previous state
     const previousState = history.value[history.value.length - 1]
 
     if (previousState) {
-      // 3. Apply the previous state
       initialBlocks.value.splice(0, initialBlocks.value.length, ...previousState)
 
-      // 4. FIX 3: Force a new history array reference when popping
       const newHistory = [...history.value]
       newHistory.pop()
       history.value = newHistory
@@ -108,26 +115,26 @@ export function useBlockEditor(initialBlocks: Ref<Block[]>) {
   const redo = () => {
     if (future.value.length === 0) return
 
-    // 1. Save the current state to history
     const currentState: Block[] = JSON.parse(JSON.stringify(initialBlocks.value))
-    history.value = [...history.value, currentState]
 
-    // 2. Get the next future state
-    const nextState = future.value[0] // Get the first item (don't shift yet)
+    // 💡 FIX: Check size limit *after* pushing to history during redo.
+    // If the history stack is full, we must discard the oldest item BEFORE adding the new one.
+    let newHistory = [...history.value, currentState]
+
+    // Enforce size limit on history before continuing
+    if (newHistory.length > maxHistorySize) {
+      newHistory.shift()
+    }
+    history.value = newHistory
+
+    const nextState = future.value[0]
 
     if (nextState) {
-      // 3. Apply the next state immutably.
       initialBlocks.value.splice(0, initialBlocks.value.length, ...nextState)
 
-      // 4. FIX 4: Force a new future array reference when shifting/removing the first item
       const newFuture = [...future.value]
       newFuture.shift()
       future.value = newFuture
-    }
-
-    // 5. Enforce history size limit after pushing to history
-    if (history.value.length > MAX_HISTORY_SIZE) {
-      history.value.shift() // This should be safe now if we were using a new array reference
     }
   }
 
@@ -149,17 +156,50 @@ export function useBlockEditor(initialBlocks: Ref<Block[]>) {
       const loc = findBlockLocation(initialBlocks.value, id)
       if (!loc) return
 
+      // 1. TS18048 FIX: Safely retrieve the block from the array location.
+      // The previous check (if (!loc) return) guarantees parentArray and index exist.
+      // TypeScript, however, still warns about array indexing.
       const oldBlock = loc.parentArray[loc.index]
-      const newPropsObject = {
+
+      // We check if oldBlock is truthy. Since loc exists, oldBlock should too,
+      // but this satisfies TS strict mode for array access inside a loop context.
+      if (!oldBlock) return
+
+      // --- TS2322 FIX: Solving the Block Union Assignment ---
+
+      // The error occurs because TypeScript cannot guarantee that the result of:
+      // { ...oldBlock, props: newPropsObject }
+      // still adheres to the strict structure of the Block union type.
+      // Specifically, when we spread the properties, TypeScript can lose track of the
+      // discriminant property (`type`) relative to the expected `props`.
+
+      // We have to explicitly define the required properties (`id` and `type`)
+      // when constructing the new block object, even though they come from the spread.
+
+      // 2. Create the new props object
+      const newPropsObject: Record<string, any> = {
         ...oldBlock.props,
         ...newProps
       }
 
+      // 3. Construct the new block, explicitly ensuring the required Block fields are present.
+      // The easiest fix is to cast the final object back to the Block type,
+      // assuming we know the structure is preserved.
       const newBlock: Block = {
-        ...oldBlock,
+        id: oldBlock.id, // Explicitly carry over the required BaseBlock properties
+        type: oldBlock.type, // Explicitly carry over the required BaseBlock properties
         props: newPropsObject
-      }
+      } as Block; // We use an 'as Block' cast as the structure is preserved
 
+      // Alternative FIX for Step 3 (safer but verbose):
+      /*
+      const newBlock = {
+        ...oldBlock, // This brings over id, type, and props
+        props: newPropsObject // This overwrites the props property
+      } as Block
+      */
+
+      // 4. Replace the old block with the new one
       loc.parentArray.splice(loc.index, 1, newBlock)
     })
   }
@@ -181,8 +221,14 @@ export function useBlockEditor(initialBlocks: Ref<Block[]>) {
       const newIndex = index + direction
 
       if (newIndex >= 0 && newIndex < parentArray.length) {
-        const [movedBlock] = parentArray.splice(index, 1)
-        parentArray.splice(newIndex, 0, movedBlock)
+        // Alternative: Accessing by index [0] to get the movedBlock.
+        const movedBlock = parentArray.splice(index, 1)[0]
+
+        // We still need to confirm it's not undefined because the type of the result
+        // of array access might be Block | undefined if the array is Block[].
+        if (movedBlock) {
+          parentArray.splice(newIndex, 0, movedBlock)
+        }
       }
     })
   }
