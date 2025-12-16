@@ -5,6 +5,7 @@ import { slugify } from "../../../utils"
 
 const { level, title, description, children } = defineProps<SectionBlockProps>()
 const headingId = computed(() => (title ? slugify(title) : undefined))
+const hasChildren = computed(() => children && children.length > 0)
 </script>
 
 <template>
@@ -14,6 +15,6 @@ const headingId = computed(() => (title ? slugify(title) : undefined))
     :description="description"
     :id="headingId"
   >
-    <RCBlockRenderer :blocks="children" />
+    <RCBlockViewRenderer v-if="hasChildren" :blocks="children" />
   </RCSection>
 </template>

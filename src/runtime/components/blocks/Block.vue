@@ -1,109 +1,74 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject, computed, ref } from "vue"
 
-const {
-  id
-} = defineProps<{
+const editorApi = inject<any>("block-editor-api")
+
+if (!editorApi) {
+  throw new Error("RCBlock must be used within a BlockEditor component")
+}
+const { id, type } = defineProps<{
   id: string
+  type: string
 }>()
 
-const emit = defineEmits<{
-  (e: 'moveBlockUp', id: string): void
-  (e: 'moveBlockDown', id: string): void
-  (e: 'addBlockAbove', id: string): void
-  (e: 'addBlockBelow', id: string): void
-  (e: 'duplicateBlock', id: string): void
-  (e: 'deleteBlock', id: string): void
-}>()
-
-const handleMoveBlockUp = () => {
-  emit('moveBlockUp', id)
-  console.log(`Emitting 'moveBlockUp' for ID: ${id}`)
-}
-
-const handleMoveBlockDown = () => {
-  emit('moveBlockDown', id)
-  console.log(`Emitting 'moveBlockDown' for ID: ${id}`)
-}
-
-const handleAddBlockAbove = () => {
-  emit('addBlockAbove', id)
-  console.log(`Emitting 'addBlockAbove' for ID: ${id}`)
-}
-
-const handleAddBlockBelow = () => {
-  emit('addBlockBelow', id)
-  console.log(`Emitting 'addBlockBelow' for ID: ${id}`)
-}
-
-const handleDuplicateBlock = () => {
-  emit('duplicateBlock', id)
-  console.log(`Emitting 'duplicateBlock' for ID: ${id}`)
-}
-
-const handleDeleteBlock = () => {
-  emit('deleteBlock', id)
-  console.log(`Emitting 'deleteBlock' for ID: ${id}`)
-}
+const onDelete = () => editorApi.removeBlock(id)
+const onDuplicate = () => editorApi.duplicateBlock(id)
+const onMoveUp = () => editorApi.moveBlock(id, -1)
+const onMoveDown = () => editorApi.moveBlock(id, 1)
 
 const items = ref([
   [
     {
-      icon: 'lucide:arrow-up',
-      label: 'Move Block Up',
-      click: handleMoveBlockUp,
+      icon: "lucide:arrow-up",
+      label: "Move Block Up",
+      click: onMoveUp
     },
     {
-      icon: 'lucide:arrow-down',
-      label: 'Move Block Down',
-      click: handleMoveBlockDown,
+      icon: "lucide:arrow-down",
+      label: "Move Block Down",
+      click: onMoveDown
     }
   ],
   [
     {
-      icon: 'lucide:corner-right-up',
-      label: 'Add Block Above',
-      click: handleAddBlockAbove,
+      icon: "lucide:corner-right-up",
+      label: "Add Block Above",
+      //click: handleAddBlockAbove
     },
     {
-      icon: 'lucide:corner-right-down',
-      label: 'Add Block Below',
-      click: handleAddBlockBelow,
+      icon: "lucide:corner-right-down",
+      label: "Add Block Below",
+      //click: handleAddBlockBelow
     }
   ],
   [
     {
-      icon: 'lucide:copy-plus',
-      label: 'Duplicate Block',
-      click: handleDuplicateBlock,
+      icon: "lucide:copy-plus",
+      label: "Duplicate Block",
+      click: onDuplicate
     },
     {
-      color: 'error',
-      icon: 'lucide:trash-2',
-      label: 'Delete Block',
-      click: handleDeleteBlock,
+      color: "error",
+      icon: "lucide:trash-2",
+      label: "Delete Block",
+      click: onDelete
     }
   ]
 ])
 </script>
 
 <template>
-  <div class="relative group">
+  <div class="group relative">
     <div
-      class=" absolute top-0 -ms-10 left-0
-             z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+      class="absolute top-0 left-0 z-10 -ms-10 opacity-0 transition-opacity group-hover:opacity-100"
     >
-      <UDropdownMenu
-        :items="items"
-      >
-        <UButton icon="lucide:grip-vertical" variant="ghost" color="neutral"/>
+      <UDropdownMenu :items="items">
+        <UButton icon="lucide:grip-vertical" variant="ghost" color="neutral" />
       </UDropdownMenu>
     </div>
 
-    <slot/>
+    <slot />
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

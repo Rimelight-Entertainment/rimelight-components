@@ -1,57 +1,131 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue"
-import type {
-  SectionBlockProps
-} from "~~/src/runtime/types/blocks"
-import { slugify } from "../../../utils"
+import { inject, ref, type Ref, computed, watch } from "vue"
+import type { SectionBlockProps, HeadingLevel } from "../../../types/blocks"
 
-const { level, title, description, children } = defineProps<SectionBlockProps>()
+interface SelectItem {
+  label: string;
+  value: HeadingLevel;
+}
 
-const titleCharacterCount = 128
-const descriptionCharacterCount = 256
+const { level, title, description, children, id } = defineProps<
+  SectionBlockProps & { id: string }
+>()
+const hasChildren = computed(() => children && children.length > 0)
 
-const localTitle = ref(title || "")
-const localDescription = ref(description || "")
+const editorApi = inject<any>("block-editor-api")
 
-const headingId = computed(() => (title ? slugify(title) : undefined))
+const localLevel: Ref<HeadingLevel> = ref(level as HeadingLevel)
+const localTitle = ref(title)
+const localDescription = ref(description)
+
+const levelItems: SelectItem[] = [
+  { label: "H1", value: 1 },
+  { label: "H2", value: 2 },
+  { label: "H3", value: 3 }
+]
+
+/**
+ * Updates the local title buffer on every keystroke for instant feedback.
+ */
+const updateLocalTitle = (e: Event) => {
+  localTitle.value = (e.target as HTMLInputElement).value
+}
+
+/**
+ * Commits the final local title value to the global store when the input loses focus.
+ */
+const commitTitleOnBlur = () => {
+  if (editorApi && id && localTitle.value !== title) {
+    editorApi.updateBlockProps(id, { title: localTitle.value })
+  }
+}
+
+const updateLocalDescription = (e: Event) => {
+  localDescription.value = (e.target as HTMLInputElement).value
+}
+
+const commitDescriptionOnBlur = () => {
+  if (editorApi && id && localDescription.value !== description) {
+    editorApi.updateBlockProps(id, { description: localDescription.value })
+  }
+}
+
+watch(localLevel, (newLocalLevel) => {
+  if (editorApi && id && newLocalLevel !== level) {
+    editorApi.updateBlockProps(id, { level: newLocalLevel })
+  }
+})
+
+watch(
+  () => title,
+  (newVal) => {
+    if (newVal !== localTitle.value) {
+      localTitle.value = newVal
+    }
+  }
+)
+
+watch(
+  () => level,
+  (newVal) => {
+    if (newVal !== localLevel.value) {
+      localLevel.value = newVal
+    }
+  }
+)
+
+watch(
+  () => description,
+  (newVal) => {
+    if (newVal !== localDescription.value) {
+      localDescription.value = newVal
+    }
+  }
+)
 </script>
 
 <template>
-  <RCSection
-      :level="level"
-      :title="title"
+  <div class="flex flex-col gap-sm">
+    <RCSection
+      :level="localLevel"
+      :title="localTitle"
       :description="description"
-      :id="headingId"
-  >
-    <template #title>
-      <UInput v-model="localTitle" :maxlength="titleCharacterCount" type="text" variant="ghost" placeholder="Section title" class="w-full">
-        <template #trailing>
-          <div
-            id="character-count"
-            class="text-xs text-dimmed tabular-nums"
-            aria-live="polite"
-            role="status"
-          >
-            {{ localTitle?.length }}/{{ titleCharacterCount }}
-          </div>
-        </template>
-      </UInput>
-    </template>
-
-    <template #description>
-      <UTextarea v-model="localDescription" :maxlength="descriptionCharacterCount" variant="ghost" autoresize placeholder="Section description" class="w-full">
-        <template #trailing>
-          <div
-            id="character-count"
-            class="text-xs text-dimmed tabular-nums"
-            aria-live="polite"
-            role="status"
-          >
-            {{ localDescription?.length }}/{{ descriptionCharacterCount }}
-          </div>
-        </template>
-      </UTextarea>
-    </template>
-    <RCBlockEditor :blocks="children" />
-  </RCSection>
+      is-editing
+    >
+      <template #title>
+        <div class="flex flex-row gap-xs">
+        <USelect
+          v-model="localLevel"
+          :items="levelItems"
+          value-key="value"
+          label-key="label"
+          variant="ghost"
+          placeholder="Select Heading Level"
+          size="sm"
+          color="neutral"
+        />
+        <UInput
+          :model-value="localTitle"
+          variant="ghost"
+          placeholder="Section Title..."
+          @input="updateLocalTitle"
+          @blur="commitTitleOnBlur"
+          class="w-full"
+        />
+        </div>
+      </template>
+      <template #description>
+        <UInput
+          :model-value="localDescription"
+          variant="ghost"
+          placeholder="Section Description..."
+          @input="updateLocalDescription"
+          @blur="commitDescriptionOnBlur"
+        />
+      </template>
+      <template #default>
+        <RCBlockEditRenderer v-if="hasChildren" :blocks="children" />
+      </template>
+    </RCSection>
+  </div>
 </template>

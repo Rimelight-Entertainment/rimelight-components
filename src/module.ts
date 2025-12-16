@@ -2,7 +2,7 @@ import {
   defineNuxtModule,
   addComponentsDir,
   addImportsDir,
-  createResolver
+  createResolver, installModule
 } from "@nuxt/kit"
 import { name, version, homepage } from "../package.json"
 import { type CalloutOptions, defaultOptions } from "./defaults"
@@ -110,6 +110,10 @@ export default defineNuxtModule<ModuleOptions>().with({
       nuxt.options.appConfig.rimelightComponents || {},
       options
     )
+
+    nuxt.options.build.transpile.push('@nuxt/ui')
+
+    installModule('@nuxt/ui')
 
     addComponentsDir({
       path: resolve("./runtime/components/"),

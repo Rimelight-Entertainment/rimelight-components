@@ -6,6 +6,6 @@ const { variant, children, to, target } = defineProps<CalloutBlockProps>()
 
 <template>
   <RCCallout :variant="variant" :to="to" :target="target">
-    <RCBlockEditor :blocks="children" />
+    <RCBlockViewRenderer :blocks="children" />
   </RCCallout>
 </template>
