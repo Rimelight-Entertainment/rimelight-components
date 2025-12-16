@@ -5,10 +5,18 @@ import { useBlockEditor } from "../../composables/useBlockEditor"
 
 const blocks = defineModel<Block[]>({ required: true })
 
-const emit = defineEmits<{
-  (e: "update:modelValue", value: Block[]): void
+export interface BlockEditorProps {
+  historyLimit?: number
+  isSaving: boolean
+}
+
+const { historyLimit, isSaving } = defineProps<BlockEditorProps>()
+
+export interface BlockEditorEmits {
   (e: "save"): void
-}>()
+}
+
+const emit = defineEmits<BlockEditorEmits>()
 
 const {
   removeBlock,
@@ -20,7 +28,7 @@ const {
   redo,
   canUndo,
   canRedo
-} = useBlockEditor(blocks)
+} = useBlockEditor(blocks, historyLimit)
 
 provide("block-editor-api", {
   removeBlock,
@@ -76,6 +84,26 @@ const redoAction = () => {
     redo()
   }
 }
+
+/*defineShortcuts({
+  // Save: Ctrl + S
+  'meta_s': {
+    handler: handleSave
+  },
+
+  // Undo: Ctrl + Z
+  'meta_z': {
+    handler: undoAction
+  },
+
+  // Ctrl + Shift + Z
+  'meta_shift_z': {
+    handler: redoAction
+  },
+
+  // Toggle Preview: Ctrl + P
+  'meta_p': togglePreview
+})*/
 </script>
 
 <template>
@@ -100,13 +128,22 @@ const redoAction = () => {
       />
     </div>
 
-    <UButton
-      :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
-      :label="showPreview ? 'Hide Preview' : 'Show Preview'"
-      variant="outline"
-      color="neutral"
-      @click="togglePreview"
-    />
+    <div class="flex items-center gap-sm">
+      <UButton
+        :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
+        :label="showPreview ? 'Hide Preview' : 'Show Preview'"
+        variant="outline"
+        color="neutral"
+        @click="togglePreview"
+      />
+      <UButton
+        icon="lucide:save"
+        label="Save Post"
+        color="primary"
+        :loading="isSaving"
+        @click="handleSave"
+      />
+    </div>
   </div>
 
   <div :class="gridClass">
