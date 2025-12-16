@@ -107,63 +107,67 @@ const redoAction = () => {
 </script>
 
 <template>
-  <div class="mb-lg flex justify-between pr-8">
-
-    <div class="flex items-center gap-sm">
+  <UHeader class="fixed mt-16 top-0 left-0 z-50 h-12 w-full bg-muted">
+  <template #left>
+    <div class="flex items-center gap-xs">
       <UButton
         icon="lucide:rotate-ccw"
-        label="Undo"
         variant="outline"
         color="neutral"
+        size="xs"
         :disabled="!canUndo"
         @click="undoAction"
       />
       <UButton
         icon="lucide:rotate-cw"
-        label="Redo"
         variant="outline"
         color="neutral"
+        size="xs"
         :disabled="!canRedo"
         @click="redoAction"
       />
     </div>
+  </template>
 
-    <div class="flex items-center gap-sm">
+  <template #right>
+    <div class="flex items-center gap-xs">
       <UButton
         :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
-        :label="showPreview ? 'Hide Preview' : 'Show Preview'"
+        label="Preview"
         variant="outline"
         color="neutral"
+        size="xs"
         @click="togglePreview"
       />
       <UButton
         icon="lucide:save"
-        label="Save Post"
+        label="Save"
         color="primary"
+        size="xs"
         :loading="isSaving"
         @click="handleSave"
       />
     </div>
-  </div>
+  </template>
+  </UHeader>
+  <UPage>
+    <div :class="gridClass">
 
-  <div :class="gridClass">
+      <div :class="editorPanelClass">
+          <RCBlockEditRenderer :blocks="blocks" />
+      </div>
 
-    <div :class="editorPanelClass">
-      <div class="pl-8">
-        <RCBlockEditRenderer :blocks="blocks" />
+      <div
+        v-if="showPreview"
+        class="col-span-1 w-full"
+      >
+        <RCBlockViewRenderer
+          :blocks="blocks"
+          class="transition duration-300 opacity-100"
+        />
       </div>
     </div>
-
-    <div
-      v-if="showPreview"
-      class="col-span-1 w-full"
-    >
-      <RCBlockViewRenderer
-        :blocks="blocks"
-        class="transition duration-300 opacity-100"
-      />
-    </div>
-  </div>
+  </UPage>
 </template>
 
 <style scoped></style>

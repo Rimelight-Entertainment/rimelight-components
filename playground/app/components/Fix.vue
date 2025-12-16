@@ -36,7 +36,7 @@
   <!-- prettier-ignore -->
   <div class="flex flex-row sm:flex-row md:flex-row lg:flex-row xl:flex-row flex-col sm:flex-col md:flex-col lg:flex-col xl:flex-col flex-wrap flex-grid grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5 grid-cols-6 grid-cols-7 grid-cols-8"/>
   <!-- prettier-ignore -->
-  <div class="items-start sm:items-start md:items-start lg:items-start xl:items-start"/>
+  <div class="px-12 px-8 px-10 pl-5 pl-10 pl-6 items-start sm:items-start md:items-start lg:items-start xl:items-start"/>
   <!-- prettier-ignore -->
   <div class="items-center sm:items-center md:items-center lg:items-center xl:items-center"/>
   <!-- prettier-ignore -->

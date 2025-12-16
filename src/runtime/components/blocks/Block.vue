@@ -58,9 +58,9 @@ const items = ref([
 </script>
 
 <template>
-  <div class="group relative">
+  <div class="group relative pl-12 flex flex-row gap-xs">
     <div
-      class="absolute top-0 left-0 z-10 -ms-10 opacity-0 transition-opacity group-hover:opacity-100"
+      class="top-0 left-0 z-10 opacity-0 transition-opacity group-hover:opacity-100"
     >
       <UDropdownMenu :items="items">
         <UButton icon="lucide:grip-vertical" variant="ghost" color="neutral" />
