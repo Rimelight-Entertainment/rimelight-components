@@ -16,18 +16,9 @@ const editorRef = ref<HTMLElement | null>(null)
 // Local buffer that holds the HTML representation of the content for initial render/sync
 const localHtml = ref(richTextToHtml(props.text))
 
-// --- Commit & Update Logic ---
+const isContentChanging = ref(false)
 
-/**
- * Handles the input event (optional, for real-time local updates if needed)
- */
-const updateLocalContent = (e: Event) => {
-  // For a basic contenteditable, we often rely on the DOM itself for the source of truth
-  // and only update the local variable if complex logic is involved.
-  if (editorRef.value) {
-    localHtml.value = editorRef.value.innerHTML
-  }
-}
+// --- Commit & Update Logic ---
 
 /**
  * Commits the content of the editor to the global store on blur.
@@ -35,40 +26,52 @@ const updateLocalContent = (e: Event) => {
 const commitContentOnBlur = () => {
   if (!editorRef.value || !editorApi) return
 
-  const rawHtml = editorRef.value.innerText.trim() // Get plain text content for simplicity
+  // 1. Get the content (using innerText to simulate plain text editing)
+  const rawHtml = editorRef.value.innerText.trim()
 
-  // Only commit if the content has actually changed from the last known state (prop text content)
+  // 2. Only commit if the content has actually changed from the last known state
   const currentPropText = richTextToHtml(props.text)
   if (rawHtml === currentPropText) {
     return
   }
 
-  // Parse the raw input back into the RichTextContent structure
-  const newRichContent: RichTextContent = parseHtmlToRichText(rawHtml)
+  // 3. Set a flag to ignore watcher updates briefly (defensive measure)
+  isContentChanging.value = true
 
-  // Commit the structural update
+  // 4. Commit the structural update
+  const newRichContent: RichTextContent = parseHtmlToRichText(rawHtml)
   editorApi.updateBlockProps(props.id, { text: newRichContent })
+
+  // 5. Reset flag after commit
+  nextTick(() => {
+    isContentChanging.value = false
+  })
 }
 
 // 3. Sync-In: Watch for external changes (undo/redo) and sync back to the editor
 watch(
-  () => props.text,
-  (newContent) => {
-    const newHtml = richTextToHtml(newContent)
+    () => props.text,
+    (newContent) => {
+      // Only sync back if the change is external AND the user is not actively typing
+      if (isContentChanging.value || !editorRef.value || document.activeElement === editorRef.value) {
+        return
+      }
 
-    // Only update if the content has actually changed and the editor is not currently focused
-    // We trust the DOM to have the correct state if focused.
-    if (editorRef.value && document.activeElement !== editorRef.value) {
-      localHtml.value = newHtml
-      editorRef.value.innerHTML = newHtml // Force DOM update for contenteditable
-    }
-  },
-  { deep: true, immediate: true }
+      const newHtml = richTextToHtml(newContent)
+
+      // 💡 FIX: Manually update the DOM content, bypassing v-html
+      if (editorRef.value.innerText !== newHtml) {
+        editorRef.value.innerHTML = newHtml
+        localHtml.value = newHtml // Update local state for future use
+      }
+    },
+    { deep: true, immediate: true }
 )
 
 // Set the initial content when mounted (optional, handled by v-html but safer)
 onMounted(() => {
   if (editorRef.value) {
+    // 💡 FIX: Manually set content on mount. NO v-html in template.
     editorRef.value.innerHTML = localHtml.value
   }
 })
@@ -76,16 +79,14 @@ onMounted(() => {
 
 <template>
     <div
-      ref="editorRef"
-      contenteditable="true"
-      @input="updateLocalContent"
-      @blur="commitContentOnBlur"
-      :class="[
+        ref="editorRef"
+        contenteditable="true"
+        @blur="commitContentOnBlur"
+        :class="[
         'p-2 outline-none min-h-6',
         'focus:ring-2 focus:ring-blue-500 rounded-md transition duration-150',
-        'text-base' // Apply your typography styles here
+        'text-base'
       ]"
-      v-html="localHtml"
     >
     </div>
 </template>
