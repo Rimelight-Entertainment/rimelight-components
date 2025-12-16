@@ -1,5 +1,5 @@
 // composables/useBlockEditor.ts
-import { type Ref, computed, shallowRef } from "vue"
+import { type Ref, computed, ref, shallowRef } from "vue"
 import { v7 as uuidv7 } from "uuid"
 import type { Block } from "../types/blocks"
 
@@ -52,6 +52,7 @@ function regenerateIds(block: Block): void {
 export function useBlockEditor(initialBlocks: Ref<Block[]>, maxHistorySize: number = 100) {
   const history = shallowRef<Block[][]>([])
   const future = shallowRef<Block[][]>([])
+  const committedBlocks = ref<Block[]>(JSON.parse(JSON.stringify(initialBlocks.value)))
 
 
   /**
@@ -271,18 +272,32 @@ export function useBlockEditor(initialBlocks: Ref<Block[]>, maxHistorySize: numb
     })
   }
 
-  // --- Final Return ---
+  const commitChanges = (): Block[] => {
+    // 1. Take a deep copy of the current working state (initialBlocks)
+    const committedSnapshot: Block[] = JSON.parse(JSON.stringify(initialBlocks.value))
+
+    // 2. Update the internal ref
+    committedBlocks.value = committedSnapshot
+
+    // 3. Return the snapshot for immediate use (e.g., passing to an API call)
+    return committedSnapshot
+  }
 
   return {
+    // Mutations
     updateBlockProps,
     removeBlock,
     moveBlock,
     duplicateBlock,
     insertBlock,
+    // History
     undo,
     redo,
     canUndo,
-    canRedo
+    canRedo,
+    // State
+    committedBlocks: committedBlocks,
+    commitChanges: commitChanges,
   }
 }
 
