@@ -10,10 +10,7 @@ const blocks = ref<Block[]>([
 <template>
   <UPage>
     <UPageSection>
-      <div class="grid grid-cols-2 gap-xl">
-        <RCBlockEditor v-model="blocks" class="col-span-1 w-full" />
-        <RCBlockViewRenderer :blocks="blocks" class="col-span-1 w-full" />
-      </div>
+      <RCBlockEditor v-model="blocks" class="w-full" />
     </UPageSection>
   </UPage>
 </template>
