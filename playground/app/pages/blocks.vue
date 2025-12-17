@@ -10,7 +10,7 @@ const blocks = ref<Block[]>([
 <template>
   <UPage>
     <UPageSection>
-      <RCBlockEditor v-model="blocks" class="w-full" />
+      <RCBlockEditor v-model="blocks" :is-saving="false" class="w-full" />
     </UPageSection>
   </UPage>
 </template>
