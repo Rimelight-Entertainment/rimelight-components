@@ -49,7 +49,10 @@ function regenerateIds(block: Block): void {
   // No need for an 'else' block, as blocks without children simply terminate the recursion here.
 }
 
-export function useBlockEditor(initialBlocks: Ref<Block[]>, maxHistorySize: number = 100) {
+export function useBlockEditor(
+  initialBlocks: Ref<Block[]>,
+  { maxHistorySize = 100, onMutation }: { maxHistorySize?: number, onMutation?: () => void } = {}
+) {
   const history = shallowRef<Block[][]>([])
   const future = shallowRef<Block[][]>([])
   const committedBlocks = ref<Block[]>(JSON.parse(JSON.stringify(initialBlocks.value)))
@@ -87,10 +90,11 @@ export function useBlockEditor(initialBlocks: Ref<Block[]>, maxHistorySize: numb
    * This is called by mutations (updateBlockProps, removeBlock, etc.)
    */
   const executeMutation = (mutationFn: () => void) => {
-    // 1. Save the state *before* the mutation changes initialBlocks.value
-    captureSnapshot()
-
-    // 2. Execute the actual mutation (which changes initialBlocks.value)
+    if (onMutation) {
+      onMutation() // This triggers the Page-level snapshot
+    } else {
+      captureSnapshot() // Fallback to internal block-only history
+    }
     mutationFn()
   }
 

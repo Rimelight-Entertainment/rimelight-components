@@ -18,6 +18,7 @@ export type BlockType =
   | "CardBlock"
   | "CollapsibleCardBlock"
 
+
 /**
  * Defines the common structure for any content block object.
  * The 'type' must be one of the registered BlockType values.
@@ -25,6 +26,7 @@ export type BlockType =
 export interface BaseBlock {
   id: string
   type: BlockType
+  isTemplated?: boolean
   props: Record<string, any>
 }
 
