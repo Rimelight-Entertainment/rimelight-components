@@ -1,8 +1,7 @@
-// utils/template-sync.ts
 import { PAGE_TEMPLATES } from "../types/pageTemplates"
 import type { Page, Localized } from "../types/pages"
 
-const getLocalizedContent = (field: Localized | undefined, currentLocale: string): string => {
+export const getLocalizedContent = (field: Localized | undefined, currentLocale: string): string => {
   if (!field) return ''
   return field[currentLocale as keyof Localized] || field['en' as keyof Localized] || ''
 }
