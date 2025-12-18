@@ -123,7 +123,6 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     addImportsDir(resolve("./runtime/composables"))
     addImportsDir(resolve("./runtime/utils"))
-    nuxt.options.alias['#rimelight'] = resolve('./runtime')
 
     // Scan the directory for all .vue files
     const blockRendererFiles = readdirSync(

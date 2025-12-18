@@ -1,27 +1,10 @@
 // utils/template-sync.ts
 import { PAGE_TEMPLATES } from "../types/pageTemplates"
-import type { Page, PageType } from "../types/pages"
-import type { Block } from "../types/blocks"
-import { v7 as uuidv7 } from "uuid"
+import type { Page, Localized } from "../types/pages"
 
-
-export function createPage(type: PageType, slug: string = "new-page"): Page {
-  const now = new Date().toISOString()
-
-  // Directly call the factory function for the specific type
-  const templateFn = PAGE_TEMPLATES[type]
-  const blocks = templateFn ? templateFn() : []
-
-  return {
-    id: uuidv7(),
-    slug,
-    type,
-    tags: [],
-    properties: {} as any,
-    blocks: blocks,
-    createdAt: now,
-    updatedAt: now
-  }
+const getLocalizedContent = (field: Localized | undefined, currentLocale: string): string => {
+  if (!field) return ''
+  return field[currentLocale as keyof Localized] || field['en' as keyof Localized] || ''
 }
 
 
