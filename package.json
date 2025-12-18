@@ -22,11 +22,13 @@
   "exports": {
     ".": {
       "types": "./dist/module.d.mts",
-      "import": "./dist/module.mjs"
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.mjs"
     },
     "./types": {
       "types": "./dist/runtime/types/index.d.ts",
-      "import": "./dist/runtime/types/index.js"
+      "import": "./dist/runtime/types/index.js",
+      "require": "./dist/runtime/types/index.js"
     },
     "./runtime/*": "./dist/runtime/*",
     "./components/*": "./dist/runtime/components/*",
@@ -36,8 +38,9 @@
       "import": "./dist/runtime/utils/*.js"
     }
   },
-  "style": "./dist/runtime/index.css",
   "main": "./dist/module.mjs",
+  "types": "./dist/module.d.mts",
+  "style": "./dist/runtime/index.css",
   "typesVersions": {
     "*": {
       ".": [
