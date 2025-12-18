@@ -1,6 +1,4 @@
-/*
-* Page Category Definitions
-*/
+import { type Image } from "../types/schemas"
 import { type Block } from "./blocks"
 
 export type PageType = "Default" | "Location" | "Species" | "Character" | "Object" | "Tale" | "Item" | "Skill" | "Hero" | "Card" | "Series" | "Episode"
@@ -96,6 +94,7 @@ export interface EpisodeProperties extends BasePageProperties {
 
 }
 
+export type Localized<T = string> = Record<string, T>;
 
 /**
  * Common fields shared by every page regardless of type.
@@ -103,7 +102,10 @@ export interface EpisodeProperties extends BasePageProperties {
 interface BasePage {
   id: string
   slug: string
-  tags: string[]
+  image?: Image
+  title: Localized<string>
+  description?: Localized<string>
+  tags: Localized<string>[]
   blocks: Block[]
   createdAt: string
   updatedAt: string

@@ -2,7 +2,7 @@ import {
   defineNuxtModule,
   addComponentsDir,
   addImportsDir,
-  createResolver, installModule
+  createResolver
 } from "@nuxt/kit"
 import { name, version, homepage } from "../package.json"
 import { type CalloutOptions, defaultOptions } from "./defaults"
@@ -14,7 +14,7 @@ import { readdirSync } from "node:fs"
 import { basename } from "node:path"
 import type { Nuxt } from "@nuxt/schema"
 
-export type * from './runtime/types'
+export * from './runtime/types'
 
 export interface ModuleOptions {
   /**
@@ -113,8 +113,6 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     nuxt.options.build.transpile.push('@nuxt/ui')
 
-    installModule('@nuxt/ui')
-
     addComponentsDir({
       path: resolve("./runtime/components/"),
       pathPrefix: false,
@@ -125,6 +123,7 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     addImportsDir(resolve("./runtime/composables"))
     addImportsDir(resolve("./runtime/utils"))
+    nuxt.options.alias['#rimelight'] = resolve('./runtime')
 
     // Scan the directory for all .vue files
     const blockRendererFiles = readdirSync(
