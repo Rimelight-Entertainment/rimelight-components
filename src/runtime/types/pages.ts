@@ -117,8 +117,10 @@ interface BasePage {
   image?: Image
   title: Localized<string>
   description?: Localized<string>
-  tags: Localized<string>[]
+  tags?: Localized<string>[]
+  authorsIds?: string[]
   blocks: Block[]
+  posted_at?: string
   createdAt: string
   updatedAt: string
 }
