@@ -22,8 +22,11 @@
   "exports": {
     ".": {
       "types": "./dist/module.d.mts",
-      "style": "./dist/runtime/index.css",
       "import": "./dist/module.mjs"
+    },
+    "./types": {
+      "types": "./dist/runtime/types/index.d.ts",
+      "import": "./dist/runtime/types/index.js"
     },
     "./runtime/*": "./dist/runtime/*",
     "./components/*": "./dist/runtime/components/*",
