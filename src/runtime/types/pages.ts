@@ -1,7 +1,7 @@
 import { type Image } from "../types/schemas"
 import { type Block } from "./blocks"
 
-export type PageType = "Default" | "Location" | "Species" | "Character" | "Object" | "Tale" | "Item" | "Skill" | "Hero" | "Card" | "Series" | "Episode"
+export type PageType = "Default" | "Document" | "BlogPost" | "PatchNote" | "Location" | "Species" | "Character" | "Object" | "Tale" | "Item" | "Skill" | "Hero" | "Card" | "Series" | "Episode"
 
 export interface Property {
   // The human-readable label to display
@@ -26,6 +26,18 @@ export interface PropertyGroup {
 }
 
 export interface BasePageProperties {
+
+}
+
+export interface DocumentProperties extends BasePageProperties {
+
+}
+
+export interface BlogPostProperties extends BasePageProperties {
+
+}
+
+export interface PatchNoteProperties extends BasePageProperties {
 
 }
 
@@ -116,6 +128,9 @@ interface BasePage {
  */
 export type Page =
   | { type: "Default"; properties: BasePageProperties } & BasePage
+  | { type: "Document"; properties: DocumentProperties } & BasePage
+  | { type: "BlogPost"; properties: BlogPostProperties } & BasePage
+  | { type: "PatchNote"; properties: PatchNoteProperties } & BasePage
   | { type: "Character"; properties: CharacterProperties } & BasePage
   | { type: "Card"; properties: CardProperties } & BasePage
   | { type: "Location"; properties: BasePageProperties } & BasePage
@@ -134,6 +149,9 @@ export type Page =
  */
 export const PAGE_SCHEMAS: Record<PageType, PropertyGroup[]> = {
   Default: [],
+  Document: [],
+  BlogPost: [],
+  PatchNote: [],
   Character: [
     {
       id: "identity",
