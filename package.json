@@ -44,31 +44,6 @@
       "import": "./dist/runtime/utils/*.mjs"
     }
   },
-  "typesVersions": {
-    "*": {
-      ".": [
-        "./dist/module.d.mts"
-      ],
-      "runtime/*": [
-        "./dist/runtime/*"
-      ],
-      "components/*": [
-        "./dist/runtime/components/*"
-      ],
-      "composables": [
-        "./dist/runtime/composables/index.d.mts"
-      ],
-      "composables/*": [
-        "./dist/runtime/composables/*.d.mts"
-      ],
-      "utils": [
-        "./dist/runtime/utils/index.d.mts"
-      ],
-      "utils/*": [
-        "./dist/runtime/utils/*.d.mts"
-      ]
-    }
-  },
   "style": "./dist/runtime/index.css",
   "main": "./dist/module.mjs",
   "files": [
