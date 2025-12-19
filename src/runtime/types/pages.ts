@@ -71,8 +71,8 @@ export interface BasePage {
   authorsIds?: string[]
   blocks: Block[]
   posted_at?: Date | null
-  createdAt: Date
-  updatedAt: Date
+  created_at: Date
+  updated_at: Date
 }
 
 /**
