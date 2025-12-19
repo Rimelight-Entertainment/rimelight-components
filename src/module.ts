@@ -14,7 +14,8 @@ import { readdirSync } from "node:fs"
 import { basename } from "node:path"
 import type { Nuxt } from "@nuxt/schema"
 
-export type * from './runtime/types'
+export type * from "./runtime/types"
+export * from "./runtime/utils"
 
 export interface ModuleOptions {
   /**
