@@ -1,9 +1,17 @@
+import { toValue, type MaybeRefOrGetter } from 'vue'
 import type { Page, Localized, PageDefinition } from "../types/pages"
 
-export const getLocalizedContent = (field: Localized | undefined, currentLocale: string): string => {
-  if (!field) return ''
-  return field[currentLocale as keyof Localized] || field['en' as keyof Localized] || ''
-}
+export const getLocalizedContent = <T = string>(
+    field: Localized<T> | undefined,
+    currentLocale: MaybeRefOrGetter<string>
+): T | string => {
+  if (!field) return '';
+
+  const locale = toValue(currentLocale);
+
+  // Attempt to retrieve current locale, then fallback to 'en', then return empty string or first available key
+  return field[locale] ?? field['en'] ?? '';
+};
 
 /**
  * Ensures a page strictly adheres to its PageDefinition.
