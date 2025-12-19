@@ -60,19 +60,19 @@
         "./dist/runtime/components/*"
       ],
       "composables": [
-        "./dist/runtime/composables/index.d.ts"
+        "./dist/runtime/composables/index.d.mts"
       ],
       "composables/*": [
-        "./dist/runtime/composables/*.d.ts"
+        "./dist/runtime/composables/*.d.mts"
       ],
       "utils": [
-        "./dist/runtime/utils/index.d.ts"
+        "./dist/runtime/utils/index.d.mts"
       ],
       "utils/*": [
-        "./dist/runtime/utils/*.d.ts"
+        "./dist/runtime/utils/*.d.mts"
       ],
       "locale": [
-        "./dist/runtime/locale/index.d.ts"
+        "./dist/runtime/locale/index.d.mts"
       ]
     }
   },
