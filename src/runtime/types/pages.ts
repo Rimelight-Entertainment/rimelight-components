@@ -66,13 +66,14 @@ interface BasePage {
   slug: string
   image?: Image
   title: Localized<string>
-  description?: Localized<string>
-  tags?: Localized<string>[]
-  authorsIds?: string[]
+  description?: Localized<string> | null
+  tags: Localized<string>[]
+  authorIds?: string[]
   blocks: Block[]
-  posted_at?: string
-  createdAt: string
-  updatedAt: string
+  posted_at: Date | null
+  created_at: Date
+  updated_at: Date
+  deleted_at: Date | null
 }
 
 /**
