@@ -4,7 +4,9 @@ import { type PageType } from "./pages"
 
 export const PAGE_TEMPLATES: Record<PageType, () => Block[]> = {
   Default: () => [],
-
+  Document: () => [],
+  BlogPost: () => [],
+  PatchNote: () => [],
   Character: () => [
     {
       id: uuidv7(),
