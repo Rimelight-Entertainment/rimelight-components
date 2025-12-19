@@ -6,4 +6,10 @@ export default defineBuildConfig({
             options.addRelativeDeclarationExtensions = false
         }
     },
+    declaration: true,
+    clean: true,
+    rollup: {
+        emitCJS: false,
+        inlineDependencies: true
+    },
 })
