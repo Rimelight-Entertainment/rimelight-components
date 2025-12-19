@@ -24,7 +24,6 @@ export interface Property<T = any> {
   visibleIf?: (properties: any) => boolean
 }
 
-
 export type Localized<T = string> = Record<string, T>;
 
 export interface PropertyGroup {
@@ -32,7 +31,6 @@ export interface PropertyGroup {
   order?: number
   fields: Record<string, Property>
 }
-
 
 /**
  * A PageTemplate is the single definition for a page's properties and initial blocks.
@@ -72,7 +70,7 @@ interface BasePage {
   blocks: Block[]
   posted_at: Date | null
   created_at: Date
-  updated_at: Date
+  updated_at: Date | null
   deleted_at: Date | null
 }
 

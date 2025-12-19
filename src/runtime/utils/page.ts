@@ -1,5 +1,4 @@
 import type { Page, Localized, PageDefinition } from "../types/pages"
-import type { Block } from "../types/blocks"
 
 export const getLocalizedContent = (field: Localized | undefined, currentLocale: string): string => {
   if (!field) return ''
@@ -104,7 +103,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
   }
 
   if (hasChanged) {
-    page.updatedAt = new Date().toISOString()
+    page.updated_at = new Date()
   }
 
   return page
