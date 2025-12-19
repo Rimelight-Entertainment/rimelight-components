@@ -70,9 +70,9 @@ export interface BasePage {
   tags?: Localized<string>[]
   authorsIds?: string[]
   blocks: Block[]
-  posted_at?: string
-  createdAt: string
-  updatedAt: string
+  posted_at?: Date
+  createdAt: Date
+  updatedAt: Date
 }
 
 /**
