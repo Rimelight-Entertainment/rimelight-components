@@ -2,7 +2,7 @@
 import { useRoute } from "#imports"
 import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
-import { useToast } from "#imports"
+import { useToast } from "@nuxt/ui/composables"
 import { tv } from "tailwind-variants"
 import { slugify } from "../../utils"
 

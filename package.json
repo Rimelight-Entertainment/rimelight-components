@@ -78,8 +78,10 @@
     "typecheck": "vue-tsc --noEmit && nuxt typecheck",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
-    "format": "prettier . --check .",
-    "format:fix": "prettier . --write .",
+    "format": "oxfmt --check",
+    "format:fix": "oxfmt .",
+    "check": "bun run typecheck && bun run lint && bun run format",
+    "fix": "bun run lint:fix && bun run format:fix",
     "test": "vitest",
     "release": "release-it --ci"
   },

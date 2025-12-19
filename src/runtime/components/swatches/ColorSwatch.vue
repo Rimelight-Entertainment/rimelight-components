@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
-import { useToast } from "#imports"
+import { useToast } from "@nuxt/ui/composables"
 
 const { copy } = useClipboard()
 const toast = useToast()

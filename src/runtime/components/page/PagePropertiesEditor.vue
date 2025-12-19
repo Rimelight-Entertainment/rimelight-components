@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { type Page, type PageType, PAGE_SCHEMAS } from '../../types/pages'
+import { useAppConfig } from '#imports'
+import { useI18n } from 'vue-i18n'
+import { type Page, type PageType } from '../../types/pages'
 
 const page = defineModel<Page>({ required: true })
+const appConfig = useAppConfig()
+
 /**
  * Accessor for the properties object.
  * Cast to any for dynamic key access in the template.
  */
+const locale = useI18n().locale
 const properties = computed(() => page.value.properties as any)
 
 /**
- * Get the schema groups for the current PageType.
+ * Get the groups directly from the page properties.
+ * We cast to any for dynamic key access.
  */
 const groups = computed(() => {
-  return PAGE_SCHEMAS[page.value.type as PageType] || []
+  return page.value.properties as any
 })
+
 
 /**
  * Logic to determine if a specific field should be visible.
@@ -44,46 +51,46 @@ const getSortedFields = (fields: Record<string, any>) => {
       </UBadge>
     </div>
 
-    <div v-for="group in groups" :key="group.id" class="space-y-4">
+    <div v-for="(group, groupId) in groups" :key="groupId" class="space-y-4">
       <div class="flex items-center gap-3">
         <span class="text-[10px] font-bold uppercase tracking-widest text-primary">
-          {{ group.label }}
+          {{ group.label[locale] }}
         </span>
         <div class="h-px flex-1 bg-border/50"></div>
       </div>
 
       <div class="grid gap-y-4 px-1">
-        <template v-for="[key, schema] in getSortedFields(group.fields)" :key="key">
+        <template v-for="[fieldKey, schema] in getSortedFields(group.fields)" :key="fieldKey">
 
           <UFormField
             v-if="isFieldVisible(schema)"
             :label="schema.label"
-            :name="key"
+            :name="fieldKey"
           >
             <UInput
               v-if="schema.type === 'text'"
-              v-model="properties[key]"
+              v-model="properties[groupId].fields[fieldKey].value[locale]"
               variant="subtle"
               placeholder="..."
             />
 
             <UInput
               v-else-if="schema.type === 'number'"
-              v-model.number="properties[key]"
+              v-model.number="properties[groupId].fields[fieldKey].value"
               type="number"
               variant="subtle"
             />
 
             <USelect
               v-else-if="schema.type === 'enum'"
-              v-model="properties[key]"
+              v-model="properties[groupId].fields[fieldKey].value"
               :items="schema.options || []"
               variant="subtle"
             />
 
             <UInputMenu
               v-else-if="schema.type === 'text-array'"
-              v-model="properties[key]"
+              v-model="properties[groupId].fields[fieldKey].value[locale]"
               multiple
               creatable
               variant="subtle"
@@ -92,7 +99,7 @@ const getSortedFields = (fields: Record<string, any>) => {
 
             <UInput
               v-else-if="schema.type === 'page'"
-              v-model="properties[key]"
+              v-model="properties[groupId].fields[fieldKey].value"
               icon="lucide:link-2"
               variant="subtle"
               :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
@@ -101,6 +108,7 @@ const getSortedFields = (fields: Record<string, any>) => {
         </template>
       </div>
     </div>
+
 
     <USeparator />
 

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import type { Block } from "../../../src/runtime/types"
-import type { AccordionItem } from "@nuxt/ui"
-
 useHead({
   title: "Home"
 })
@@ -76,12 +73,21 @@ const projectsLinks = ref([
   }
 ])
 
-const ctaLinks = ref([
+const ctaLinks = [
   {
-    label: "Call to Action",
-    to: ""
+    label: "Movie Test",
+    to: "/movie",
+    icon: "lucide:film",
+    color: "primary" as const
+  },
+  {
+    label: "Game Test",
+    to: "/game",
+    icon: "lucide:gamepad-2",
+    color: "secondary" as const
   }
-])
+]
+
 </script>
 
 <template>

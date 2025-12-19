@@ -1,9 +1,15 @@
 import { type Image } from "../types/schemas"
 import { type Block } from "./blocks"
 
-export type PageType = "Default" | "Document" | "BlogPost" | "PatchNote" | "Location" | "Species" | "Character" | "Object" | "Tale" | "Item" | "Skill" | "Hero" | "Card" | "Series" | "Episode"
+declare global {
+  interface RimelightRegisterPageTypes { }
+}
 
-export interface Property {
+export type PageType = keyof RegisterPageTypes
+
+export interface Property<T = any> {
+  // The data value
+  value: T
   // The human-readable label to display
   label: string
   // Type of data/renderer
@@ -18,95 +24,39 @@ export interface Property {
   visibleIf?: (properties: any) => boolean
 }
 
+
+export type Localized<T = string> = Record<string, T>;
+
 export interface PropertyGroup {
-  id: string
-  label: string
+  label: Localized<string>
   order?: number
   fields: Record<string, Property>
 }
 
-export interface BasePageProperties {
 
+/**
+ * A PageTemplate is the single definition for a page's properties and initial blocks.
+ */
+export interface PageDefinition {
+  properties: Record<string, PropertyGroup>
+  initialBlocks?: () => Block[]
 }
 
-export interface DocumentProperties extends BasePageProperties {
-
+/**
+ * Helper to define a page with full type safety and literal preservation.
+ * This is used by consuming apps to define their custom page types.
+ */
+export function definePageDefinition<T extends PageDefinition>(def: T): T {
+  return def
 }
 
-export interface BlogPostProperties extends BasePageProperties {
+export interface BasePageProperties { }
 
+export interface RegisterPageTypes extends RimelightRegisterPageTypes {
+  Default: BasePageProperties
 }
 
-export interface PatchNoteProperties extends BasePageProperties {
 
-}
-
-export interface LocationProperties extends BasePageProperties {
-
-}
-
-export interface SpeciesProperties extends BasePageProperties {
-
-}
-
-export interface CharacterProperties extends BasePageProperties {
-  name: string
-  title?: string
-  aliases?: string[]
-  flavourText?: string
-  species?: string
-  sex?: string
-  pronouns?: string
-  height?: number
-  weight?: number
-  dateOfBirth?: string
-  dateOfDeath?: string
-  placeOfBirth?: string
-  placeOfDeath?: string
-  formerAffiliations?: string[]
-  currentAffiliations?: string[]
-  equipment?: string[]
-  pets?: string[]
-  mounts?: string[]
-  favouriteFood?: string
-}
-
-export interface ObjectProperties extends BasePageProperties {
-
-}
-
-export interface TaleProperties extends BasePageProperties {
-
-}
-
-export interface ItemProperties extends BasePageProperties {
-
-}
-
-export interface SkillProperties extends BasePageProperties {
-
-}
-
-export interface HeroProperties extends BasePageProperties {
-
-}
-
-export interface CardProperties extends BasePageProperties {
-  name: string
-  alignment: string
-  type: string
-  flavourText: string
-}
-
-export interface SeriesProperties extends BasePageProperties {
-
-}
-
-export interface EpisodeProperties extends BasePageProperties {
-
-}
-
-export type Localized<T = string> = Record<string, T>;
 
 /**
  * Common fields shared by every page regardless of type.
@@ -128,82 +78,6 @@ interface BasePage {
 /**
  * Discriminated Union for Page Data structure
  */
-export type Page =
-  | { type: "Default"; properties: BasePageProperties } & BasePage
-  | { type: "Document"; properties: DocumentProperties } & BasePage
-  | { type: "BlogPost"; properties: BlogPostProperties } & BasePage
-  | { type: "PatchNote"; properties: PatchNoteProperties } & BasePage
-  | { type: "Character"; properties: CharacterProperties } & BasePage
-  | { type: "Card"; properties: CardProperties } & BasePage
-  | { type: "Location"; properties: BasePageProperties } & BasePage
-  | { type: "Species"; properties: BasePageProperties } & BasePage
-  | { type: "Object"; properties: BasePageProperties } & BasePage
-  | { type: "Tale"; properties: BasePageProperties } & BasePage
-  | { type: "Item"; properties: BasePageProperties } & BasePage
-  | { type: "Skill"; properties: BasePageProperties } & BasePage
-  | { type: "Hero"; properties: BasePageProperties } & BasePage
-  | { type: "Series"; properties: BasePageProperties } & BasePage
-  | { type: "Episode"; properties: BasePageProperties } & BasePage
-
-/**
- * Registry mapping PageTypes to their UI schema.
- * This drives the dynamic form generation in the Sidebar.
- */
-export const PAGE_SCHEMAS: Record<PageType, PropertyGroup[]> = {
-  Default: [],
-  Document: [],
-  BlogPost: [],
-  PatchNote: [],
-  Character: [
-    {
-      id: "identity",
-      label: "Identity",
-      fields: {
-        name: { label: "Name", type: "text" },
-        title: { label: "Social Title", type: "text" },
-        aliases: { label: "Aliases", type: "text-array" },
-      }
-    },
-    {
-      id: "characteristics",
-      label: "Characteristics",
-      fields: {
-        species: { label: "Species", type: "page", allowedPageTypes: ["Species"] },
-        sex: { label: "Sex", type: "enum", options: ["Male", "Female", "Other", "Unknown"] },
-        height: { label: "Height", type: "number" },
-        weight: { label: "Weight", type: "number" },
-      }
-    },
-    {
-      id: "timeline",
-      label: "Timeline",
-      fields: {
-        dateOfBirth: { label: "Date of Birth", type: "text" },
-        dateOfDeath: { label: "Date of Death", type: "text" },
-        placeOfDeath: {
-          label: "Place of Death",
-          type: "text",
-          visibleIf: (props: CharacterProperties) => !!props.dateOfDeath
-        }
-      }
-    },
-    {
-      id: "other",
-      label: "Other",
-      order: 3,
-      fields: {
-        flavourText: { label: "Flavour Text", type: "text" }
-      }
-    }
-  ],
-  Location: [],
-  Species: [],
-  Object: [],
-  Tale: [],
-  Item: [],
-  Skill: [],
-  Hero: [],
-  Card: [],
-  Series: [],
-  Episode: []
-}
+export type Page = {
+  [K in PageType]: { type: K; properties: RegisterPageTypes[K] } & BasePage
+}[PageType]

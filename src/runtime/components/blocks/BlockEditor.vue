@@ -27,7 +27,7 @@ const {
   redo,
   canUndo,
   canRedo
-} = useBlockEditor(blocks, historyLimit)
+} = useBlockEditor(blocks, { maxHistorySize: historyLimit })
 
 provide("block-editor-api", {
   removeBlock,
