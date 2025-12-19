@@ -70,7 +70,7 @@ export interface BasePage {
   tags?: Localized<string>[]
   authorsIds?: string[]
   blocks: Block[]
-  posted_at?: Date
+  posted_at?: Date | null
   createdAt: Date
   updatedAt: Date
 }
