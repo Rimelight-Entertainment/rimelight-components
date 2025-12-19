@@ -1,6 +1,7 @@
 export * from "./richTextHelpers"
 export * from "./blockMapper"
 export * from "./page"
+export * from "./database"
 
 /**
  * Converts a string into a URL-friendly slug.

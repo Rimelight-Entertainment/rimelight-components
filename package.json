@@ -1,7 +1,7 @@
 {
   "name": "rimelight-components",
   "description": "A component library by Rimelight Entertainment.",
-  "version": "2.0.61",
+  "version": "2.0.60",
   "type": "module",
   "repository": {
     "type": "git",
@@ -22,50 +22,65 @@
   "exports": {
     ".": {
       "types": "./dist/module.d.mts",
-      "import": "./dist/module.mjs",
-      "require": "./dist/module.mjs"
-    },
-    "./types": {
-      "types": "./dist/runtime/types/index.d.ts",
-      "import": "./dist/runtime/types/index.js",
-      "require": "./dist/runtime/types/index.js"
+      "style": "./dist/runtime/index.css",
+      "import": "./dist/module.mjs"
     },
     "./runtime/*": "./dist/runtime/*",
     "./components/*": "./dist/runtime/components/*",
-    "./composables/*": "./dist/runtime/composables/*",
+    "./composables": {
+      "types": "./dist/runtime/composables/index.d.ts",
+      "import": "./dist/runtime/composables/index.js"
+    },
+    "./composables/*": {
+      "types": "./dist/runtime/composables/*.d.ts",
+      "import": "./dist/runtime/composables/*.js"
+    },
+    "./utils": {
+      "types": "./dist/runtime/utils/index.d.ts",
+      "import": "./dist/runtime/utils/index.js"
+    },
     "./utils/*": {
-      "types": "./dist/runtime/utils/*.d.mts",
+      "types": "./dist/runtime/utils/*.d.ts",
       "import": "./dist/runtime/utils/*.js"
+    },
+    "./locale": {
+      "types": "./dist/runtime/locale/index.d.ts",
+      "import": "./dist/runtime/locale/index.js"
     }
   },
-  "main": "./dist/module.mjs",
-  "types": "./dist/module.d.mts",
-  "style": "./dist/runtime/index.css",
   "typesVersions": {
     "*": {
       ".": [
         "./dist/module.d.mts"
       ],
-      "vite": [
-        "./dist/vite.d.mts"
-      ],
-      "./runtime/*": [
-        "./dist/runtime/index.d.ts"
+      "runtime/*": [
+        "./dist/runtime/*"
       ],
       "components/*": [
         "./dist/runtime/components/*"
       ],
+      "composables": [
+        "./dist/runtime/composables/index.d.ts"
+      ],
       "composables/*": [
-        "./dist/runtime/composables/*"
+        "./dist/runtime/composables/*.d.ts"
       ],
       "utils": [
         "./dist/runtime/utils/index.d.ts"
       ],
       "utils/*": [
         "./dist/runtime/utils/*.d.ts"
+      ],
+      "locale": [
+        "./dist/runtime/locale/index.d.ts"
       ]
     }
   },
+  "bin": {
+    "nuxt-ui": "./cli/index.mjs"
+  },
+  "style": "./dist/runtime/index.css",
+  "main": "./dist/module.mjs",
   "files": [
     "dist"
   ],

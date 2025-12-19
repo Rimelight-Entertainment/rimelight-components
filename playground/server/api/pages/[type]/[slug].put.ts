@@ -1,5 +1,5 @@
 import type { PageType, Page, Block, RegisterPageTypes } from "../../../../../src/runtime/types"
-import { syncPageWithDefinition } from "../../../../../src/runtime/utils/page"
+import { syncPageWithDefinition } from "../../../../../src/runtime/utils"
 import * as Definitions from "../../../../app/types/page-definitions"
 
 // Mock database update function

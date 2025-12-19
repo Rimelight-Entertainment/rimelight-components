@@ -1,5 +1,5 @@
-import { type Image } from "../types/schemas"
-import { type Block } from "./blocks"
+import { type Image } from "../types"
+import { type Block } from "../types"
 
 declare global {
   interface RimelightRegisterPageTypes { }
@@ -24,6 +24,7 @@ export interface Property<T = any> {
   visibleIf?: (properties: any) => boolean
 }
 
+
 export type Localized<T = string> = Record<string, T>;
 
 export interface PropertyGroup {
@@ -31,6 +32,7 @@ export interface PropertyGroup {
   order?: number
   fields: Record<string, Property>
 }
+
 
 /**
  * A PageTemplate is the single definition for a page's properties and initial blocks.
@@ -59,19 +61,18 @@ export interface RegisterPageTypes extends RimelightRegisterPageTypes {
 /**
  * Common fields shared by every page regardless of type.
  */
-interface BasePage {
+export interface BasePage {
   id: string
   slug: string
   image?: Image
   title: Localized<string>
-  description?: Localized<string> | null
-  tags: Localized<string>[]
-  authorIds?: string[]
+  description?: Localized<string>
+  tags?: Localized<string>[]
+  authorsIds?: string[]
   blocks: Block[]
-  posted_at: Date | null
-  created_at: Date
-  updated_at: Date | null
-  deleted_at: Date | null
+  posted_at?: string
+  createdAt: string
+  updatedAt: string
 }
 
 /**

@@ -1,5 +1,5 @@
 import type { PageType, Page } from "../../../../../src/runtime/types"
-import { syncPageWithDefinition } from "../../../../../src/runtime/utils/page"
+import { syncPageWithDefinition } from "../../../../../src/runtime/utils"
 import * as Definitions from "../../../../app/types/page-definitions"
 
 // This represents what your 'db' would return

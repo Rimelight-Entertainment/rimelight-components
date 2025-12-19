@@ -103,7 +103,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
   }
 
   if (hasChanged) {
-    page.updated_at = new Date()
+    page.updatedAt = new Date().toISOString()
   }
 
   return page

@@ -1,5 +1,5 @@
 import { defineAsyncComponent, type Component } from "vue"
-import { type BlockType } from "../types/blocks"
+import { type BlockType } from "../types"
 
 import { BLOCK_RENDERER_COMPONENT_MAP } from "#build/rimelight-block-renderer-map"
 import { BLOCK_EDITOR_COMPONENT_MAP } from "#build/rimelight-block-editor-map"
