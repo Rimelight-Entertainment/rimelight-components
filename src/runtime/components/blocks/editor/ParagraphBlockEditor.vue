@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref, watch, onMounted, nextTick } from "vue"
-import type { ParagraphBlockProps, RichTextContent } from "../../../types/blocks"
-import { richTextToHtml, parseHtmlToRichText } from "../../../utils/richTextHelpers"
+import type { ParagraphBlockProps, RichTextContent } from "../../../types"
+import { richTextToHtml, parseHtmlToRichText } from "../../../utils"
 
 // The external dependencies
 const editorApi = inject<any>("block-editor-api")
