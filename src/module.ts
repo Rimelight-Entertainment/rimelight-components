@@ -111,29 +111,7 @@ export default defineNuxtModule<ModuleOptions>().with({
         options
     )
 
-    const runtimeDir = resolve('./runtime')
-
-    nuxt.options.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index.ts')
-    nuxt.options.alias['#rimelight-components/utils/'] = resolve(runtimeDir, 'utils/')
-
-    nuxt.hook('nitro:config', (nitroConfig) => {
-      nitroConfig.alias = nitroConfig.alias || {}
-      nitroConfig.alias['#rimelight-components'] = runtimeDir
-      nitroConfig.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index.ts')
-      nitroConfig.alias['#rimelight-components/utils/'] = resolve(runtimeDir, 'utils/')
-    })
-
-    nuxt.hook('prepare:types', (opts) => {
-      opts.tsConfig.compilerOptions = opts.tsConfig.compilerOptions || {}
-      opts.tsConfig.compilerOptions.paths = opts.tsConfig.compilerOptions.paths || {}
-
-      opts.tsConfig.compilerOptions.paths['#rimelight-components'] = [runtimeDir]
-      opts.tsConfig.compilerOptions.paths['#rimelight-components/*'] = [resolve(runtimeDir, '*')]
-
-      // explicit utils path(s)
-      opts.tsConfig.compilerOptions.paths['#rimelight-components/utils'] = [resolve(runtimeDir, 'utils/index.ts')]
-      opts.tsConfig.compilerOptions.paths['#rimelight-components/utils/*'] = [resolve(runtimeDir, 'utils/*')]
-    })
+    nuxt.options.alias['#rimelight-components'] = resolve('./runtime')
 
     addComponentsDir({
       path: resolve("./runtime/components/"),
@@ -161,12 +139,5 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames, resolve)
     nuxt.options.alias["#rimelight-internal/block-editor-map"] = blockEditorTemplate.dst
-
-    // Nitro support
-    nuxt.hook('nitro:config', (nitroConfig) => {
-      nitroConfig.alias = nitroConfig.alias || {}
-      nitroConfig.alias["#rimelight-internal/block-renderer-map"] = blockRendererTemplate.dst
-      nitroConfig.alias["#rimelight-internal/block-editor-map"] = blockEditorTemplate.dst
-    })
   }
 })

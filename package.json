@@ -1,7 +1,7 @@
 {
   "name": "rimelight-components",
   "description": "A component library by Rimelight Entertainment.",
-  "version": "2.0.83",
+  "version": "2.0.84",
   "type": "module",
   "repository": {
     "type": "git",
@@ -29,23 +29,19 @@
     "./components/*": "./dist/runtime/components/*",
     "./composables": {
       "types": "./dist/runtime/composables/index.d.mts",
-      "import": "./dist/runtime/composables/index.mjs",
-      "require": "./dist/runtime/composables/index.cjs"
+      "import": "./dist/runtime/composables/index.mjs"
     },
     "./composables/*": {
       "types": "./dist/runtime/composables/*.d.mts",
-      "import": "./dist/runtime/composables/*.mjs",
-      "require": "./dist/runtime/composables/*.cjs"
+      "import": "./dist/runtime/composables/*.mjs"
     },
     "./utils": {
       "types": "./dist/runtime/utils/index.d.mts",
-      "import": "./dist/runtime/utils/index.mjs",
-      "require": "./dist/runtime/utils/index.cjs"
+      "import": "./dist/runtime/utils/index.mjs"
     },
     "./utils/*": {
       "types": "./dist/runtime/utils/*.d.mts",
-      "import": "./dist/runtime/utils/*.mjs",
-      "require": "./dist/runtime/utils/*.cjs"
+      "import": "./dist/runtime/utils/*.mjs"
     }
   },
   "style": "./dist/runtime/index.css",
