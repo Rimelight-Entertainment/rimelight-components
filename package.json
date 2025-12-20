@@ -27,22 +27,10 @@
     },
     "./runtime/*": "./dist/runtime/*",
     "./components/*": "./dist/runtime/components/*",
-    "./composables": {
-      "types": "./dist/runtime/composables/index.d.ts",
-      "import": "./dist/runtime/composables/index.js"
-    },
-    "./composables/*": {
-      "types": "./dist/runtime/composables/*.d.ts",
-      "import": "./dist/runtime/composables/*.js"
-    },
-    "./utils": {
-      "types": "./dist/runtime/utils/index.d.ts",
-      "import": "./dist/runtime/utils/index.js"
-    },
+    "./composables/*": "./dist/runtime/composables/*",
     "./utils/*": {
-      "types": "./dist/runtime/utils/*.d.ts",
-      "import": "./dist/runtime/utils/*.js",
-      "default": "./dist/runtime/utils/*.js"
+      "types": "./dist/runtime/utils/*.d.mts",
+      "import": "./dist/runtime/utils/*.js"
     }
   },
   "typesVersions": {
@@ -50,17 +38,17 @@
       ".": [
         "./dist/module.d.mts"
       ],
-      "runtime/*": [
-        "./dist/runtime/*"
+      "vite": [
+        "./dist/vite.d.mts"
+      ],
+      "./runtime/*": [
+        "./dist/runtime/index.d.ts"
       ],
       "components/*": [
         "./dist/runtime/components/*"
       ],
-      "composables": [
-        "./dist/runtime/composables/index.d.ts"
-      ],
       "composables/*": [
-        "./dist/runtime/composables/*.d.ts"
+        "./dist/runtime/composables/*"
       ],
       "utils": [
         "./dist/runtime/utils/index.d.ts"

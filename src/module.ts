@@ -2,7 +2,7 @@ import {
   defineNuxtModule,
   addComponentsDir,
   addImportsDir,
-  createResolver
+  createResolver, installModule
 } from "@nuxt/kit"
 import { name, version, homepage } from "../package.json"
 import { type CalloutOptions, defaultOptions } from "./defaults"
@@ -14,7 +14,7 @@ import { readdirSync } from "node:fs"
 import { basename } from "node:path"
 import type { Nuxt } from "@nuxt/schema"
 
-export type * from "./runtime/types"
+export type * from './runtime/types'
 
 export interface ModuleOptions {
   /**
@@ -111,20 +111,9 @@ export default defineNuxtModule<ModuleOptions>().with({
         options
     )
 
-    nuxt.options.alias['#rimelight-components'] = resolve('./runtime')
+    nuxt.options.build.transpile.push('@nuxt/ui')
 
-    // 1. Define the base alias for the main app (Client/Universal)
-    nuxt.options.alias['#rimelight-components/utils'] = resolve('./runtime/utils/index')
-
-    // 2. IMPORTANT: Register the alias for Nitro (Server Routes)
-    nuxt.hook('nitro:config', (nitroConfig) => {
-      nitroConfig.alias = nitroConfig.alias || {}
-      nitroConfig.alias['#rimelight-components/utils'] = resolve('./runtime/utils/index')
-    })
-
-    // 3. Optional: If you still want the "naked" package import to work,
-    // though aliases starting with # are best practice for Nuxt modules.
-    nuxt.options.alias['rimelight-components/utils'] = resolve('./runtime/utils/index')
+    installModule('@nuxt/ui')
 
     addComponentsDir({
       path: resolve("./runtime/components/"),
@@ -137,20 +126,37 @@ export default defineNuxtModule<ModuleOptions>().with({
     addImportsDir(resolve("./runtime/composables"))
     addImportsDir(resolve("./runtime/utils"))
 
-    // --- Renderer Mapping ---
-    const rendererPath = resolve("./runtime/components/blocks/renderer")
-    const blockRendererFiles = readdirSync(rendererPath).filter(f => f.endsWith(".vue"))
-    const blockRendererNames = blockRendererFiles.map(f => basename(f, ".vue").replace(/Renderer$/, ''))
+    // Scan the directory for all .vue files
+    const blockRendererFiles = readdirSync(
+        resolve("./runtime/components/blocks/renderer")
+    ).filter((name) => name.endsWith(".vue"))
 
-    const blockRendererTemplate = addBlockMapTemplates(blockRendererNames, resolve)
-    nuxt.options.alias["#rimelight-internal/block-renderer-map"] = blockRendererTemplate.dst
+    // Generate a clean list of component names
+    const blockRendererNames = blockRendererFiles.map((file) => {
+      const baseName = basename(file, ".vue") // e.g., 'SectionBlockRenderer'
+      return baseName.replace(/Renderer$/, '') // e.g., 'SectionBlock'
+    })
 
-    // --- Editor Mapping ---
-    const editorPath = resolve("./runtime/components/blocks/editor")
-    const blockEditorFiles = readdirSync(editorPath).filter(f => f.endsWith(".vue"))
-    const blockEditorNames = blockEditorFiles.map(f => basename(f, ".vue").replace(/Editor$/, ''))
+    // Generate the Component Map Template
+    const blockRendererTemplate = addBlockMapTemplates(blockRendererNames)
 
-    const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames, resolve)
-    nuxt.options.alias["#rimelight-internal/block-editor-map"] = blockEditorTemplate.dst
+    // Expose the map template to the runtime via an alias
+    nuxt.options.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst
+
+    const blockEditorFiles = readdirSync(
+        resolve("./runtime/components/blocks/editor")
+    ).filter((name) => name.endsWith(".vue"))
+
+    // Generate a clean list of component names
+    const blockEditorNames = blockEditorFiles.map((file) => {
+      const baseName = basename(file, ".vue") // e.g., 'SectionBlockEditor'
+      return baseName.replace(/Editor$/, '') // e.g., 'SectionBlock'
+    })
+
+    // Generate the Component Map Template
+    const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames)
+
+    // Expose the map template to the runtime via an alias
+    nuxt.options.alias["#build/rimelight-block-editor-map"] = blockEditorTemplate.dst
   }
 })
