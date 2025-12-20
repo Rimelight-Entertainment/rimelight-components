@@ -126,39 +126,23 @@ export default defineNuxtModule<ModuleOptions>().with({
     addImportsDir(resolve("./runtime/composables"))
     addImportsDir(resolve("./runtime/utils"))
 
-    // Scan the directory for all .vue files
-    const blockRendererFiles = readdirSync(
-        resolve("./runtime/components/blocks/renderer")
-    ).filter((name) => name.endsWith(".vue"))
+    // --- Renderer Mapping ---
+    const rendererPath = resolve("./runtime/components/blocks/renderer")
+    const blockRendererFiles = readdirSync(rendererPath).filter(f => f.endsWith(".vue"))
+    const blockRendererNames = blockRendererFiles.map(f => basename(f, ".vue").replace(/Renderer$/, ''))
 
-    // Generate a clean list of component names
-    const blockRendererNames = blockRendererFiles.map((file) => {
-      const baseName = basename(file, ".vue") // e.g., 'SectionBlockRenderer'
-      return baseName.replace(/Renderer$/, '') // e.g., 'SectionBlock'
-    })
-
-    // Generate the Component Map Template
-    const blockRendererTemplate = addBlockMapTemplates(blockRendererNames)
-
-    // Expose the map template to the runtime via an alias
+    const blockRendererTemplate = addBlockMapTemplates(blockRendererNames, resolve)
     nuxt.options.alias["#rimelight-internal/block-renderer-map"] = blockRendererTemplate.dst
 
-    const blockEditorFiles = readdirSync(
-        resolve("./runtime/components/blocks/editor")
-    ).filter((name) => name.endsWith(".vue"))
+    // --- Editor Mapping ---
+    const editorPath = resolve("./runtime/components/blocks/editor")
+    const blockEditorFiles = readdirSync(editorPath).filter(f => f.endsWith(".vue"))
+    const blockEditorNames = blockEditorFiles.map(f => basename(f, ".vue").replace(/Editor$/, ''))
 
-    // Generate a clean list of component names
-    const blockEditorNames = blockEditorFiles.map((file) => {
-      const baseName = basename(file, ".vue") // e.g., 'SectionBlockEditor'
-      return baseName.replace(/Editor$/, '') // e.g., 'SectionBlock'
-    })
-
-    // Generate the Component Map Template
-    const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames)
-
-    // Expose the map template to the runtime via an alias
+    const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames, resolve)
     nuxt.options.alias["#rimelight-internal/block-editor-map"] = blockEditorTemplate.dst
 
+    // Nitro support
     nuxt.hook('nitro:config', (nitroConfig) => {
       nitroConfig.alias = nitroConfig.alias || {}
       nitroConfig.alias["#rimelight-internal/block-renderer-map"] = blockRendererTemplate.dst
