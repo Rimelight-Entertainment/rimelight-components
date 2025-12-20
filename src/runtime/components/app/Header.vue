@@ -28,25 +28,32 @@ const {
 
 <template>
   <header :class="root()">
-    <UContainer :class="container()">
-      <div :class="left()">
+    <UContainer as="div" :class="container()">
+
+      <div v-if="$slots.left" :class="left()">
         <slot name="left" />
       </div>
-      <div :class="center()">
+
+      <div v-if="$slots.center" :class="center()">
         <slot name="center" />
       </div>
-      <div :class="right()">
+
+      <div v-if="$slots.right" :class="right()">
         <slot name="right" />
       </div>
-      <div :class="collapsedLeft()">
+
+      <div v-if="$slots['collapsed-left']" :class="collapsedLeft()">
         <slot name="collapsed-left" />
       </div>
-      <div :class="collapsedCenter()">
+
+      <div v-if="$slots['collapsed-center']" :class="collapsedCenter()">
         <slot name="collapsed-center" />
       </div>
-      <div :class="collapsedRight()">
+
+      <div v-if="$slots['collapsed-right']" :class="collapsedRight()">
         <slot name="collapsed-right" />
       </div>
+
     </UContainer>
   </header>
 </template>

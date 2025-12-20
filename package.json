@@ -41,7 +41,8 @@
     },
     "./utils/*": {
       "types": "./dist/runtime/utils/*.d.ts",
-      "import": "./dist/runtime/utils/*.js"
+      "import": "./dist/runtime/utils/*.js",
+      "default": "./dist/runtime/utils/*.js"
     }
   },
   "typesVersions": {
