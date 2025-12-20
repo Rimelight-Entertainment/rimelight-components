@@ -2,7 +2,8 @@ import {
   defineNuxtModule,
   addComponentsDir,
   addImportsDir,
-  createResolver, installModule
+  addServerImportsDir,
+  createResolver,
 } from "@nuxt/kit"
 import { name, version, homepage } from "../package.json"
 import { type CalloutOptions, defaultOptions } from "./defaults"
@@ -113,8 +114,6 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     nuxt.options.build.transpile.push('@nuxt/ui')
 
-    installModule('@nuxt/ui')
-
     addComponentsDir({
       path: resolve("./runtime/components/"),
       pathPrefix: false,
@@ -125,6 +124,7 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     addImportsDir(resolve("./runtime/composables"))
     addImportsDir(resolve("./runtime/utils"))
+    addServerImportsDir(resolve("./runtime/utils"))
 
     // Scan the directory for all .vue files
     const blockRendererFiles = readdirSync(
