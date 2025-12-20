@@ -146,28 +146,22 @@ export default defineNuxtModule<ModuleOptions>().with({
     const rendererAlias = "#rimelight-block-renderer-map"
     const editorAlias = "#rimelight-block-editor-map"
 
-    nuxt.options.alias[rendererAlias] = blockRendererTemplate.dst
-    nuxt.options.alias[editorAlias] = blockEditorTemplate.dst
+    nuxt.options.build.transpile.push(resolve('./runtime'))
+    nuxt.options.build.transpile.push('rimelight-components')
 
-    // 6. Nitro Bridge & Security Hook
     nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.externals = nitroConfig.externals || {}
+
+      // Ensure Nitro doesn't try to resolve the .vue files found in these paths
+      nitroConfig.externals.external = nitroConfig.externals.external || []
+      nitroConfig.externals.external.push(resolve('./runtime'))
+      nitroConfig.externals.external.push('rimelight-components')
+
       nitroConfig.alias = nitroConfig.alias || {}
       nitroConfig.alias[rendererAlias] = blockRendererTemplate.dst
 
-      // Virtual Guard: Provide an empty map for Editor on the server
       nitroConfig.virtual = nitroConfig.virtual || {}
-      nitroConfig.virtual[editorAlias] = 'export const BLOCK_EDITOR_COMPONENT_MAP = {}'
-
-      // Externalize: Prevents Nitro's Rollup from deep-crawling .vue source
-      nitroConfig.externals = nitroConfig.externals || {}
-      nitroConfig.externals.inline = nitroConfig.externals.inline || []
-      nitroConfig.externals.inline.push(runtimePath)
-      nitroConfig.externals.inline.push("rimelight-components")
-    })
-
-    nuxt.hook('prepare:types', ({ references }) => {
-      references.push({ path: blockRendererTemplate.dst })
-      references.push({ path: blockEditorTemplate.dst })
+      nitroConfig.virtual[editorAlias] = blockEditorTemplate.dst
     })
   }
 })
