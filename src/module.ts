@@ -113,6 +113,19 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     nuxt.options.alias['#rimelight-components'] = resolve('./runtime')
 
+    // 1. Define the base alias for the main app (Client/Universal)
+    nuxt.options.alias['#rimelight-components/utils'] = resolve('./runtime/utils/index')
+
+    // 2. IMPORTANT: Register the alias for Nitro (Server Routes)
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.alias = nitroConfig.alias || {}
+      nitroConfig.alias['#rimelight-components/utils'] = resolve('./runtime/utils/index')
+    })
+
+    // 3. Optional: If you still want the "naked" package import to work,
+    // though aliases starting with # are best practice for Nuxt modules.
+    nuxt.options.alias['rimelight-components/utils'] = resolve('./runtime/utils/index')
+
     addComponentsDir({
       path: resolve("./runtime/components/"),
       pathPrefix: false,
