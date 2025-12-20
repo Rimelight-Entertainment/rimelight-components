@@ -158,5 +158,11 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     // Expose the map template to the runtime via an alias
     nuxt.options.alias["#build/rimelight-block-editor-map"] = blockEditorTemplate.dst
+
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.alias = nitroConfig.alias || {}
+      nitroConfig.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst
+      nitroConfig.alias["#build/rimelight-block-editor-map"] = blockEditorTemplate.dst
+    })
   }
 })
