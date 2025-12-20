@@ -28,20 +28,45 @@
     "./runtime/*": "./dist/runtime/*",
     "./components/*": "./dist/runtime/components/*",
     "./composables": {
-      "types": "./dist/runtime/composables/index.d.mts",
-      "import": "./dist/runtime/composables/index.mjs"
+      "types": "./dist/runtime/composables/index.d.ts",
+      "import": "./dist/runtime/composables/index.js"
     },
     "./composables/*": {
-      "types": "./dist/runtime/composables/*.d.mts",
-      "import": "./dist/runtime/composables/*.mjs"
+      "types": "./dist/runtime/composables/*.d.ts",
+      "import": "./dist/runtime/composables/*.js"
     },
     "./utils": {
-      "types": "./dist/runtime/utils/index.d.mts",
-      "import": "./dist/runtime/utils/index.mjs"
+      "types": "./dist/runtime/utils/index.d.ts",
+      "import": "./dist/runtime/utils/index.js"
     },
     "./utils/*": {
-      "types": "./dist/runtime/utils/*.d.mts",
-      "import": "./dist/runtime/utils/*.mjs"
+      "types": "./dist/runtime/utils/*.d.ts",
+      "import": "./dist/runtime/utils/*.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "./dist/module.d.mts"
+      ],
+      "runtime/*": [
+        "./dist/runtime/*"
+      ],
+      "components/*": [
+        "./dist/runtime/components/*"
+      ],
+      "composables": [
+        "./dist/runtime/composables/index.d.ts"
+      ],
+      "composables/*": [
+        "./dist/runtime/composables/*.d.ts"
+      ],
+      "utils": [
+        "./dist/runtime/utils/index.d.ts"
+      ],
+      "utils/*": [
+        "./dist/runtime/utils/*.d.ts"
+      ]
     }
   },
   "style": "./dist/runtime/index.css",
