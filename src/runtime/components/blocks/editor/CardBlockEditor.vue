@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CardBlockProps } from "~~/src/runtime/types/blocks"
+import type { CardBlockProps } from "../../../types"
 
 const { title, to, target, children } = defineProps<CardBlockProps>()
 </script>

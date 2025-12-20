@@ -1,19 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useAppConfig } from '#imports'
 import { useI18n } from 'vue-i18n'
 import {
-  type Page,
-  type PageType,
-  type PropertyGroup,
-  type Property
-} from '../../types/pages'
+  type Page
+} from '../../types'
 
 const props = defineProps<{
   modelValue: Page
 }>()
 
-const appConfig = useAppConfig()
 const locale = useI18n().locale
 const properties = computed(() => props.modelValue.properties as any)
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { inject, ref, watch } from "vue"
-import type { TestBlockProps } from "../../../types/blocks"
+import {inject, ref, watch} from "vue"
+import type {TestBlockProps} from "../../../types"
 
 const { text, id } = defineProps<TestBlockProps & { id: string }>()
 
@@ -13,8 +13,7 @@ const localText = ref(text)
  * This is fast and maintains focus stability.
  */
 const updateLocalText = (e: Event) => {
-  const val = (e.target as HTMLInputElement).value
-  localText.value = val
+  localText.value = (e.target as HTMLInputElement).value
 }
 
 /**

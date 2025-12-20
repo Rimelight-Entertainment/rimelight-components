@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue"
-import type { ImageBlockProps } from "~~/src/runtime/types/blocks"
+import type { ImageBlockProps } from "../../../types"
 import { useObjectUrl } from "@vueuse/core"
 
 const props = defineProps<ImageBlockProps>()

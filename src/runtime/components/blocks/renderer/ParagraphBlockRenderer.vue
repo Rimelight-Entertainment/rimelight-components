@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ParagraphBlockProps } from "~~/src/runtime/types/blocks"
+import type { ParagraphBlockProps } from "../../../types"
 
 const { text } = defineProps<ParagraphBlockProps>()
 </script>

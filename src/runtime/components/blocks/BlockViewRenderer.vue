@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type Component } from "vue"
-import { getBlockRendererComponent } from "../../utils/blockMapper"
-import type { Block } from "../../types/blocks"
+import { getBlockRendererComponent } from "../../utils"
+import type { Block } from "../../types"
 
 const { blocks } = defineProps<{
   blocks: Block[]

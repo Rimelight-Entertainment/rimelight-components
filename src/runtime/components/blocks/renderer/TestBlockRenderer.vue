@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TestBlockProps } from "~~/src/runtime/types/blocks"
+import type { TestBlockProps } from "../../../types"
 
 const { text } = defineProps<TestBlockProps>()
 </script>

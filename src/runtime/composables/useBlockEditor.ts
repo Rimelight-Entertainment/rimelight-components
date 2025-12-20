@@ -1,4 +1,3 @@
-// composables/useBlockEditor.ts
 import { type Ref, computed, ref, shallowRef } from "vue"
 import { v7 as uuidv7 } from "uuid"
 import type { Block } from "../types"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, useTemplateRef } from "vue"
-import type { Page } from "../../types/pages"
-import { usePageEditor } from "../../composables/usePageEditor"
+import type { Page } from "../../types"
+import { usePageEditor } from "../../composables"
 
 const page = defineModel<Page>({ required: true })
 const { undo, redo, canUndo, canRedo, captureSnapshot } = usePageEditor(page)

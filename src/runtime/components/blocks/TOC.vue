@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import type { Block } from "../../types/blocks"
-import type { SectionBlockProps } from "../../types/blocks"
-import type { HeadingLevel } from "../../types/blocks"
+import { type Block, type SectionBlockProps, type HeadingLevel } from "../../types"
 import { slugify } from "../../utils"
 import { useI18n } from "vue-i18n"
 

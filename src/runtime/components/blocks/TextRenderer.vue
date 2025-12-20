@@ -5,7 +5,7 @@ import {
   type InlineText,
   type InlineLink,
   type InlineMention
-} from "../../types/blocks"
+} from "../../types"
 import TextNode from "../nodes/TextNode.vue"
 import LinkNode from "../nodes/LinkNode.vue"
 import MentionNode from "../nodes/MentionNode.vue"

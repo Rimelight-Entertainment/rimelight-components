@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CalloutBlockProps } from "~~/src/runtime/types/blocks"
+import type { CalloutBlockProps } from "../../../types"
 
 const { variant, children, to, target } = defineProps<CalloutBlockProps>()
 </script>

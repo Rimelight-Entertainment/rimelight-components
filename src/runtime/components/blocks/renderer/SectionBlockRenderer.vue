@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import type { SectionBlockProps } from "~~/src/runtime/types/blocks"
+import type { SectionBlockProps } from "../../../types"
 import { slugify } from "../../../utils"
 
 const { level, title, description, children } = defineProps<SectionBlockProps>()

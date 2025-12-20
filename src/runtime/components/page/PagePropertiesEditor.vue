@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useAppConfig } from '#imports'
 import { useI18n } from 'vue-i18n'
-import { type Page, type PageType } from '../../types/pages'
+import { type Page } from '../../types'
 
 const page = defineModel<Page>({ required: true })
-const appConfig = useAppConfig()
 
 /**
  * Accessor for the properties object.

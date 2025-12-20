@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, ref, type Ref, computed, watch } from "vue"
-import type { SectionBlockProps, HeadingLevel } from "../../../types/blocks"
+import type { SectionBlockProps, HeadingLevel } from "../../../types"
 
 interface SelectItem {
   label: string;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { provide, ref, computed } from "vue"
-import type { Block } from "../../types/blocks"
-import { useBlockEditor } from "../../composables/useBlockEditor"
+import type { Block } from "../../types"
+import { useBlockEditor } from "../../composables"
 
 const blocks = defineModel<Block[]>({ required: true })
 
