@@ -105,65 +105,64 @@ export default defineNuxtModule<ModuleOptions>().with({
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
+    const runtimePath = resolve("./runtime")
 
+    // 1. Sync AppConfig
     nuxt.options.appConfig.rimelightComponents = defu(
-      nuxt.options.appConfig.rimelightComponents || {},
-      options
+        nuxt.options.appConfig.rimelightComponents || {},
+        options
     )
 
-    nuxt.options.build.transpile.push(resolve('./runtime'))
-    //nuxt.options.build.transpile.push('@nuxt/ui')
-    nuxt.options.alias['#rimelight-components'] = resolve('./runtime')
-    //nuxt.options.alias['rimelight-components/utils'] = resolve('./runtime/utils/index')
+    // 2. CRITICAL: Transpilation
+    // This ensures .vue files are compiled to JS so Nitro doesn't see <script> tags
+    nuxt.options.build.transpile.push(runtimePath)
+    nuxt.options.build.transpile.push("rimelight-components")
 
+    // 3. Aliases
+    nuxt.options.alias['#rimelight-components'] = runtimePath
+
+    // 4. Registration
     addComponentsDir({
       path: resolve("./runtime/components/"),
       pathPrefix: false,
-      //TODO Figure out if this can be typed better
       prefix: options.prefix ?? undefined,
       global: true
     })
-
     addImportsDir(resolve("./runtime/composables"))
     addImportsDir(resolve("./runtime/utils"))
 
-    // Scan the directory for all .vue files
-    const blockRendererFiles = readdirSync(
-      resolve("./runtime/components/blocks/renderer")
-    ).filter((name) => name.endsWith(".vue"))
+    // 5. Template Logic
+    const getBlockNames = (dir: string, suffix: string) =>
+        readdirSync(resolve(dir))
+            .filter(f => f.endsWith(".vue"))
+            .map(f => basename(f, ".vue").replace(new RegExp(`${suffix}$`), ''))
 
-    // Generate a clean list of component names
-    const blockRendererNames = blockRendererFiles.map((file) => {
-      const baseName = basename(file, ".vue") // e.g., 'SectionBlockRenderer'
-      return baseName.replace(/Renderer$/, '') // e.g., 'SectionBlock'
-    })
+    const rendererNames = getBlockNames("./runtime/components/blocks/renderer", "Renderer")
+    const editorNames = getBlockNames("./runtime/components/blocks/editor", "Editor")
 
-    // Generate the Component Map Template
-    const blockRendererTemplate = addBlockMapTemplates(blockRendererNames)
+    const blockRendererTemplate = addBlockMapTemplates(rendererNames)
+    const blockEditorTemplate = addEditorBlockMapTemplates(editorNames)
 
-    // Expose the map template to the runtime via an alias
-    nuxt.options.alias["#rimelight-block-renderer-map"] = blockRendererTemplate.dst
+    const rendererAlias = "#rimelight-block-renderer-map"
+    const editorAlias = "#rimelight-block-editor-map"
 
-    const blockEditorFiles = readdirSync(
-      resolve("./runtime/components/blocks/editor")
-    ).filter((name) => name.endsWith(".vue"))
+    nuxt.options.alias[rendererAlias] = blockRendererTemplate.dst
+    nuxt.options.alias[editorAlias] = blockEditorTemplate.dst
 
-    // Generate a clean list of component names
-    const blockEditorNames = blockEditorFiles.map((file) => {
-      const baseName = basename(file, ".vue") // e.g., 'SectionBlockEditor'
-      return baseName.replace(/Editor$/, '') // e.g., 'SectionBlock'
-    })
-
-    // Generate the Component Map Template
-    const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames)
-
-    // Expose the map template to the runtime via an alias
-    nuxt.options.alias["#rimelight-block-editor-map"] = blockEditorTemplate.dst
-
+    // 6. Nitro Bridge & Security Hook
     nuxt.hook('nitro:config', (nitroConfig) => {
       nitroConfig.alias = nitroConfig.alias || {}
-      nitroConfig.alias["#rimelight-block-renderer-map"] = blockRendererTemplate.dst
-      nitroConfig.alias["#rimelight-block-editor-map"] = blockEditorTemplate.dst
+      nitroConfig.alias[rendererAlias] = blockRendererTemplate.dst
+
+      // Virtual Guard: Provide an empty map for Editor on the server
+      nitroConfig.virtual = nitroConfig.virtual || {}
+      nitroConfig.virtual[editorAlias] = 'export const BLOCK_EDITOR_COMPONENT_MAP = {}'
+
+      // Externalize: Prevents Nitro's Rollup from deep-crawling .vue source
+      nitroConfig.externals = nitroConfig.externals || {}
+      nitroConfig.externals.inline = nitroConfig.externals.inline || []
+      nitroConfig.externals.inline.push(runtimePath)
+      nitroConfig.externals.inline.push("rimelight-components")
     })
 
     nuxt.hook('prepare:types', ({ references }) => {
