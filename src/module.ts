@@ -113,16 +113,27 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     const runtimeDir = resolve('./runtime')
 
+    // 1. Vite Aliases (for the frontend/components)
+    // We map BOTH the base and the specific utils file
     nuxt.options.alias['#rimelight-components'] = runtimeDir
     nuxt.options.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index')
 
-// 2. Nitro (Server-side) Alias
+    // 2. Nitro Aliases (for the server-side/API)
     nuxt.hook('nitro:config', (nitroConfig) => {
       nitroConfig.alias = nitroConfig.alias || {}
       nitroConfig.alias['#rimelight-components'] = runtimeDir
       nitroConfig.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index')
     })
 
+    // 3. TypeScript Aliases
+    // This tells the IDE that #rimelight-components/utils is a valid path
+    nuxt.hook('prepare:types', (options) => {
+      options.tsConfig.compilerOptions = options.tsConfig.compilerOptions || {}
+      options.tsConfig.compilerOptions.paths = options.tsConfig.compilerOptions.paths || {}
+
+      options.tsConfig.compilerOptions.paths['#rimelight-components'] = [runtimeDir]
+      options.tsConfig.compilerOptions.paths['#rimelight-components/*'] = [resolve(runtimeDir, '*')]
+    })
     addComponentsDir({
       path: resolve("./runtime/components/"),
       pathPrefix: false,
