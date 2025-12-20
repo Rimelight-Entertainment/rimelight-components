@@ -141,7 +141,7 @@ export default defineNuxtModule<ModuleOptions>().with({
     const blockRendererTemplate = addBlockMapTemplates(blockRendererNames)
 
     // Expose the map template to the runtime via an alias
-    nuxt.options.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst
+    nuxt.options.alias["#rimelight-components/rimelight-block-renderer-map"] = blockRendererTemplate.dst
 
     const blockEditorFiles = readdirSync(
         resolve("./runtime/components/blocks/editor")
@@ -157,12 +157,12 @@ export default defineNuxtModule<ModuleOptions>().with({
     const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames)
 
     // Expose the map template to the runtime via an alias
-    nuxt.options.alias["#build/rimelight-block-editor-map"] = blockEditorTemplate.dst
+    nuxt.options.alias["#rimelight-components/rimelight-block-editor-map"] = blockEditorTemplate.dst
 
     nuxt.hook('nitro:config', (nitroConfig) => {
       nitroConfig.alias = nitroConfig.alias || {}
-      nitroConfig.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst
-      nitroConfig.alias["#build/rimelight-block-editor-map"] = blockEditorTemplate.dst
+      nitroConfig.alias["#rimelight-components/rimelight-block-renderer-map"] = blockRendererTemplate.dst
+      nitroConfig.alias["#rimelight-components/rimelight-block-editor-map"] = blockEditorTemplate.dst
     })
   }
 })
