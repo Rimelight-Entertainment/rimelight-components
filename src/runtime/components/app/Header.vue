@@ -30,27 +30,27 @@ const {
   <header :class="root()">
     <UContainer as="div" :class="container()">
 
-      <div v-if="$slots.left" :class="left()">
+      <div :class="[left(), !$slots.left && 'hidden']">
         <slot name="left" />
       </div>
 
-      <div v-if="$slots.center" :class="center()">
+      <div :class="[center(), !$slots.center && 'hidden']">
         <slot name="center" />
       </div>
 
-      <div v-if="$slots.right" :class="right()">
+      <div :class="[right(), !$slots.right && 'hidden']">
         <slot name="right" />
       </div>
 
-      <div v-if="$slots['collapsed-left']" :class="collapsedLeft()">
+      <div :class="[collapsedLeft(), !$slots['collapsed-left'] && 'hidden']">
         <slot name="collapsed-left" />
       </div>
 
-      <div v-if="$slots['collapsed-center']" :class="collapsedCenter()">
+      <div :class="[collapsedCenter(), !$slots['collapsed-center'] && 'hidden']">
         <slot name="collapsed-center" />
       </div>
 
-      <div v-if="$slots['collapsed-right']" :class="collapsedRight()">
+      <div :class="[collapsedRight(), !$slots['collapsed-right'] && 'hidden']">
         <slot name="collapsed-right" />
       </div>
 
