@@ -111,6 +111,7 @@ export default defineNuxtModule<ModuleOptions>().with({
       options
     )
 
+    nuxt.options.build.transpile.push(resolve('./runtime'))
     //nuxt.options.build.transpile.push('@nuxt/ui')
     nuxt.options.alias['#rimelight-components'] = resolve('./runtime')
     //nuxt.options.alias['rimelight-components/utils'] = resolve('./runtime/utils/index')
