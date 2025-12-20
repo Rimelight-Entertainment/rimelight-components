@@ -105,63 +105,58 @@ export default defineNuxtModule<ModuleOptions>().with({
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
-    const runtimePath = resolve("./runtime")
 
-    // 1. Sync AppConfig
     nuxt.options.appConfig.rimelightComponents = defu(
         nuxt.options.appConfig.rimelightComponents || {},
         options
     )
 
-    // 2. CRITICAL: Transpilation
-    // This ensures .vue files are compiled to JS so Nitro doesn't see <script> tags
-    nuxt.options.build.transpile.push(runtimePath)
-    nuxt.options.build.transpile.push("rimelight-components")
+    //nuxt.options.build.transpile.push('@nuxt/ui')
+    nuxt.options.alias['#rimelight-components'] = resolve('./runtime')
+    //nuxt.options.alias['rimelight-components/utils'] = resolve('./runtime/utils/index')
 
-    // 3. Aliases
-    nuxt.options.alias['#rimelight-components'] = runtimePath
-
-    // 4. Registration
     addComponentsDir({
       path: resolve("./runtime/components/"),
       pathPrefix: false,
+      //TODO Figure out if this can be typed better
       prefix: options.prefix ?? undefined,
       global: true
     })
+
     addImportsDir(resolve("./runtime/composables"))
     addImportsDir(resolve("./runtime/utils"))
 
-    // 5. Template Logic
-    const getBlockNames = (dir: string, suffix: string) =>
-        readdirSync(resolve(dir))
-            .filter(f => f.endsWith(".vue"))
-            .map(f => basename(f, ".vue").replace(new RegExp(`${suffix}$`), ''))
+    // Scan the directory for all .vue files
+    const blockRendererFiles = readdirSync(
+        resolve("./runtime/components/blocks/renderer")
+    ).filter((name) => name.endsWith(".vue"))
 
-    const rendererNames = getBlockNames("./runtime/components/blocks/renderer", "Renderer")
-    const editorNames = getBlockNames("./runtime/components/blocks/editor", "Editor")
-
-    const blockRendererTemplate = addBlockMapTemplates(rendererNames)
-    const blockEditorTemplate = addEditorBlockMapTemplates(editorNames)
-
-    const rendererAlias = "#rimelight-block-renderer-map"
-    const editorAlias = "#rimelight-block-editor-map"
-
-    nuxt.options.build.transpile.push(resolve('./runtime'))
-    nuxt.options.build.transpile.push('rimelight-components')
-
-    nuxt.hook('nitro:config', (nitroConfig) => {
-      nitroConfig.externals = nitroConfig.externals || {}
-
-      // Ensure Nitro doesn't try to resolve the .vue files found in these paths
-      nitroConfig.externals.external = nitroConfig.externals.external || []
-      nitroConfig.externals.external.push(resolve('./runtime'))
-      nitroConfig.externals.external.push('rimelight-components')
-
-      nitroConfig.alias = nitroConfig.alias || {}
-      nitroConfig.alias[rendererAlias] = blockRendererTemplate.dst
-
-      nitroConfig.virtual = nitroConfig.virtual || {}
-      nitroConfig.virtual[editorAlias] = blockEditorTemplate.dst
+    // Generate a clean list of component names
+    const blockRendererNames = blockRendererFiles.map((file) => {
+      const baseName = basename(file, ".vue") // e.g., 'SectionBlockRenderer'
+      return baseName.replace(/Renderer$/, '') // e.g., 'SectionBlock'
     })
+
+    // Generate the Component Map Template
+    const blockRendererTemplate = addBlockMapTemplates(blockRendererNames)
+
+    // Expose the map template to the runtime via an alias
+    nuxt.options.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst
+
+    const blockEditorFiles = readdirSync(
+        resolve("./runtime/components/blocks/editor")
+    ).filter((name) => name.endsWith(".vue"))
+
+    // Generate a clean list of component names
+    const blockEditorNames = blockEditorFiles.map((file) => {
+      const baseName = basename(file, ".vue") // e.g., 'SectionBlockEditor'
+      return baseName.replace(/Editor$/, '') // e.g., 'SectionBlock'
+    })
+
+    // Generate the Component Map Template
+    const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames)
+
+    // Expose the map template to the runtime via an alias
+    nuxt.options.alias["#build/rimelight-block-editor-map"] = blockEditorTemplate.dst
   }
 })
