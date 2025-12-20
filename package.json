@@ -29,19 +29,23 @@
     "./components/*": "./dist/runtime/components/*",
     "./composables": {
       "types": "./dist/runtime/composables/index.d.mts",
-      "import": "./dist/runtime/composables/index.mjs"
+      "import": "./dist/runtime/composables/index.mjs",
+      "require": "./dist/runtime/composables/index.cjs"
     },
     "./composables/*": {
       "types": "./dist/runtime/composables/*.d.mts",
-      "import": "./dist/runtime/composables/*.mjs"
+      "import": "./dist/runtime/composables/*.mjs",
+      "require": "./dist/runtime/composables/*.cjs"
     },
     "./utils": {
       "types": "./dist/runtime/utils/index.d.mts",
-      "import": "./dist/runtime/utils/index.mjs"
+      "import": "./dist/runtime/utils/index.mjs",
+      "require": "./dist/runtime/utils/index.cjs"
     },
     "./utils/*": {
       "types": "./dist/runtime/utils/*.d.mts",
-      "import": "./dist/runtime/utils/*.mjs"
+      "import": "./dist/runtime/utils/*.mjs",
+      "require": "./dist/runtime/utils/*.cjs"
     }
   },
   "style": "./dist/runtime/index.css",
