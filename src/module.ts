@@ -113,27 +113,28 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     const runtimeDir = resolve('./runtime')
 
-    // 1. Vite Aliases (for the frontend/components)
-    // We map BOTH the base and the specific utils file
-    nuxt.options.alias['#rimelight-components'] = runtimeDir
-    nuxt.options.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index')
+    nuxt.options.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index.ts')
+    nuxt.options.alias['#rimelight-components/utils/'] = resolve(runtimeDir, 'utils/')
 
-    // 2. Nitro Aliases (for the server-side/API)
     nuxt.hook('nitro:config', (nitroConfig) => {
       nitroConfig.alias = nitroConfig.alias || {}
       nitroConfig.alias['#rimelight-components'] = runtimeDir
-      nitroConfig.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index')
+      nitroConfig.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index.ts')
+      nitroConfig.alias['#rimelight-components/utils/'] = resolve(runtimeDir, 'utils/')
     })
 
-    // 3. TypeScript Aliases
-    // This tells the IDE that #rimelight-components/utils is a valid path
-    nuxt.hook('prepare:types', (options) => {
-      options.tsConfig.compilerOptions = options.tsConfig.compilerOptions || {}
-      options.tsConfig.compilerOptions.paths = options.tsConfig.compilerOptions.paths || {}
+    nuxt.hook('prepare:types', (opts) => {
+      opts.tsConfig.compilerOptions = opts.tsConfig.compilerOptions || {}
+      opts.tsConfig.compilerOptions.paths = opts.tsConfig.compilerOptions.paths || {}
 
-      options.tsConfig.compilerOptions.paths['#rimelight-components'] = [runtimeDir]
-      options.tsConfig.compilerOptions.paths['#rimelight-components/*'] = [resolve(runtimeDir, '*')]
+      opts.tsConfig.compilerOptions.paths['#rimelight-components'] = [runtimeDir]
+      opts.tsConfig.compilerOptions.paths['#rimelight-components/*'] = [resolve(runtimeDir, '*')]
+
+      // explicit utils path(s)
+      opts.tsConfig.compilerOptions.paths['#rimelight-components/utils'] = [resolve(runtimeDir, 'utils/index.ts')]
+      opts.tsConfig.compilerOptions.paths['#rimelight-components/utils/*'] = [resolve(runtimeDir, 'utils/*')]
     })
+
     addComponentsDir({
       path: resolve("./runtime/components/"),
       pathPrefix: false,
