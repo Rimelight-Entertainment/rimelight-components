@@ -42,21 +42,11 @@ export interface PageDefinition {
   initialBlocks?: () => Block[]
 }
 
-/**
- * Helper to define a page with full type safety and literal preservation.
- * This is used by consuming apps to define their custom page types.
- */
-export function definePageDefinition<T extends PageDefinition>(def: T): T {
-  return def
-}
-
 export interface BasePageProperties { }
 
 export interface RegisterPageTypes extends RimelightRegisterPageTypes {
   Default: BasePageProperties
 }
-
-
 
 /**
  * Common fields shared by every page regardless of type.

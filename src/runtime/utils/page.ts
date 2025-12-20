@@ -14,6 +14,14 @@ export const getLocalizedContent = <T = string>(
 };
 
 /**
+ * Helper to define a page with full type safety and literal preservation.
+ * This is used by consuming apps to define their custom page types.
+ */
+export function definePageDefinition<T extends PageDefinition>(def: T): T {
+  return def
+}
+
+/**
  * Ensures a page strictly adheres to its PageDefinition.
  * - Adds missing properties and groups in the correct order.
  * - Removes properties and groups no longer in the definition.
