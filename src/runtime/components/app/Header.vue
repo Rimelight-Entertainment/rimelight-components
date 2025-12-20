@@ -28,32 +28,13 @@ const {
 
 <template>
   <header :class="root()">
-    <UContainer as="div" :class="container()">
-
-      <div :class="[left(), !$slots.left && 'hidden']">
-        <slot name="left" />
-      </div>
-
-      <div :class="[center(), !$slots.center && 'hidden']">
-        <slot name="center" />
-      </div>
-
-      <div :class="[right(), !$slots.right && 'hidden']">
-        <slot name="right" />
-      </div>
-
-      <div :class="[collapsedLeft(), !$slots['collapsed-left'] && 'hidden']">
-        <slot name="collapsed-left" />
-      </div>
-
-      <div :class="[collapsedCenter(), !$slots['collapsed-center'] && 'hidden']">
-        <slot name="collapsed-center" />
-      </div>
-
-      <div :class="[collapsedRight(), !$slots['collapsed-right'] && 'hidden']">
-        <slot name="collapsed-right" />
-      </div>
-
+    <UContainer :class="container()">
+      <div :class="left()"><slot name="left" /></div>
+      <div :class="center()"><slot name="center" /></div>
+      <div :class="right()"><slot name="right" /></div>
+      <div :class="collapsedLeft()"><slot name="collapsed-left" /></div>
+      <div :class="collapsedCenter()"><slot name="collapsed-center" /></div>
+      <div :class="collapsedRight()"><slot name="collapsed-right" /></div>
     </UContainer>
   </header>
 </template>
