@@ -128,7 +128,7 @@ const getSortedFields = (fields: Record<string, any>) => {
       </div>
       <div class="flex justify-between">
         <span>Last Updated:</span>
-        <span>{{ new Date(page.updatedAt).toLocaleString() }}</span>
+        <span>{{ page.updated_at }}</span>
       </div>
     </div>
   </div>

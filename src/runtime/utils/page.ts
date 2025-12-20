@@ -5,13 +5,12 @@ export const getLocalizedContent = <T = string>(
     field: Localized<T> | undefined,
     currentLocale: MaybeRefOrGetter<string>
 ): T | string => {
-  if (!field) return '';
+  if (!field || typeof field !== 'object') return ''
 
-  const locale = toValue(currentLocale);
+  const locale = toValue(currentLocale)
 
-  // Attempt to retrieve current locale, then fallback to 'en', then return empty string or first available key
-  return field[locale] ?? field['en'] ?? '';
-};
+  return field[locale] ?? field['en'] ?? ''
+}
 
 /**
  * Helper to define a page with full type safety and literal preservation.

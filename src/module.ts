@@ -8,14 +8,10 @@ import {
 import { name, version, homepage } from "../package.json"
 import { type CalloutOptions, defaultOptions } from "./defaults"
 import { defu } from "defu"
-
 import { addBlockMapTemplates, addEditorBlockMapTemplates } from "./templates"
-
 import { readdirSync } from "node:fs"
 import { basename } from "node:path"
 import type { Nuxt } from "@nuxt/schema"
-
-export type * from './runtime/types'
 
 export interface ModuleOptions {
   /**
@@ -50,19 +46,21 @@ export default defineNuxtModule<ModuleOptions>().with({
   moduleDependencies(_nuxt) {
     const dependencies: Record<string, any> = {
       "@nuxt/image": {
-        version: ">=1.0.0",
+        version: ">=2.0.0",
         optional: false,
         overrides: {},
         defaults: {}
       },
       "@nuxtjs/i18n": {
-        version: ">=10.1.1",
+        version: ">=10.2.1",
         optional: false,
         overrides: {},
-        defaults: {}
+        defaults: {
+          defaultLocale: "en",
+        }
       },
       "@nuxt/ui": {
-        version: ">=4.0.0",
+        version: ">=4.2.0",
         optional: false,
         overrides: {},
         defaults: {
@@ -82,18 +80,6 @@ export default defineNuxtModule<ModuleOptions>().with({
             ]
           }
         }
-      },
-      "@vueuse/nuxt": {
-        version: ">=13.9.0",
-        optional: false,
-        overrides: {},
-        defaults: {}
-      },
-      "motion-v/nuxt": {
-        version: ">=1.7.2",
-        optional: false,
-        overrides: {},
-        defaults: {}
       }
     }
     return dependencies
@@ -107,12 +93,14 @@ export default defineNuxtModule<ModuleOptions>().with({
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
+    nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
+    nuxt.options.vite.optimizeDeps.include = nuxt.options.vite.optimizeDeps.include || []
+    nuxt.options.vite.optimizeDeps.include.push('@nuxt/ui', '@nuxtjs/i18n', '@nuxt/image', '@vueuse/nuxt')
+
     nuxt.options.appConfig.rimelightComponents = defu(
         nuxt.options.appConfig.rimelightComponents || {},
         options
     )
-
-    nuxt.options.build.transpile.push('@nuxt/ui')
 
     addComponentsDir({
       path: resolve("./runtime/components/"),
@@ -123,7 +111,9 @@ export default defineNuxtModule<ModuleOptions>().with({
     })
 
     addImportsDir(resolve("./runtime/composables"))
+    addImportsDir(resolve("./runtime/types"))
     addImportsDir(resolve("./runtime/utils"))
+    addServerImportsDir(resolve("./runtime/types"))
     addServerImportsDir(resolve("./runtime/utils"))
 
     // Scan the directory for all .vue files

@@ -27,8 +27,8 @@ const moviePage = ref<Page>({
       }
     }
   },
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
+  created_at: new Date(),
+  updated_at: new Date()
 })
 
 const isSaving = ref(false)

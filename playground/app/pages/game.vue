@@ -21,13 +21,13 @@ const gamePage = ref<Page>({
       label: { en: 'Game Information' },
       fields: {
         developer: { value: { en: 'FromSoftware' }, label: 'Developer', type: 'text' },
-        platform: { value: { en: 'PC, PS5, Xbox Series X/S' }, label: 'Platform', type: 'text' },
+        platforms: { value: [{ en: 'PC' }, { en: 'XBOX' }], label: 'Platforms', type: 'text-array' },
         rating: { value: 9.5, label: 'Rating', type: 'number' }
       }
     }
   },
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
+  created_at: new Date(),
+  updated_at: new Date()
 })
 
 const isSaving = ref(false)
@@ -42,7 +42,6 @@ const onSave = (page: Page) => {
 </script>
 
 <template>
-
   <RCPageEditor
     v-model="gamePage"
     :is-saving="isSaving"

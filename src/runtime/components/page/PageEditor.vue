@@ -91,6 +91,7 @@ const editorPanelClass = computed(() => ({
   <div class="mt-24 grid gap-xl" :class="showPreview ? 'grid-cols-2' : 'grid-cols-1'">
     <UPage :class="editorPanelClass">
       <template #default>
+        <UPageHeader />
         <RCBlockEditor
           ref="editor"
           v-model="page.blocks"

@@ -175,8 +175,8 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
           <UContainer>
             <div class="flex h-full flex-row gap-xl">
               <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
-              <ul>
-                <li v-for="child in item.children" :key="child.label">
+              <ul v-if="(item as NavigationMenuItem).children">
+                <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
                   <ULink
                     class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
                   >
@@ -201,7 +201,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                 <RCPlaceholder class="size-full min-h-48" />
               </li>
 
-              <li v-for="child in item.children" :key="child.label">
+              <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
                 <ULink
                   class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
                 >
