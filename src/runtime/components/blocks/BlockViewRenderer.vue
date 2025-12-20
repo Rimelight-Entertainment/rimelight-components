@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Component } from "vue"
-import { getBlockRendererComponent } from "../../utils"
+import { getBlockRendererComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
 
 const { blocks } = defineProps<{

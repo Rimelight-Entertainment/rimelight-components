@@ -1,5 +1,4 @@
 export * from "./richTextHelpers"
-export * from "./blockMapper"
 export * from "./page"
 export * from "./database"
 
