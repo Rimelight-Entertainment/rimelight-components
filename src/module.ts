@@ -111,9 +111,17 @@ export default defineNuxtModule<ModuleOptions>().with({
         options
     )
 
-    //nuxt.options.build.transpile.push('@nuxt/ui')
-    nuxt.options.alias['#rimelight-components'] = resolve('./runtime')
-    //nuxt.options.alias['rimelight-components/utils'] = resolve('./runtime/utils/index')
+    const runtimeDir = resolve('./runtime')
+
+    nuxt.options.alias['#rimelight-components'] = runtimeDir
+    nuxt.options.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index')
+
+// 2. Nitro (Server-side) Alias
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.alias = nitroConfig.alias || {}
+      nitroConfig.alias['#rimelight-components'] = runtimeDir
+      nitroConfig.alias['#rimelight-components/utils'] = resolve(runtimeDir, 'utils/index')
+    })
 
     addComponentsDir({
       path: resolve("./runtime/components/"),
