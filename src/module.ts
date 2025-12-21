@@ -144,5 +144,10 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     // Expose the map template to the runtime via an alias
     nuxt.options.alias["#build/rimelight-block-editor-map"] = blockEditorTemplate.dst
+
+    // Register type definitions
+    nuxt.hook("prepare:types", ({ references }) => {
+      references.push({ path: resolve("./runtime/app.config.d.ts") })
+    })
   }
 })
