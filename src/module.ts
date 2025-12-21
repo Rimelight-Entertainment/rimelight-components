@@ -93,13 +93,9 @@ export default defineNuxtModule<ModuleOptions>().with({
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
-    nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
-    nuxt.options.vite.optimizeDeps.include = nuxt.options.vite.optimizeDeps.include || []
-    nuxt.options.vite.optimizeDeps.include.push('@nuxt/ui', '@nuxtjs/i18n', '@nuxt/image', '@vueuse/nuxt')
-
     nuxt.options.appConfig.rimelightComponents = defu(
-        nuxt.options.appConfig.rimelightComponents || {},
-        options
+      nuxt.options.appConfig.rimelightComponents || {},
+      options
     )
 
     addComponentsDir({
@@ -118,7 +114,7 @@ export default defineNuxtModule<ModuleOptions>().with({
 
     // Scan the directory for all .vue files
     const blockRendererFiles = readdirSync(
-        resolve("./runtime/components/blocks/renderer")
+      resolve("./runtime/components/blocks/renderer")
     ).filter((name) => name.endsWith(".vue"))
 
     // Generate a clean list of component names
@@ -134,7 +130,7 @@ export default defineNuxtModule<ModuleOptions>().with({
     nuxt.options.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst
 
     const blockEditorFiles = readdirSync(
-        resolve("./runtime/components/blocks/editor")
+      resolve("./runtime/components/blocks/editor")
     ).filter((name) => name.endsWith(".vue"))
 
     // Generate a clean list of component names

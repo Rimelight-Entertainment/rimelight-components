@@ -6,18 +6,14 @@ export default defineNuxtConfig({
     host: "127.0.0.1",
     port: 3000
   },
-  vite: {
-    server: {
-      hmr: {
-        overlay: false
-      }
-    }
-  },
   typescript: {
     strict: true,
     typeCheck: true
   },
   modules: ["../src/module", "@nuxt/ui", "@vueuse/nuxt"],
+  build: {
+    transpile: ["@nuxt/ui"]
+  },
   css: ["~/assets/css/main.css"],
   icon: {
     provider: "server",

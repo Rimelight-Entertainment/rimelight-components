@@ -24,7 +24,7 @@ const { variant, to, target } = defineProps<{
 
 const config = computed(() => {
   return (
-    appConfig.rimelightComponents?.callouts?.[variant] ?? {
+    (appConfig.rimelightComponents as any)?.callouts?.[variant] ?? {
       icon: "lucide:alert-circle",
       title: "Callout",
       tooltip: "Callout"

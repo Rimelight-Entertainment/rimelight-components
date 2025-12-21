@@ -53,5 +53,3 @@ declare global {
         Game: typeof GAME_DEFINITION.properties
     }
 }
-
-export {}

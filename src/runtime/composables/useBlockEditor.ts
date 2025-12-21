@@ -256,22 +256,7 @@ export function useBlockEditor(
     position: "before" | "after" = "after"
   ) => {
     executeMutation(() => {
-      const newBlock: Block = {
-        id: uuidv7(),
-        type: newBlockType,
-        props: getDefaultPropsForType(newBlockType)
-      }
 
-      if (!targetId) {
-        initialBlocks.value.push(newBlock)
-        return
-      }
-
-      const loc = findBlockLocation(initialBlocks.value, targetId)
-      if (loc) {
-        const insertIndex = position === "after" ? loc.index + 1 : loc.index
-        loc.parentArray.splice(insertIndex, 0, newBlock)
-      }
     })
   }
 
@@ -302,9 +287,4 @@ export function useBlockEditor(
     committedBlocks: committedBlocks,
     commitChanges: commitChanges,
   }
-}
-
-function getDefaultPropsForType(type: string): any {
-  // You can expand this factory later
-  return { children: [] }
 }
