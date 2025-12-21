@@ -1,125 +1,126 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { getLocalizedContent } from "../../utils"
 import { useI18n } from 'vue-i18n'
 import {
   type Page
 } from '../../types'
 
-const props = defineProps<{
-  modelValue: Page
-}>()
+const page = defineModel<Page>({ required: true })
 
-const locale = useI18n().locale
-const properties = computed(() => props.modelValue.properties as any)
+const { t, locale } = useI18n()
 
 /**
- * Filter groups and fields for display.
- * Rules:
- * 1. Field must pass visibleIf condition.
- * 2. Field must have a non-empty value.
- * 3. Group is only shown if it contains at least one visible, non-empty field.
+ * Logic to determine if a field should be rendered.
+ * In Read-Only mode, we check visibility logic AND if the value is non-empty.
  */
-const displayGroups = computed(() => {
-  return Object.entries(properties.value || {}).map(([groupId, group]: [string, any]) => {
-    // Filter the fields in this group
-    const visibleFields = Object.entries(group.fields || {})
-      .filter(([fieldKey, schema]: [string, any]) => {
-        const value = (schema.type === 'text' || schema.type === 'text-array')
-          ? schema.value?.[locale.value]
-          : schema.value
+const shouldRenderField = (schema: any) => {
+  const isVisible = !schema.visibleIf || schema.visibleIf(page.value.properties)
+  if (!isVisible) return false
 
-        // 1. Check Visibility Logic
-        const isVisible = !schema.visibleIf || schema.visibleIf(props.modelValue.properties)
-        if (!isVisible) return false
+  const val = schema.value
 
-        // 2. Check if value exists (don't show empty rows in read-only mode)
-        if (Array.isArray(value)) return value.length > 0
-        return value !== undefined && value !== null && value !== ''
-      })
-      .sort(([, a]: [string, any], [, b]: [string, any]) => (a.order ?? 0) - (b.order ?? 0))
+  if (schema.type === 'text') {
+    return !!val?.[locale.value]
+  }
 
-    return {
-      ...group,
-      groupId,
-      visibleFields
-    }
-  }).filter((group: any) => group.visibleFields.length > 0)
-})
+  if (schema.type === 'text-array') {
+    return Array.isArray(val) && val.length > 0
+  }
 
+
+  return val !== undefined && val !== null && val !== ''
+}
+
+/**
+ * Logic to determine if a group has any renderable fields.
+ */
+const shouldRenderGroup = (group: any) => {
+  return Object.values(group.fields || {}).some((schema: any) => shouldRenderField(schema))
+}
+
+/**
+ * Helper to sort fields within a group based on their order property.
+ */
+const getSortedFields = (fields: Record<string, any>) => {
+  return Object.entries(fields).sort(([, a], [, b]) => (a.order ?? 0) - (b.order ?? 0))
+}
 </script>
-
 <template>
-  <div class="wiki-renderer flex flex-col border border-border rounded-lg bg-muted/20 overflow-hidden shadow-sm">
-    <div class="bg-muted/50 p-4 border-b border-border text-center">
-      <div class="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70 mb-1">
-        {{ props.modelValue.type }}
-      </div>
-      <h2 class="text-xl font-serif font-bold italic text-foreground">
-        {{ properties.name?.value?.[locale] || props.modelValue.slug }}
-      </h2>
-    </div>
-
-    <div v-for="group in displayGroups" :key="group.groupId" class="border-b last:border-b-0 border-border/40">
-      <div class="bg-muted/30 px-3 py-1.5 text-[10px] font-black text-primary uppercase tracking-tighter border-b border-border/10">
-        {{ group.label[locale] }}
-      </div>
-
-      <dl class="p-3 space-y-2.5">
-        <div
-          v-for="[fieldKey, schema] in group.visibleFields"
-          :key="fieldKey"
-          class="grid grid-cols-3 gap-x-3 items-baseline"
-        >
-          <dt class="text-[11px] font-semibold text-muted-foreground leading-tight">
-            {{ schema.label }}
-          </dt>
-
-          <dd class="text-xs col-span-2 text-foreground leading-snug">
-            <div v-if="schema.type === 'text-array'" class="flex flex-wrap gap-1">
-              <template v-for="(item, index) in properties[group.groupId].fields[fieldKey].value[locale]" :key="index">
-                <span class="font-medium">{{ item }}</span>
-                <span v-if="index < properties[group.groupId].fields[fieldKey].value[locale].length - 1" class="text-muted-foreground/50">, </span>
-              </template>
-            </div>
-
-            <span v-else-if="schema.type === 'page'" class="text-primary font-bold hover:underline cursor-pointer">
-              {{ properties[group.groupId].fields[fieldKey].value }}
-            </span>
-
-            <span v-else-if="schema.type === 'text'" class="font-medium">
-              {{ properties[group.groupId].fields[fieldKey].value[locale] }}
-            </span>
-
-            <span v-else class="font-medium">
-              {{ properties[group.groupId].fields[fieldKey].value }}
-            </span>
-          </dd>
+  <aside class="flex flex-col gap-xl">
+    <UCard variant="soft" :ui="{ root: 'divide-none', header: 'bg-accented text-center', body: 'p-0 sm:p-0 bg-muted' }">
+      <template #header>
+        <div class="flex flex-col gap-xs items-center">
+          <h3>
+            {{ getLocalizedContent(page.title, locale) }}
+          </h3>
+          <span class="text-xs">{{ page.type }}</span>
+          <div v-if="page.tags?.length" class="flex flex-row flex-wrap gap-xs">
+            <UBadge
+                v-for="tag in page.tags"
+                :key="tag[locale]"
+                variant="soft"
+                size="xs"
+                color="neutral"
+            >
+              {{ tag[locale] }}
+            </UBadge>
+          </div>
         </div>
-      </dl>
-    </div>
+      </template>
 
-    <div v-if="props.modelValue.tags?.length" class="p-3 bg-background/50 border-t border-border">
-      <div class="flex flex-wrap gap-1.5">
-        <UBadge
-          v-for="tag in props.modelValue.tags"
-          :key="String(tag[locale])"
-          variant="subtle"
-          size="sm"
-          color="neutral"
-          class="text-[9px] font-bold uppercase tracking-tight"
-        >
-          #{{ tag[locale] }}
-        </UBadge>
-      </div>
-    </div>
+      <template #default>
+        <template v-for="(group, groupId) in (page.properties as any)" :key="groupId">
+          <UCollapsible v-if="shouldRenderGroup(group)" :default-open="group.defaultOpen">
+            <template #default>
+              <UButton
+                  :label="getLocalizedContent(group.label, locale)"
+                  variant="soft"
+                  trailing-icon="lucide:chevron-down"
+                  :ui="{
+            trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
+          }"
+                  block
+                  class="group rounded-none bg-elevated text-default"
+              />
+            </template>
 
+            <template #content>
+              <dl class="p-sm flex flex-col gap-xs">
+                <template v-for="[fieldKey, schema] in getSortedFields(group.fields)" :key="fieldKey">
+                  <div
+                      v-if="shouldRenderField(schema)"
+                      class="grid grid-cols-3 gap-xs items-baseline"
+                  >
+                    <dt class="text-xs font-semibold text-dimmed">
+                      {{ getLocalizedContent(schema.label, locale) }}
+                    </dt>
 
-  </div>
+                    <dd class="text-xs col-span-2">
+                      <ul v-if="schema.type === 'text-array'" class="flex flex-wrap">
+                        <li v-for="(item, index) in schema.value" :key="index">
+                          <span class="font-medium">
+                            {{ getLocalizedContent(item, locale) }}
+                          </span>
+                        </li>
+                      </ul>
+                      <span v-else-if="schema.type === 'text'">
+                        {{ getLocalizedContent(schema.value, locale) }}
+                      </span>
+                      <span v-else>
+                        {{ schema.value }}
+                      </span>
+                    </dd>
+                  </div>
+                </template>
+              </dl>
+            </template>
+          </UCollapsible>
+        </template>
+      </template>
+    </UCard>
+  </aside>
 </template>
 
 <style scoped>
-/* Optional: Adding a subtle serif feel for names common in Wiki designs */
-.font-serif {
-  font-family: Georgia, 'Times New Roman', Times, serif;
-}
+
 </style>

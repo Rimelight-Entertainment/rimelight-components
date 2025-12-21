@@ -1,5 +1,5 @@
 import { toValue, type MaybeRefOrGetter } from 'vue'
-import type { Page, Localized, PageDefinition } from "../types/pages"
+import { type Page, type Localized, type PageDefinition, type Property } from "../types"
 
 export const getLocalizedContent = <T = string>(
     field: Localized<T> | undefined,
@@ -12,12 +12,31 @@ export const getLocalizedContent = <T = string>(
   return field[locale] ?? field['en'] ?? ''
 }
 
+type WidenProperty<T> = T extends string
+    ? string
+    : T extends number
+        ? number
+        : T extends never[]
+            ? Localized[]
+            : T extends object
+                ? { [K in keyof T]: WidenProperty<T[K]> }
+                : T;
+
+
 /**
  * Helper to define a page with full type safety and literal preservation.
  * This is used by consuming apps to define their custom page types.
  */
-export function definePageDefinition<T extends PageDefinition>(def: T): T {
-  return def
+export function definePageDefinition<T extends PageDefinition>(def: T): {
+  [K in keyof T]: K extends 'properties'
+      ? { [G in keyof T['properties']]: {
+        label: Localized<string>,
+        defaultOpen: boolean,
+        fields: { [F in keyof T['properties'][G]['fields']]: Property<WidenProperty<T['properties'][G]['fields'][F]['value']>> }
+      }}
+      : T[K]
+} {
+  return def as any;
 }
 
 /**

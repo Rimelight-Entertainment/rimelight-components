@@ -1,25 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { getLocalizedContent } from "../../utils"
 import { type Page } from '../../types'
 
 const page = defineModel<Page>({ required: true })
 
-/**
- * Accessor for the properties object.
- * Cast to any for dynamic key access in the template.
- */
 const locale = useI18n().locale
-const properties = computed(() => page.value.properties as any)
-
-/**
- * Get the groups directly from the page properties.
- * We cast to any for dynamic key access.
- */
-const groups = computed(() => {
-  return page.value.properties as any
-})
-
 
 /**
  * Logic to determine if a specific field should be visible.
@@ -39,17 +25,18 @@ const getSortedFields = (fields: Record<string, any>) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-y-8 pr-2 pb-12">
-    <div class="flex items-center justify-between border-b border-border pb-4">
-      <h3 class="text-xs font-black uppercase tracking-widest text-muted-foreground">
-        {{ page.type }} Metadata
+  <UCard variant="soft" :ui="{ root: 'divide-none', header: 'bg-elevated text-center', body: 'bg-muted' }">
+    <template #header>
+      <h3>
+        {{ getLocalizedContent(page.title, locale) }}
       </h3>
-      <UBadge variant="subtle" size="sm" color="primary">
-        {{ page.slug }}
-      </UBadge>
-    </div>
+      <UBadge variant="subtle" size="sm" color="primary" :label="page.type"/>
+    </template>
 
-    <div v-for="(group, groupId) in groups" :key="groupId" class="space-y-4">
+    <div
+        v-for="(group, groupId) in (page.properties as any)"
+        :key="groupId"
+    >
       <div class="flex items-center gap-3">
         <span class="text-[10px] font-bold uppercase tracking-widest text-primary">
           {{ group.label[locale] }}
@@ -61,77 +48,64 @@ const getSortedFields = (fields: Record<string, any>) => {
         <template v-for="[fieldKey, schema] in getSortedFields(group.fields)" :key="fieldKey">
 
           <UFormField
-            v-if="isFieldVisible(schema)"
-            :label="schema.label"
-            :name="fieldKey"
+              v-if="isFieldVisible(schema)"
+              :label="getLocalizedContent(schema.label, locale)"
+              :name="fieldKey"
           >
             <UInput
-              v-if="schema.type === 'text'"
-              v-model="properties[groupId].fields[fieldKey].value[locale]"
-              variant="subtle"
-              placeholder="..."
+                v-if="schema.type === 'text'"
+                v-model="schema.value[locale]"
+                variant="subtle"
+                placeholder="..."
             />
 
             <UInput
-              v-else-if="schema.type === 'number'"
-              v-model.number="properties[groupId].fields[fieldKey].value"
-              type="number"
-              variant="subtle"
+                v-else-if="schema.type === 'number'"
+                v-model.number="schema.value"
+                type="number"
+                variant="subtle"
             />
 
             <USelect
-              v-else-if="schema.type === 'enum'"
-              v-model="properties[groupId].fields[fieldKey].value"
-              :items="schema.options || []"
-              variant="subtle"
+                v-else-if="schema.type === 'enum'"
+                v-model="schema.value"
+                :items="schema.options || []"
+                variant="subtle"
             />
 
             <UInputMenu
-              v-else-if="schema.type === 'text-array'"
-              v-model="properties[groupId].fields[fieldKey].value[locale]"
-              multiple
-              creatable
-              variant="subtle"
-              placeholder="Add item..."
+                v-else-if="schema.type === 'text-array'"
+                :model-value="schema.value.map(v => v[locale])"
+                @update:model-value="(vals) => schema.value = vals.map(str => ({ [locale]: str }))"
+                multiple
+                creatable
+                variant="subtle"
+                placeholder="Add item..."
             />
 
             <UInput
-              v-else-if="schema.type === 'page'"
-              v-model="properties[groupId].fields[fieldKey].value"
-              icon="lucide:link-2"
-              variant="subtle"
-              :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
+                v-else-if="schema.type === 'page'"
+                v-model="schema.value"
+                icon="lucide:link-2"
+                variant="subtle"
+                :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
             />
           </UFormField>
         </template>
       </div>
     </div>
 
-
-    <USeparator />
+    <USeparator class="my-6" />
 
     <UFormField label="Global Search Tags">
       <UInputMenu
-        v-model="page.tags"
-        multiple
-        creatable
-        icon="lucide:tag"
-        variant="subtle"
-        placeholder="Add tags..."
+          v-model="page.tags"
+          multiple
+          creatable
+          icon="lucide:tag"
+          variant="subtle"
+          placeholder="Add tags..."
       />
     </UFormField>
-
-    <div class="mt-auto pt-6 text-[9px] font-mono text-muted-foreground/60 space-y-1">
-      <div class="flex justify-between">
-        <span>ID:</span>
-        <span>{{ page.id }}</span>
-      </div>
-      <ClientOnly>
-      <div class="flex justify-between">
-        <span>Last Updated:</span>
-        <span>{{ page.updated_at }}</span>
-      </div>
-      </ClientOnly>
-    </div>
-  </div>
+  </UCard>
 </template>

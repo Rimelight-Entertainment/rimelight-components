@@ -34,7 +34,7 @@
   <!-- prettier-ignore -->
   <div class="mr-1 mr-2 mr-3 mr-4 mr-6 mr-8 mr-10 mr-12 mr-16 mr-20 mr-24 mr-32 mr-40 mr-48 mr-56 mr-64 mr-96 mr-128 mr-256 lg:mr-1 lg:mr-2 lg:mr-3 lg:mr-4 lg:mr-6 lg:mr-8 lg:mr-10 lg:mr-12 lg:mr-16 lg:mr-20 lg:mr-24 lg:mr-32 lg:mr-40 lg:mr-48 lg:mr-56 lg:mr-64 lg:mr-96 lg:mr-128 lg:mr-256"/>
   <!-- prettier-ignore -->
-  <div class="flex flex-row sm:flex-row md:flex-row lg:flex-row xl:flex-row flex-col sm:flex-col md:flex-col lg:flex-col xl:flex-col flex-wrap flex-grid grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5 grid-cols-6 grid-cols-7 grid-cols-8"/>
+  <div class="flex flex-row sm:flex-row md:flex-row lg:flex-row xl:flex-row flex-col sm:flex-col divide-none bg-muted p-0 m-0 bg-dimmed bg-elevated md:flex-col lg:flex-col xl:flex-col flex-wrap flex-grid grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4 grid-cols-5 grid-cols-6 grid-cols-7 grid-cols-8"/>
   <!-- prettier-ignore -->
   <div class="px-12 px-8 px-10 pl-5 pl-10 pl-6 items-start sm:items-start md:items-start lg:items-start xl:items-start"/>
   <!-- prettier-ignore -->
@@ -42,9 +42,9 @@
   <!-- prettier-ignore -->
   <div class="items-end sm:items-end md:items-end lg:items-end xl:items-end"/>
   <!-- prettier-ignore -->
-  <div class="gap-xs pl-8 pl-16 pl-32 align-baseline sm:align-baseline md:align-baseline lg:align-baseline xl:align-baseline"/>
+  <div class="min-w-96 min-w-128 col-span-1 col-span-2 col-span-3 min-w-64 min-w-32 gap-xs pl-8 pl-16 pl-32 align-baseline sm:align-baseline md:align-baseline lg:align-baseline xl:align-baseline"/>
   <!-- prettier-ignore -->
-  <div class="relative absolute -ms-12 -ms-16 -ms-10 scroll-mt-24 group lg:ps-2 lg:-ms-2 -ms-8 hidden absolute top-0 -ms-8 hidden rounded-md p-1 opacity-0 transition top-1 group-hover:opacity-100 group-focus:opacity-100 lg:flex rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"/>
+  <div class="lg:order-1 lg:col-span-2 lg:col-span-3 order-2 order-1 lg:order-2 lg:col-span-1 lg:grid-cols-4 lg:grid-cols-3 lg:grid-cols-5 relative absolute -ms-12 -ms-16 -ms-10 scroll-mt-24 group lg:ps-2 lg:-ms-2 -ms-8 hidden absolute top-0 -ms-8 hidden rounded-md p-1 opacity-0 transition top-1 group-hover:opacity-100 group-focus:opacity-100 lg:flex rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"/>
 </template>
 
 <style scoped></style>

@@ -9,9 +9,9 @@ export type PageType = keyof RegisterPageTypes
 
 export interface Property<T = any> {
   // The data value
-  value: T
+  value: T extends never[] ? Localized[] : T
   // The human-readable label to display
-  label: string
+  label: Localized<string>
   // Type of data/renderer
   type: "number" | "text" | "text-array" | "enum" | "page" | "page-array"
   // Optional: For union type, defines the available options
@@ -31,6 +31,7 @@ export interface PropertyGroup {
   label: Localized<string>
   order?: number
   fields: Record<string, Property>
+  defaultOpen: boolean
 }
 
 
