@@ -126,10 +126,12 @@ const getSortedFields = (fields: Record<string, any>) => {
         <span>ID:</span>
         <span>{{ page.id }}</span>
       </div>
+      <ClientOnly>
       <div class="flex justify-between">
         <span>Last Updated:</span>
         <span>{{ page.updated_at }}</span>
       </div>
+      </ClientOnly>
     </div>
   </div>
 </template>
