@@ -32,7 +32,8 @@
     "./utils/*": {
       "types": "./dist/runtime/utils/*.d.mts",
       "import": "./dist/runtime/utils/*.js"
-    }
+    },
+    "./db": "./dist/runtime/utils/db.js"
   },
   "typesVersions": {
     "*": {
