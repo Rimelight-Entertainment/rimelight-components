@@ -21,7 +21,6 @@
     "#build/rimelight-components.css": "./.nuxt/rimelight-components.css"
   },
   "exports": {
-    "./*": "./*",
     ".": {
       "types": "./dist/module.d.mts",
       "import": "./dist/module.mjs",
@@ -33,10 +32,6 @@
     "./utils/*": {
       "types": "./dist/runtime/utils/*.d.mts",
       "import": "./dist/runtime/utils/*.js"
-    },
-    "./db": {
-      "types": "./dist/runtime/utils/db.d.ts",
-      "import": "./dist/runtime/utils/db.js"
     }
   },
   "typesVersions": {
