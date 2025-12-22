@@ -101,9 +101,7 @@ watch(fileToUpload, (newFile) => {
           <template #default>
             <span class="text-xs text-muted">Alt</span>
           </template>
-          <template #content>
-            The text description for the image used by screen readers.
-          </template>
+          <template #content> The text description for the image used by screen readers. </template>
         </UTooltip>
       </template>
     </UInput>
@@ -120,9 +118,7 @@ watch(fileToUpload, (newFile) => {
           <template #default>
             <span class="text-xs text-muted">Caption</span>
           </template>
-          <template #content>
-            The text description for the image used by screen readers.
-          </template>
+          <template #content> The text description for the image used by screen readers. </template>
         </UTooltip>
       </template>
     </UTextarea>

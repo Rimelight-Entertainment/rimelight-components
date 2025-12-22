@@ -37,17 +37,20 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
   const canRedo = computed(() => future.value.length > 0)
 
   const save = () => {
-
     return JSON.parse(JSON.stringify(page.value))
   }
 
   // This is the "Magic": we watch for property changes to trigger history snapshots
   // We use deep: true to catch nested property updates
-  watch(() => page.value.properties, () => {
-    // We might want to debounce this so typing in a text field
-    // doesn't create 50 history states
-    captureSnapshot()
-  }, { deep: true })
+  watch(
+    () => page.value.properties,
+    () => {
+      // We might want to debounce this so typing in a text field
+      // doesn't create 50 history states
+      captureSnapshot()
+    },
+    { deep: true }
+  )
 
   return {
     undo,

@@ -1,7 +1,9 @@
-declare module '#build/app.config' {
-  import type { AppConfig } from '@nuxt/schema'
+declare module "#build/app.config" {
+  import type { AppConfig } from "@nuxt/schema"
+  import type { PageType, PageDefinition } from "~/src/runtime/types"
 
   interface RimelightComponentsConfig {
+    pageDefinitions?: Partial<Record<PageType, PageDefinition>>
     [key: string]: any
   }
 

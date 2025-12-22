@@ -57,26 +57,11 @@ const columns: FooterColumn[] = [
         <UColorModeSelect />
       </div>
       <div class="flex flex-row gap-sm lg:items-end">
-        <UButton
-          size="xl"
-          variant="ghost"
-          color="neutral"
-          icon="mdi:instagram"
-        />
-        <UButton
-          size="xl"
-          variant="ghost"
-          color="neutral"
-          icon="ic:baseline-discord"
-        />
+        <UButton size="xl" variant="ghost" color="neutral" icon="mdi:instagram" />
+        <UButton size="xl" variant="ghost" color="neutral" icon="ic:baseline-discord" />
         <UButton size="xl" variant="ghost" color="neutral" icon="mdi:spotify" />
         <UButton size="xl" variant="ghost" color="neutral" icon="mdi:github" />
-        <UButton
-          size="xl"
-          variant="ghost"
-          color="neutral"
-          icon="mdi:linkedin"
-        />
+        <UButton size="xl" variant="ghost" color="neutral" icon="mdi:linkedin" />
       </div>
     </template>
   </RCFooter>

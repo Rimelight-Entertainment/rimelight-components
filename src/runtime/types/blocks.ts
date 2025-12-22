@@ -18,7 +18,6 @@ export type BlockType =
   | "CardBlock"
   | "CollapsibleCardBlock"
 
-
 /**
  * Defines the common structure for any content block object.
  * The 'type' must be one of the registered BlockType values.
@@ -46,14 +45,7 @@ export interface ParagraphBlockProps {
 }
 
 export interface CalloutBlockProps {
-  variant:
-    | "info"
-    | "success"
-    | "warning"
-    | "error"
-    | "commentary"
-    | "ideation"
-    | "source"
+  variant: "info" | "success" | "warning" | "error" | "commentary" | "ideation" | "source"
   children: Block[]
   to?: string
   target?: string
@@ -192,9 +184,7 @@ export interface InlineLink extends BaseInlineContent {
 export interface InlineMention extends BaseInlineContent {
   type: "mention"
   props: {
-    href: string
-    target?: "_blank" | "_self"
-    content: string
+    pageId: string
   }
 }
 

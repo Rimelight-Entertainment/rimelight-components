@@ -1,5 +1,13 @@
 {
   "placeholder": "Placeholder",
+  "page": {
+    "type": {
+      "movie": "Movie"
+    }
+  },
+  "table_of_contents": "Table of Contents",
+  "navigation_previous": "Previous",
+  "navigation_next": "Next",
   "callout_info_title": "Note",
   "callout_info_description": "This callout is used for general notes.",
   "callout_success_title": "Tip",

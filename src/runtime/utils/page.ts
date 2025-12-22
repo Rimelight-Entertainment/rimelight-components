@@ -1,42 +1,49 @@
-import { toValue, type MaybeRefOrGetter } from 'vue'
+import { toValue, type MaybeRefOrGetter } from "vue"
 import { type Page, type Localized, type PageDefinition, type Property } from "../types"
 
 export const getLocalizedContent = <T = string>(
-    field: Localized<T> | undefined,
-    currentLocale: MaybeRefOrGetter<string>
+  field: Localized<T> | undefined,
+  currentLocale: MaybeRefOrGetter<string>
 ): T | string => {
-  if (!field || typeof field !== 'object') return ''
+  if (!field || typeof field !== "object") return ""
 
   const locale = toValue(currentLocale)
 
-  return field[locale] ?? field['en'] ?? ''
+  return field[locale] ?? field["en"] ?? ""
 }
 
 type WidenProperty<T> = T extends string
-    ? string
-    : T extends number
-        ? number
-        : T extends never[]
-            ? Localized[]
-            : T extends object
-                ? { [K in keyof T]: WidenProperty<T[K]> }
-                : T;
-
+  ? string
+  : T extends number
+    ? number
+    : T extends never[]
+      ? Localized[]
+      : T extends object
+        ? { [K in keyof T]: WidenProperty<T[K]> }
+        : T
 
 /**
  * Helper to define a page with full type safety and literal preservation.
  * This is used by consuming apps to define their custom page types.
  */
-export function definePageDefinition<T extends PageDefinition>(def: T): {
-  [K in keyof T]: K extends 'properties'
-      ? { [G in keyof T['properties']]: {
-        label: Localized<string>,
-        defaultOpen: boolean,
-        fields: { [F in keyof T['properties'][G]['fields']]: Property<WidenProperty<T['properties'][G]['fields'][F]['value']>> }
-      }}
-      : T[K]
+export function definePageDefinition<T extends PageDefinition>(
+  def: T
+): {
+  [K in keyof T]: K extends "properties"
+    ? {
+        [G in keyof T["properties"]]: {
+          label: Localized<string>
+          defaultOpen: boolean
+          fields: {
+            [F in keyof T["properties"][G]["fields"]]: Property<
+              WidenProperty<T["properties"][G]["fields"][F]["value"]>
+            >
+          }
+        }
+      }
+    : T[K]
 } {
-  return def as any;
+  return def as any
 }
 
 /**
@@ -89,7 +96,10 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
   } else {
     for (const groupId in updatedProperties) {
       const pageGroup = (page.properties as any)[groupId]
-      if (Object.keys(pageGroup?.fields || {}).length !== Object.keys(updatedProperties[groupId].fields).length) {
+      if (
+        Object.keys(pageGroup?.fields || {}).length !==
+        Object.keys(updatedProperties[groupId].fields).length
+      ) {
         hasChanged = true
         break
       }
@@ -104,10 +114,10 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
     const currentBlocks = [...page.blocks]
 
     // Map ideal blocks by ID for easy lookup
-    const idealBlocksMap = new Map(idealBlocks.map(b => [b.id, b]))
+    const idealBlocksMap = new Map(idealBlocks.map((b) => [b.id, b]))
 
     // Filter out templated blocks that are no longer in the definition
-    const filteredCurrent = currentBlocks.filter(b => {
+    const filteredCurrent = currentBlocks.filter((b) => {
       if (!b.isTemplated) return true // Keep user-added blocks
       return idealBlocksMap.has(b.id) // Keep templated blocks only if still in definition
     })
@@ -120,7 +130,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
     let lastExistingIdealIndex = -1
 
     for (const idealBlock of idealBlocks) {
-      const existingIndex = filteredCurrent.findIndex(b => b.id === idealBlock.id)
+      const existingIndex = filteredCurrent.findIndex((b) => b.id === idealBlock.id)
 
       if (existingIndex !== -1) {
         lastExistingIdealIndex = existingIndex

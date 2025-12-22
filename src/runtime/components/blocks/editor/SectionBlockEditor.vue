@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { inject, ref, type Ref, computed, watch } from "vue"
-import type { SectionBlockProps, HeadingLevel } from "../../../types"
-
-interface SelectItem {
-  label: string;
-  value: HeadingLevel;
-}
+import { type SectionBlockProps, type HeadingLevel } from "../../../types"
+import { type SelectItem } from "@nuxt/ui/components/Select.vue"
 
 const { level, title, description, children, id } = defineProps<
   SectionBlockProps & { id: string }
@@ -86,32 +82,27 @@ watch(
 
 <template>
   <div class="flex flex-col gap-sm">
-    <RCSection
-      :level="localLevel"
-      :title="localTitle"
-      :description="description"
-      is-editing
-    >
+    <RCSection :level="localLevel" :title="localTitle" :description="description" is-editing>
       <template #title>
         <div class="flex flex-row gap-xs">
-        <USelect
-          v-model="localLevel"
-          :items="levelItems"
-          value-key="value"
-          label-key="label"
-          variant="ghost"
-          placeholder="Select Heading Level"
-          size="sm"
-          color="neutral"
-        />
-        <UInput
-          :model-value="localTitle"
-          variant="ghost"
-          placeholder="Section Title..."
-          @input="updateLocalTitle"
-          @blur="commitTitleOnBlur"
-          class="w-full"
-        />
+          <USelect
+            v-model="localLevel"
+            :items="levelItems"
+            value-key="value"
+            label-key="label"
+            variant="ghost"
+            placeholder="Select Heading Level"
+            size="sm"
+            color="neutral"
+          />
+          <UInput
+            :model-value="localTitle"
+            variant="ghost"
+            placeholder="Section Title..."
+            @input="updateLocalTitle"
+            @blur="commitTitleOnBlur"
+            class="w-full"
+          />
         </div>
       </template>
       <template #description>

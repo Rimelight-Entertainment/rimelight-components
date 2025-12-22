@@ -87,55 +87,30 @@ const ctaLinks = [
     color: "secondary" as const
   }
 ]
-
 </script>
 
 <template>
   <UPage>
     <UContainer>
-      <RCSection
-        :level="1"
-        title="Components"
-        description="Lorem ipsum dolor sit amet."
-      >
-        <RCSection
-          :level="2"
-          title="Content"
-          description="Lorem ipsum dolor sit amet."
-        >
+      <RCSection :level="1" title="Components" description="Lorem ipsum dolor sit amet.">
+        <RCSection :level="2" title="Content" description="Lorem ipsum dolor sit amet.">
           <RCSection
             :level="3"
             title="Callout"
             description="Callouts are used to highlight important information."
           >
             <div class="flex flex-col gap-md">
-              <RCCallout variant="info">
-                Lorem ipsum dolor sit amet.
-              </RCCallout>
-              <RCCallout variant="success"
-                >Lorem ipsum dolor sit amet.</RCCallout
-              >
-              <RCCallout variant="warning"
-                >Lorem ipsum dolor sit amet.</RCCallout
-              >
+              <RCCallout variant="info"> Lorem ipsum dolor sit amet. </RCCallout>
+              <RCCallout variant="success">Lorem ipsum dolor sit amet.</RCCallout>
+              <RCCallout variant="warning">Lorem ipsum dolor sit amet.</RCCallout>
               <RCCallout variant="error">Lorem ipsum dolor sit amet.</RCCallout>
-              <RCCallout variant="commentary"
-                >Lorem ipsum dolor sit amet.</RCCallout
-              >
-              <RCCallout variant="ideation"
-                >Lorem ipsum dolor sit amet.</RCCallout
-              >
-              <RCCallout variant="source"
-                >Lorem ipsum dolor sit amet.</RCCallout
-              >
+              <RCCallout variant="commentary">Lorem ipsum dolor sit amet.</RCCallout>
+              <RCCallout variant="ideation">Lorem ipsum dolor sit amet.</RCCallout>
+              <RCCallout variant="source">Lorem ipsum dolor sit amet.</RCCallout>
             </div>
           </RCSection>
         </RCSection>
-        <RCSection
-          :level="2"
-          title="Swatches"
-          description="Lorem ipsum dolor sit amet."
-        >
+        <RCSection :level="2" title="Swatches" description="Lorem ipsum dolor sit amet.">
           <RCSection :level="3" title="Logotype">
             <div class="flex flex-col gap-lg lg:flex-row">
               <RCImageSwatch
@@ -161,11 +136,7 @@ const ctaLinks = [
               />
             </div>
           </RCSection>
-          <RCSection
-            :level="3"
-            title="Color"
-            description="Lorem ipsum dolor sit amet."
-          >
+          <RCSection :level="3" title="Color" description="Lorem ipsum dolor sit amet.">
             <RCColorSwatch
               name="Color"
               hex="#1d6ebe"
@@ -175,11 +146,7 @@ const ctaLinks = [
               cmyk="cmyk(84%, 42%, 0%, 25%)"
             />
           </RCSection>
-          <RCSection
-            :level="3"
-            title="Image"
-            description="Lorem ipsum dolor sit amet."
-          >
+          <RCSection :level="3" title="Image" description="Lorem ipsum dolor sit amet.">
             <RCImageSwatch
               name="Image"
               jpg="https://placehold.co/1024x512"
@@ -188,11 +155,7 @@ const ctaLinks = [
               svg="https://placehold.co/1024x512"
             />
           </RCSection>
-          <RCSection
-            :level="3"
-            title="Font"
-            description="Lorem ipsum dolor sit amet."
-          >
+          <RCSection :level="3" title="Font" description="Lorem ipsum dolor sit amet.">
             <RCFontSwatch />
           </RCSection>
         </RCSection>
@@ -206,15 +169,10 @@ const ctaLinks = [
       reverse
       class="pointer-events-none z-20"
     >
-      <NuxtImg
-        src="https://cdn.idantity.me/images/logos/logomark-white.webp"
-        alt="idantity.me"
-      />
+      <NuxtImg src="https://cdn.idantity.me/images/logos/logomark-white.webp" alt="idantity.me" />
     </UPageHero>
     <ClientOnly>
-      <div
-        class="relative grid h-128 w-full place-content-center justify-center overflow-hidden"
-      >
+      <div class="relative grid h-128 w-full place-content-center justify-center overflow-hidden">
         <UPageCTA
           variant="naked"
           title="Rimelight Components"

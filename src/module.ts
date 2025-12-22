@@ -3,7 +3,7 @@ import {
   addComponentsDir,
   addImportsDir,
   addServerImportsDir,
-  createResolver,
+  createResolver
 } from "@nuxt/kit"
 import { name, version, homepage } from "../package.json"
 import { type CalloutOptions, defaultOptions } from "./defaults"
@@ -58,7 +58,7 @@ export default defineNuxtModule<ModuleOptions>().with({
         optional: false,
         overrides: {},
         defaults: {
-          defaultLocale: "en",
+          defaultLocale: "en"
         }
       },
       "@nuxt/ui": {
@@ -115,14 +115,14 @@ export default defineNuxtModule<ModuleOptions>().with({
     addServerImportsDir(resolve("./runtime/utils"))
 
     // Scan the directory for all .vue files
-    const blockRendererFiles = readdirSync(
-      resolve("./runtime/components/blocks/renderer")
-    ).filter((name) => name.endsWith(".vue"))
+    const blockRendererFiles = readdirSync(resolve("./runtime/components/blocks/renderer")).filter(
+      (name) => name.endsWith(".vue")
+    )
 
     // Generate a clean list of component names
     const blockRendererNames = blockRendererFiles.map((file) => {
       const baseName = basename(file, ".vue") // e.g., 'SectionBlockRenderer'
-      return baseName.replace(/Renderer$/, '') // e.g., 'SectionBlock'
+      return baseName.replace(/Renderer$/, "") // e.g., 'SectionBlock'
     })
 
     // Generate the Component Map Template
@@ -131,14 +131,14 @@ export default defineNuxtModule<ModuleOptions>().with({
     // Expose the map template to the runtime via an alias
     nuxt.options.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst
 
-    const blockEditorFiles = readdirSync(
-      resolve("./runtime/components/blocks/editor")
-    ).filter((name) => name.endsWith(".vue"))
+    const blockEditorFiles = readdirSync(resolve("./runtime/components/blocks/editor")).filter(
+      (name) => name.endsWith(".vue")
+    )
 
     // Generate a clean list of component names
     const blockEditorNames = blockEditorFiles.map((file) => {
       const baseName = basename(file, ".vue") // e.g., 'SectionBlockEditor'
-      return baseName.replace(/Editor$/, '') // e.g., 'SectionBlock'
+      return baseName.replace(/Editor$/, "") // e.g., 'SectionBlock'
     })
 
     // Generate the Component Map Template

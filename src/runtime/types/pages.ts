@@ -1,15 +1,20 @@
-import { type Image } from "../types"
-import { type Block } from "../types"
+import { type Block, type Image, type Link } from "../types"
+
+export type Localized<T = string> = Record<string, T>
 
 declare global {
-  interface RimelightRegisterPageTypes { }
+  interface RimelightRegisterPageTypes {}
+}
+
+export interface RegisterPageTypes extends RimelightRegisterPageTypes {
+  Default: BasePageProperties
 }
 
 export type PageType = keyof RegisterPageTypes
 
 export interface Property<T = any> {
   // The data value
-  value: T extends never[] ? Localized[] : T
+  value: T | string | string[] | number | Localized | Localized[]
   // The human-readable label to display
   label: Localized<string>
   // Type of data/renderer
@@ -24,9 +29,6 @@ export interface Property<T = any> {
   visibleIf?: (properties: any) => boolean
 }
 
-
-export type Localized<T = string> = Record<string, T>;
-
 export interface PropertyGroup {
   label: Localized<string>
   order?: number
@@ -34,20 +36,16 @@ export interface PropertyGroup {
   defaultOpen: boolean
 }
 
-
 /**
  * A PageTemplate is the single definition for a page's properties and initial blocks.
  */
 export interface PageDefinition {
+  typeLabelKey: string
   properties: Record<string, PropertyGroup>
   initialBlocks?: () => Block[]
 }
 
-export interface BasePageProperties { }
-
-export interface RegisterPageTypes extends RimelightRegisterPageTypes {
-  Default: BasePageProperties
-}
+export interface BasePageProperties {}
 
 /**
  * Common fields shared by every page regardless of type.
@@ -55,10 +53,13 @@ export interface RegisterPageTypes extends RimelightRegisterPageTypes {
 export interface BasePage {
   id: string
   slug: string
-  image?: Image
+  icon?: Image
+  banner?: Image
+  images?: Image[]
   title: Localized<string>
   description?: Localized<string>
   tags?: Localized<string>[]
+  links?: Link[]
   authorsIds?: string[]
   blocks: Block[]
   posted_at?: Date | null
@@ -72,3 +73,10 @@ export interface BasePage {
 export type Page = {
   [K in PageType]: { type: K; properties: RegisterPageTypes[K] } & BasePage
 }[PageType]
+
+export type SurroundItem = Pick<BasePage, "id" | "slug" | "title" | "description">
+
+export interface PageSurround {
+  previous: SurroundItem | null
+  next: SurroundItem | null
+}

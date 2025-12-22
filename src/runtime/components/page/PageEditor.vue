@@ -90,13 +90,19 @@ const editorPanelClass = computed(() => ({
       </div>
     </template>
   </UHeader>
-  <UContainer class="mt-24 grid gap-xl" :class="showPreview ? 'grid-cols-2 max-w-full' : 'grid-cols-1'">
+  <UContainer
+    class="mt-24 grid gap-xl"
+    :class="showPreview ? 'grid-cols-2 max-w-full' : 'grid-cols-1'"
+  >
     <div :class="editorPanelClass" class="grid grid-cols-1 lg:grid-cols-4 gap-8">
       <UPageAside class="order-1 lg:order-2 lg:col-span-1">
         <RCPagePropertiesEditor v-model="page" />
       </UPageAside>
       <div class="order-2 lg:order-1 lg:col-span-3">
-        <UPageHeader :title="getLocalizedContent(page.title, 'en')" :description="getLocalizedContent(page.description, 'en') ?? ''" />
+        <UPageHeader
+          :title="getLocalizedContent(page.title, 'en')"
+          :description="getLocalizedContent(page.description, 'en') ?? ''"
+        />
         <RCBlockEditor
           ref="editor"
           v-model="page.blocks"
@@ -106,7 +112,9 @@ const editorPanelClass = computed(() => ({
         <div class="flex flex-col gap-xs text-xs">
           <h6>Metadata</h6>
           <span>Page ID: {{ page.id }}</span>
-          <span>Created At: <NuxtTime
+          <span
+            >Created At:
+            <NuxtTime
               :datetime="page.created_at ?? ''"
               year="numeric"
               month="numeric"
@@ -116,7 +124,9 @@ const editorPanelClass = computed(() => ({
               second="numeric"
               time-zone-name="short"
           /></span>
-          <span>Posted At: <NuxtTime
+          <span
+            >Posted At:
+            <NuxtTime
               :datetime="page.created_at ?? ''"
               year="numeric"
               month="numeric"
@@ -126,7 +136,9 @@ const editorPanelClass = computed(() => ({
               second="numeric"
               time-zone-name="short"
           /></span>
-          <span>Updated At: <NuxtTime
+          <span
+            >Updated At:
+            <NuxtTime
               :datetime="page.created_at ?? ''"
               year="numeric"
               month="numeric"
@@ -141,11 +153,9 @@ const editorPanelClass = computed(() => ({
     </div>
     <div class="flex flex-row gap-xl">
       <USeparator orientation="vertical" />
-      <RCPageRenderer v-if="showPreview" v-model="page"/>
+      <RCPageRenderer v-if="showPreview" v-model="page" />
     </div>
   </UContainer>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -7,10 +7,19 @@ import type { RichTextContent, InlineText, InlineContent } from "../types/blocks
  * For now, we only extract the text content.
  */
 export function richTextToHtml(content: RichTextContent): string {
-  // In a real editor, this would serialize the array into HTML.
-  // Example: item.type === 'link' ? `<a href="${item.props.href}">${item.props.content}</a>` : item.props.content
-  // For this simple text-only editing simulation, we join the text parts.
-  return content.map(item => item.props.content).join("")
+  return content
+    .map((item) => {
+      if (item.type === "text" || item.type === "link") {
+        return item.props.content
+      }
+      if (item.type === "mention") {
+        // For mentions, we return an empty string or a placeholder
+        // since the "content" is fetched by the ID
+        return ""
+      }
+      return ""
+    })
+    .join("")
 }
 
 /**

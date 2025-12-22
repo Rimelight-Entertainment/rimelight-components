@@ -5,7 +5,7 @@ const { text } = defineProps<TestBlockProps>()
 </script>
 
 <template>
-  <RCTest :text="text"/>
+  <RCTest :text="text" />
 </template>
 
 <style scoped></style>

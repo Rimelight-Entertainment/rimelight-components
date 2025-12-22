@@ -1,6 +1,6 @@
 {
-  "private": true,
   "name": "rimelight-components-playground",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "nuxi dev",

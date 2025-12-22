@@ -8,7 +8,7 @@ import {
 } from "../../types"
 import TextNode from "../nodes/TextNode.vue"
 import LinkNode from "../nodes/LinkNode.vue"
-import MentionNode from "../nodes/MentionNode.vue"
+import PageMention from "../page/PageMention.vue"
 
 defineOptions({
   name: "TextRenderer"
@@ -36,7 +36,7 @@ const getTag = (item: InlineContent): ComponentIs => {
     case "link":
       return LinkNode
     case "mention":
-      return MentionNode
+      return PageMention
     default:
       return TextNode
   }
@@ -66,9 +66,7 @@ const getProps = (item: InlineContent): Record<string, any> => {
     case "mention": {
       const mentionProps = item.props as InlineMention["props"]
       return {
-        href: mentionProps.href,
-        target: mentionProps.target,
-        content: mentionProps.content
+        pageId: mentionProps.pageId
       }
     }
     default:

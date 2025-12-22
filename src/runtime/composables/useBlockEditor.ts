@@ -10,9 +10,9 @@ function findBlockLocation(
   id: string
 ): { parentArray: Block[]; index: number } | null {
   for (let i = 0; i < blocks.length; i++) {
-    const block = blocks[i];
+    const block = blocks[i]
 
-    if (!block) continue;
+    if (!block) continue
 
     if (block.id === id) {
       return { parentArray: blocks, index: i }
@@ -20,7 +20,7 @@ function findBlockLocation(
 
     // Since the children property only exists on certain block types,
     // we use the type guard established in the previous step.
-    if ('children' in block.props && Array.isArray(block.props.children)) {
+    if ("children" in block.props && Array.isArray(block.props.children)) {
       // Recursion: TS knows block.props.children is Block[] here.
       const result = findBlockLocation(block.props.children as Block[], id)
       if (result) return result
@@ -38,7 +38,7 @@ function regenerateIds(block: Block): void {
 
   // 💡 FIX: Apply the type guard to ensure 'children' property exists on 'props'.
   // This satisfies TypeScript that we are only accessing 'children' on container blocks.
-  if ('children' in block.props && Array.isArray(block.props.children)) {
+  if ("children" in block.props && Array.isArray(block.props.children)) {
     // TypeScript now knows block.props.children is safe to access and iterate over (as Block[])
 
     // We can remove the redundant ': Block[]' cast here since the guard is strong enough,
@@ -50,12 +50,11 @@ function regenerateIds(block: Block): void {
 
 export function useBlockEditor(
   initialBlocks: Ref<Block[]>,
-  { maxHistorySize = 100, onMutation }: { maxHistorySize?: number, onMutation?: () => void } = {}
+  { maxHistorySize = 100, onMutation }: { maxHistorySize?: number; onMutation?: () => void } = {}
 ) {
   const history = shallowRef<Block[][]>([])
   const future = shallowRef<Block[][]>([])
   const committedBlocks = ref<Block[]>(JSON.parse(JSON.stringify(initialBlocks.value)))
-
 
   /**
    * Captures the current state of initialBlocks, adds it to the history,
@@ -150,7 +149,6 @@ export function useBlockEditor(
   // ✅ CORRECT: canRedo is true if there is a state *in the future stack* to advance to.
   const canRedo = computed(() => future.value.length > 0)
 
-
   // --- Refactored Block Mutation Methods ---
 
   // 💡 All public mutation methods must now call executeMutation()
@@ -193,7 +191,7 @@ export function useBlockEditor(
         id: oldBlock.id, // Explicitly carry over the required BaseBlock properties
         type: oldBlock.type, // Explicitly carry over the required BaseBlock properties
         props: newPropsObject
-      } as Block; // We use an 'as Block' cast as the structure is preserved
+      } as Block // We use an 'as Block' cast as the structure is preserved
 
       // Alternative FIX for Step 3 (safer but verbose):
       /*
@@ -255,9 +253,7 @@ export function useBlockEditor(
     targetId: string | null = null,
     position: "before" | "after" = "after"
   ) => {
-    executeMutation(() => {
-
-    })
+    executeMutation(() => {})
   }
 
   const commitChanges = (): Block[] => {
@@ -285,6 +281,6 @@ export function useBlockEditor(
     canRedo,
     // State
     committedBlocks: committedBlocks,
-    commitChanges: commitChanges,
+    commitChanges: commitChanges
   }
 }

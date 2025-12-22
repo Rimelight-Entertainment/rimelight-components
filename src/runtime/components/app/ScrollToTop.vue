@@ -108,9 +108,7 @@ const durationInSeconds = computed(() => `${props.duration}s`)
               class="gauge-primary-stroke opacity-100"
             />
           </svg>
-          <div
-            class="absolute inset-0 flex items-center justify-center text-center"
-          >
+          <div class="absolute inset-0 flex items-center justify-center text-center">
             <UIcon name="lucide:arrow-up" class="size-6 text-white" />
           </div>
         </div>

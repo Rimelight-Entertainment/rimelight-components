@@ -194,9 +194,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
         </template>
         <template #megamenu2-content="{ item }">
           <UContainer>
-            <ul
-              class="grid gap-2 p-4 lg:w-[500px] lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]"
-            >
+            <ul class="grid gap-2 p-4 lg:w-[500px] lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]">
               <li class="row-span-3">
                 <RCPlaceholder class="size-full min-h-48" />
               </li>
@@ -246,11 +244,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
         </template>
         <template #body>
           <div class="flex size-full flex-col items-start gap-md">
-            <UNavigationMenu
-              :items="items"
-              variant="link"
-              orientation="vertical"
-            />
+            <UNavigationMenu :items="items" variant="link" orientation="vertical" />
           </div>
         </template>
       </UDrawer>
@@ -281,20 +275,8 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
         <template #body>
           <div class="flex size-full flex-col gap-md">
             <div class="flex flex-col gap-sm">
-              <UButton
-                size="xl"
-                variant="solid"
-                color="primary"
-                label="Button 1"
-                block
-              />
-              <UButton
-                size="xl"
-                variant="outline"
-                color="primary"
-                label="Button 2"
-                block
-              />
+              <UButton size="xl" variant="solid" color="primary" label="Button 1" block />
+              <UButton size="xl" variant="outline" color="primary" label="Button 2" block />
             </div>
           </div>
         </template>

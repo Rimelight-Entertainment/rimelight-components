@@ -1,20 +1,21 @@
 {
   "name": "rimelight-components",
-  "description": "A component library by Rimelight Entertainment.",
   "version": "2.0.98",
-  "type": "module",
+  "description": "A component library by Rimelight Entertainment.",
+  "keywords": [
+    "nuxt",
+    "rimelight",
+    "typescript",
+    "vue"
+  ],
+  "homepage": "https://rimelight.com/tools/rimelight-components",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight-components.git"
   },
-  "homepage": "https://rimelight.com/tools/rimelight-components",
   "license": "MIT",
-  "keywords": [
-    "rimelight",
-    "typescript",
-    "vue",
-    "nuxt"
-  ],
+  "type": "module",
+  "main": "./dist/module.mjs",
   "imports": {
     "#build/rimelight-components/*": "./.nuxt/rimelight-components/*.ts",
     "#build/rimelight-components.css": "./.nuxt/rimelight-components.css"
@@ -22,12 +23,12 @@
   "exports": {
     ".": {
       "types": "./dist/module.d.mts",
-      "style": "./dist/runtime/index.css",
-      "import": "./dist/module.mjs"
+      "import": "./dist/module.mjs",
+      "style": "./dist/runtime/index.css"
     },
-    "./runtime/*": "./dist/runtime/*",
     "./components/*": "./dist/runtime/components/*",
     "./composables/*": "./dist/runtime/composables/*",
+    "./runtime/*": "./dist/runtime/*",
     "./utils/*": {
       "types": "./dist/runtime/utils/*.d.mts",
       "import": "./dist/runtime/utils/*.js"
@@ -59,7 +60,6 @@
     }
   },
   "style": "./dist/runtime/index.css",
-  "main": "./dist/module.mjs",
   "files": [
     "dist"
   ],
@@ -78,6 +78,9 @@
     "fix": "bun run lint:fix && bun run format:fix",
     "test": "vitest",
     "release": "release-it --ci"
+  },
+  "resolutions": {
+    "rimelight-components": "workspace:*"
   },
   "dependencies": {
     "@nuxt/kit": "^4.2.2",
@@ -123,8 +126,5 @@
     "esbuild",
     "sharp",
     "vue-demi"
-  ],
-  "resolutions": {
-    "rimelight-components": "workspace:*"
-  }
+  ]
 }

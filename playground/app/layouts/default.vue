@@ -3,7 +3,7 @@
 <template>
   <div>
     <AppHeader />
-    <UMain>
+    <UMain class="bg-primary-900">
       <slot />
     </UMain>
     <AppFooter />

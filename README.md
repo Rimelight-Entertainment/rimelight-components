@@ -51,55 +51,54 @@ Thank you for considering contributing to Rimelight Components. Here are a few w
 
 ## Local Development
 
-  ```bash [bun]
-  # Install dependencies
-  bun install
-  ```
-  
-  ```bash [bun]
-  # Generate type stubs
-  bun dev:prepare
-  ```
-  
-  ```bash [bun]
-  # Develop with the playground
-  bun dev
-  ```
-  
-  ```bash [bun]
-  # Build the playground
-  bun dev:build
-  ```
-  
-  ```bash [bun]
-  # Run Typecheck
-  bun typecheck
-  ```
-  
-  ```bash [bun]
-  # Run Oxlint
-  bun lint
-  ```
-  
-  ```bash [bun]
-  # Run Prettier
-  bun format
-  ```
-  
-  ```bash [bun]
-  # Run Vitest
-  npm run test
-  ```
-  
-  ```bash [bun]
-  # Release new version
-  bun release
-  ```
+```bash [bun]
+# Install dependencies
+bun install
+```
+
+```bash [bun]
+# Generate type stubs
+bun dev:prepare
+```
+
+```bash [bun]
+# Develop with the playground
+bun dev
+```
+
+```bash [bun]
+# Build the playground
+bun dev:build
+```
+
+```bash [bun]
+# Run Typecheck
+bun typecheck
+```
+
+```bash [bun]
+# Run Oxlint
+bun lint
+```
+
+```bash [bun]
+# Run Prettier
+bun format
+```
+
+```bash [bun]
+# Run Vitest
+npm run test
+```
+
+```bash [bun]
+# Release new version
+bun release
+```
 
 Learn more in the [development guide](https://ui.nuxt.com/docs/getting-started/contribution#local-development).
 
 ## Sponshorship
-
 
 ## License
 

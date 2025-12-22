@@ -57,10 +57,7 @@ const color = computed(() => {
       <h3 class="text-lg font-bold">{{ name }}</h3>
     </template>
     <div class="flex flex-col items-center gap-sm xl:flex-row xl:items-start">
-      <div
-        class="flex aspect-square size-48 p-sm"
-        :style="{ backgroundColor: color }"
-      >
+      <div class="flex aspect-square size-48 p-sm" :style="{ backgroundColor: color }">
         <div class="flex flex-col justify-end gap-xs text-xs">
           <span v-if="name" class="text-sm">{{ formatColor(name) }}</span>
           <span v-if="hex">HEX {{ formatColor(hex) }}</span>

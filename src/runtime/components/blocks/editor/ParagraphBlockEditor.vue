@@ -78,19 +78,16 @@ onMounted(() => {
 </script>
 
 <template>
-    <div
-        ref="editorRef"
-        contenteditable="true"
-        @blur="commitContentOnBlur"
-        :class="[
+  <div
+    ref="editorRef"
+    contenteditable="true"
+    @blur="commitContentOnBlur"
+    :class="[
         'p-2 outline-none min-h-6',
         'focus:ring-2 focus:ring-blue-500 rounded-md transition duration-150',
         'text-base'
       ]"
-    >
-    </div>
+  ></div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

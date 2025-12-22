@@ -123,28 +123,26 @@ const fullSectionUrl = computed(() => {
 
 <template>
   <section :id="sectionId" :class="sectionSlot()" v-bind="$attrs">
-    <component
-      :id="sectionId"
-      :is="`h${level}`"
-      :class="headingSlot()"
-    >
+    <component :id="sectionId" :is="`h${level}`" :class="headingSlot()">
       <NuxtLink
         v-if="!isEditing"
         :href="`#${sectionId}`"
         :class="linkSlot()"
-        class="group lg:-ms-2 lg:ps-2"
+        class="group relative lg:-ms-2 lg:ps-2 inline-block w-full"
       >
         <ClientOnly>
           <UButton
             variant="soft"
             color="primary"
-            leading-icon="lucide:link"
+            icon="i-lucide-link"
             :to="`#${sectionId}`"
-            class="absolute top-1 -ms-8 hidden rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"
-            @click="copyToClipboard(fullSectionUrl)"
+            class="absolute top-1/2 -translate-y-1/2 -ms-8 hidden rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"
+            @click.prevent="copyToClipboard(fullSectionUrl)"
           />
           <template #fallback>
-            <div class="absolute top-1 -ms-8 w-6 h-6 rounded-md p-1 opacity-0 transition lg:flex" />
+            <div
+              class="absolute top-1/2 -translate-y-1/2 -ms-8 w-6 h-6 rounded-md p-1 opacity-0 transition lg:flex"
+            />
           </template>
         </ClientOnly>
         <slot name="title">{{ title }}</slot>
