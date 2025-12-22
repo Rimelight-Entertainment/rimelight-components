@@ -111,6 +111,7 @@ export default defineNuxtModule<ModuleOptions>().with({
     addImportsDir(resolve("./runtime/composables"))
     addImportsDir(resolve("./runtime/types"))
     addImportsDir(resolve("./runtime/utils"))
+    addServerImportsDir(resolve("./runtime/composables"))
     addServerImportsDir(resolve("./runtime/types"))
     addServerImportsDir(resolve("./runtime/utils"))
 
