@@ -20,6 +20,21 @@
     "#build/rimelight-components/*": "./.nuxt/rimelight-components/*.ts",
     "#build/rimelight-components.css": "./.nuxt/rimelight-components.css"
   },
+  "exports": {
+    ".": "./dist/module.mjs",
+    "./composables": {
+      "types": "./dist/runtime/composables/index.d.ts",
+      "import": "./dist/runtime/composables/index.mjs"
+    },
+    "./types": {
+      "types": "./dist/runtime/types/index.d.ts",
+      "import": "./dist/runtime/types/index.mjs"
+    },
+    "./utils": {
+      "types": "./dist/runtime/utils/index.d.ts",
+      "import": "./dist/runtime/utils/index.mjs"
+    }
+  },
   "style": "./dist/runtime/index.css",
   "files": [
     "dist"
