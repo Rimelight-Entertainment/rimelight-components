@@ -33,6 +33,10 @@
     "./utils": {
       "types": "./dist/runtime/utils/index.d.ts",
       "import": "./dist/runtime/utils/index.mjs"
+    },
+    "./db":{
+      "types": "./dist/runtime/db/index.d.ts",
+      "import": "./dist/runtime/db/index.mjs"
     }
   },
   "style": "./dist/runtime/index.css",

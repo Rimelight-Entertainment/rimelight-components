@@ -1,14 +1,12 @@
-import { defineBuildConfig } from "unbuild"
+import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
-    entries: [
-        "./src/module",
-        { input: "./src/runtime/", outDir: "./dist/runtime", format: "esm", declaration: true }
-    ],
-    declaration: true,
-    clean: true,
-    rollup: {
-        emitCJS: false,
-    },
-    failOnWarn: false
+  declaration: true,
+  entries: [
+    'src/module',
+    { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm' }
+  ],
+  rollup: {
+    emitCJS: false
+  }
 })
