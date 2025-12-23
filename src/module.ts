@@ -1,8 +1,6 @@
 import {
   defineNuxtModule,
   addComponentsDir,
-  addImportsDir,
-  addServerImportsDir,
   createResolver
 } from "@nuxt/kit"
 import { name, version, homepage } from "../package.json"
@@ -12,8 +10,6 @@ import { addBlockMapTemplates, addEditorBlockMapTemplates } from "./templates"
 import { readdirSync } from "node:fs"
 import { basename } from "node:path"
 import type { Nuxt } from "@nuxt/schema"
-
-export type * from "./runtime/types"
 
 export interface ModuleOptions {
   /**
@@ -107,14 +103,6 @@ export default defineNuxtModule<ModuleOptions>().with({
       prefix: options.prefix ?? undefined,
       global: true
     })
-
-    nuxt.options.alias["#rimelight"] = resolve("./runtime")
-
-    addImportsDir(resolve("./runtime/composables"))
-    addImportsDir(resolve("./runtime/types"))
-    addImportsDir(resolve("./runtime/utils"))
-    addServerImportsDir(resolve("./runtime/types"))
-    addServerImportsDir(resolve("./runtime/utils"))
 
     // Scan the directory for all .vue files
     const blockRendererFiles = readdirSync(resolve("./runtime/components/blocks/renderer")).filter(

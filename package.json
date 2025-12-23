@@ -20,45 +20,6 @@
     "#build/rimelight-components/*": "./.nuxt/rimelight-components/*.ts",
     "#build/rimelight-components.css": "./.nuxt/rimelight-components.css"
   },
-  "exports": {
-    ".": {
-      "types": "./dist/module.d.mts",
-      "import": "./dist/module.mjs",
-      "style": "./dist/runtime/index.css"
-    },
-    "./components/*": "./dist/runtime/components/*",
-    "./composables/*": "./dist/runtime/composables/*",
-    "./runtime/*": "./dist/runtime/*",
-    "./utils/*": {
-      "types": "./dist/runtime/utils/*.d.mts",
-      "import": "./dist/runtime/utils/*.js"
-    }
-  },
-  "typesVersions": {
-    "*": {
-      ".": [
-        "./dist/module.d.mts"
-      ],
-      "vite": [
-        "./dist/vite.d.mts"
-      ],
-      "./runtime/*": [
-        "./dist/runtime/index.d.ts"
-      ],
-      "components/*": [
-        "./dist/runtime/components/*"
-      ],
-      "composables/*": [
-        "./dist/runtime/composables/*"
-      ],
-      "utils": [
-        "./dist/runtime/utils/index.d.ts"
-      ],
-      "utils/*": [
-        "./dist/runtime/utils/*.d.ts"
-      ]
-    }
-  },
   "style": "./dist/runtime/index.css",
   "files": [
     "dist"
