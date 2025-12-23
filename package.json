@@ -1,6 +1,6 @@
 {
   "name": "rimelight-components",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "A component library by Rimelight Entertainment.",
   "keywords": [
     "nuxt",
@@ -34,7 +34,7 @@
       "types": "./dist/runtime/utils/index.d.ts",
       "import": "./dist/runtime/utils/index.mjs"
     },
-    "./db":{
+    "./db": {
       "types": "./dist/runtime/db/index.d.ts",
       "import": "./dist/runtime/db/index.mjs"
     }
