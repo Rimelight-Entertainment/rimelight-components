@@ -1,5 +1,5 @@
-import { toValue, type MaybeRefOrGetter } from "vue"
-import { type Page, type Localized, type PageDefinition, type Property } from "../types"
+import {type MaybeRefOrGetter, toValue} from "vue"
+import {type Localized, type Page, type PageDefinition, type Property} from "../types"
 
 export const getLocalizedContent = <T = string>(
   field: Localized<T> | undefined,
@@ -31,16 +31,16 @@ export function definePageDefinition<T extends PageDefinition>(
 ): {
   [K in keyof T]: K extends "properties"
     ? {
-        [G in keyof T["properties"]]: {
-          label: Localized<string>
-          defaultOpen: boolean
-          fields: {
-            [F in keyof T["properties"][G]["fields"]]: Property<
-              WidenProperty<T["properties"][G]["fields"][F]["value"]>
-            >
-          }
+      [G in keyof T["properties"]]: {
+        label: Localized<string>
+        defaultOpen: boolean
+        fields: {
+          [F in keyof T["properties"][G]["fields"]]: Property<
+            WidenProperty<T["properties"][G]["fields"][F]["value"]>
+          >
         }
       }
+    }
     : T[K]
 } {
   return def as any
@@ -62,51 +62,59 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
   const updatedProperties: any = {}
   const definitionGroups = definition.properties
 
-  for (const [groupId, definitionGroup] of Object.entries(definitionGroups)) {
-    const existingGroup = (page.properties as any)[groupId]
-    const updatedGroupFields: any = {}
+  const existingProperties = (page.properties || {}) as any;
 
-    for (const [fieldId, definitionField] of Object.entries(definitionGroup.fields)) {
-      if (existingGroup?.fields[fieldId]) {
-        // Keep existing value but update metadata from definition
+  for (const [groupId, definitionGroup] of Object.entries(definitionGroups)) {
+    const existingGroup = existingProperties[groupId];
+    const updatedGroupFields: any = {};
+
+    // Ensure fields exist in the definition group
+    const definitionFields = definitionGroup.fields || {};
+
+    for (const [fieldId, definitionField] of Object.entries(definitionFields)) {
+      // Defensive check: verify existingGroup and existingGroup.fields exist
+      const existingField = existingGroup?.fields ? existingGroup.fields[fieldId] : undefined;
+
+      if (existingField !== undefined) {
         updatedGroupFields[fieldId] = {
           ...definitionField,
-          value: existingGroup.fields[fieldId].value
-        }
+          value: existingField.value
+        };
       } else {
-        // Add new field with its default definition value
-        updatedGroupFields[fieldId] = { ...definitionField }
-        hasChanged = true
+        updatedGroupFields[fieldId] = {...definitionField};
+        hasChanged = true;
       }
     }
 
     updatedProperties[groupId] = {
       ...definitionGroup,
       fields: updatedGroupFields
-    }
+    };
 
     if (!existingGroup) {
-      hasChanged = true
+      hasChanged = true;
     }
   }
 
-  // Check if we removed any groups or fields
-  if (Object.keys(page.properties).length !== Object.keys(updatedProperties).length) {
-    hasChanged = true
+  // Check for removed groups or field count mismatches
+  const existingGroupKeys = Object.keys(existingProperties);
+  const updatedGroupKeys = Object.keys(updatedProperties);
+
+  if (existingGroupKeys.length !== updatedGroupKeys.length) {
+    hasChanged = true;
   } else {
-    for (const groupId in updatedProperties) {
-      const pageGroup = (page.properties as any)[groupId]
-      if (
-        Object.keys(pageGroup?.fields || {}).length !==
-        Object.keys(updatedProperties[groupId].fields).length
-      ) {
-        hasChanged = true
-        break
+    for (const groupId of updatedGroupKeys) {
+      const existingFields = existingProperties[groupId]?.fields || {};
+      const updatedFields = updatedProperties[groupId].fields;
+
+      if (Object.keys(existingFields).length !== Object.keys(updatedFields).length) {
+        hasChanged = true;
+        break;
       }
     }
   }
 
-  page.properties = updatedProperties as any
+  page.properties = updatedProperties;
 
   // 2. Sync Blocks
   if (definition.initialBlocks) {
@@ -137,7 +145,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
       } else {
         // This templated block is missing from the page.
         // Insert it after the last "seen" ideal block to preserve relative order.
-        filteredCurrent.splice(lastExistingIdealIndex + 1, 0, { ...idealBlock })
+        filteredCurrent.splice(lastExistingIdealIndex + 1, 0, {...idealBlock})
         lastExistingIdealIndex++
         hasChanged = true
       }
