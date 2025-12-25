@@ -13,12 +13,23 @@ const pageResolver = async (id: string) => {
   await new Promise(resolve => setTimeout(resolve, 500))
 
   // Logic to return mock data based on ID
-  if (id === 'movie-1') return { title: MOCK_MOVIE_PAGE.title, icon: MOCK_MOVIE_PAGE.icon, slug: MOCK_MOVIE_PAGE.slug }
-  if (id === 'movie-2') return { title: MOCK_MOVIE_PAGE.title, slug: MOCK_MOVIE_PAGE.slug }
-
-  return {
-
+  if (id === 'movie-1') {
+    return {
+      title: MOCK_MOVIE_PAGE.title,
+      icon: MOCK_MOVIE_PAGE.icon,
+      slug: MOCK_MOVIE_PAGE.slug
+    }
   }
+
+  if (id === 'movie-2') {
+    return {
+      title: MOCK_MOVIE_PAGE.title,
+      icon: undefined,
+      slug: MOCK_MOVIE_PAGE.slug
+    }
+  }
+
+  throw new Error(`Page with ID ${id} not found`)
 }
 
 const surround = ref<PageSurround | null>(null)

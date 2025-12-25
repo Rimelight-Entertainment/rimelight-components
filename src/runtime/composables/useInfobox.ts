@@ -3,7 +3,6 @@
 import { useI18n } from 'vue-i18n';
 import type { Property, PropertyGroup, BasePageProperties } from '../types';
 
-// Use BasePageProperties to maintain compatibility with your Page union
 export const useInfobox = (properties: BasePageProperties) => {
   const { locale } = useI18n();
 

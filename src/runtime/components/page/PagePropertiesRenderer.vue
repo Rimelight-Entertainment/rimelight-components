@@ -8,50 +8,16 @@ import { useI18n } from "vue-i18n"
 import { useShare, useClipboard } from "@vueuse/core"
 import { type Page } from '../../types'
 
-const { getTypeLabelKey } = usePageRegistry();
-
 const page = defineModel<Page>({ required: true })
+
+const { getTypeLabelKey } = usePageRegistry();
+const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(page.value.properties)
+
 
 const { t, locale } = useI18n()
 const { share } = useShare()
 const { copy } = useClipboard()
 const toast = useToast()
-
-/**
- * Logic to determine if a field should be rendered.
- * In Read-Only mode, we check visibility logic AND if the value is non-empty.
- */
-const shouldRenderField = (schema: any) => {
-  const isVisible = !schema.visibleIf || schema.visibleIf(page.value.properties)
-  if (!isVisible) return false
-
-  const val = schema.value
-
-  if (schema.type === 'text') {
-    return !!val?.[locale.value]
-  }
-
-  if (schema.type === 'text-array') {
-    return Array.isArray(val) && val.length > 0
-  }
-
-
-  return val !== undefined && val !== null && val !== ''
-}
-
-/**
- * Logic to determine if a group has any renderable fields.
- */
-const shouldRenderGroup = (group: any) => {
-  return Object.values(group.fields || {}).some((schema: any) => shouldRenderField(schema))
-}
-
-/**
- * Helper to sort fields within a group based on their order property.
- */
-const getSortedFields = (fields: Record<string, any>) => {
-  return Object.entries(fields).sort(([, a], [, b]) => (a.order ?? 0) - (b.order ?? 0))
-}
 
 const sharePage = async () => {
   if (!page.value) {
@@ -168,8 +134,8 @@ const imageTabs = computed<TabsItem[]>(() => {
       </template>
 
       <template #default>
-        <template v-for="(group, groupId) in (page.properties as any)" :key="groupId">
-          <UCollapsible v-if="shouldRenderGroup(group)" :default-open="group.defaultOpen">
+        <template v-for="[groupId, group] in getSortedGroups(page.properties)" :key="groupId">
+          <UCollapsible v-if="shouldRenderGroup(group, true)" :default-open="group.defaultOpen">
             <template #default>
               <UButton
                 :label="getLocalizedContent(group.label, locale)"
@@ -190,7 +156,7 @@ const imageTabs = computed<TabsItem[]>(() => {
                   :key="fieldKey"
                 >
                   <div
-                    v-if="shouldRenderField(schema)"
+                    v-if="isFieldVisible(schema, true)"
                     class="grid grid-cols-3 gap-xs items-baseline"
                   >
                     <dt class="text-xs font-semibold text-dimmed">

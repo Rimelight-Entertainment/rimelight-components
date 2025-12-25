@@ -164,6 +164,15 @@ const updateTextArray = (schema: any, vals: string[]) => {
                       :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
                       class="w-full"
                     />
+
+                    <USelectMenu
+                      v-else-if="schema.type === 'page-array'"
+                      v-model="schema.value"
+                      icon="lucide:link-2"
+                      variant="subtle"
+                      :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
+                      class="w-full"
+                    />
                   </UFormField>
                 </template>
               </dl>

@@ -15,7 +15,7 @@ interface PageRendererProps {
   useSurround?: boolean
   surround?: PageSurround | null
   surroundStatus?: 'idle' | 'pending' | 'success' | 'error'
-  resolvePage?: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
+  resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
 }
 
 const { useSurround = false, surroundStatus = 'idle', surround = null, resolvePage } = defineProps<PageRendererProps>()

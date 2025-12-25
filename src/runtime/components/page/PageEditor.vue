@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {ref, computed, useTemplateRef, provide} from "vue"
-import type {Page, PageSurround} from "../../types"
+import { type Page, type PageSurround, type PageDefinition } from "../../types"
 import { usePageEditor, usePageRegistry } from "../../composables"
 import { getLocalizedContent } from "../../utils"
-import {useI18n} from "vue-i18n";
+import { useI18n } from "vue-i18n";
 
 const { getTypeLabelKey } = usePageRegistry();
 
@@ -17,10 +17,13 @@ interface PageEditorProps {
   useSurround?: boolean
   surround?: PageSurround | null
   surroundStatus?: 'idle' | 'pending' | 'success' | 'error'
-  resolvePage?: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
+  resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
+  pageDefinitions: Record<string, PageDefinition>
+  onCreatePage?: (page: Partial<Page>) => Promise<void>
+  onDeletePage?: (id: string) => Promise<void>
 }
 
-const { isSaving, useSurround = false, surroundStatus = 'idle', surround = null, resolvePage } = defineProps<PageEditorProps>()
+const { isSaving, useSurround = false, surroundStatus = 'idle', surround = null, resolvePage, onCreatePage, onDeletePage } = defineProps<PageEditorProps>()
 
 interface PageEditorEmits {
   (e: "save", value: Page): void
@@ -95,6 +98,42 @@ const stopResizing = () => {
   document.body.style.cursor = ''
   document.body.style.userSelect = ''
 }
+
+/* Handlers */
+
+// Create Page
+const isCreateModalOpen = ref(false)
+const isCreating = ref(false)
+
+const handleCreateConfirm = async (newPageData: Partial<Page>) => {
+  if (!onCreatePage) return
+
+  try {
+    isCreating.value = true
+    await onCreatePage(newPageData)
+    isCreateModalOpen.value = false
+  } finally {
+    isCreating.value = false
+  }
+}
+
+// Delete Page
+const isDeleteModalOpen = ref(false)
+const isDeleting = ref(false)
+
+const handleDeleteConfirm = async () => {
+  if (!onDeletePage || !page.value.id) return
+
+  try {
+    isDeleting.value = true
+    await onDeletePage(page.value.id)
+    isDeleteModalOpen.value = false
+  } catch (err) {
+    console.error("Failed to delete page:", err)
+  } finally {
+    isDeleting.value = false
+  }
+}
 </script>
 
 <template>
@@ -138,6 +177,34 @@ const stopResizing = () => {
           :loading="isSaving"
           @click="handleSave"
         />
+        <RCCreatePageModal
+          :is-open="isCreateModalOpen"
+           :definitions="pageDefinitions"
+           :loading="isCreating"
+           @close="isCreateModalOpen = false"
+           @confirm="handleCreateConfirm"
+        >
+          <UButton
+            icon="lucide:file-plus"
+            label="Create Page"
+            color="primary"
+            size="xs"
+          />
+        </RCCreatePageModal>
+        <RCDeletePageModal
+          :is-open="isDeleteModalOpen"
+          :loading="isDeleting"
+          :page-title="getLocalizedContent(page.title, locale)"
+          @close="isDeleteModalOpen = false"
+          @confirm="handleDeleteConfirm"
+        >
+          <UButton
+            icon="lucide:file-plus"
+            label="Delete Page"
+            color="error"
+            size="xs"
+          />
+        </RCDeletePageModal>
       </div>
     </template>
   </UHeader>
@@ -273,7 +340,7 @@ const stopResizing = () => {
       class="h-full overflow-y-auto"
       :style="{ width: `${100 - editorWidth}%` }"
     >
-      <RCPageRenderer v-model="page" />
+      <RCPageRenderer v-model="page" :resolve-page="resolvePage" />
     </div>
   </main>
 </template>
