@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { getLocalizedContent } from "../../utils"
-import { usePageRegistry } from "../../composables"
+import { usePageRegistry, useInfobox } from "../../composables"
 import { useToast } from "@nuxt/ui/composables"
 import { type TabsItem } from "@nuxt/ui/components/Tabs.vue"
 import { useI18n } from "vue-i18n"

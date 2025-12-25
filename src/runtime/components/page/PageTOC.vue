@@ -105,7 +105,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <nav class="flex flex-col gap-sm self-start w-full" aria-label="Table of Contents">
+  <nav class="flex flex-col gap-sm w-full" aria-label="Table of Contents">
     <h5 v-if="title">
       {{ t(title) }}
     </h5>

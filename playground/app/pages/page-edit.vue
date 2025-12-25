@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { MOCK_MOVIE_PAGE, MOCK_MOVIE_SURROUND } from "../mocks/pages"
+import { type Page, type PageSurround } from "rimelight-components/types";
 
 const moviePage = ref(MOCK_MOVIE_PAGE)
 

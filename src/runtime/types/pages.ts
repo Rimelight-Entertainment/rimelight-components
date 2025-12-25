@@ -45,7 +45,9 @@ export interface PageDefinition {
   initialBlocks?: () => Block[]
 }
 
-export interface BasePageProperties {}
+export interface BasePageProperties {
+  [key: string]: PropertyGroup | undefined;
+}
 
 /**
  * Common fields shared by every page regardless of type.

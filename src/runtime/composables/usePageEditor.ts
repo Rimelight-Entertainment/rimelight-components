@@ -1,6 +1,5 @@
-// composables/usePageEditor.ts
-import { computed, type Ref, shallowRef, watch } from "vue"
-import type { Page } from "../types/pages"
+import {computed, type Ref, shallowRef, watch} from "vue"
+import type {Page} from "../types/pages"
 
 export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
   const history = shallowRef<string[]>([]) // Store as JSON strings for clean snapshots
@@ -21,16 +20,14 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
     if (history.value.length === 0) return
     future.value = [JSON.stringify(page.value), ...future.value]
 
-    const previous = JSON.parse(history.value.pop()!)
-    page.value = previous
+    page.value = JSON.parse(history.value.pop()!)
   }
 
   const redo = () => {
     if (future.value.length === 0) return
     history.value = [...history.value, JSON.stringify(page.value)]
 
-    const next = JSON.parse(future.value.shift()!)
-    page.value = next
+    page.value = JSON.parse(future.value.shift()!)
   }
 
   const canUndo = computed(() => history.value.length > 0)

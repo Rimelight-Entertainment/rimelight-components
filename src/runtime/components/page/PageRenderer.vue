@@ -39,7 +39,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
       <RCPageTOC
         :page-blocks="page.blocks"
         :levels="[2, 3, 4]"
-        class="hidden lg:flex lg:col-span-4 sticky top-32"
+        class="hidden lg:flex lg:col-span-4 sticky top-16"
       >
         <template #bottom> </template>
       </RCPageTOC>

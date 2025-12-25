@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import { ref, computed, useTemplateRef } from "vue"
-import type { Page } from "../../types"
-import { usePageEditor } from "../../composables"
+import {ref, computed, useTemplateRef, provide} from "vue"
+import type {Page, PageSurround} from "../../types"
+import { usePageEditor, usePageRegistry } from "../../composables"
 import { getLocalizedContent } from "../../utils"
+import {useI18n} from "vue-i18n";
+
+const { getTypeLabelKey } = usePageRegistry();
+
+const { t, locale } = useI18n()
 
 const page = defineModel<Page>({ required: true })
 const { undo, redo, canUndo, canRedo, captureSnapshot } = usePageEditor(page)
 
 interface PageEditorProps {
   isSaving: boolean
+  useSurround?: boolean
+  surround?: PageSurround | null
+  surroundStatus?: 'idle' | 'pending' | 'success' | 'error'
+  resolvePage?: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
 }
 
-const { isSaving } = defineProps<PageEditorProps>()
+const { isSaving, useSurround = false, surroundStatus = 'idle', surround = null, resolvePage } = defineProps<PageEditorProps>()
 
 interface PageEditorEmits {
   (e: "save", value: Page): void
@@ -20,10 +29,7 @@ interface PageEditorEmits {
 const emit = defineEmits<PageEditorEmits>()
 
 const handleSave = () => {
-  // We take a deep copy to "freeze" the data state for the API
   const dataToPersist = JSON.parse(JSON.stringify(page.value))
-
-  // Pass the data up to the parent
   emit("save", dataToPersist)
 }
 
@@ -38,12 +44,57 @@ const editorRef = useTemplateRef('editor')
 
 const showPreview = ref(false)
 
-const editorPanelClass = computed(() => ({
-  // When the preview is visible, both editor/preview share 1/2 span.
-  'col-span-1 w-full': showPreview.value,
-  // When the preview is hidden, the editor uses the full grid space.
-  'col-span-2 w-full': !showPreview.value,
-}))
+provide('page-resolver', resolvePage)
+
+const previousPage = computed(() => surround?.previous)
+const nextPage = computed(() => surround?.next)
+const hasSurround = computed(() => !!(surround?.previous || surround?.next))
+
+const containerRef = useTemplateRef<HTMLElement>('split-container')
+const editorWidth = ref(50)
+const isResizing = ref(false)
+const SNAP_THRESHOLD = 1.5 // Snap if within 1.5% of the center
+
+const handleMouseMove = (e: MouseEvent) => {
+  if (!isResizing.value || !containerRef.value) return
+
+  const containerRect = containerRef.value.getBoundingClientRect()
+  let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100
+
+  // Constrain bounds
+  newWidth = Math.min(Math.max(newWidth, 20), 80)
+
+  // Snap logic: if near 50%, lock it to 50%
+  if (Math.abs(newWidth - 50) < SNAP_THRESHOLD) {
+    editorWidth.value = 50
+  } else {
+    editorWidth.value = newWidth
+  }
+}
+
+const cursorClass = computed(() => {
+  if (isResizing.value) return 'cursor-grabbing'
+  return 'cursor-grab'
+})
+
+const startResizing = (e: MouseEvent) => {
+  isResizing.value = true
+  window.addEventListener('mousemove', handleMouseMove)
+  window.addEventListener('mouseup', stopResizing)
+
+  // Visual feedback
+  document.body.style.cursor = 'col-resize'
+  document.body.style.userSelect = 'none'
+}
+
+const stopResizing = () => {
+  isResizing.value = false
+  window.removeEventListener('mousemove', handleMouseMove)
+  window.removeEventListener('mouseup', stopResizing)
+
+  document.body.style.cursor = ''
+  document.body.style.userSelect = ''
+}
 </script>
 
 <template>
@@ -90,72 +141,143 @@ const editorPanelClass = computed(() => ({
       </div>
     </template>
   </UHeader>
-  <UContainer
-    class="mt-24 grid gap-xl"
-    :class="showPreview ? 'grid-cols-2 max-w-full' : 'grid-cols-1'"
+  <main
+    ref="split-container"
+    class="flex w-full overflow-hidden"
   >
-    <div :class="editorPanelClass" class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-      <UPageAside class="order-1 lg:order-2 lg:col-span-1">
-        <RCPagePropertiesEditor v-model="page" />
-      </UPageAside>
-      <div class="order-2 lg:order-1 lg:col-span-3">
-        <UPageHeader
-          :title="getLocalizedContent(page.title, 'en')"
-          :description="getLocalizedContent(page.description, 'en') ?? ''"
-        />
-        <RCBlockEditor
-          ref="editor"
-          v-model="page.blocks"
-          :class="editorPanelClass"
-          @mutation="captureSnapshot"
-        />
-        <div class="flex flex-col gap-xs text-xs">
-          <h6>Metadata</h6>
-          <span>Page ID: {{ page.id }}</span>
-          <span
-            >Created At:
-            <NuxtTime
-              :datetime="page.created_at ?? ''"
-              year="numeric"
-              month="numeric"
-              day="numeric"
-              hour="numeric"
-              minute="numeric"
-              second="numeric"
-              time-zone-name="short"
-          /></span>
-          <span
-            >Posted At:
-            <NuxtTime
-              :datetime="page.created_at ?? ''"
-              year="numeric"
-              month="numeric"
-              day="numeric"
-              hour="numeric"
-              minute="numeric"
-              second="numeric"
-              time-zone-name="short"
-          /></span>
-          <span
-            >Updated At:
-            <NuxtTime
-              :datetime="page.created_at ?? ''"
-              year="numeric"
-              month="numeric"
-              day="numeric"
-              hour="numeric"
-              minute="numeric"
-              second="numeric"
-              time-zone-name="short"
-          /></span>
+    <div
+      class="h-full overflow-y-auto"
+      :style="{ width: showPreview ? `${editorWidth}%` : '100%' }"
+    >
+      <UContainer class="flex flex-col py-16">
+        <div class="grid grid-cols-1 lg:grid-cols-24 gap-xl items-start">
+          <RCPageTOC
+            :page-blocks="page.blocks"
+            :levels="[2, 3, 4]"
+            class="hidden lg:flex lg:col-span-4 sticky top-20 self-start"
+          >
+              <template #bottom> </template>
+            </RCPageTOC>
+          <RCPagePropertiesEditor v-model="page" class="order-1 lg:order-2 lg:col-span-6" />
+          <div class="order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl">
+            <NuxtImg
+              v-if="page.banner?.src"
+              :src="page.banner?.src"
+              :alt="page.banner?.alt"
+              class="rounded-xl w-full object-cover"
+            />
+            <UPageHeader
+              :headline="t(getTypeLabelKey(page.type))"
+              :description="getLocalizedContent(page.description, 'en') ?? ''"
+              :ui="{ root: 'pt-0' }"
+            >
+              <template #title>
+                <div class="flex flex-row gap-sm">
+                  <NuxtImg
+                    v-if="page.icon?.src"
+                    :src="page.icon?.src"
+                    :alt="page.icon?.alt"
+                    class="rounded-full w-12 h-12 object-cover"
+                  />
+                  <h1>{{ getLocalizedContent(page.title, locale) }}</h1>
+                </div>
+              </template>
+            </UPageHeader>
+            <RCBlockEditor
+              ref="editor"
+              v-model="page.blocks"
+              @mutation="captureSnapshot"
+            />
+            <template v-if="useSurround">
+              <div v-if="surroundStatus === 'pending'" class="grid grid-cols-1 gap-md sm:grid-cols-2">
+                <USkeleton class="h-48 w-full rounded-xl" />
+                <USkeleton class="h-48 w-full rounded-xl" />
+              </div>
+
+              <LazyRCPageSurround
+                v-else-if="surroundStatus === 'success' && hasSurround"
+                hydrate-on-visible
+                :pageType="getTypeLabelKey(page.type)"
+                :previousTitle="getLocalizedContent(previousPage?.title, locale)"
+                :previousDescription="getLocalizedContent(previousPage?.description, locale)"
+                :previousTo="`/${previousPage?.slug}`"
+                :nextTitle="getLocalizedContent(nextPage?.title, locale)"
+                :nextDescription="getLocalizedContent(nextPage?.description, locale)"
+                :nextTo="`/${nextPage?.slug}`"
+              />
+
+              <USeparator />
+
+              <div class="flex flex-col gap-xs text-xs text-dimmed p-xl">
+                <h6>Metadata</h6>
+                <span>Page ID: {{ page.id }}</span>
+                <span
+                >Created At:
+              <NuxtTime
+                :datetime="page.created_at ?? ''"
+                year="numeric"
+                month="numeric"
+                day="numeric"
+                hour="numeric"
+                minute="numeric"
+                second="numeric"
+                time-zone-name="short"
+              /></span>
+                <span
+                >Posted At:
+              <NuxtTime
+                :datetime="page.created_at ?? ''"
+                year="numeric"
+                month="numeric"
+                day="numeric"
+                hour="numeric"
+                minute="numeric"
+                second="numeric"
+                time-zone-name="short"
+              /></span>
+                <span
+                >Updated At:
+              <NuxtTime
+                :datetime="page.created_at ?? ''"
+                year="numeric"
+                month="numeric"
+                day="numeric"
+                hour="numeric"
+                minute="numeric"
+                second="numeric"
+                time-zone-name="short"
+              /></span>
+              </div>
+            </template>
+          </div>
         </div>
-      </div>
+      </UContainer>
     </div>
-    <div class="flex flex-row gap-xl">
-      <USeparator orientation="vertical" />
-      <RCPageRenderer v-if="showPreview" v-model="page" />
+
+    <div
+      v-if="showPreview"
+      :class="cursorClass"
+      class="relative flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16"
+      @mousedown="startResizing"
+      @dblclick="editorWidth = 50"
+    >
+      <USeparator
+        orientation="vertical"
+        :ui="{
+      }"
+      />
     </div>
-  </UContainer>
+
+    <div
+      v-if="showPreview"
+      class="h-full overflow-y-auto"
+      :style="{ width: `${100 - editorWidth}%` }"
+    >
+      <RCPageRenderer v-model="page" />
+    </div>
+  </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
