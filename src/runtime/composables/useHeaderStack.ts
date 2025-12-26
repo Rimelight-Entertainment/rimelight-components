@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { useState } from '#app'
 
 interface HeaderLayer {
   id: string
@@ -6,20 +7,17 @@ interface HeaderLayer {
   order: number
 }
 
-const layers = ref<HeaderLayer[]>([])
-
 export const useHeaderStack = () => {
+  const layers = useState<HeaderLayer[]>('header-layers', () => [])
+
   const registerHeader = (id: string, height: number, order: number = 10) => {
     const existingLayer = layers.value.find((l) => l.id === id)
-
     if (existingLayer) {
-      // Only update if the height actually changed to prevent jitter
       if (existingLayer.height !== height) {
         existingLayer.height = height
       }
     } else {
       layers.value.push({ id, height, order })
-      // Keep layers sorted so the top-down calculation is always correct
       layers.value.sort((a, b) => a.order - b.order)
     }
   }
