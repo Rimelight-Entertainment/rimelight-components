@@ -1,9 +1,25 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useHeaderStack } from "rimelight-components/composables"
+
+const { totalOffset } = useHeaderStack()
+</script>
 
 <template>
-  <div>
-    <AppHeader />
-    <UMain class="bg-primary-900">
+  <div :style="{ '--total-header-offset': `${totalOffset}px` }">
+    <RCHeaderLayer id="banner" :order="1" hide-on-scroll>
+      <UBanner
+        icon="lucide:construction"
+        title="This module is under constant development, you may see placeholder or incomplete content."
+        class="bg-accented"
+      />
+    </RCHeaderLayer>
+
+    <RCHeaderLayer id="global-header" :order="2">
+      <AppHeader />
+    </RCHeaderLayer>
+
+    <UMain class="bg-primary-900 transition-[padding-top] duration-400 ease-in-out"
+           :style="{ paddingTop: 'var(--total-header-offset)' }">
       <slot />
     </UMain>
     <AppFooter />

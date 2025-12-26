@@ -137,78 +137,81 @@ const handleDeleteConfirm = async () => {
 </script>
 
 <template>
-  <UHeader class="fixed mt-16 top-0 left-0 z-50 h-12 w-full bg-muted">
-    <template #left>
-      <div class="flex items-center gap-xs">
-        <UButton
-          icon="lucide:rotate-ccw"
-          variant="outline"
-          color="neutral"
-          size="xs"
-          :disabled="!canUndo"
-          @click="undo"
-        />
-        <UButton
-          icon="lucide:rotate-cw"
-          variant="outline"
-          color="neutral"
-          size="xs"
-          :disabled="!canRedo"
-          @click="redo"
-        />
-      </div>
-    </template>
-
-    <template #right>
-      <div class="flex items-center gap-xs">
-        <UButton
-          :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
-          label="Preview"
-          variant="outline"
-          color="neutral"
-          size="xs"
-          @click="showPreview = !showPreview"
-        />
-        <UButton
-          icon="lucide:save"
-          label="Save"
-          color="primary"
-          size="xs"
-          :loading="isSaving"
-          @click="handleSave"
-        />
-        <RCCreatePageModal
-          :is-open="isCreateModalOpen"
-           :definitions="pageDefinitions"
-           :loading="isCreating"
-           @close="isCreateModalOpen = false"
-           @confirm="handleCreateConfirm"
-        >
+  <RCHeaderLayer id="editor-header" :order="3">
+    <UHeader class="h-12 w-full bg-muted">
+      <template #left>
+        <div class="flex items-center gap-xs">
           <UButton
-            icon="lucide:file-plus"
-            label="Create Page"
+            icon="lucide:rotate-ccw"
+            variant="outline"
+            color="neutral"
+            size="xs"
+            :disabled="!canUndo"
+            @click="undo"
+          />
+          <UButton
+            icon="lucide:rotate-cw"
+            variant="outline"
+            color="neutral"
+            size="xs"
+            :disabled="!canRedo"
+            @click="redo"
+          />
+        </div>
+      </template>
+
+      <template #right>
+        <div class="flex items-center gap-xs">
+          <UButton
+            :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
+            label="Preview"
+            variant="outline"
+            color="neutral"
+            size="xs"
+            @click="showPreview = !showPreview"
+          />
+          <UButton
+            icon="lucide:save"
+            label="Save"
             color="primary"
             size="xs"
+            :loading="isSaving"
+            @click="handleSave"
           />
-        </RCCreatePageModal>
-        <RCDeletePageModal
-          :is-open="isDeleteModalOpen"
-          :loading="isDeleting"
-          :page-title="getLocalizedContent(page.title, locale)"
-          @close="isDeleteModalOpen = false"
-          @confirm="handleDeleteConfirm"
-        >
-          <UButton
-            icon="lucide:file-plus"
-            label="Delete Page"
-            color="error"
-            size="xs"
-          />
-        </RCDeletePageModal>
-      </div>
-    </template>
-  </UHeader>
-  <main
+          <RCCreatePageModal
+            :is-open="isCreateModalOpen"
+             :definitions="pageDefinitions"
+             :loading="isCreating"
+             @close="isCreateModalOpen = false"
+             @confirm="handleCreateConfirm"
+          >
+            <UButton
+              icon="lucide:file-plus"
+              label="Create Page"
+              color="primary"
+              size="xs"
+            />
+          </RCCreatePageModal>
+          <RCDeletePageModal
+            :is-open="isDeleteModalOpen"
+            :loading="isDeleting"
+            :page-title="getLocalizedContent(page.title, locale)"
+            @close="isDeleteModalOpen = false"
+            @confirm="handleDeleteConfirm"
+          >
+            <UButton
+              icon="lucide:file-plus"
+              label="Delete Page"
+              color="error"
+              size="xs"
+            />
+          </RCDeletePageModal>
+        </div>
+      </template>
+    </UHeader>
+  </RCHeaderLayer>
+
+  <div
     ref="split-container"
     class="flex w-full overflow-hidden"
   >
@@ -342,7 +345,7 @@ const handleDeleteConfirm = async () => {
     >
       <RCPageRenderer v-model="page" :resolve-page="resolvePage" />
     </div>
-  </main>
+  </div>
 </template>
 
 <style scoped>
