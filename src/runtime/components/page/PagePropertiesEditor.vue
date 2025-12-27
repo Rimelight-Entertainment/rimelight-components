@@ -46,16 +46,21 @@ const updateTextArray = (schema: any, vals: string[]) => {
     >
       <template #header>
         <div class="flex flex-col gap-xs items-center">
-          <NuxtImg
+          <RCImage
             v-if="page.icon?.src"
             :src="page.icon?.src"
             :alt="page.icon?.alt"
             class="rounded-full w-12 h-12 object-cover"
           />
 
-          <h3>
-            {{ getLocalizedContent(page.title, locale) }}
-          </h3>
+          <UInput
+            v-model="page.title.en"
+            variant="subtle"
+            placeholder="Enter page title..."
+            size="xl"
+            :ui="{ base: 'text-center font-bold text-lg' }"
+            class="w-full"
+          />
 
           <span class="text-sm">{{ t(getTypeLabelKey(page.type)) }}</span>
 
@@ -82,12 +87,12 @@ const updateTextArray = (schema: any, vals: string[]) => {
               class="w-full"
             >
               <template #content="{ item }">
-                <NuxtImg :src="item.img.src" :alt="item.img.alt" class="w-full object-cover" />
+                <RCImage :src="item.img.src" :alt="item.img.alt" class="w-full object-cover" />
               </template>
             </UTabs>
 
             <div v-else-if="page.images[0]">
-              <NuxtImg
+              <RCImage
                 :src="page.images[0].src"
                 :alt="page.images[0].alt"
                 class="w-full object-cover"

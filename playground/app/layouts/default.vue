@@ -22,12 +22,6 @@ const { totalOffset } = useHeaderStack()
            :style="{ paddingTop: 'var(--total-header-offset)' }">
       <slot />
     </UMain>
-    <ClientOnly>
-      <div class="fixed bottom-4 right-4 z-[9999] bg-black text-white p-2 text-xs">
-        Total Offset: {{ totalOffset }}px
-        Layers: {{ layers.length }}
-      </div>
-    </ClientOnly>
     <AppFooter />
   </div>
 </template>

@@ -82,7 +82,7 @@ const imageTabs = computed<TabsItem[]>(() => {
     >
       <template #header>
         <div class="flex flex-col gap-xs items-center">
-          <NuxtImg
+          <RCImage
             v-if="page.icon?.src"
             :src="page.icon?.src"
             :alt="page.icon?.alt"
@@ -118,16 +118,14 @@ const imageTabs = computed<TabsItem[]>(() => {
               class="w-full"
             >
               <template #content="{ item }">
-                <NuxtImg :src="item.img.src" :alt="item.img.alt" class="w-full object-cover" />
+                <RCImage :src="item.img.src" :alt="item.img.alt" class="w-full object-cover" />
               </template>
             </UTabs>
 
             <div v-else-if="page.images[0]">
-              <NuxtImg
-                :src="page.images[0].src"
-                :alt="page.images[0].alt"
-                class="w-full object-cover"
-              />
+              <RCImage :src="page.images[0].src"
+                       :alt="page.images[0].alt"
+                       class="w-full object-cover" />
             </div>
           </div>
         </div>

@@ -10,7 +10,7 @@ const {} = defineProps<{
 
 <template>
   <UCard>
-    <NuxtImg :src="src" :alt="alt" />
+    <RCImage :src="src" :alt="alt" />
     <div class="flex flex-col gap-xs">
       <h3 class="text-xl font-bold">
         {{ name }}

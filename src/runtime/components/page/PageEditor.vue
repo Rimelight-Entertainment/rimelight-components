@@ -230,7 +230,7 @@ const handleDeleteConfirm = async () => {
             </RCPageTOC>
           <RCPagePropertiesEditor v-model="page" class="order-1 lg:order-2 lg:col-span-6" />
           <div class="order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl">
-            <NuxtImg
+            <RCImage
               v-if="page.banner?.src"
               :src="page.banner?.src"
               :alt="page.banner?.alt"
@@ -243,7 +243,7 @@ const handleDeleteConfirm = async () => {
             >
               <template #title>
                 <div class="flex flex-row gap-sm">
-                  <NuxtImg
+                  <RCImage
                     v-if="page.icon?.src"
                     :src="page.icon?.src"
                     :alt="page.icon?.alt"
