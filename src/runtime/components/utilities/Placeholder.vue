@@ -3,7 +3,7 @@ import { tv } from "tailwind-variants"
 
 export interface PlaceholderProps {}
 
-const props = defineProps<PlaceholderProps>()
+const {} = defineProps<PlaceholderProps>()
 
 export interface PlaceholderEmits {}
 

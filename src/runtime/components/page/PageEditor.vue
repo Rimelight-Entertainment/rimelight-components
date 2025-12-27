@@ -19,6 +19,8 @@ export interface PageEditorProps {
 
 const { isSaving, useSurround = false, surroundStatus = 'idle', surround = null, resolvePage, onCreatePage, onDeletePage } = defineProps<PageEditorProps>()
 
+const page = defineModel<Page>({ required: true })
+
 export interface PageEditorEmits {
   (e: "save", value: Page): void
 }
@@ -70,7 +72,6 @@ const {
 const { getTypeLabelKey } = usePageRegistry();
 const { t, locale } = useI18n()
 
-const page = defineModel<Page>({ required: true })
 const { undo, redo, canUndo, canRedo, captureSnapshot } = usePageEditor(page)
 
 const handleSave = () => {

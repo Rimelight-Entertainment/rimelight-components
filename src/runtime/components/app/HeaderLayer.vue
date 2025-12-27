@@ -10,7 +10,7 @@ export interface HeaderLayerProps {
   hideOnScroll?: boolean
 }
 
-const props = defineProps<HeaderLayerProps>()
+const { id, order, hideOnScroll = false } = defineProps<HeaderLayerProps>()
 
 export interface HeaderLayerEmits {}
 
@@ -35,10 +35,10 @@ const lastScrollY = ref(0)
 // This tracks the "measured" height of the children
 const naturalHeight = ref(0)
 
-const topOffset = computed(() => getOffsetFor(props.id))
+const topOffset = computed(() => getOffsetFor(id))
 
 watch(scrollY, (current) => {
-  if (!props.hideOnScroll) return
+  if (!hideOnScroll) return
 
   const diff = current - lastScrollY.value
   // Don't hide if we are within the top 50px or if the scroll was tiny
@@ -56,7 +56,7 @@ const updateStack = () => {
   // Because the stack is reactive, changing this triggers the transition
   // on UMain and other HeaderLayers simultaneously.
   const heightToRegister = isVisible.value ? naturalHeight.value : 0
-  registerHeader(props.id, heightToRegister, props.order)
+  registerHeader(id, heightToRegister, order)
 }
 
 // When visibility changes, update the stack immediately
@@ -86,7 +86,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  unregisterHeader(props.id)
+  unregisterHeader(id)
   observer?.disconnect()
 })
 </script>

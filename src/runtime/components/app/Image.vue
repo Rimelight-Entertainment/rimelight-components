@@ -45,7 +45,6 @@ const { base } = imageStyles()
 
 const img = useImage()
 const isOpen = ref(false)
-const imgRef = ref<HTMLImageElement | null>(null)
 const imgElement = useTemplateRef<{ $el: HTMLImageElement }>('imgRef')
 
 const metadata = reactive({

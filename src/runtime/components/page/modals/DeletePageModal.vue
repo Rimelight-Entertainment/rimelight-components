@@ -3,8 +3,6 @@ import { ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { tv } from "tailwind-variants"
 
-const { t } = useI18n()
-
 export interface DeletePageModalProps {
   isOpen: boolean
   loading?: boolean
@@ -37,6 +35,8 @@ const {
   body,
   footer
 } = deletePageModalStyles()
+
+const { t } = useI18n()
 
 const confirmationInput = ref('')
 const CONFIRMATION_TEXT = "DELETE"

@@ -10,15 +10,17 @@ export interface BlockEditorProps {
 
 const { historyLimit } = defineProps<BlockEditorProps>()
 
+const blocks = defineModel<Block[]>({ required: true })
+
 export interface BlockEditorEmits {
   (e: "save"): void
 }
 
 const emit = defineEmits<BlockEditorEmits>()
 
-const blocks = defineModel<Block[]>({ required: true })
-
 const blockEditorStyles = tv({})
+
+const {} = blockEditorStyles()
 
 const {
   removeBlock,

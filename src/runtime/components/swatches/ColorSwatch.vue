@@ -4,9 +4,6 @@ import { useClipboard } from "@vueuse/core"
 import { useToast } from "@nuxt/ui/composables"
 import { tv } from "tailwind-variants"
 
-const { copy } = useClipboard()
-const toast = useToast()
-
 export interface ColorSwatchProps {
   name?: string
   hex?: string
@@ -35,6 +32,9 @@ const colorSwatchStyles = tv({
 })
 
 const { card, title: titleStyle, content, preview, details, buttonGroup, button } = colorSwatchStyles()
+
+const { copy } = useClipboard()
+const toast = useToast()
 
 const copyToClipboard = async (text: string) => {
   try {

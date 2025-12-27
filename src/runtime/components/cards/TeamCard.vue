@@ -9,9 +9,10 @@ export interface TeamCardProps {
   description: string
 }
 
+const { src, alt, name, role, description } = defineProps<TeamCardProps>()
+
 export interface TeamCardEmits {}
 
-const { src, alt, name, role, description } = defineProps<TeamCardProps>()
 const emit = defineEmits<TeamCardEmits>()
 
 const teamCardStyles = tv({

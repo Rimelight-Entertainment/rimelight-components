@@ -7,10 +7,7 @@ export interface ScrollToTopProps {
   duration?: number
 }
 
-const props = withDefaults(defineProps<ScrollToTopProps>(), {
-  circleStrokeWidth: 4,
-  duration: 0.1
-})
+const { circleStrokeWidth = 4, duration = 0.1 } = defineProps<ScrollToTopProps>()
 
 export interface ScrollToTopEmits {}
 
@@ -85,7 +82,7 @@ const currentPercent = computed(
 )
 
 const percentageInPx = computed(() => `${percentPx}px`)
-const durationInSeconds = computed(() => `${props.duration}s`)
+const durationInSeconds = computed(() => `${duration}s`)
 </script>
 
 <template>
@@ -105,7 +102,7 @@ const durationInSeconds = computed(() => `${props.duration}s`)
               cy="50"
               r="45"
               fill="var(--color-primary-950)"
-              :stroke-width="props.circleStrokeWidth"
+              :stroke-width="circleStrokeWidth"
               stroke-dashoffset="0"
               stroke-linecap="round"
               class="gauge-secondary-stroke opacity-100"
@@ -115,7 +112,7 @@ const durationInSeconds = computed(() => `${props.duration}s`)
               cy="50"
               r="45"
               fill="transparent"
-              :stroke-width="props.circleStrokeWidth"
+              :stroke-width="circleStrokeWidth"
               stroke-dashoffset="0"
               stroke-linecap="round"
               class="gauge-primary-stroke opacity-100"

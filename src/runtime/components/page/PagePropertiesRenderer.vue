@@ -11,7 +11,9 @@ import { tv } from 'tailwind-variants'
 
 export interface PagePropertiesRendererProps {}
 
-const props = defineProps<PagePropertiesRendererProps>()
+const {} = defineProps<PagePropertiesRendererProps>()
+
+const page = defineModel<Page>({ required: true })
 
 export interface PagePropertiesRendererEmits {}
 
@@ -63,7 +65,6 @@ const {
   links
 } = pagePropertiesRendererStyles()
 
-const page = defineModel<Page>({ required: true })
 const { getTypeLabelKey } = usePageRegistry();
 const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(page.value.properties)
 

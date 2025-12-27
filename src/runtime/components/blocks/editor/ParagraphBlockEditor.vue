@@ -5,13 +5,11 @@ import type { ParagraphBlockProps, RichTextContent } from "../../../types"
 import { richTextToHtml, parseHtmlToRichText } from "../../../utils"
 
 // The external dependencies
-const editorApi = inject<any>("block-editor-api")
-
 export interface ParagraphBlockEditorProps extends ParagraphBlockProps {
   id: string
 }
 
-const props = defineProps<ParagraphBlockEditorProps>()
+const { id, text } = defineProps<ParagraphBlockEditorProps>()
 
 export interface ParagraphBlockEditorEmits {}
 
@@ -25,12 +23,15 @@ const paragraphBlockEditorStyles = tv({
 
 const { root } = paragraphBlockEditorStyles()
 
+// The external dependencies
+const editorApi = inject<any>("block-editor-api")
+
 // 2. Local State for the Contenteditable Element
 // We use a reference to the DOM element to read/write its content.
 const editorRef = ref<HTMLElement | null>(null)
 
 // Local buffer that holds the HTML representation of the content for initial render/sync
-const localHtml = ref(richTextToHtml(props.text))
+const localHtml = ref(richTextToHtml(text))
 
 const isContentChanging = ref(false)
 
@@ -46,7 +47,7 @@ const commitContentOnBlur = () => {
   const rawHtml = editorRef.value.innerText.trim()
 
   // 2. Only commit if the content has actually changed from the last known state
-  const currentPropText = richTextToHtml(props.text)
+  const currentPropText = richTextToHtml(text)
   if (rawHtml === currentPropText) {
     return
   }
@@ -56,7 +57,7 @@ const commitContentOnBlur = () => {
 
   // 4. Commit the structural update
   const newRichContent: RichTextContent = parseHtmlToRichText(rawHtml)
-  editorApi.updateBlockProps(props.id, { text: newRichContent })
+  editorApi.updateBlockProps(id, { text: newRichContent })
 
   // 5. Reset flag after commit
   nextTick(() => {
@@ -66,7 +67,7 @@ const commitContentOnBlur = () => {
 
 // 3. Sync-In: Watch for external changes (undo/redo) and sync back to the editor
 watch(
-    () => props.text,
+    () => text,
     (newContent) => {
       // Only sync back if the change is external AND the user is not actively typing
       if (isContentChanging.value || !editorRef.value || document.activeElement === editorRef.value) {

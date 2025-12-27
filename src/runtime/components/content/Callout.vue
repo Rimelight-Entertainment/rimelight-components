@@ -13,9 +13,6 @@ export type CalloutVariant =
   | "ideation"
   | "source"
 
-const { t } = useI18n()
-const appConfig = useAppConfig()
-
 export interface CalloutProps {
   variant: CalloutVariant
   to?: string
@@ -37,6 +34,8 @@ const calloutStyles = tv({
 
 const { icon: iconClass, tooltipIcon } = calloutStyles()
 
+const { t } = useI18n()
+const appConfig = useAppConfig()
 
 const config = computed(() => {
   return (
