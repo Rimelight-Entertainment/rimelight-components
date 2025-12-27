@@ -3,16 +3,10 @@ import {ref, computed, useTemplateRef, provide} from "vue"
 import { type Page, type PageSurround, type PageDefinition } from "../../types"
 import { usePageEditor, usePageRegistry } from "../../composables"
 import { getLocalizedContent } from "../../utils"
-import { useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n"
+import { tv } from "tailwind-variants"
 
-const { getTypeLabelKey } = usePageRegistry();
-
-const { t, locale } = useI18n()
-
-const page = defineModel<Page>({ required: true })
-const { undo, redo, canUndo, canRedo, captureSnapshot } = usePageEditor(page)
-
-interface PageEditorProps {
+export interface PageEditorProps {
   isSaving: boolean
   useSurround?: boolean
   surround?: PageSurround | null
@@ -25,11 +19,59 @@ interface PageEditorProps {
 
 const { isSaving, useSurround = false, surroundStatus = 'idle', surround = null, resolvePage, onCreatePage, onDeletePage } = defineProps<PageEditorProps>()
 
-interface PageEditorEmits {
+export interface PageEditorEmits {
   (e: "save", value: Page): void
 }
 
 const emit = defineEmits<PageEditorEmits>()
+
+const pageEditorStyles = tv({
+  slots: {
+    header: "h-12 w-full bg-muted",
+    headerGroup: "flex items-center gap-xs",
+    splitContainer: "flex w-full overflow-hidden",
+    editorColumn: "h-full overflow-y-auto",
+    container: "flex flex-col py-16",
+    grid: "grid grid-cols-1 lg:grid-cols-24 gap-xl items-start",
+    toc: "hidden lg:flex lg:col-span-4 sticky top-20 self-start",
+    properties: "order-1 lg:order-2 lg:col-span-6",
+    contentWrapper: "order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl",
+    banner: "rounded-xl w-full object-cover",
+    icon: "rounded-full w-12 h-12 object-cover",
+    title: "",
+    surroundSkeleton: "grid grid-cols-1 gap-md sm:grid-cols-2",
+    skeleton: "h-48 w-full rounded-xl",
+    metadata: "flex flex-col gap-xs text-xs text-dimmed p-xl",
+    resizer: "relative flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16",
+    previewColumn: "h-full overflow-y-auto"
+  }
+})
+
+const {
+  header,
+  headerGroup,
+  splitContainer,
+  editorColumn,
+  container,
+  grid,
+  toc,
+  properties,
+  contentWrapper,
+  banner,
+  icon,
+  title: titleClass,
+  surroundSkeleton,
+  skeleton,
+  metadata,
+  resizer,
+  previewColumn
+} = pageEditorStyles()
+
+const { getTypeLabelKey } = usePageRegistry();
+const { t, locale } = useI18n()
+
+const page = defineModel<Page>({ required: true })
+const { undo, redo, canUndo, canRedo, captureSnapshot } = usePageEditor(page)
 
 const handleSave = () => {
   const dataToPersist = JSON.parse(JSON.stringify(page.value))
@@ -138,9 +180,9 @@ const handleDeleteConfirm = async () => {
 
 <template>
   <RCHeaderLayer id="editor-header" :order="3">
-    <UHeader class="h-12 w-full bg-muted">
+    <UHeader :class="header()">
       <template #left>
-        <div class="flex items-center gap-xs">
+        <div :class="headerGroup()">
           <UButton
             icon="lucide:rotate-ccw"
             variant="outline"
@@ -161,7 +203,7 @@ const handleDeleteConfirm = async () => {
       </template>
 
       <template #right>
-        <div class="flex items-center gap-xs">
+        <div :class="headerGroup()">
           <UButton
             :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
             label="Preview"
@@ -213,28 +255,28 @@ const handleDeleteConfirm = async () => {
 
   <div
     ref="split-container"
-    class="flex w-full overflow-hidden"
+    :class="splitContainer()"
   >
     <div
-      class="h-full overflow-y-auto"
+      :class="editorColumn()"
       :style="{ width: showPreview ? `${editorWidth}%` : '100%' }"
     >
-      <UContainer class="flex flex-col py-16">
-        <div class="grid grid-cols-1 lg:grid-cols-24 gap-xl items-start">
+      <UContainer :class="container()">
+        <div :class="grid()">
           <RCPageTOC
             :page-blocks="page.blocks"
             :levels="[2, 3, 4]"
-            class="hidden lg:flex lg:col-span-4 sticky top-20 self-start"
+            :class="toc()"
           >
               <template #bottom> </template>
             </RCPageTOC>
-          <RCPagePropertiesEditor v-model="page" class="order-1 lg:order-2 lg:col-span-6" />
-          <div class="order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl">
+          <RCPagePropertiesEditor v-model="page" :class="properties()" />
+          <div :class="contentWrapper()">
             <RCImage
               v-if="page.banner?.src"
               :src="page.banner?.src"
               :alt="page.banner?.alt"
-              class="rounded-xl w-full object-cover"
+              :class="banner()"
             />
             <UPageHeader
               :headline="t(getTypeLabelKey(page.type))"
@@ -247,9 +289,9 @@ const handleDeleteConfirm = async () => {
                     v-if="page.icon?.src"
                     :src="page.icon?.src"
                     :alt="page.icon?.alt"
-                    class="rounded-full w-12 h-12 object-cover"
+                    :class="icon()"
                   />
-                  <h1>{{ getLocalizedContent(page.title, locale) }}</h1>
+                  <h1 :class="titleClass()">{{ getLocalizedContent(page.title, locale) }}</h1>
                 </div>
               </template>
             </UPageHeader>
@@ -259,9 +301,9 @@ const handleDeleteConfirm = async () => {
               @mutation="captureSnapshot"
             />
             <template v-if="useSurround">
-              <div v-if="surroundStatus === 'pending'" class="grid grid-cols-1 gap-md sm:grid-cols-2">
-                <USkeleton class="h-48 w-full rounded-xl" />
-                <USkeleton class="h-48 w-full rounded-xl" />
+              <div v-if="surroundStatus === 'pending'" :class="surroundSkeleton()">
+                <USkeleton :class="skeleton()" />
+                <USkeleton :class="skeleton()" />
               </div>
 
               <LazyRCPageSurround
@@ -278,7 +320,7 @@ const handleDeleteConfirm = async () => {
 
               <USeparator />
 
-              <div class="flex flex-col gap-xs text-xs text-dimmed p-xl">
+              <div :class="metadata()">
                 <h6>Metadata</h6>
                 <span>Page ID: {{ page.id }}</span>
                 <span
@@ -326,21 +368,16 @@ const handleDeleteConfirm = async () => {
 
     <div
       v-if="showPreview"
-      :class="cursorClass"
-      class="relative flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16"
+      :class="[cursorClass, resizer()]"
       @mousedown="startResizing"
       @dblclick="editorWidth = 50"
     >
-      <USeparator
-        orientation="vertical"
-        :ui="{
-      }"
-      />
+      <USeparator orientation="vertical" />
     </div>
 
     <div
       v-if="showPreview"
-      class="h-full overflow-y-auto"
+      :class="previewColumn()"
       :style="{ width: `${100 - editorWidth}%` }"
     >
       <RCPageRenderer v-model="page" :resolve-page="resolvePage" />

@@ -9,14 +9,29 @@ import {
 import TextNode from "../nodes/TextNode.vue"
 import LinkNode from "../nodes/LinkNode.vue"
 import PageMention from "../page/PageMention.vue"
+import { tv } from "tailwind-variants"
 
 defineOptions({
   name: "TextRenderer"
 })
 
-const { content } = defineProps<{
+export interface TextRendererProps {
   content: RichTextContent
-}>()
+}
+
+const { content } = defineProps<TextRendererProps>()
+
+export interface TextRendererEmits {}
+
+const emit = defineEmits<TextRendererEmits>()
+
+const textRendererStyles = tv({
+  slots: {
+    root: ""
+  }
+})
+
+const { root } = textRendererStyles()
 
 /**
  * Type representing the possible values for the `is` attribute on <component>.

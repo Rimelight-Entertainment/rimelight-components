@@ -1,13 +1,29 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed, nextTick } from 'vue'
-import { useHeaderStack } from '../../composables'
-import { useWindowScroll } from '@vueuse/core'
+import { ref, onMounted, onUnmounted, watch, computed, nextTick } from "vue"
+import { useHeaderStack } from "../../composables"
+import { useWindowScroll } from "@vueuse/core"
+import { tv } from "tailwind-variants"
 
-const props = defineProps<{
+export interface HeaderLayerProps {
   id: string
   order?: number
   hideOnScroll?: boolean
-}>()
+}
+
+const props = defineProps<HeaderLayerProps>()
+
+export interface HeaderLayerEmits {}
+
+const emit = defineEmits<HeaderLayerEmits>()
+
+const headerLayerStyles = tv({
+  slots: {
+    root: "fixed left-0 right-0 z-50 overflow-hidden transition-[top,height,opacity] duration-200 ease-in-out",
+    content: "w-full"
+  }
+})
+
+const { root, content } = headerLayerStyles()
 
 const { registerHeader, unregisterHeader, getOffsetFor } = useHeaderStack()
 const { y: scrollY } = useWindowScroll()
@@ -77,7 +93,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="fixed left-0 right-0 z-50 overflow-hidden transition-[top,height,opacity] duration-200 ease-in-out"
+    :class="root()"
     :style="{
       top: `${topOffset}px`,
       height: isVisible ? `${naturalHeight}px` : '0px',
@@ -85,7 +101,7 @@ onUnmounted(() => {
       pointerEvents: isVisible ? 'auto' : 'none'
     }"
   >
-    <div ref="contentRef" class="w-full">
+    <div ref="contentRef" :class="content()">
       <slot />
     </div>
   </div>

@@ -1,8 +1,25 @@
 <script setup lang="ts">
 import {inject, ref, watch} from "vue"
 import type {TestBlockProps} from "../../../types"
+import { tv } from "tailwind-variants"
 
-const { text, id } = defineProps<TestBlockProps & { id: string }>()
+export interface TestBlockEditorProps extends TestBlockProps {
+  id: string
+}
+
+const { text, id } = defineProps<TestBlockEditorProps>()
+
+export interface TestBlockEditorEmits {}
+
+const emit = defineEmits<TestBlockEditorEmits>()
+
+const testBlockEditorStyles = tv({
+  slots: {
+    input: "w-full"
+  }
+})
+
+const { input } = testBlockEditorStyles()
 
 const editorApi = inject<any>("block-editor-api")
 
@@ -54,7 +71,7 @@ watch(
         placeholder="Type here..."
         @input="updateLocalText"
         @blur="commitOnBlur"
-        class="w-full"
+        :class="input()"
       />
     </template>
   </RCTest>

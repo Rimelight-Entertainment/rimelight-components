@@ -5,9 +5,47 @@ import { usePageRegistry, useInfobox } from "../../composables"
 import { getLocalizedContent } from "../../utils"
 import { type TabsItem } from "@nuxt/ui/components/Tabs.vue"
 import { type Page } from "../../types"
+import { tv } from "tailwind-variants"
+
+export interface PagePropertiesEditorProps {}
+
+const props = defineProps<PagePropertiesEditorProps>()
+
+export interface PagePropertiesEditorEmits {}
+
+const emit = defineEmits<PagePropertiesEditorEmits>()
+
+const pagePropertiesEditorStyles = tv({
+  slots: {
+    aside: "flex flex-col gap-md",
+    icon: "rounded-full w-12 h-12 object-cover",
+    titleInput: "w-full",
+    type: "text-sm",
+    tags: "flex flex-row flex-wrap gap-xs",
+    tabs: "w-full",
+    image: "w-full object-cover",
+    groupButton: "group rounded-none bg-elevated text-default",
+    details: "p-sm flex flex-col gap-xs",
+    field: "w-full",
+    links: "flex flex-col gap-xs"
+  }
+})
+
+const {
+  aside,
+  icon,
+  titleInput,
+  type,
+  tags,
+  tabs,
+  image,
+  groupButton,
+  details,
+  field,
+  links
+} = pagePropertiesEditorStyles()
 
 const page = defineModel<Page>({ required: true })
-
 const { getTypeLabelKey } = usePageRegistry()
 const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(page.value.properties)
 
@@ -39,7 +77,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
 </script>
 
 <template>
-  <aside class="flex flex-col gap-md">
+  <aside :class="aside()">
     <UCard
       variant="soft"
       :ui="{ root: 'divide-none', header: 'bg-accented text-center', body: 'p-0 sm:p-0 bg-muted' }"
@@ -50,7 +88,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
             v-if="page.icon?.src"
             :src="page.icon?.src"
             :alt="page.icon?.alt"
-            class="rounded-full w-12 h-12 object-cover"
+            :class="icon()"
           />
 
           <UInput
@@ -59,12 +97,12 @@ const updateTextArray = (schema: any, vals: string[]) => {
             placeholder="Enter page title..."
             size="xl"
             :ui="{ base: 'text-center font-bold text-lg' }"
-            class="w-full"
+            :class="titleInput()"
           />
 
-          <span class="text-sm">{{ t(getTypeLabelKey(page.type)) }}</span>
+          <span :class="type()">{{ t(getTypeLabelKey(page.type)) }}</span>
 
-          <div v-if="page.tags?.length" class="flex flex-row flex-wrap gap-xs">
+          <div v-if="page.tags?.length" :class="tags()">
             <UBadge
               v-for="tag in page.tags"
               :key="tag[locale]"
@@ -84,10 +122,10 @@ const updateTextArray = (schema: any, vals: string[]) => {
               variant="link"
               size="xs"
               color="neutral"
-              class="w-full"
+              :class="tabs()"
             >
               <template #content="{ item }">
-                <RCImage :src="item.img.src" :alt="item.img.alt" class="w-full object-cover" />
+                <RCImage :src="item.img.src" :alt="item.img.alt" :class="image()" />
               </template>
             </UTabs>
 
@@ -95,7 +133,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
               <RCImage
                 :src="page.images[0].src"
                 :alt="page.images[0].alt"
-                class="w-full object-cover"
+                :class="image()"
               />
             </div>
           </div>
@@ -114,12 +152,13 @@ const updateTextArray = (schema: any, vals: string[]) => {
             trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
           }"
                 block
-                class="group rounded-none bg-elevated text-default"
+                :class="groupButton()"
               />
             </template>
 
             <template #content>
-              <dl class="p-sm flex flex-col gap-xs">
+              <ClientOnly>
+               <dl :class="details()">
                 <template v-for="[fieldKey, schema] in getSortedFields(group.fields)" :key="fieldKey">
                   <UFormField
                     v-if="isFieldVisible(schema, false)"
@@ -131,7 +170,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
                       v-model="schema.value.en"
                       variant="subtle"
                       placeholder="Type here..."
-                      class="w-full"
+                      :class="field()"
                     />
 
                     <UInput
@@ -139,7 +178,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
                       v-model.number="schema.value"
                       type="number"
                       variant="subtle"
-                      class="w-full"
+                      :class="field()"
                     />
 
                     <USelect
@@ -147,7 +186,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
                       v-model="schema.value"
                       :items="schema.options || []"
                       variant="subtle"
-                      class="w-full"
+                      :class="field()"
                     />
 
                     <UInputMenu
@@ -158,7 +197,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
                       creatable
                       variant="subtle"
                       placeholder="Add item..."
-                      class="w-full"
+                      :class="field()"
                     />
 
                     <UInput
@@ -167,7 +206,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
                       icon="lucide:link-2"
                       variant="subtle"
                       :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
-                      class="w-full"
+                      :class="field()"
                     />
 
                     <USelectMenu
@@ -176,17 +215,18 @@ const updateTextArray = (schema: any, vals: string[]) => {
                       icon="lucide:link-2"
                       variant="subtle"
                       :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
-                      class="w-full"
+                      :class="field()"
                     />
                   </UFormField>
                 </template>
               </dl>
+              </ClientOnly>
             </template>
           </UCollapsible>
         </template>
       </template>
     </UCard>
-    <div class="flex flex-col gap-xs">
+    <div :class="links()">
       <h6>Links</h6>
       <UButton
         v-for="(link, index) in page.links"

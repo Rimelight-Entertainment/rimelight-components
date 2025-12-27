@@ -4,8 +4,6 @@ import { type PageDefinition, type PageType, type Page } from "../../../types"
 import { tv } from "tailwind-variants"
 import { useI18n } from "vue-i18n"
 
-const { t } = useI18n()
-
 export interface CreatePageModalProps {
   isOpen: boolean
   definitions: Record<string, PageDefinition>
@@ -19,21 +17,29 @@ export interface CreatePageModalEmits {
   confirm: [page: Partial<Page>]
 }
 
-const emits = defineEmits<CreatePageModalEmits>()
+const emit = defineEmits<CreatePageModalEmits>()
 
 const createPageModalStyles = tv({
   slots: {
-    base: "flex flex-col gap-6",
-    group: "border border-neutral-200 rounded-lg p-4 bg-white shadow-sm",
-    groupTitle: "text-lg font-bold text-neutral-900 mb-4",
-    field: "flex flex-col gap-1.5",
-    label: "text-sm font-medium text-neutral-700",
-    input: "w-full px-3 py-2 rounded-md border border-neutral-300 focus:ring-2 focus:ring-primary-500 transition-all outline-hidden",
-    select: "w-full px-3 py-2 rounded-md border border-neutral-300 bg-white",
+    header: "flex items-center justify-between",
+    headerTitle: "text-base font-semibold leading-6",
+    closeButton: "-my-1",
+    body: "space-y-4 py-4",
+    field: "w-full",
+    footer: "flex justify-end gap-2"
   }
 })
 
-const styles = createPageModalStyles()
+const {
+  header: headerClass,
+  headerTitle,
+  closeButton,
+  body,
+  field,
+  footer
+} = createPageModalStyles()
+
+const { t } = useI18n()
 
 const selectedType = ref<PageType | ''>('')
 
@@ -81,29 +87,29 @@ const handleConfirm = () => {
 
   }
 
-  emits('confirm', newPage)
+  emit('confirm', newPage)
 }
 </script>
 
 <template>
-  <UModal :model-value="isOpen" @update:model-value="emits('close')">
+  <UModal :model-value="isOpen" @update:model-value="emit('close')">
     <slot/>
     <template #content>
       <UCard>
       <template #header>
-        <div class="flex items-center justify-between">
-          <h3 class="text-base font-semibold leading-6">Create New Page</h3>
-          <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="emits('close')" />
+        <div :class="headerClass()">
+          <h3 :class="headerTitle()">Create New Page</h3>
+          <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark-20-solid" :class="closeButton()" @click="emit('close')" />
         </div>
       </template>
 
-      <div class="space-y-4 py-4">
+      <div :class="body()">
         <UFormField label="Page Template" required>
           <USelect
             v-model="selectedType"
             :items="typeOptions"
             :placeholder="t('editor.template_placeholder', 'Select a template...')"
-            class="w-full"
+            :class="field()"
           />
         </UFormField>
 
@@ -117,8 +123,8 @@ const handleConfirm = () => {
       </div>
 
       <template #footer>
-        <div class="flex justify-end gap-2">
-          <UButton color="neutral" variant="ghost" label="Cancel" @click="emits('close')" />
+        <div :class="footer()">
+          <UButton color="neutral" variant="ghost" label="Cancel" @click="emit('close')" />
           <UButton
             color="primary"
             label="Create & Edit"

@@ -1,13 +1,33 @@
 <script setup lang="ts">
-import { computed } from "#imports"
+import { computed } from "vue"
+import { tv } from "tailwind-variants"
 
-const { name, jpg, png, webp, svg } = defineProps<{
+export interface ImageSwatchProps {
   name?: string
   jpg?: string
   png?: string
   webp?: string
   svg?: string
-}>()
+}
+
+const { name, jpg, png, webp, svg } = defineProps<ImageSwatchProps>()
+
+export interface ImageSwatchEmits {}
+
+const emit = defineEmits<ImageSwatchEmits>()
+
+const imageSwatchStyles = tv({
+  slots: {
+    card: "w-full rounded-none xl:w-fit",
+    title: "text-lg font-bold",
+    content: "flex flex-col items-center gap-sm xl:flex-row xl:items-start",
+    image: "size-48",
+    buttonGroup: "flex w-full flex-col justify-center gap-sm",
+    button: "w-full xl:w-36"
+  }
+})
+
+const { card, title: titleStyle, content, image: imageStyle, buttonGroup, button } = imageSwatchStyles()
 
 const image = computed(() => {
   if (webp) return webp
@@ -20,20 +40,20 @@ const image = computed(() => {
 </script>
 
 <template>
-  <UCard variant="subtle" class="w-full rounded-none xl:w-fit">
+  <UCard variant="subtle" :class="card()">
     <template #header v-if="name">
-      <h3 class="text-lg font-bold">{{ name }}</h3>
+      <h3 :class="titleStyle()">{{ name }}</h3>
     </template>
-    <div class="flex flex-col items-center gap-sm xl:flex-row xl:items-start">
-      <NuxtImg :src="image" class="size-48" />
-      <div class="flex w-full flex-col justify-center gap-sm">
+    <div :class="content()">
+      <NuxtImg :src="image" :class="imageStyle()" />
+      <div :class="buttonGroup()">
         <UButton
           v-if="jpg"
           variant="outline"
           size="sm"
           icon="lucide:download"
           label="Download JPG"
-          class="w-full xl:w-36"
+          :class="button()"
           :to="jpg"
           target="_blank"
         />
@@ -43,7 +63,7 @@ const image = computed(() => {
           size="sm"
           icon="lucide:download"
           label="Download PNG"
-          class="w-full xl:w-36"
+          :class="button()"
           :to="png"
           target="_blank"
         />
@@ -53,7 +73,7 @@ const image = computed(() => {
           size="sm"
           icon="lucide:download"
           label="Download WEBP"
-          class="w-full xl:w-36"
+          :class="button()"
           :to="webp"
           target="_blank"
         />
@@ -63,7 +83,7 @@ const image = computed(() => {
           size="sm"
           icon="lucide:download"
           label="Download SVG"
-          class="w-full xl:w-36"
+          :class="button()"
           :to="svg"
           target="_blank"
         />

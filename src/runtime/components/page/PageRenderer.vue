@@ -4,27 +4,59 @@ import { type Page, type PageSurround } from "../../types"
 import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { usePageRegistry } from "../../composables"
+import { tv } from "tailwind-variants"
 
-const { getTypeLabelKey } = usePageRegistry();
-
-const page = defineModel<Page>({ required: true })
-
-const { t, locale } = useI18n()
-
-interface PageRendererProps {
+export interface PageRendererProps {
   useSurround?: boolean
   surround?: PageSurround | null
   surroundStatus?: 'idle' | 'pending' | 'success' | 'error'
   resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
 }
 
-const { useSurround = false, surroundStatus = 'idle', surround = null, resolvePage } = defineProps<PageRendererProps>()
+const {
+  useSurround = false,
+  surroundStatus = 'idle',
+  surround = null,
+  resolvePage
+} = defineProps<PageRendererProps>()
 
-interface PageRendererEmits {
-
-}
+export interface PageRendererEmits {}
 
 const emit = defineEmits<PageRendererEmits>()
+
+const pageRendererStyles = tv({
+  slots: {
+    container: "flex flex-col py-16",
+    grid: "grid grid-cols-1 lg:grid-cols-24 gap-xl items-start",
+    toc: "hidden lg:flex lg:col-span-4 sticky top-16",
+    properties: "order-1 lg:order-2 lg:col-span-6",
+    contentWrapper: "order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl",
+    banner: "rounded-xl w-full object-cover",
+    icon: "rounded-full w-12 h-12 object-cover",
+    title: "",
+    surroundSkeleton: "grid grid-cols-1 gap-md sm:grid-cols-2",
+    skeleton: "h-48 w-full rounded-xl",
+    metadata: "flex flex-col gap-xs text-xs text-dimmed p-xl"
+  }
+})
+
+const {
+  container,
+  grid,
+  toc,
+  properties,
+  contentWrapper,
+  banner,
+  icon,
+  title: titleClass,
+  surroundSkeleton,
+  skeleton,
+  metadata
+} = pageRendererStyles()
+
+const { getTypeLabelKey } = usePageRegistry();
+const page = defineModel<Page>({ required: true })
+const { t, locale } = useI18n()
 
 provide('page-resolver', resolvePage)
 
@@ -34,22 +66,22 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
 </script>
 
 <template>
-  <UContainer class="flex flex-col py-16">
-    <div class="grid grid-cols-1 lg:grid-cols-24 gap-xl items-start">
+  <UContainer :class="container()">
+    <div :class="grid()">
       <RCPageTOC
         :page-blocks="page.blocks"
         :levels="[2, 3, 4]"
-        class="hidden lg:flex lg:col-span-4 sticky top-16"
+        :class="toc()"
       >
         <template #bottom> </template>
       </RCPageTOC>
-      <RCPagePropertiesRenderer v-model="page" class="order-1 lg:order-2 lg:col-span-6" />
-      <div class="order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl">
+      <RCPagePropertiesRenderer v-model="page" :class="properties()" />
+      <div :class="contentWrapper()">
         <RCImage
           v-if="page.banner?.src"
           :src="page.banner?.src"
           :alt="page.banner?.alt"
-          class="rounded-xl w-full object-cover"
+          :class="banner()"
         />
         <UPageHeader
           :headline="t(getTypeLabelKey(page.type))"
@@ -62,17 +94,17 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
                 v-if="page.icon?.src"
                 :src="page.icon?.src"
                 :alt="page.icon?.alt"
-                class="rounded-full w-12 h-12 object-cover"
+                :class="icon()"
               />
-              <h1>{{ getLocalizedContent(page.title, locale) }}</h1>
+              <h1 :class="titleClass()">{{ getLocalizedContent(page.title, locale) }}</h1>
             </div>
           </template>
         </UPageHeader>
         <RCBlockViewRenderer :blocks="page.blocks" />
         <template v-if="useSurround">
-          <div v-if="surroundStatus === 'pending'" class="grid grid-cols-1 gap-md sm:grid-cols-2">
-            <USkeleton class="h-48 w-full rounded-xl" />
-            <USkeleton class="h-48 w-full rounded-xl" />
+          <div v-if="surroundStatus === 'pending'" :class="surroundSkeleton()">
+            <USkeleton :class="skeleton()" />
+            <USkeleton :class="skeleton()" />
           </div>
 
           <LazyRCPageSurround
@@ -89,7 +121,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
 
           <USeparator />
 
-          <div class="flex flex-col gap-xs text-xs text-dimmed p-xl">
+          <div :class="metadata()">
             <h6>Metadata</h6>
             <span>Page ID: {{ page.id }}</span>
             <span

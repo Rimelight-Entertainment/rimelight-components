@@ -2,10 +2,27 @@
 import { inject, ref, type Ref, computed, watch } from "vue"
 import { type SectionBlockProps, type HeadingLevel } from "../../../types"
 import { type SelectItem } from "@nuxt/ui/components/Select.vue"
+import { tv } from "tailwind-variants"
 
-const { level, title, description, children, id } = defineProps<
-  SectionBlockProps & { id: string }
->()
+export interface SectionBlockEditorProps extends SectionBlockProps {
+  id: string
+}
+
+const { level, title, description, children, id } = defineProps<SectionBlockEditorProps>()
+
+export interface SectionBlockEditorEmits {}
+
+const emit = defineEmits<SectionBlockEditorEmits>()
+
+const sectionBlockEditorStyles = tv({
+  slots: {
+    root: "flex flex-col gap-sm",
+    headerContainer: "flex flex-row gap-xs",
+    titleInput: "w-full"
+  }
+})
+
+const { root, headerContainer, titleInput } = sectionBlockEditorStyles()
 const hasChildren = computed(() => children && children.length > 0)
 
 const editorApi = inject<any>("block-editor-api")
@@ -81,10 +98,10 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col gap-sm">
+  <div :class="root()">
     <RCSection :level="localLevel" :title="localTitle" :description="description" is-editing>
       <template #title>
-        <div class="flex flex-row gap-xs">
+        <div :class="headerContainer()">
           <USelect
             v-model="localLevel"
             :items="levelItems"
@@ -101,7 +118,7 @@ watch(
             placeholder="Section Title..."
             @input="updateLocalTitle"
             @blur="commitTitleOnBlur"
-            class="w-full"
+            :class="titleInput()"
           />
         </div>
       </template>

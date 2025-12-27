@@ -1,7 +1,22 @@
 <script setup lang="ts">
 import type { TestBlockProps } from "../../../types"
+import { tv } from "tailwind-variants"
 
-const { text } = defineProps<TestBlockProps>()
+export interface TestBlockRendererProps extends TestBlockProps {}
+
+const { text } = defineProps<TestBlockRendererProps>()
+
+export interface TestBlockRendererEmits {}
+
+const emit = defineEmits<TestBlockRendererEmits>()
+
+const testBlockRendererStyles = tv({
+  slots: {
+    root: ""
+  }
+})
+
+const { root } = testBlockRendererStyles()
 </script>
 
 <template>

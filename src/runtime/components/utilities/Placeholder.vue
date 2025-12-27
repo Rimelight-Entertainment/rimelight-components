@@ -1,10 +1,27 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { tv } from "tailwind-variants"
+
+export interface PlaceholderProps {}
+
+const props = defineProps<PlaceholderProps>()
+
+export interface PlaceholderEmits {}
+
+const emit = defineEmits<PlaceholderEmits>()
+
+const placeholderStyles = tv({
+  slots: {
+    base: "relative flex items-center justify-center overflow-hidden rounded-sm border border-dashed border-accented px-4 opacity-75",
+    svg: "absolute inset-0 h-full w-full stroke-inverted/10"
+  }
+})
+
+const { base, svg } = placeholderStyles()
+</script>
 
 <template>
-  <div
-    class="relative flex items-center justify-center overflow-hidden rounded-sm border border-dashed border-accented px-4 opacity-75"
-  >
-    <svg class="absolute inset-0 h-full w-full stroke-inverted/10">
+  <div :class="base()">
+    <svg :class="svg()">
       <defs>
         <pattern
           id="pattern-5c1e4f0e-62d5-498b-8ff0-cf77bb448c8e"

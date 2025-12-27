@@ -1,7 +1,22 @@
 <script setup lang="ts">
 import type { CalloutBlockProps } from "../../../types"
+import { tv } from "tailwind-variants"
 
-const { variant, children, to, target } = defineProps<CalloutBlockProps>()
+export interface CalloutBlockEditorProps extends CalloutBlockProps {}
+
+const { variant, children, to, target } = defineProps<CalloutBlockEditorProps>()
+
+export interface CalloutBlockEditorEmits {}
+
+const emit = defineEmits<CalloutBlockEditorEmits>()
+
+const calloutBlockEditorStyles = tv({
+  slots: {
+    root: ""
+  }
+})
+
+const { root } = calloutBlockEditorStyles()
 </script>
 
 <template>

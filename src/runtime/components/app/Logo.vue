@@ -1,12 +1,27 @@
 <script setup lang="ts">
 import { useAppConfig } from "nuxt/app"
 import { computed } from "#imports"
+import { tv } from "tailwind-variants"
+
+export interface LogoProps {
+  variant?: "mark" | "type"
+}
+
+const { variant = "mark" } = defineProps<LogoProps>()
+
+export interface LogoEmits {}
+
+const emit = defineEmits<LogoEmits>()
+
+const logoStyles = tv({
+  slots: {
+    root: ""
+  }
+})
+
+const { root } = logoStyles()
 
 const appConfig = useAppConfig()
-
-const { variant = "mark" } = defineProps<{
-  variant?: "mark" | "type"
-}>()
 
 const logoSrc = computed<string>(() => {
   switch (variant) {

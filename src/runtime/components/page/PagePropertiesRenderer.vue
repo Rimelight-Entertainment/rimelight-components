@@ -7,12 +7,65 @@ import { type TabsItem } from "@nuxt/ui/components/Tabs.vue"
 import { useI18n } from "vue-i18n"
 import { useShare, useClipboard } from "@vueuse/core"
 import { type Page } from '../../types'
+import { tv } from 'tailwind-variants'
+
+export interface PagePropertiesRendererProps {}
+
+const props = defineProps<PagePropertiesRendererProps>()
+
+export interface PagePropertiesRendererEmits {}
+
+const emit = defineEmits<PagePropertiesRendererEmits>()
+
+const pagePropertiesRendererStyles = tv({
+  slots: {
+    aside: "flex flex-col gap-md",
+    actions: "flex flex-row flex-wrap gap-sm",
+    icon: "rounded-full w-12 h-12 object-cover",
+    title: "",
+    type: "text-sm",
+    tags: "flex flex-row flex-wrap gap-xs",
+    tabs: "w-full",
+    image: "w-full object-cover",
+    groupButton: "group rounded-none bg-elevated text-default",
+    details: "p-sm flex flex-col gap-xs",
+    field: "grid grid-cols-3 gap-xs items-baseline",
+    fieldLabel: "text-xs font-semibold text-dimmed",
+    fieldValue: "text-xs col-span-2",
+    list: "flex flex-wrap list-disc list-inside",
+    listItem: "font-medium",
+    pageArrayList: "flex flex-col gap-y-1",
+    pageArrayItem: "flex items-center gap-x-2",
+    pageArrayBullet: "w-1 h-1 rounded-full bg-inverted shrink-0",
+    links: "flex flex-col gap-xs"
+  }
+})
+
+const {
+  aside,
+  actions,
+  icon,
+  title: titleClass,
+  type,
+  tags,
+  tabs,
+  image,
+  groupButton,
+  details,
+  field,
+  fieldLabel,
+  fieldValue,
+  list,
+  listItem,
+  pageArrayList,
+  pageArrayItem,
+  pageArrayBullet,
+  links
+} = pagePropertiesRendererStyles()
 
 const page = defineModel<Page>({ required: true })
-
 const { getTypeLabelKey } = usePageRegistry();
 const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(page.value.properties)
-
 
 const { t, locale } = useI18n()
 const { share } = useShare()
@@ -71,8 +124,8 @@ const imageTabs = computed<TabsItem[]>(() => {
 })
 </script>
 <template>
-  <aside class="flex flex-col gap-md">
-    <div class="flex flex-row flex-wrap gap-sm">
+  <aside :class="aside()">
+    <div :class="actions()">
       <UButton variant="soft" color="neutral" icon="lucide:share" size="sm" @click="sharePage()" />
       <UButton variant="soft" color="neutral" icon="lucide:link" size="sm" @click="copyLink()" />
     </div>
@@ -86,16 +139,16 @@ const imageTabs = computed<TabsItem[]>(() => {
             v-if="page.icon?.src"
             :src="page.icon?.src"
             :alt="page.icon?.alt"
-            class="rounded-full w-12 h-12 object-cover"
+            :class="icon()"
           />
 
-          <h3>
+          <h3 :class="titleClass()">
             {{ getLocalizedContent(page.title, locale) }}
           </h3>
 
-          <span class="text-sm">{{ t(getTypeLabelKey(page.type)) }}</span>
+          <span :class="type()">{{ t(getTypeLabelKey(page.type)) }}</span>
 
-          <div v-if="page.tags?.length" class="flex flex-row flex-wrap gap-xs">
+          <div v-if="page.tags?.length" :class="tags()">
             <UBadge
               v-for="tag in page.tags"
               :key="tag[locale]"
@@ -115,17 +168,17 @@ const imageTabs = computed<TabsItem[]>(() => {
               variant="link"
               size="xs"
               color="neutral"
-              class="w-full"
+              :class="tabs()"
             >
               <template #content="{ item }">
-                <RCImage :src="item.img.src" :alt="item.img.alt" class="w-full object-cover" />
+                <RCImage :src="item.img.src" :alt="item.img.alt" :class="image()" />
               </template>
             </UTabs>
 
             <div v-else-if="page.images[0]">
               <RCImage :src="page.images[0].src"
                        :alt="page.images[0].alt"
-                       class="w-full object-cover" />
+                       :class="image()" />
             </div>
           </div>
         </div>
@@ -143,34 +196,34 @@ const imageTabs = computed<TabsItem[]>(() => {
             trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
           }"
                 block
-                class="group rounded-none bg-elevated text-default"
+                :class="groupButton()"
               />
             </template>
 
             <template #content>
-              <dl class="p-sm flex flex-col gap-xs">
+              <dl :class="details()">
                 <template
                   v-for="[fieldKey, schema] in getSortedFields(group.fields)"
                   :key="fieldKey"
                 >
                   <div
                     v-if="isFieldVisible(schema, true)"
-                    class="grid grid-cols-3 gap-xs items-baseline"
+                    :class="field()"
                   >
-                    <dt class="text-xs font-semibold text-dimmed">
+                    <dt :class="fieldLabel()">
                       {{ getLocalizedContent(schema.label, locale) }}
                     </dt>
 
-                    <dd class="text-xs col-span-2">
+                    <dd :class="fieldValue()">
                       <span v-if="schema.type === 'text'">
                         {{ getLocalizedContent(schema.value, locale) }}
                       </span>
                       <ul
                         v-else-if="schema.type === 'text-array'"
-                        class="flex flex-wrap list-disc list-inside"
+                        :class="list()"
                       >
                         <li v-for="(item, index) in schema.value" :key="index">
-                          <span class="font-medium">
+                          <span :class="listItem()">
                             {{ getLocalizedContent(item, locale) }}
                           </span>
                         </li>
@@ -182,11 +235,11 @@ const imageTabs = computed<TabsItem[]>(() => {
 
                       <ul
                         v-else-if="schema.type === 'page-array' && Array.isArray(schema.value)"
-                        class="flex flex-col gap-y-1"
+                        :class="pageArrayList()"
                       >
-                        <li v-for="id in schema.value" :key="id" class="flex items-center gap-x-2">
+                        <li v-for="id in schema.value" :key="id" :class="pageArrayItem()">
                           <span
-                            class="w-1 h-1 rounded-full bg-inverted shrink-0"
+                            :class="pageArrayBullet()"
                             aria-hidden="true"
                           />
 
@@ -206,7 +259,7 @@ const imageTabs = computed<TabsItem[]>(() => {
         </template>
       </template>
     </UCard>
-    <div class="flex flex-col gap-xs">
+    <div :class="links()">
       <h6>Links</h6>
       <UButton
         v-for="(link, index) in page.links"

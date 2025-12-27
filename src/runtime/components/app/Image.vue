@@ -1,18 +1,47 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, useTemplateRef, watch, nextTick } from 'vue'
-import { tv } from 'tailwind-variants';
+import { ref, reactive, onMounted, useTemplateRef, watch, nextTick } from "vue"
+import { tv } from "tailwind-variants"
 import { useImage } from "#imports"
 
-export interface ImageWrapperProps {
+export interface ImageProps {
   src: string
   alt?: string
   height?: string | number
   width?: string | number
-  loading?: 'lazy' | 'eager'
-  fit?: 'cover' | 'contain' | 'fill' | 'inside' | 'outside'
+  loading?: "lazy" | "eager"
+  fit?: "cover" | "contain" | "fill" | "inside" | "outside"
 }
 
-const { src, alt = "Image", height, width, loading = "lazy", fit = "cover"} = defineProps<ImageWrapperProps>()
+const {
+  src,
+  alt = "Image",
+  height,
+  width,
+  loading = "lazy",
+  fit = "cover"
+} = defineProps<ImageProps>()
+
+export interface ImageEmits {}
+
+const emit = defineEmits<ImageEmits>()
+
+const imageStyles = tv({
+  slots: {
+    base: "cursor-pointer transition-transform duration-300",
+  },
+  variants: {
+    isExpanded: {
+      true: {
+        base: "w-full h-full object-contain mx-auto block rounded-lg"
+      },
+      false: {
+        base: "w-full h-full object-cover hover:scale-[1.02] active:scale-95"
+      }
+    }
+  }
+})
+
+const { base } = imageStyles()
 
 const img = useImage()
 const isOpen = ref(false)
@@ -25,16 +54,6 @@ const metadata = reactive({
   size: '',
   format: '',
   mimeType: ''
-})
-
-const imageStyles = tv({
-  base: 'cursor-pointer transition-transform duration-300',
-  variants: {
-    isExpanded: {
-      true: 'w-full h-full object-contain mx-auto block rounded-lg',
-      false: 'w-full h-full object-cover hover:scale-[1.02] active:scale-95',
-    },
-  },
 })
 
 function formatBytes(bytes: number): string {
@@ -143,7 +162,7 @@ watch(() => imgElement.value, (newVal) => {
         :height="height"
         :width="width"
         :loading="loading"
-        :class="imageStyles({ isExpanded: false })"
+        :class="base({ isExpanded: false })"
         @click="isOpen = true"
         @load="handleImageLoad"
       />
@@ -156,7 +175,7 @@ watch(() => imgElement.value, (newVal) => {
           <NuxtImg
             :src="src"
             :alt="alt"
-            :class="imageStyles({ isExpanded: true })"
+            :class="base({ isExpanded: true })"
           />
         </div>
 

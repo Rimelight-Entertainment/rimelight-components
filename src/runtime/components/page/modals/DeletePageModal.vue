@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
+import { tv } from "tailwind-variants"
+
+const { t } = useI18n()
 
 export interface DeletePageModalProps {
   isOpen: boolean
@@ -16,7 +19,24 @@ export interface DeletePageModalEmits {
 }
 
 const emits = defineEmits<DeletePageModalEmits>()
-const { t } = useI18n()
+
+const deletePageModalStyles = tv({
+  slots: {
+    header: "flex items-center justify-between",
+    headerTitle: "text-base font-semibold leading-6 text-error-600",
+    closeButton: "-my-1",
+    body: "text-sm text-neutral-600 dark:text-neutral-400",
+    footer: "flex justify-end gap-2"
+  }
+})
+
+const {
+  header: headerClass,
+  headerTitle,
+  closeButton,
+  body,
+  footer
+} = deletePageModalStyles()
 
 const confirmationInput = ref('')
 const CONFIRMATION_TEXT = "DELETE"
@@ -39,21 +59,21 @@ const handleConfirm = () => {
     <template #content>
       <UCard :ui="{ body: 'space-y-4' }">
         <template #header>
-          <div class="flex items-center justify-between">
-            <h3 class="text-base font-semibold leading-6 text-error-600">
+          <div :class="headerClass()">
+            <h3 :class="headerTitle()">
               {{ t('editor.delete_page_title', 'Delete Page') }}
             </h3>
             <UButton
               color="neutral"
               variant="ghost"
               icon="lucide:x"
-              class="-my-1"
+              :class="closeButton()"
               @click="emits('close')"
             />
           </div>
         </template>
 
-        <div class="text-sm text-neutral-600 dark:text-neutral-400">
+        <div :class="body()">
           <p>
             Are you sure you want to delete <strong>{{ pageTitle }}</strong>?
             This action is permanent and cannot be undone.
@@ -74,7 +94,7 @@ const handleConfirm = () => {
         </UFormField>
 
         <template #footer>
-          <div class="flex justify-end gap-2">
+          <div :class="footer()">
             <UButton
               color="neutral"
               variant="ghost"

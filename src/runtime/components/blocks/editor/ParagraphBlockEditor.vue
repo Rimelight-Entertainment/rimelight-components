@@ -1,13 +1,29 @@
 <script setup lang="ts">
 import { inject, ref, watch, onMounted, nextTick } from "vue"
+import { tv } from "tailwind-variants"
 import type { ParagraphBlockProps, RichTextContent } from "../../../types"
 import { richTextToHtml, parseHtmlToRichText } from "../../../utils"
 
 // The external dependencies
 const editorApi = inject<any>("block-editor-api")
 
-// 1. Define Props
-const props = defineProps<ParagraphBlockProps & { id: string }>()
+export interface ParagraphBlockEditorProps extends ParagraphBlockProps {
+  id: string
+}
+
+const props = defineProps<ParagraphBlockEditorProps>()
+
+export interface ParagraphBlockEditorEmits {}
+
+const emit = defineEmits<ParagraphBlockEditorEmits>()
+
+const paragraphBlockEditorStyles = tv({
+  slots: {
+    root: "p-2 outline-none min-h-6 focus:ring-2 focus:ring-blue-500 rounded-md transition duration-150 text-base"
+  }
+})
+
+const { root } = paragraphBlockEditorStyles()
 
 // 2. Local State for the Contenteditable Element
 // We use a reference to the DOM element to read/write its content.
@@ -82,11 +98,7 @@ onMounted(() => {
     ref="editorRef"
     contenteditable="true"
     @blur="commitContentOnBlur"
-    :class="[
-        'p-2 outline-none min-h-6',
-        'focus:ring-2 focus:ring-blue-500 rounded-md transition duration-150',
-        'text-base'
-      ]"
+    :class="root()"
   ></div>
 </template>
 

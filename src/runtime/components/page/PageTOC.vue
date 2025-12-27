@@ -12,30 +12,35 @@ interface TOCItem {
   level: HeadingLevel
 }
 
-const props = withDefaults(defineProps<{
+export interface PageTOCProps {
   pageBlocks: Block[] | null
   title?: string
   levels?: HeadingLevel[]
-}>(), {
+}
+
+const props = withDefaults(defineProps<PageTOCProps>(), {
   title: "table_of_contents",
   levels: () => [2, 3, 4]
 })
 
-const { t } = useI18n()
-const activeId = ref<string | null>(null)
+export interface PageTOCEmits {}
 
-const tocVariants = tv({
+const emit = defineEmits<PageTOCEmits>()
+
+const pageTOCStyles = tv({
   slots: {
+    nav: "flex flex-col gap-sm w-full",
+    list: "flex flex-col",
     link: "group relative flex items-center px-3 py-1.5 text-sm transition-all duration-200 border-s-2 -ms-px",
     text: "truncate"
   },
   variants: {
     active: {
       true: {
-        link: "border-accented font-semibold text-foreground",
+        link: "border-accented font-semibold text-foreground"
       },
       false: {
-        link: "border-dimmed text-dimmed",
+        link: "border-dimmed text-dimmed"
       }
     },
     level: {
@@ -48,6 +53,18 @@ const tocVariants = tv({
     }
   }
 })
+
+const {
+  nav,
+  list,
+  link,
+  text
+} = pageTOCStyles()
+
+const { t } = useI18n()
+const activeId = ref<string | null>(null)
+
+const { locale } = useI18n()
 
 const extractHeadings = (blocks: Block[]): TOCItem[] => {
   const headings: TOCItem[] = []
@@ -105,18 +122,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <nav class="flex flex-col gap-sm w-full" aria-label="Table of Contents">
+  <nav :class="nav()" aria-label="Table of Contents">
     <h5 v-if="title">
       {{ t(title) }}
     </h5>
 
-    <ul v-if="items.length > 0" class="flex flex-col">
+    <ul v-if="items.length > 0" :class="list()">
       <li v-for="item in items" :key="item.id">
         <NuxtLink
           :to="{ hash: `#${item.id}` }"
-          :class="tocVariants({ active: activeId === item.id, level: item.level }).link()"
+          :class="pageTOCStyles({ active: activeId === item.id, level: item.level }).link()"
         >
-          <span :class="tocVariants().text()">
+          <span :class="text()">
             {{ item.title }}
           </span>
         </NuxtLink>

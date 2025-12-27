@@ -6,6 +6,98 @@ import { useToast } from "@nuxt/ui/composables"
 import { tv } from "tailwind-variants"
 import { slugify } from "../../utils"
 
+export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6
+
+export interface SectionProps {
+  level?: SectionLevel
+  title: string
+  description?: string
+  isEditing?: boolean
+}
+
+const {
+  level = 1,
+  title,
+  description,
+  isEditing = false
+} = defineProps<SectionProps>()
+
+export interface SectionEmits {}
+
+const emit = defineEmits<SectionEmits>()
+
+const sectionStyles = tv({
+  slots: {
+    section: "flex flex-col scroll-mt-24 w-full",
+    link: "",
+    heading: "font-bold w-full",
+    descriptionText: "text-muted",
+    separator: "py-2",
+    content: "flex flex-col gap-md mt-2"
+  },
+  variants: {
+    level: {
+      1: {
+        section: "gap-2",
+        link: "",
+        heading: "",
+        descriptionText: "text-2xl",
+        separator: "",
+        content: ""
+      },
+      2: {
+        section: "gap-1.5",
+        link: "",
+        heading: "",
+        descriptionText: "text-xl",
+        separator: "",
+        content: ""
+      },
+      3: {
+        section: "gap-1",
+        link: "",
+        heading: "",
+        descriptionText: "text-lg",
+        separator: "",
+        content: ""
+      },
+      4: {
+        section: "gap-0.5",
+        link: "",
+        heading: "",
+        descriptionText: "text-md",
+        separator: "",
+        content: ""
+      },
+      5: {
+        section: "gap-0.25",
+        link: "",
+        heading: "",
+        descriptionText: "text-sm",
+        separator: "",
+        content: ""
+      },
+      6: {
+        section: "gap-0.125",
+        link: "",
+        heading: "",
+        descriptionText: "text-xs",
+        separator: "",
+        content: ""
+      }
+    }
+  }
+})
+
+const {
+  section,
+  link,
+  heading,
+  descriptionText,
+  separator,
+  content
+} = sectionStyles({ level })
+
 const { copy } = useClipboard()
 const toast = useToast()
 const route = useRoute()
@@ -27,92 +119,6 @@ const copyToClipboard = async (text: string) => {
   }
 }
 
-const sectionVariants = tv({
-  slots: {
-    sectionSlot: "flex flex-col scroll-mt-24 w-full",
-    linkSlot: "",
-    headingSlot: "font-bold w-full",
-    descriptionSlot: "text-muted",
-    separatorSlot: "py-2",
-    contentSlot: "flex flex-col gap-md mt-2"
-  },
-  variants: {
-    level: {
-      1: {
-        sectionSlot: "gap-2",
-        linkSlot: "",
-        headingSlot: "",
-        descriptionSlot: "text-2xl",
-        separatorSlot: "",
-        contentSlot: ""
-      },
-      2: {
-        sectionSlot: "gap-1.5",
-        linkSlot: "",
-        headingSlot: "",
-        descriptionSlot: "text-xl",
-        separatorSlot: "",
-        contentSlot: ""
-      },
-      3: {
-        sectionSlot: "gap-1",
-        linkSlot: "",
-        headingSlot: "",
-        descriptionSlot: "text-lg",
-        separatorSlot: "",
-        contentSlot: ""
-      },
-      4: {
-        sectionSlot: "gap-0.5",
-        linkSlot: "",
-        headingSlot: "",
-        descriptionSlot: "text-md",
-        separatorSlot: "",
-        contentSlot: ""
-      },
-      5: {
-        sectionSlot: "gap-0.25",
-        linkSlot: "",
-        headingSlot: "",
-        descriptionSlot: "text-sm",
-        separatorSlot: "",
-        contentSlot: ""
-      },
-      6: {
-        sectionSlot: "gap-0.125",
-        linkSlot: "",
-        headingSlot: "",
-        descriptionSlot: "text-xs",
-        separatorSlot: "",
-        contentSlot: ""
-      }
-    }
-  }
-})
-
-export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6
-
-const {
-  level = 1,
-  title,
-  description,
-  isEditing = false
-} = defineProps<{
-  level?: SectionLevel
-  title: string
-  description?: string
-  isEditing?: boolean
-}>()
-
-const {
-  sectionSlot,
-  linkSlot,
-  headingSlot,
-  descriptionSlot,
-  separatorSlot,
-  contentSlot
-} = sectionVariants({ level })
-
 const sectionId = computed(() => slugify(title))
 const sectionHash = computed(() => `#${sectionId.value}`)
 const fullSectionUrl = computed(() => {
@@ -122,12 +128,12 @@ const fullSectionUrl = computed(() => {
 </script>
 
 <template>
-  <section :id="sectionId" :class="sectionSlot()" v-bind="$attrs">
-    <component :id="sectionId" :is="`h${level}`" :class="headingSlot()">
+  <section :id="sectionId" :class="section()" v-bind="$attrs">
+    <component :id="sectionId" :is="`h${level}`" :class="heading()">
       <NuxtLink
         v-if="!isEditing"
         :href="`#${sectionId}`"
-        :class="linkSlot()"
+        :class="link()"
         class="group relative lg:-ms-2 lg:ps-2 inline-block w-full"
       >
         <ClientOnly>
@@ -150,12 +156,12 @@ const fullSectionUrl = computed(() => {
       <slot v-else name="title">{{ title }}</slot>
     </component>
     <slot name="description">
-      <p v-if="description" :class="descriptionSlot()">
+      <p v-if="description" :class="descriptionText()">
         {{ description }}
       </p>
     </slot>
-    <USeparator :class="separatorSlot()" />
-    <div :class="contentSlot()">
+    <USeparator :class="separator()" />
+    <div :class="content()">
       <slot />
     </div>
   </section>

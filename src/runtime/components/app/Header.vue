@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { tv } from "tailwind-variants"
 
-const header = tv({
+export interface HeaderProps {}
+
+const {} = defineProps<HeaderProps>()
+
+export interface HeaderEmits {}
+
+const emit = defineEmits<HeaderEmits>()
+
+const headerStyles = tv({
   slots: {
     root: "h-(--ui-header-height)",
     container: "h-full flex flex-row items-center p-sm",
@@ -23,7 +31,7 @@ const {
   collapsedLeft,
   collapsedCenter,
   collapsedRight
-} = header()
+} = headerStyles()
 </script>
 
 <template>

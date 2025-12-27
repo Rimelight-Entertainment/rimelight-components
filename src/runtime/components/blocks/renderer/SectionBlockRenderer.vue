@@ -2,8 +2,24 @@
 import { computed } from "vue"
 import type { SectionBlockProps } from "../../../types"
 import { slugify } from "../../../utils"
+import { tv } from "tailwind-variants"
 
-const { level, title, description, children } = defineProps<SectionBlockProps>()
+export interface SectionBlockRendererProps extends SectionBlockProps {}
+
+const { level, title, description, children } = defineProps<SectionBlockRendererProps>()
+
+export interface SectionBlockRendererEmits {}
+
+const emit = defineEmits<SectionBlockRendererEmits>()
+
+const sectionBlockRendererStyles = tv({
+  slots: {
+    root: ""
+  }
+})
+
+const { root } = sectionBlockRendererStyles()
+
 const headingId = computed(() => (title ? slugify(title) : undefined))
 const hasChildren = computed(() => children && children.length > 0)
 </script>

@@ -1,7 +1,22 @@
 <script setup lang="ts">
 import type { ParagraphBlockProps } from "../../../types"
+import { tv } from "tailwind-variants"
 
-const { text } = defineProps<ParagraphBlockProps>()
+export interface ParagraphBlockRendererProps extends ParagraphBlockProps {}
+
+const { text } = defineProps<ParagraphBlockRendererProps>()
+
+export interface ParagraphBlockRendererEmits {}
+
+const emit = defineEmits<ParagraphBlockRendererEmits>()
+
+const paragraphBlockRendererStyles = tv({
+  slots: {
+    root: ""
+  }
+})
+
+const { root } = paragraphBlockRendererStyles()
 </script>
 
 <template>

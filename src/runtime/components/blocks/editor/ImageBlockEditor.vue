@@ -1,25 +1,42 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue"
-import type { ImageBlockProps } from "../../../types"
+import { tv } from "tailwind-variants"
+import { type ImageBlockProps } from "../../../types"
 import { useObjectUrl } from "@vueuse/core"
 
-const props = defineProps<ImageBlockProps>()
+export interface ImageBlockEditorProps extends ImageBlockProps {}
 
-const emit = defineEmits<{
+const { src, alt, caption, } = defineProps<ImageBlockEditorProps>()
+
+export interface ImageBlockEditorEmits {
   (e: "update:src", value: string | null): void
   (e: "update:alt", value: string): void
   (e: "update:caption", value: string | null): void
   (e: "update:file", value: File | null): void
-}>()
+}
+
+const emit = defineEmits<ImageBlockEditorEmits>()
+
+const imageBlockEditorStyles = tv({
+  slots: {
+    root: "mx-auto space-y-4 flex flex-col gap-xs w-full",
+    upload: "min-h-48 w-full",
+    previewContainer: "w-full relative rounded-lg border border-default overflow-hidden",
+    previewImage: "w-full h-auto object-contain transition-opacity duration-300",
+    emptyPreview: "w-full h-48 flex items-center justify-center bg-elevated/25"
+  }
+})
+
+const { root, upload, previewContainer, previewImage, emptyPreview } = imageBlockEditorStyles()
 
 const fileToUpload = ref<File | null>(null)
-const localAlt = ref(props.alt || "")
-const localCaption = ref(props.caption || "")
+const localAlt = ref(alt || "")
+const localCaption = ref(caption || "")
 
 const filePreviewUrl = useObjectUrl(fileToUpload)
 
 const previewSrc = computed(() => {
-  return fileToUpload.value ? filePreviewUrl.value : props.src
+  return fileToUpload.value ? filePreviewUrl.value : src
 })
 
 const removeFile = () => {
@@ -42,26 +59,26 @@ watch(fileToUpload, (newFile) => {
 </script>
 
 <template>
-  <figure class="mx-auto space-y-4 flex flex-col gap-xs w-full">
+  <figure :class="root()">
     <UFileUpload
       v-slot="{ open }"
       v-model="fileToUpload"
       accept="image/*"
-      class="min-h-48 w-full"
+      :class="upload()"
       variant="area"
       color="neutral"
       label="Drop image here"
       description="JPG, PNG, GIF or WEBP. Click to select."
     >
       <div class="flex flex-col items-center justify-center space-y-3 p-4">
-        <div class="w-full relative rounded-lg border border-default overflow-hidden">
+        <div :class="previewContainer()">
           <img
             v-if="previewSrc"
             :src="previewSrc"
             :alt="localAlt || 'Image preview'"
-            class="w-full h-auto object-contain transition-opacity duration-300"
+            :class="previewImage()"
           />
-          <div v-else class="w-full h-48 flex items-center justify-center bg-elevated/25">
+          <div v-else :class="emptyPreview()">
             <UIcon name="i-lucide-image" class="w-10 h-10 text-muted" />
           </div>
 

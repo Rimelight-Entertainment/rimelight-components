@@ -1,27 +1,52 @@
 <script setup lang="ts">
-const {} = defineProps<{
+import { tv } from "tailwind-variants"
+
+export interface TeamCardProps {
   src: string
   alt: string
   name: string
   role: string
   description: string
-}>()
+}
+
+export interface TeamCardEmits {}
+
+const { src, alt, name, role, description } = defineProps<TeamCardProps>()
+const emit = defineEmits<TeamCardEmits>()
+
+const teamCardStyles = tv({
+  slots: {
+    details: "flex flex-col gap-xs",
+    name: "text-xl font-bold",
+    role: "text-sm",
+    description: "text-md",
+    links: "flex flex-row gap-md"
+  }
+})
+
+const {
+  details,
+  name: nameClass,
+  role: roleClass,
+  description: descriptionClass,
+  links
+} = teamCardStyles()
 </script>
 
 <template>
   <UCard>
     <RCImage :src="src" :alt="alt" />
-    <div class="flex flex-col gap-xs">
-      <h3 class="text-xl font-bold">
+    <div :class="details()">
+      <h3 :class="nameClass()">
         {{ name }}
       </h3>
-      <span class="text-sm">{{ role }}</span>
+      <span :class="roleClass()">{{ role }}</span>
     </div>
-    <p class="text-md">
+    <p :class="descriptionClass()">
       {{ description }}
     </p>
     <template #footer>
-      <div class="flex flex-row gap-md">
+      <div :class="links()">
         <slot name="links" />
       </div>
     </template>

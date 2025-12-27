@@ -4,13 +4,30 @@ import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { type Page } from "../../types"
 import { useAsyncData } from "#imports"
+import { tv } from "tailwind-variants"
 
-interface PageMentionProps {
+export interface PageMentionProps {
   pageId: string
 }
+
+export interface PageMentionEmits {}
+
 const { pageId } = defineProps<PageMentionProps>()
+const emit = defineEmits<PageMentionEmits>()
+
+const pageMentionStyles = tv({
+  slots: {
+    link: "inline-flex items-baseline gap-1 align-middle hover:text-primary transition-colors font-medium text-inherit",
+    icon: "w-4 h-4 rounded-full object-cover shrink-0",
+    text: "truncate font-medium",
+    skeleton: "h-3 w-24"
+  }
+})
+
+const { link, icon, text, skeleton } = pageMentionStyles()
 
 const { locale } = useI18n()
+
 
 const resolver = inject<(id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>>('page-resolver')
 
@@ -31,19 +48,19 @@ const { data: linkedPage, status } = await useAsyncData(`page-mention-${pageId}`
   <NuxtLink
     v-if="linkedPage"
     :to="`/${linkedPage.slug}`"
-    class="inline-flex items-baseline gap-1 align-middle hover:text-primary transition-colors font-medium text-inherit"
+    :class="link()"
   >
     <NuxtImg
       v-if="linkedPage.icon?.src"
       :src="linkedPage.icon.src"
       :alt="linkedPage.icon.alt"
-      class="w-4 h-4 rounded-full object-cover shrink-0"
+      :class="icon()"
     />
-    <span class="truncate font-medium">
+    <span :class="text()">
       {{ getLocalizedContent(linkedPage.title, locale) }}
     </span>
   </NuxtLink>
-  <USkeleton v-else-if="status === 'pending'" class="h-3 w-24" />
+  <USkeleton v-else-if="status === 'pending'" :class="skeleton()" />
 </template>
 
 <style scoped></style>

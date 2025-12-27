@@ -2,10 +2,25 @@
 import { type Component } from "vue"
 import { getBlockEditorComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
+import { tv } from "tailwind-variants"
 
-const { blocks } = defineProps<{
+export interface BlockEditRendererProps {
   blocks: Block[]
-}>()
+}
+
+const { blocks } = defineProps<BlockEditRendererProps>()
+
+export interface BlockEditRendererEmits {}
+
+const emit = defineEmits<BlockEditRendererEmits>()
+
+const blockEditRendererStyles = tv({
+  slots: {
+    root: "flex flex-col gap-lg w-full"
+  }
+})
+
+const { root } = blockEditRendererStyles()
 
 const getComponent = (block: Block): Component | null => {
   if (!block || !block.type || block.type.length === 0) {
@@ -25,7 +40,7 @@ const getComponent = (block: Block): Component | null => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-lg w-full">
+  <div :class="root()">
     <UEmpty
       v-if="!blocks || blocks.length === 0"
       variant="naked"

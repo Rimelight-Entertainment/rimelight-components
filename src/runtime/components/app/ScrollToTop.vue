@@ -1,15 +1,32 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from "vue"
+import { tv } from "tailwind-variants"
 
-interface Props {
+export interface ScrollToTopProps {
   circleStrokeWidth?: number
   duration?: number
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ScrollToTopProps>(), {
   circleStrokeWidth: 4,
   duration: 0.1
 })
+
+export interface ScrollToTopEmits {}
+
+const emit = defineEmits<ScrollToTopEmits>()
+
+const scrollToTopStyles = tv({
+  slots: {
+    button: "fixed right-4 bottom-4 z-50 size-20 lg:size-16",
+    progressBase: "progress-circle-base size-full",
+    svg: "size-full",
+    iconContainer: "absolute inset-0 flex items-center justify-center text-center",
+    icon: "size-6 text-white"
+  }
+})
+
+const { button, progressBase, svg, iconContainer, icon } = scrollToTopStyles()
 
 const scrollPercentage = ref(0)
 const minScrollThreshold = 15
@@ -80,13 +97,9 @@ const durationInSeconds = computed(() => `${props.duration}s`)
     leave-to-class="opacity-0"
   >
     <div v-if="isVisible">
-      <UButton
-        variant="ghost"
-        class="fixed right-4 bottom-4 z-50 size-20 lg:size-16"
-        @click="scrollToTop"
-      >
-        <div class="progress-circle-base size-full">
-          <svg class="size-full" viewBox="0 0 100 100">
+      <UButton variant="ghost" :class="button()" @click="scrollToTop">
+        <div :class="progressBase()">
+          <svg :class="svg()" viewBox="0 0 100 100">
             <circle
               cx="50"
               cy="50"
@@ -108,8 +121,8 @@ const durationInSeconds = computed(() => `${props.duration}s`)
               class="gauge-primary-stroke opacity-100"
             />
           </svg>
-          <div class="absolute inset-0 flex items-center justify-center text-center">
-            <UIcon name="lucide:arrow-up" class="size-6 text-white" />
+          <div :class="iconContainer()">
+            <UIcon name="lucide:arrow-up" :class="icon()" />
           </div>
         </div>
       </UButton>

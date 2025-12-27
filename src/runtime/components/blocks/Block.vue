@@ -1,15 +1,33 @@
 <script setup lang="ts">
-import { inject, computed, ref } from "vue"
+import { inject, ref } from "vue"
+import { tv } from "tailwind-variants"
+
+export interface BlockProps {
+  id: string
+  type: string
+}
+
+const { id, type } = defineProps<BlockProps>()
+
+export interface BlockEmits {}
+
+const emit = defineEmits<BlockEmits>()
+
+const blockStyles = tv({
+  slots: {
+    root: "group relative pl-12 flex flex-row gap-xs",
+    menuContainer:
+      "top-0 left-0 z-10 opacity-0 transition-opacity group-hover:opacity-100"
+  }
+})
+
+const { root, menuContainer } = blockStyles()
 
 const editorApi = inject<any>("block-editor-api")
 
 if (!editorApi) {
   throw new Error("RCBlock must be used within a BlockEditor component")
 }
-const { id, type } = defineProps<{
-  id: string
-  type: string
-}>()
 
 const onDelete = () => editorApi.removeBlock(id)
 const onDuplicate = () => editorApi.duplicateBlock(id)
@@ -58,8 +76,8 @@ const items = ref([
 </script>
 
 <template>
-  <div class="group relative pl-12 flex flex-row gap-xs">
-    <div class="top-0 left-0 z-10 opacity-0 transition-opacity group-hover:opacity-100">
+  <div :class="root()">
+    <div :class="menuContainer()">
       <UDropdownMenu :items="items">
         <UButton icon="lucide:grip-vertical" variant="ghost" color="neutral" />
       </UDropdownMenu>

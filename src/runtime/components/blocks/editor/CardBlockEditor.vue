@@ -1,12 +1,27 @@
 <script setup lang="ts">
 import type { CardBlockProps } from "../../../types"
+import { tv } from "tailwind-variants"
 
-const { title, to, target, children } = defineProps<CardBlockProps>()
+export interface CardBlockEditorProps extends CardBlockProps {}
+
+const { title, to, target, children } = defineProps<CardBlockEditorProps>()
+
+export interface CardBlockEditorEmits {}
+
+const emit = defineEmits<CardBlockEditorEmits>()
+
+const cardBlockEditorStyles = tv({
+  slots: {
+    card: "flex h-full flex-col"
+  }
+})
+
+const { card } = cardBlockEditorStyles()
 </script>
 
 <template>
   <NuxtLink :to="to" :target="target">
-    <UCard class="flex h-full flex-col">
+    <UCard :class="card()">
       <h3>{{ title }}</h3>
       <RCBlockEditRenderer :blocks="children" />
     </UCard>

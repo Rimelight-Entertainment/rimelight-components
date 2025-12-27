@@ -2,8 +2,7 @@
 import { useAppConfig } from "#imports"
 import { computed } from "#imports"
 import { useI18n } from "vue-i18n"
-
-const { t } = useI18n()
+import { tv } from "tailwind-variants"
 
 export type CalloutVariant =
   | "info"
@@ -14,13 +13,30 @@ export type CalloutVariant =
   | "ideation"
   | "source"
 
+const { t } = useI18n()
 const appConfig = useAppConfig()
 
-const { variant, to, target } = defineProps<{
+export interface CalloutProps {
   variant: CalloutVariant
   to?: string
   target?: string
-}>()
+}
+
+const { variant, to, target } = defineProps<CalloutProps>()
+
+export interface CalloutEmits {}
+
+const emit = defineEmits<CalloutEmits>()
+
+const calloutStyles = tv({
+  slots: {
+    icon: "size-6",
+    tooltipIcon: "pointer-events-auto size-5"
+  }
+})
+
+const { icon: iconClass, tooltipIcon } = calloutStyles()
+
 
 const config = computed(() => {
   return (
@@ -48,14 +64,14 @@ const tooltip = computed(() => config.value.tooltip)
       }"
     >
       <template #leading>
-        <UIcon :name="icon" class="size-6" />
+        <UIcon :name="icon" :class="iconClass()" />
       </template>
       <template #description>
         <slot />
       </template>
       <template #close>
         <UTooltip v-if="tooltip" :text="t(tooltip)">
-          <UIcon name="lucide:circle-question-mark" class="pointer-events-auto size-5" />
+          <UIcon name="lucide:circle-question-mark" :class="tooltipIcon()" />
         </UTooltip>
       </template>
     </UAlert>
