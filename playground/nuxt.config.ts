@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     strict: true,
     typeCheck: true
   },
-  modules: ["../src/module", "@nuxt/ui", "@vueuse/nuxt"],
+  modules: ["../src/module", "@nuxt/ui", "@vueuse/nuxt", "@nuxt/image"],
   build: {
     transpile: ["@nuxt/ui"]
   },

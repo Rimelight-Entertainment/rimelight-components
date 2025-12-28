@@ -3,26 +3,48 @@ import { computed, provide } from "vue"
 import { type Page, type PageSurround } from "../../types"
 import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
-import { usePageRegistry } from "../../composables"
-import { tv } from "tailwind-variants"
+import { usePageRegistry, useRC } from "../../composables"
+import { tv } from "../../utils/tv"
 
 export interface PageRendererProps {
   useSurround?: boolean
   surround?: PageSurround | null
   surroundStatus?: 'idle' | 'pending' | 'success' | 'error'
   resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
+  rc?: {
+    container?: string
+    grid?: string
+    toc?: string
+    properties?: string
+    contentWrapper?: string
+    banner?: string
+    icon?: string
+    title?: string
+    surroundSkeleton?: string
+    skeleton?: string
+    metadata?: string
+  }
 }
 
 const {
   useSurround = false,
   surroundStatus = 'idle',
   surround = null,
-  resolvePage
+  resolvePage,
+  rc: rcProp
 } = defineProps<PageRendererProps>()
+
+const page = defineModel<Page>({ required: true })
 
 export interface PageRendererEmits {}
 
 const emit = defineEmits<PageRendererEmits>()
+
+export interface PageRendererSlots {}
+
+const slots = defineSlots<PageRendererSlots>()
+
+const { rc } = useRC('PageRenderer', rcProp)
 
 const pageRendererStyles = tv({
   slots: {
@@ -55,7 +77,6 @@ const {
 } = pageRendererStyles()
 
 const { getTypeLabelKey } = usePageRegistry();
-const page = defineModel<Page>({ required: true })
 const { t, locale } = useI18n()
 
 provide('page-resolver', resolvePage)
@@ -66,22 +87,22 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
 </script>
 
 <template>
-  <UContainer :class="container()">
-    <div :class="grid()">
+  <UContainer :class="container({ class: rc.container })">
+    <div :class="grid({ class: rc.grid })">
       <RCPageTOC
         :page-blocks="page.blocks"
         :levels="[2, 3, 4]"
-        :class="toc()"
+        :class="toc({ class: rc.toc })"
       >
         <template #bottom> </template>
       </RCPageTOC>
-      <RCPagePropertiesRenderer v-model="page" :class="properties()" />
-      <div :class="contentWrapper()">
+      <RCPagePropertiesRenderer v-model="page" :class="properties({ class: rc.properties })" />
+      <div :class="contentWrapper({ class: rc.contentWrapper })">
         <RCImage
           v-if="page.banner?.src"
           :src="page.banner?.src"
           :alt="page.banner?.alt"
-          :class="banner()"
+          :class="banner({ class: rc.banner })"
         />
         <UPageHeader
           :headline="t(getTypeLabelKey(page.type))"
@@ -94,17 +115,17 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
                 v-if="page.icon?.src"
                 :src="page.icon?.src"
                 :alt="page.icon?.alt"
-                :class="icon()"
+                :class="icon({ class: rc.icon })"
               />
-              <h1 :class="titleClass()">{{ getLocalizedContent(page.title, locale) }}</h1>
+              <h1 :class="titleClass({ class: rc.title })">{{ getLocalizedContent(page.title, locale) }}</h1>
             </div>
           </template>
         </UPageHeader>
         <RCBlockViewRenderer :blocks="page.blocks" />
         <template v-if="useSurround">
-          <div v-if="surroundStatus === 'pending'" :class="surroundSkeleton()">
-            <USkeleton :class="skeleton()" />
-            <USkeleton :class="skeleton()" />
+          <div v-if="surroundStatus === 'pending'" :class="surroundSkeleton({ class: rc.surroundSkeleton })">
+            <USkeleton :class="skeleton({ class: rc.skeleton })" />
+            <USkeleton :class="skeleton({ class: rc.skeleton })" />
           </div>
 
           <LazyRCPageSurround
@@ -121,7 +142,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
 
           <USeparator />
 
-          <div :class="metadata()">
+          <div :class="metadata({ class: rc.metadata })">
             <h6>Metadata</h6>
             <span>Page ID: {{ page.id }}</span>
             <span

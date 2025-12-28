@@ -1,22 +1,38 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 
 export interface DeletePageModalProps {
   isOpen: boolean
   loading?: boolean
   pageTitle: string
+  rc?: {
+    header?: string
+    headerTitle?: string
+    closeButton?: string
+    body?: string
+    footer?: string
+  }
 }
 
-const { isOpen, loading, pageTitle } = defineProps<DeletePageModalProps>()
+const { isOpen, loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>()
 
 export interface DeletePageModalEmits {
-  (e: 'close'): void
-  (e: 'confirm'): void
+  close: []
+  confirm: []
 }
 
 const emits = defineEmits<DeletePageModalEmits>()
+
+export interface DeletePageModalSlots {
+  default: (props: {}) => any
+}
+
+const slots = defineSlots<DeletePageModalSlots>()
+
+const { rc } = useRC('DeletePageModal', rcProp)
 
 const deletePageModalStyles = tv({
   slots: {
@@ -59,21 +75,21 @@ const handleConfirm = () => {
     <template #content>
       <UCard :ui="{ body: 'space-y-4' }">
         <template #header>
-          <div :class="headerClass()">
-            <h3 :class="headerTitle()">
+          <div :class="headerClass({ class: rc.header })">
+            <h3 :class="headerTitle({ class: rc.headerTitle })">
               {{ t('editor.delete_page_title', 'Delete Page') }}
             </h3>
             <UButton
               color="neutral"
               variant="ghost"
               icon="lucide:x"
-              :class="closeButton()"
+              :class="closeButton({ class: rc.closeButton })"
               @click="emits('close')"
             />
           </div>
         </template>
 
-        <div :class="body()">
+        <div :class="body({ class: rc.body })">
           <p>
             Are you sure you want to delete <strong>{{ pageTitle }}</strong>?
             This action is permanent and cannot be undone.
@@ -94,7 +110,7 @@ const handleConfirm = () => {
         </UFormField>
 
         <template #footer>
-          <div :class="footer()">
+          <div :class="footer({ class: rc.footer })">
             <UButton
               color="neutral"
               variant="ghost"

@@ -1,18 +1,28 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface LinkNodeProps {
   href: string
   target?: string
   content: string
+  rc?: {
+    root?: string
+  }
 }
 
-const { href, target, content } = defineProps<LinkNodeProps>()
+const { href, target, content, rc: rcProp } = defineProps<LinkNodeProps>()
 
 export interface LinkNodeEmits {}
 
 const emit = defineEmits<LinkNodeEmits>()
+
+export interface LinkNodeSlots {}
+
+const slots = defineSlots<LinkNodeSlots>()
+
+const { rc } = useRC('LinkNode', rcProp)
 
 const linkNodeStyles = tv({
   slots: {
@@ -28,7 +38,7 @@ const rel = computed(() =>
 </script>
 
 <template>
-  <ULink :to="href" :target="target" :rel="rel" :class="root()">
+  <ULink :to="href" :target="target" :rel="rel" :class="root({ class: rc.root })">
     {{ content }}
   </ULink>
 </template>

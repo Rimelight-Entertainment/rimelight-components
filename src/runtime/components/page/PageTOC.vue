@@ -2,7 +2,8 @@
 import { computed, ref, onMounted, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { useIntersectionObserver } from "@vueuse/core"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 import type { Block, SectionBlockProps, HeadingLevel } from "../../types"
 import { slugify } from "../../utils"
 
@@ -16,6 +17,12 @@ export interface PageTOCProps {
   pageBlocks: Block[] | null
   title?: string
   levels?: HeadingLevel[]
+  rc?: {
+    nav?: string
+    list?: string
+    link?: string
+    text?: string
+  }
 }
 
 const props = withDefaults(defineProps<PageTOCProps>(), {
@@ -26,6 +33,14 @@ const props = withDefaults(defineProps<PageTOCProps>(), {
 export interface PageTOCEmits {}
 
 const emit = defineEmits<PageTOCEmits>()
+
+export interface PageTOCSlots {
+  bottom: (props: {}) => any
+}
+
+const slots = defineSlots<PageTOCSlots>()
+
+const { rc } = useRC('PageTOC', props.rc)
 
 const pageTOCStyles = tv({
   slots: {
@@ -122,18 +137,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <nav :class="nav()" aria-label="Table of Contents">
+  <nav :class="nav({ class: rc.nav })" aria-label="Table of Contents">
     <h5 v-if="title">
       {{ t(title) }}
     </h5>
 
-    <ul v-if="items.length > 0" :class="list()">
+    <ul v-if="items.length > 0" :class="list({ class: rc.list })">
       <li v-for="item in items" :key="item.id">
         <NuxtLink
           :to="{ hash: `#${item.id}` }"
-          :class="pageTOCStyles({ active: activeId === item.id, level: item.level }).link()"
+          :class="pageTOCStyles({ active: activeId === item.id, level: item.level }).link({ class: rc.link })"
         >
-          <span :class="text()">
+          <span :class="text({ class: rc.text })">
             {{ item.title }}
           </span>
         </NuxtLink>

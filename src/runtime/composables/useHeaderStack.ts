@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useState } from '#app'
 
 interface HeaderLayer {

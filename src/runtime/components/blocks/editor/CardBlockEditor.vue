@@ -1,14 +1,25 @@
 <script setup lang="ts">
 import type { CardBlockProps } from "../../../types"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 
-export interface CardBlockEditorProps extends CardBlockProps {}
+export interface CardBlockEditorProps extends CardBlockProps {
+  rc?: {
+    card?: string
+  }
+}
 
-const { title, to, target, children } = defineProps<CardBlockEditorProps>()
+const { title, to, target, children, rc: rcProp } = defineProps<CardBlockEditorProps>()
 
 export interface CardBlockEditorEmits {}
 
 const emit = defineEmits<CardBlockEditorEmits>()
+
+export interface CardBlockEditorSlots {}
+
+const slots = defineSlots<CardBlockEditorSlots>()
+
+const { rc } = useRC('CardBlockEditor', rcProp)
 
 const cardBlockEditorStyles = tv({
   slots: {
@@ -21,7 +32,7 @@ const { card } = cardBlockEditorStyles()
 
 <template>
   <NuxtLink :to="to" :target="target">
-    <UCard :class="card()">
+    <UCard :class="card({ class: rc.card })">
       <h3>{{ title }}</h3>
       <RCBlockEditRenderer :blocks="children" />
     </UCard>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {ref, computed, useTemplateRef, provide} from "vue"
 import { type Page, type PageSurround, type PageDefinition } from "../../types"
-import { usePageEditor, usePageRegistry } from "../../composables"
+import { usePageEditor, usePageRegistry, useRC } from "../../composables"
 import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
 
 export interface PageEditorProps {
   isSaving: boolean
@@ -15,17 +15,51 @@ export interface PageEditorProps {
   pageDefinitions: Record<string, PageDefinition>
   onCreatePage?: (page: Partial<Page>) => Promise<void>
   onDeletePage?: (id: string) => Promise<void>
+  rc?: {
+    header?: string
+    headerGroup?: string
+    splitContainer?: string
+    editorColumn?: string
+    container?: string
+    grid?: string
+    toc?: string
+    properties?: string
+    contentWrapper?: string
+    banner?: string
+    icon?: string
+    title?: string
+    surroundSkeleton?: string
+    skeleton?: string
+    metadata?: string
+    resizer?: string
+    previewColumn?: string
+  }
 }
 
-const { isSaving, useSurround = false, surroundStatus = 'idle', surround = null, resolvePage, onCreatePage, onDeletePage } = defineProps<PageEditorProps>()
+const {
+  isSaving,
+  useSurround = false,
+  surroundStatus = 'idle',
+  surround = null,
+  resolvePage,
+  onCreatePage,
+  onDeletePage,
+  rc: rcProp
+} = defineProps<PageEditorProps>()
 
 const page = defineModel<Page>({ required: true })
 
 export interface PageEditorEmits {
-  (e: "save", value: Page): void
+  save: [value: Page]
 }
 
 const emit = defineEmits<PageEditorEmits>()
+
+export interface PageEditorSlots {}
+
+const slots = defineSlots<PageEditorSlots>()
+
+const { rc } = useRC('PageEditor', rcProp)
 
 const pageEditorStyles = tv({
   slots: {
@@ -181,9 +215,9 @@ const handleDeleteConfirm = async () => {
 
 <template>
   <RCHeaderLayer id="editor-header" :order="3">
-    <UHeader :class="header()">
+    <UHeader :class="header({ class: rc.header })">
       <template #left>
-        <div :class="headerGroup()">
+        <div :class="headerGroup({ class: rc.headerGroup })">
           <UButton
             icon="lucide:rotate-ccw"
             variant="outline"
@@ -204,7 +238,7 @@ const handleDeleteConfirm = async () => {
       </template>
 
       <template #right>
-        <div :class="headerGroup()">
+        <div :class="headerGroup({ class: rc.headerGroup })">
           <UButton
             :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
             label="Preview"
@@ -256,28 +290,28 @@ const handleDeleteConfirm = async () => {
 
   <div
     ref="split-container"
-    :class="splitContainer()"
+    :class="splitContainer({ class: rc.splitContainer })"
   >
     <div
-      :class="editorColumn()"
+      :class="editorColumn({ class: rc.editorColumn })"
       :style="{ width: showPreview ? `${editorWidth}%` : '100%' }"
     >
-      <UContainer :class="container()">
-        <div :class="grid()">
+      <UContainer :class="container({ class: rc.container })">
+        <div :class="grid({ class: rc.grid })">
           <RCPageTOC
             :page-blocks="page.blocks"
             :levels="[2, 3, 4]"
-            :class="toc()"
+            :class="toc({ class: rc.toc })"
           >
               <template #bottom> </template>
             </RCPageTOC>
-          <RCPagePropertiesEditor v-model="page" :class="properties()" />
-          <div :class="contentWrapper()">
+          <RCPagePropertiesEditor v-model="page" :class="properties({ class: rc.properties })" />
+          <div :class="contentWrapper({ class: rc.contentWrapper })">
             <RCImage
               v-if="page.banner?.src"
               :src="page.banner?.src"
               :alt="page.banner?.alt"
-              :class="banner()"
+              :class="banner({ class: rc.banner })"
             />
             <UPageHeader
               :headline="t(getTypeLabelKey(page.type))"
@@ -290,9 +324,9 @@ const handleDeleteConfirm = async () => {
                     v-if="page.icon?.src"
                     :src="page.icon?.src"
                     :alt="page.icon?.alt"
-                    :class="icon()"
+                    :class="icon({ class: rc.icon })"
                   />
-                  <h1 :class="titleClass()">{{ getLocalizedContent(page.title, locale) }}</h1>
+                  <h1 :class="titleClass({ class: rc.title })">{{ getLocalizedContent(page.title, locale) }}</h1>
                 </div>
               </template>
             </UPageHeader>
@@ -302,9 +336,9 @@ const handleDeleteConfirm = async () => {
               @mutation="captureSnapshot"
             />
             <template v-if="useSurround">
-              <div v-if="surroundStatus === 'pending'" :class="surroundSkeleton()">
-                <USkeleton :class="skeleton()" />
-                <USkeleton :class="skeleton()" />
+              <div v-if="surroundStatus === 'pending'" :class="surroundSkeleton({ class: rc.surroundSkeleton })">
+                <USkeleton :class="skeleton({ class: rc.skeleton })" />
+                <USkeleton :class="skeleton({ class: rc.skeleton })" />
               </div>
 
               <LazyRCPageSurround
@@ -321,7 +355,7 @@ const handleDeleteConfirm = async () => {
 
               <USeparator />
 
-              <div :class="metadata()">
+              <div :class="metadata({ class: rc.metadata })">
                 <h6>Metadata</h6>
                 <span>Page ID: {{ page.id }}</span>
                 <span
@@ -369,7 +403,7 @@ const handleDeleteConfirm = async () => {
 
     <div
       v-if="showPreview"
-      :class="[cursorClass, resizer()]"
+      :class="[cursorClass, resizer({ class: rc.resizer })]"
       @mousedown="startResizing"
       @dblclick="editorWidth = 50"
     >
@@ -378,7 +412,7 @@ const handleDeleteConfirm = async () => {
 
     <div
       v-if="showPreview"
-      :class="previewColumn()"
+      :class="previewColumn({ class: rc.previewColumn })"
       :style="{ width: `${100 - editorWidth}%` }"
     >
       <RCPageRenderer v-model="page" :resolve-page="resolvePage" />

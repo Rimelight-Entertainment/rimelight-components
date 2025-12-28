@@ -1,13 +1,38 @@
 <script setup lang="ts">
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
-export interface HeaderProps {}
+export interface HeaderProps {
+  rc?: {
+    root?: string
+    container?: string
+    left?: string
+    center?: string
+    right?: string
+    collapsedLeft?: string
+    collapsedCenter?: string
+    collapsedRight?: string
+  }
+}
 
-const {} = defineProps<HeaderProps>()
+const { rc: rcProp } = defineProps<HeaderProps>()
 
 export interface HeaderEmits {}
 
 const emit = defineEmits<HeaderEmits>()
+
+export interface HeaderSlots {
+  left: (props: {}) => any
+  center: (props: {}) => any
+  right: (props: {}) => any
+  "collapsed-left": (props: {}) => any
+  "collapsed-center": (props: {}) => any
+  "collapsed-right": (props: {}) => any
+}
+
+const slots = defineSlots<HeaderSlots>()
+
+const { rc } = useRC('Header', rcProp)
 
 const headerStyles = tv({
   slots: {
@@ -35,14 +60,14 @@ const {
 </script>
 
 <template>
-  <header :class="root()">
-    <UContainer :class="container()">
-      <div :class="left()"><slot name="left" /></div>
-      <div :class="center()"><slot name="center" /></div>
-      <div :class="right()"><slot name="right" /></div>
-      <div :class="collapsedLeft()"><slot name="collapsed-left" /></div>
-      <div :class="collapsedCenter()"><slot name="collapsed-center" /></div>
-      <div :class="collapsedRight()"><slot name="collapsed-right" /></div>
+  <header :class="root({ class: rc.root })">
+    <UContainer :class="container({ class: rc.container })">
+      <div :class="left({ class: rc.left })"><slot name="left" /></div>
+      <div :class="center({ class: rc.center })"><slot name="center" /></div>
+      <div :class="right({ class: rc.right })"><slot name="right" /></div>
+      <div :class="collapsedLeft({ class: rc.collapsedLeft })"><slot name="collapsed-left" /></div>
+      <div :class="collapsedCenter({ class: rc.collapsedCenter })"><slot name="collapsed-center" /></div>
+      <div :class="collapsedRight({ class: rc.collapsedRight })"><slot name="collapsed-right" /></div>
     </UContainer>
   </header>
 </template>

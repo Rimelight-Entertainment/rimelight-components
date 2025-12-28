@@ -2,7 +2,8 @@
 import { useAppConfig } from "#imports"
 import { computed } from "#imports"
 import { useI18n } from "vue-i18n"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export type CalloutVariant =
   | "info"
@@ -17,13 +18,25 @@ export interface CalloutProps {
   variant: CalloutVariant
   to?: string
   target?: string
+  rc?: {
+    icon?: string
+    tooltipIcon?: string
+  }
 }
 
-const { variant, to, target } = defineProps<CalloutProps>()
+const { variant, to, target, rc: rcProp } = defineProps<CalloutProps>()
 
 export interface CalloutEmits {}
 
 const emit = defineEmits<CalloutEmits>()
+
+export interface CalloutSlots {
+  default: (props: {}) => any
+}
+
+const slots = defineSlots<CalloutSlots>()
+
+const { rc } = useRC('Callout', rcProp)
 
 const calloutStyles = tv({
   slots: {
@@ -63,14 +76,14 @@ const tooltip = computed(() => config.value.tooltip)
       }"
     >
       <template #leading>
-        <UIcon :name="icon" :class="iconClass()" />
+        <UIcon :name="icon" :class="iconClass({ class: rc.icon })" />
       </template>
       <template #description>
         <slot />
       </template>
       <template #close>
         <UTooltip v-if="tooltip" :text="t(tooltip)">
-          <UIcon name="lucide:circle-question-mark" :class="tooltipIcon()" />
+          <UIcon name="lucide:circle-question-mark" :class="tooltipIcon({ class: rc.tooltipIcon })" />
         </UTooltip>
       </template>
     </UAlert>

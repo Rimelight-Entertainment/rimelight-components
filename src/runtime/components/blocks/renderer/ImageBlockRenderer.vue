@@ -1,14 +1,27 @@
 <script setup lang="ts">
 import type { ImageBlockProps } from "../../../types"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 
-export interface ImageBlockRendererProps extends ImageBlockProps {}
+export interface ImageBlockRendererProps extends ImageBlockProps {
+  rc?: {
+    root?: string
+    image?: string
+    caption?: string
+  }
+}
 
-const { src, alt, caption } = defineProps<ImageBlockRendererProps>()
+const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockRendererProps>()
 
 export interface ImageBlockRendererEmits {}
 
 const emit = defineEmits<ImageBlockRendererEmits>()
+
+export interface ImageBlockRendererSlots {}
+
+const slots = defineSlots<ImageBlockRendererSlots>()
+
+const { rc } = useRC('ImageBlockRenderer', rcProp)
 
 const imageBlockRendererStyles = tv({
   slots: {
@@ -22,9 +35,9 @@ const { root, image, caption: captionStyle } = imageBlockRendererStyles()
 </script>
 
 <template>
-  <figure :class="root()">
-    <img :src="src" :alt="alt" :class="image()" />
-    <figcaption v-if="caption" :class="captionStyle()">
+  <figure :class="root({ class: rc.root })">
+    <img :src="src" :alt="alt" :class="image({ class: rc.image })" />
+    <figcaption v-if="caption" :class="captionStyle({ class: rc.caption })">
       {{ caption }}
     </figcaption>
   </figure>

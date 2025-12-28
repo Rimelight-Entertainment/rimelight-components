@@ -1,17 +1,30 @@
 <script setup lang="ts">
 import { inject, ref } from "vue"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface BlockProps {
   id: string
   type: string
+  rc?: {
+    root?: string
+    menuContainer?: string
+  }
 }
 
-const { id, type } = defineProps<BlockProps>()
+const { id, type, rc: rcProp } = defineProps<BlockProps>()
 
 export interface BlockEmits {}
 
 const emit = defineEmits<BlockEmits>()
+
+export interface BlockSlots {
+  default: (props: {}) => any
+}
+
+const slots = defineSlots<BlockSlots>()
+
+const { rc } = useRC('Block', rcProp)
 
 const blockStyles = tv({
   slots: {
@@ -76,8 +89,8 @@ const items = ref([
 </script>
 
 <template>
-  <div :class="root()">
-    <div :class="menuContainer()">
+  <div :class="root({ class: rc.root })">
+    <div :class="menuContainer({ class: rc.menuContainer })">
       <UDropdownMenu :items="items">
         <UButton icon="lucide:grip-vertical" variant="ghost" color="neutral" />
       </UDropdownMenu>

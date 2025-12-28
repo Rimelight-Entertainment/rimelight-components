@@ -1,16 +1,25 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
 import { type PageDefinition, type PageType, type Page } from "../../../types"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 import { useI18n } from "vue-i18n"
 
 export interface CreatePageModalProps {
   isOpen: boolean
   definitions: Record<string, PageDefinition>
   loading?: boolean
+  rc?: {
+    header?: string
+    headerTitle?: string
+    closeButton?: string
+    body?: string
+    field?: string
+    footer?: string
+  }
 }
 
-const { isOpen, loading, definitions } = defineProps<CreatePageModalProps>()
+const { isOpen, loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>()
 
 export interface CreatePageModalEmits {
   close: []
@@ -18,6 +27,14 @@ export interface CreatePageModalEmits {
 }
 
 const emit = defineEmits<CreatePageModalEmits>()
+
+export interface CreatePageModalSlots {
+  default: (props: {}) => any
+}
+
+const slots = defineSlots<CreatePageModalSlots>()
+
+const { rc } = useRC('CreatePageModal', rcProp)
 
 const createPageModalStyles = tv({
   slots: {
@@ -97,19 +114,19 @@ const handleConfirm = () => {
     <template #content>
       <UCard>
       <template #header>
-        <div :class="headerClass()">
-          <h3 :class="headerTitle()">Create New Page</h3>
-          <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark-20-solid" :class="closeButton()" @click="emit('close')" />
+        <div :class="headerClass({ class: rc.header })">
+          <h3 :class="headerTitle({ class: rc.headerTitle })">Create New Page</h3>
+          <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark-20-solid" :class="closeButton({ class: rc.closeButton })" @click="emit('close')" />
         </div>
       </template>
 
-      <div :class="body()">
+      <div :class="body({ class: rc.body })">
         <UFormField label="Page Template" required>
           <USelect
             v-model="selectedType"
             :items="typeOptions"
             :placeholder="t('editor.template_placeholder', 'Select a template...')"
-            :class="field()"
+            :class="field({ class: rc.field })"
           />
         </UFormField>
 
@@ -123,7 +140,7 @@ const handleConfirm = () => {
       </div>
 
       <template #footer>
-        <div :class="footer()">
+        <div :class="footer({ class: rc.footer })">
           <UButton color="neutral" variant="ghost" label="Cancel" @click="emit('close')" />
           <UButton
             color="primary"

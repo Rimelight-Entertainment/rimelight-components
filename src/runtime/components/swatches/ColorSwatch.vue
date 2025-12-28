@@ -2,7 +2,8 @@
 import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { useToast } from "@nuxt/ui/composables"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface ColorSwatchProps {
   name?: string
@@ -11,13 +12,28 @@ export interface ColorSwatchProps {
   hsl?: string
   oklch?: string
   cmyk?: string
+  rc?: {
+    card?: string
+    title?: string
+    content?: string
+    preview?: string
+    details?: string
+    buttonGroup?: string
+    button?: string
+  }
 }
 
-const { name, hex, rgb, hsl, oklch, cmyk } = defineProps<ColorSwatchProps>()
+const { name, hex, rgb, hsl, oklch, cmyk, rc: rcProp } = defineProps<ColorSwatchProps>()
 
 export interface ColorSwatchEmits {}
 
 const emit = defineEmits<ColorSwatchEmits>()
+
+export interface ColorSwatchSlots {}
+
+const slots = defineSlots<ColorSwatchSlots>()
+
+const { rc } = useRC('ColorSwatch', rcProp)
 
 const colorSwatchStyles = tv({
   slots: {
@@ -31,7 +47,15 @@ const colorSwatchStyles = tv({
   }
 })
 
-const { card, title: titleStyle, content, preview, details, buttonGroup, button } = colorSwatchStyles()
+const {
+  card,
+  title: titleStyle,
+  content,
+  preview,
+  details,
+  buttonGroup,
+  button
+} = colorSwatchStyles()
 
 const { copy } = useClipboard()
 const toast = useToast()
@@ -73,13 +97,13 @@ const color = computed(() => {
 </script>
 
 <template>
-  <UCard variant="subtle" :class="card()">
+  <UCard variant="subtle" :class="card({ class: rc.card })">
     <template #header v-if="name">
-      <h3 :class="titleStyle()">{{ name }}</h3>
+      <h3 :class="titleStyle({ class: rc.title })">{{ name }}</h3>
     </template>
-    <div :class="content()">
-      <div :class="preview()" :style="{ backgroundColor: color }">
-        <div :class="details()">
+    <div :class="content({ class: rc.content })">
+      <div :class="preview({ class: rc.preview })" :style="{ backgroundColor: color }">
+        <div :class="details({ class: rc.details })">
           <span v-if="name" class="text-sm">{{ formatColor(name) }}</span>
           <span v-if="hex">HEX {{ formatColor(hex) }}</span>
           <span v-if="rgb">{{ formatColor(rgb) }}</span>
@@ -88,14 +112,14 @@ const color = computed(() => {
           <span v-if="cmyk">{{ formatColor(cmyk) }}</span>
         </div>
       </div>
-      <div :class="buttonGroup()">
+      <div :class="buttonGroup({ class: rc.buttonGroup })">
         <UButton
           v-if="hex"
           variant="outline"
           size="sm"
           icon="lucide:copy"
           label="Copy HEX"
-          :class="button()"
+          :class="button({ class: rc.button })"
           @click="copyToClipboard(hex)"
         />
         <UButton
@@ -104,7 +128,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy RGB"
-          :class="button()"
+          :class="button({ class: rc.button })"
           @click="copyToClipboard(rgb)"
         />
         <UButton
@@ -113,7 +137,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy HSL"
-          :class="button()"
+          :class="button({ class: rc.button })"
           @click="copyToClipboard(hsl)"
         />
         <UButton
@@ -122,7 +146,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy OKLCH"
-          :class="button()"
+          :class="button({ class: rc.button })"
           @click="copyToClipboard(oklch)"
         />
         <UButton
@@ -131,7 +155,7 @@ const color = computed(() => {
           size="sm"
           icon="lucide:copy"
           label="Copy CMYK"
-          :class="button()"
+          :class="button({ class: rc.button })"
           @click="copyToClipboard(cmyk)"
         />
       </div>

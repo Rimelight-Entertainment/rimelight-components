@@ -1,14 +1,27 @@
 <script setup lang="ts">
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface TestProps {
   text: string
+  rc?: {
+    root?: string
+  }
 }
+
+const { text, rc: rcProp } = defineProps<TestProps>()
 
 export interface TestEmits {}
 
-const { text } = defineProps<TestProps>()
 const emit = defineEmits<TestEmits>()
+
+export interface TestSlots {
+  content: (props: {}) => any
+}
+
+const slots = defineSlots<TestSlots>()
+
+const { rc } = useRC('Test', rcProp)
 
 const testStyles = tv({
   slots: {
@@ -20,7 +33,7 @@ const { root } = testStyles()
 </script>
 
 <template>
-  <div :class="root()" v-bind="$attrs">
+  <div :class="root({ class: rc.root })" v-bind="$attrs">
     <slot name="content">
       <p>{{ text }}</p>
     </slot>

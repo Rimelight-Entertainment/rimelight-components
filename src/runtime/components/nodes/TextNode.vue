@@ -1,15 +1,25 @@
 <script setup lang="ts">
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface TextNodeProps {
   content: string
+  rc?: {
+    root?: string
+  }
 }
 
-const { content } = defineProps<TextNodeProps>()
+const { content, rc: rcProp } = defineProps<TextNodeProps>()
 
 export interface TextNodeEmits {}
 
 const emit = defineEmits<TextNodeEmits>()
+
+export interface TextNodeSlots {}
+
+const slots = defineSlots<TextNodeSlots>()
+
+const { rc } = useRC('TextNode', rcProp)
 
 const textNodeStyles = tv({
   slots: {
@@ -21,5 +31,5 @@ const { root } = textNodeStyles()
 </script>
 
 <template>
-  <span :class="root()">{{ content }}</span>
+  <span :class="root({ class: rc.root })">{{ content }}</span>
 </template>

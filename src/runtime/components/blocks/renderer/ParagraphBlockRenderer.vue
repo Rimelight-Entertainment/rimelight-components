@@ -1,14 +1,25 @@
 <script setup lang="ts">
 import type { ParagraphBlockProps } from "../../../types"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 
-export interface ParagraphBlockRendererProps extends ParagraphBlockProps {}
+export interface ParagraphBlockRendererProps extends ParagraphBlockProps {
+  rc?: {
+    root?: string
+  }
+}
 
-const { text } = defineProps<ParagraphBlockRendererProps>()
+const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>()
 
 export interface ParagraphBlockRendererEmits {}
 
 const emit = defineEmits<ParagraphBlockRendererEmits>()
+
+export interface ParagraphBlockRendererSlots {}
+
+const slots = defineSlots<ParagraphBlockRendererSlots>()
+
+const { rc } = useRC('ParagraphBlockRenderer', rcProp)
 
 const paragraphBlockRendererStyles = tv({
   slots: {
@@ -20,5 +31,7 @@ const { root } = paragraphBlockRendererStyles()
 </script>
 
 <template>
-  <RCTextRenderer :content="text" />
+  <div :class="root({ class: rc.root })">
+    <RCTextRenderer :content="text" />
+  </div>
 </template>

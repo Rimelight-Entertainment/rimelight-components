@@ -2,17 +2,27 @@
 import { type Component } from "vue"
 import { getBlockEditorComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface BlockEditRendererProps {
   blocks: Block[]
+  rc?: {
+    root?: string
+  }
 }
 
-const { blocks } = defineProps<BlockEditRendererProps>()
+const { blocks, rc: rcProp } = defineProps<BlockEditRendererProps>()
 
 export interface BlockEditRendererEmits {}
 
 const emit = defineEmits<BlockEditRendererEmits>()
+
+export interface BlockEditRendererSlots {}
+
+const slots = defineSlots<BlockEditRendererSlots>()
+
+const { rc } = useRC('BlockEditRenderer', rcProp)
 
 const blockEditRendererStyles = tv({
   slots: {
@@ -40,7 +50,7 @@ const getComponent = (block: Block): Component | null => {
 </script>
 
 <template>
-  <div :class="root()">
+  <div :class="root({ class: rc.root })">
     <UEmpty
       v-if="!blocks || blocks.length === 0"
       variant="naked"

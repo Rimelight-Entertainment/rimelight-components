@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface ImageSwatchProps {
   name?: string
@@ -8,13 +9,27 @@ export interface ImageSwatchProps {
   png?: string
   webp?: string
   svg?: string
+  rc?: {
+    card?: string
+    title?: string
+    content?: string
+    image?: string
+    buttonGroup?: string
+    button?: string
+  }
 }
 
-const { name, jpg, png, webp, svg } = defineProps<ImageSwatchProps>()
+const { name, jpg, png, webp, svg, rc: rcProp } = defineProps<ImageSwatchProps>()
 
 export interface ImageSwatchEmits {}
 
 const emit = defineEmits<ImageSwatchEmits>()
+
+export interface ImageSwatchSlots {}
+
+const slots = defineSlots<ImageSwatchSlots>()
+
+const { rc } = useRC('ImageSwatch', rcProp)
 
 const imageSwatchStyles = tv({
   slots: {
@@ -40,20 +55,20 @@ const image = computed(() => {
 </script>
 
 <template>
-  <UCard variant="subtle" :class="card()">
+  <UCard variant="subtle" :class="card({ class: rc.card })">
     <template #header v-if="name">
-      <h3 :class="titleStyle()">{{ name }}</h3>
+      <h3 :class="titleStyle({ class: rc.title })">{{ name }}</h3>
     </template>
-    <div :class="content()">
-      <NuxtImg :src="image" :class="imageStyle()" />
-      <div :class="buttonGroup()">
+    <div :class="content({ class: rc.content })">
+      <NuxtImg :src="image" :class="imageStyle({ class: rc.image })" />
+      <div :class="buttonGroup({ class: rc.buttonGroup })">
         <UButton
           v-if="jpg"
           variant="outline"
           size="sm"
           icon="lucide:download"
           label="Download JPG"
-          :class="button()"
+          :class="button({ class: rc.button })"
           :to="jpg"
           target="_blank"
         />
@@ -63,7 +78,7 @@ const image = computed(() => {
           size="sm"
           icon="lucide:download"
           label="Download PNG"
-          :class="button()"
+          :class="button({ class: rc.button })"
           :to="png"
           target="_blank"
         />
@@ -73,7 +88,7 @@ const image = computed(() => {
           size="sm"
           icon="lucide:download"
           label="Download WEBP"
-          :class="button()"
+          :class="button({ class: rc.button })"
           :to="webp"
           target="_blank"
         />
@@ -83,7 +98,7 @@ const image = computed(() => {
           size="sm"
           icon="lucide:download"
           label="Download SVG"
-          :class="button()"
+          :class="button({ class: rc.button })"
           :to="svg"
           target="_blank"
         />

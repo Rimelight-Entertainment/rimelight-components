@@ -1,19 +1,41 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { useI18n } from "vue-i18n"
-import { usePageRegistry, useInfobox } from "../../composables"
+import { usePageRegistry, useInfobox, useRC } from "../../composables"
 import { getLocalizedContent } from "../../utils"
 import { type TabsItem } from "@nuxt/ui/components/Tabs.vue"
 import { type Page } from "../../types"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
 
-export interface PagePropertiesEditorProps {}
+export interface PagePropertiesEditorProps {
+  rc?: {
+    aside?: string
+    icon?: string
+    titleInput?: string
+    type?: string
+    tags?: string
+    tabs?: string
+    image?: string
+    groupButton?: string
+    details?: string
+    field?: string
+    links?: string
+  }
+}
 
-const props = defineProps<PagePropertiesEditorProps>()
+const { rc: rcProp } = defineProps<PagePropertiesEditorProps>()
+
+const page = defineModel<Page>({ required: true })
 
 export interface PagePropertiesEditorEmits {}
 
 const emit = defineEmits<PagePropertiesEditorEmits>()
+
+export interface PagePropertiesEditorSlots {}
+
+const slots = defineSlots<PagePropertiesEditorSlots>()
+
+const { rc } = useRC('PagePropertiesEditor', rcProp)
 
 const pagePropertiesEditorStyles = tv({
   slots: {
@@ -45,7 +67,6 @@ const {
   links
 } = pagePropertiesEditorStyles()
 
-const page = defineModel<Page>({ required: true })
 const { getTypeLabelKey } = usePageRegistry()
 const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(page.value.properties)
 
@@ -77,7 +98,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
 </script>
 
 <template>
-  <aside :class="aside()">
+  <aside :class="aside({ class: rc.aside })">
     <UCard
       variant="soft"
       :ui="{ root: 'divide-none', header: 'bg-accented text-center', body: 'p-0 sm:p-0 bg-muted' }"
@@ -88,7 +109,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
             v-if="page.icon?.src"
             :src="page.icon?.src"
             :alt="page.icon?.alt"
-            :class="icon()"
+            :class="icon({ class: rc.icon })"
           />
 
           <UInput
@@ -97,12 +118,12 @@ const updateTextArray = (schema: any, vals: string[]) => {
             placeholder="Enter page title..."
             size="xl"
             :ui="{ base: 'text-center font-bold text-lg' }"
-            :class="titleInput()"
+            :class="titleInput({ class: rc.titleInput })"
           />
 
-          <span :class="type()">{{ t(getTypeLabelKey(page.type)) }}</span>
+          <span :class="type({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
 
-          <div v-if="page.tags?.length" :class="tags()">
+          <div v-if="page.tags?.length" :class="tags({ class: rc.tags })">
             <UBadge
               v-for="tag in page.tags"
               :key="tag[locale]"
@@ -122,10 +143,10 @@ const updateTextArray = (schema: any, vals: string[]) => {
               variant="link"
               size="xs"
               color="neutral"
-              :class="tabs()"
+              :class="tabs({ class: rc.tabs })"
             >
               <template #content="{ item }">
-                <RCImage :src="item.img.src" :alt="item.img.alt" :class="image()" />
+                <RCImage :src="item.img.src" :alt="item.img.alt" :class="image({ class: rc.image })" />
               </template>
             </UTabs>
 
@@ -133,7 +154,7 @@ const updateTextArray = (schema: any, vals: string[]) => {
               <RCImage
                 :src="page.images[0].src"
                 :alt="page.images[0].alt"
-                :class="image()"
+                :class="image({ class: rc.image })"
               />
             </div>
           </div>
@@ -152,92 +173,92 @@ const updateTextArray = (schema: any, vals: string[]) => {
             trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
           }"
                 block
-                :class="groupButton()"
+                :class="groupButton({ class: rc.groupButton })"
               />
             </template>
 
             <template #content>
               <ClientOnly>
-               <dl :class="details()">
-                <template v-for="[fieldKey, schema] in getSortedFields(group.fields)" :key="fieldKey">
-                  <UFormField
-                    v-if="isFieldVisible(schema, false)"
-                    :label="getLocalizedContent(schema.label, locale)"
-                    :name="fieldKey"
-                  >
-                    <UInput
-                      v-if="schema.type === 'text'"
-                      v-model="schema.value.en"
-                      variant="subtle"
-                      placeholder="Type here..."
-                      :class="field()"
-                    />
+                <dl :class="details({ class: rc.details })">
+                  <template v-for="[fieldKey, schema] in getSortedFields(group.fields)" :key="fieldKey">
+                    <UFormField
+                      v-if="isFieldVisible(schema, false)"
+                      :label="getLocalizedContent(schema.label, locale)"
+                      :name="fieldKey"
+                    >
+                      <UInput
+                        v-if="schema.type === 'text'"
+                        v-model="schema.value.en"
+                        variant="subtle"
+                        placeholder="Type here..."
+                        :class="field({ class: rc.field })"
+                      />
 
-                    <UInput
-                      v-else-if="schema.type === 'number'"
-                      v-model.number="schema.value"
-                      type="number"
-                      variant="subtle"
-                      :class="field()"
-                    />
+                      <UInput
+                        v-else-if="schema.type === 'number'"
+                        v-model.number="schema.value"
+                        type="number"
+                        variant="subtle"
+                        :class="field({ class: rc.field })"
+                      />
 
-                    <USelect
-                      v-else-if="schema.type === 'enum'"
-                      v-model="schema.value"
-                      :items="schema.options || []"
-                      variant="subtle"
-                      :class="field()"
-                    />
+                      <USelect
+                        v-else-if="schema.type === 'enum'"
+                        v-model="schema.value"
+                        :items="schema.options || []"
+                        variant="subtle"
+                        :class="field({ class: rc.field })"
+                      />
 
-                    <UInputMenu
-                      v-else-if="schema.type === 'text-array'"
-                      :model-value="schema.value.map((v: any) => v.en)"
-                      @update:model-value="(vals: string[]) => updateTextArray(schema, vals)"
-                      multiple
-                      creatable
-                      variant="subtle"
-                      placeholder="Add item..."
-                      :class="field()"
-                    />
+                      <UInputMenu
+                        v-else-if="schema.type === 'text-array'"
+                        :model-value="schema.value.map((v: any) => v.en)"
+                        @update:model-value="(vals: string[]) => updateTextArray(schema, vals)"
+                        multiple
+                        creatable
+                        variant="subtle"
+                        placeholder="Add item..."
+                        :class="field({ class: rc.field })"
+                      />
 
-                    <UInput
-                      v-else-if="schema.type === 'page'"
-                      v-model="schema.value"
-                      icon="lucide:link-2"
-                      variant="subtle"
-                      :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
-                      :class="field()"
-                    />
+                      <UInput
+                        v-else-if="schema.type === 'page'"
+                        v-model="schema.value"
+                        icon="lucide:link-2"
+                        variant="subtle"
+                        :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
+                        :class="field({ class: rc.field })"
+                      />
 
-                    <USelectMenu
-                      v-else-if="schema.type === 'page-array'"
-                      v-model="schema.value"
-                      icon="lucide:link-2"
-                      variant="subtle"
-                      :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
-                      :class="field()"
-                    />
-                  </UFormField>
-                </template>
-              </dl>
+                      <USelectMenu
+                        v-else-if="schema.type === 'page-array'"
+                        v-model="schema.value"
+                        icon="lucide:link-2"
+                        variant="subtle"
+                        :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
+                        :class="field({ class: rc.field })"
+                      />
+                    </UFormField>
+                  </template>
+                </dl>
               </ClientOnly>
             </template>
           </UCollapsible>
         </template>
       </template>
     </UCard>
-    <div :class="links()">
+    <div :class="links({ class: rc.links })">
       <h6>Links</h6>
       <UButton
-        v-for="(link, index) in page.links"
+        v-for="(linkItem, index) in page.links"
         :key="index"
-        :label="link.label"
-        :icon="link.icon"
-        :to="link.to"
-        :target="link.to ? '_blank' : undefined"
-        :external="!!link.to"
-        :variant="link.variant || 'link'"
-        :color="link.color || 'neutral'"
+        :label="linkItem.label"
+        :icon="linkItem.icon"
+        :to="linkItem.to"
+        :target="linkItem.to ? '_blank' : undefined"
+        :external="!!linkItem.to"
+        :variant="linkItem.variant || 'link'"
+        :color="linkItem.color || 'neutral'"
         size="sm"
         :ui="{ base: 'pl-0' }"
       />

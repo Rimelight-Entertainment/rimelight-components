@@ -1,20 +1,32 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed, nextTick } from "vue"
-import { useHeaderStack } from "../../composables"
+import { useHeaderStack, useRC } from "../../composables"
 import { useWindowScroll } from "@vueuse/core"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
 
 export interface HeaderLayerProps {
   id: string
   order?: number
   hideOnScroll?: boolean
+  rc?: {
+    root?: string
+    content?: string
+  }
 }
 
-const { id, order, hideOnScroll = false } = defineProps<HeaderLayerProps>()
+const { id, order, hideOnScroll = false, rc: rcProp } = defineProps<HeaderLayerProps>()
 
 export interface HeaderLayerEmits {}
 
 const emit = defineEmits<HeaderLayerEmits>()
+
+export interface HeaderLayerSlots {
+  default: (props: {}) => any
+}
+
+const slots = defineSlots<HeaderLayerSlots>()
+
+const { rc } = useRC('HeaderLayer', rcProp)
 
 const headerLayerStyles = tv({
   slots: {
@@ -93,7 +105,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    :class="root()"
+    :class="root({ class: rc.root })"
     :style="{
       top: `${topOffset}px`,
       height: isVisible ? `${naturalHeight}px` : '0px',
@@ -101,7 +113,7 @@ onUnmounted(() => {
       pointerEvents: isVisible ? 'auto' : 'none'
     }"
   >
-    <div ref="contentRef" :class="content()">
+    <div ref="contentRef" :class="content({ class: rc.content })">
       <slot />
     </div>
   </div>

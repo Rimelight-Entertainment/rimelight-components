@@ -1,23 +1,51 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import { getLocalizedContent } from "../../utils"
-import { usePageRegistry, useInfobox } from "../../composables"
+import { usePageRegistry, useInfobox, useRC } from "../../composables"
 import { useToast } from "@nuxt/ui/composables"
 import { type TabsItem } from "@nuxt/ui/components/Tabs.vue"
 import { useI18n } from "vue-i18n"
 import { useShare, useClipboard } from "@vueuse/core"
 import { type Page } from '../../types'
-import { tv } from 'tailwind-variants'
+import { tv } from '../../utils/tv'
 
-export interface PagePropertiesRendererProps {}
+export interface PagePropertiesRendererProps {
+  rc?: {
+    aside?: string
+    actions?: string
+    icon?: string
+    title?: string
+    type?: string
+    tags?: string
+    tabs?: string
+    image?: string
+    groupButton?: string
+    details?: string
+    field?: string
+    fieldLabel?: string
+    fieldValue?: string
+    list?: string
+    listItem?: string
+    pageArrayList?: string
+    pageArrayItem?: string
+    pageArrayBullet?: string
+    links?: string
+  }
+}
 
-const {} = defineProps<PagePropertiesRendererProps>()
+const { rc: rcProp } = defineProps<PagePropertiesRendererProps>()
 
 const page = defineModel<Page>({ required: true })
 
 export interface PagePropertiesRendererEmits {}
 
 const emit = defineEmits<PagePropertiesRendererEmits>()
+
+export interface PagePropertiesRendererSlots {}
+
+const slots = defineSlots<PagePropertiesRendererSlots>()
+
+const { rc } = useRC('PagePropertiesRenderer', rcProp)
 
 const pagePropertiesRendererStyles = tv({
   slots: {
@@ -125,8 +153,8 @@ const imageTabs = computed<TabsItem[]>(() => {
 })
 </script>
 <template>
-  <aside :class="aside()">
-    <div :class="actions()">
+  <aside :class="aside({ class: rc.aside })">
+    <div :class="actions({ class: rc.actions })">
       <UButton variant="soft" color="neutral" icon="lucide:share" size="sm" @click="sharePage()" />
       <UButton variant="soft" color="neutral" icon="lucide:link" size="sm" @click="copyLink()" />
     </div>
@@ -140,16 +168,16 @@ const imageTabs = computed<TabsItem[]>(() => {
             v-if="page.icon?.src"
             :src="page.icon?.src"
             :alt="page.icon?.alt"
-            :class="icon()"
+            :class="icon({ class: rc.icon })"
           />
 
-          <h3 :class="titleClass()">
+          <h3 :class="titleClass({ class: rc.title })">
             {{ getLocalizedContent(page.title, locale) }}
           </h3>
 
-          <span :class="type()">{{ t(getTypeLabelKey(page.type)) }}</span>
+          <span :class="type({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
 
-          <div v-if="page.tags?.length" :class="tags()">
+          <div v-if="page.tags?.length" :class="tags({ class: rc.tags })">
             <UBadge
               v-for="tag in page.tags"
               :key="tag[locale]"
@@ -169,17 +197,17 @@ const imageTabs = computed<TabsItem[]>(() => {
               variant="link"
               size="xs"
               color="neutral"
-              :class="tabs()"
+              :class="tabs({ class: rc.tabs })"
             >
               <template #content="{ item }">
-                <RCImage :src="item.img.src" :alt="item.img.alt" :class="image()" />
+                <RCImage :src="item.img.src" :alt="item.img.alt" :class="image({ class: rc.image })" />
               </template>
             </UTabs>
 
             <div v-else-if="page.images[0]">
               <RCImage :src="page.images[0].src"
                        :alt="page.images[0].alt"
-                       :class="image()" />
+                       :class="image({ class: rc.image })" />
             </div>
           </div>
         </div>
@@ -197,34 +225,34 @@ const imageTabs = computed<TabsItem[]>(() => {
             trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
           }"
                 block
-                :class="groupButton()"
+                :class="groupButton({ class: rc.groupButton })"
               />
             </template>
 
             <template #content>
-              <dl :class="details()">
+              <dl :class="details({ class: rc.details })">
                 <template
                   v-for="[fieldKey, schema] in getSortedFields(group.fields)"
                   :key="fieldKey"
                 >
                   <div
                     v-if="isFieldVisible(schema, true)"
-                    :class="field()"
+                    :class="field({ class: rc.field })"
                   >
-                    <dt :class="fieldLabel()">
+                    <dt :class="fieldLabel({ class: rc.fieldLabel })">
                       {{ getLocalizedContent(schema.label, locale) }}
                     </dt>
 
-                    <dd :class="fieldValue()">
+                    <dd :class="fieldValue({ class: rc.fieldValue })">
                       <span v-if="schema.type === 'text'">
                         {{ getLocalizedContent(schema.value, locale) }}
                       </span>
                       <ul
                         v-else-if="schema.type === 'text-array'"
-                        :class="list()"
+                        :class="list({ class: rc.list })"
                       >
                         <li v-for="(item, index) in schema.value" :key="index">
-                          <span :class="listItem()">
+                          <span :class="listItem({ class: rc.listItem })">
                             {{ getLocalizedContent(item, locale) }}
                           </span>
                         </li>
@@ -236,11 +264,11 @@ const imageTabs = computed<TabsItem[]>(() => {
 
                       <ul
                         v-else-if="schema.type === 'page-array' && Array.isArray(schema.value)"
-                        :class="pageArrayList()"
+                        :class="pageArrayList({ class: rc.pageArrayList })"
                       >
-                        <li v-for="id in schema.value" :key="id" :class="pageArrayItem()">
+                        <li v-for="id in schema.value" :key="id" :class="pageArrayItem({ class: rc.pageArrayItem })">
                           <span
-                            :class="pageArrayBullet()"
+                            :class="pageArrayBullet({ class: rc.pageArrayBullet })"
                             aria-hidden="true"
                           />
 
@@ -260,18 +288,18 @@ const imageTabs = computed<TabsItem[]>(() => {
         </template>
       </template>
     </UCard>
-    <div :class="links()">
+    <div :class="links({ class: rc.links })">
       <h6>Links</h6>
       <UButton
-        v-for="(link, index) in page.links"
+        v-for="(linkItem, index) in page.links"
         :key="index"
-        :label="link.label"
-        :icon="link.icon"
-        :to="link.to"
-        :target="link.to ? '_blank' : undefined"
-        :external="!!link.to"
-        :variant="link.variant || 'link'"
-        :color="link.color || 'neutral'"
+        :label="linkItem.label"
+        :icon="linkItem.icon"
+        :to="linkItem.to"
+        :target="linkItem.to ? '_blank' : undefined"
+        :external="!!linkItem.to"
+        :variant="linkItem.variant || 'link'"
+        :color="linkItem.color || 'neutral'"
         size="sm"
         :ui="{ base: 'pl-0' }"
       />

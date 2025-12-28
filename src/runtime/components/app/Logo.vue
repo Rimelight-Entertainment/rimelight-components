@@ -1,17 +1,27 @@
 <script setup lang="ts">
 import { useAppConfig } from "nuxt/app"
 import { computed } from "#imports"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface LogoProps {
   variant?: "mark" | "type"
+  rc?: {
+    root?: string
+  }
 }
 
-const { variant = "mark" } = defineProps<LogoProps>()
+const { variant = "mark", rc: rcProp } = defineProps<LogoProps>()
 
 export interface LogoEmits {}
 
 const emit = defineEmits<LogoEmits>()
+
+export interface LogoSlots {}
+
+const slots = defineSlots<LogoSlots>()
+
+const { rc } = useRC('Logo', rcProp)
 
 const logoStyles = tv({
   slots: {
@@ -35,7 +45,7 @@ const logoSrc = computed<string>(() => {
 </script>
 
 <template>
-  <NuxtLink to="/">
+  <NuxtLink to="/" :class="root({ class: rc.root })">
     <UIcon :name="logoSrc" v-bind="$attrs" />
   </NuxtLink>
 </template>

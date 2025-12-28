@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface TeamCardProps {
   src: string
@@ -7,13 +8,28 @@ export interface TeamCardProps {
   name: string
   role: string
   description: string
+  rc?: {
+    details?: string
+    name?: string
+    role?: string
+    description?: string
+    links?: string
+  }
 }
 
-const { src, alt, name, role, description } = defineProps<TeamCardProps>()
+const { src, alt, name, role, description, rc: rcProp } = defineProps<TeamCardProps>()
 
 export interface TeamCardEmits {}
 
 const emit = defineEmits<TeamCardEmits>()
+
+export interface TeamCardSlots {
+  links: (props: {}) => any
+}
+
+const slots = defineSlots<TeamCardSlots>()
+
+const { rc } = useRC('TeamCard', rcProp)
 
 const teamCardStyles = tv({
   slots: {
@@ -37,17 +53,17 @@ const {
 <template>
   <UCard>
     <RCImage :src="src" :alt="alt" />
-    <div :class="details()">
-      <h3 :class="nameClass()">
+    <div :class="details({ class: rc.details })">
+      <h3 :class="nameClass({ class: rc.name })">
         {{ name }}
       </h3>
-      <span :class="roleClass()">{{ role }}</span>
+      <span :class="roleClass({ class: rc.role })">{{ role }}</span>
     </div>
-    <p :class="descriptionClass()">
+    <p :class="descriptionClass({ class: rc.description })">
       {{ description }}
     </p>
     <template #footer>
-      <div :class="links()">
+      <div :class="links({ class: rc.links })">
         <slot name="links" />
       </div>
     </template>

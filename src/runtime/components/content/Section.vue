@@ -3,7 +3,8 @@ import { useRoute } from "#imports"
 import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { useToast } from "@nuxt/ui/composables"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 import { slugify } from "../../utils"
 
 export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6
@@ -13,18 +14,37 @@ export interface SectionProps {
   title: string
   description?: string
   isEditing?: boolean
+  rc?: {
+    section?: string
+    link?: string
+    heading?: string
+    descriptionText?: string
+    separator?: string
+    content?: string
+  }
 }
 
 const {
   level = 1,
   title,
   description,
-  isEditing = false
+  isEditing = false,
+  rc: rcProp
 } = defineProps<SectionProps>()
 
 export interface SectionEmits {}
 
 const emit = defineEmits<SectionEmits>()
+
+export interface SectionSlots {
+  default: (props: {}) => any
+  title: (props: {}) => any
+  description: (props: {}) => any
+}
+
+const slots = defineSlots<SectionSlots>()
+
+const { rc } = useRC('Section', rcProp)
 
 const sectionStyles = tv({
   slots: {
@@ -128,12 +148,12 @@ const fullSectionUrl = computed(() => {
 </script>
 
 <template>
-  <section :id="sectionId" :class="section()" v-bind="$attrs">
-    <component :id="sectionId" :is="`h${level}`" :class="heading()">
+  <section :id="sectionId" :class="section({ class: rc.section })" v-bind="$attrs">
+    <component :id="sectionId" :is="`h${level}`" :class="heading({ class: rc.heading })">
       <NuxtLink
         v-if="!isEditing"
         :href="`#${sectionId}`"
-        :class="link()"
+        :class="link({ class: rc.link })"
         class="group relative lg:-ms-2 lg:ps-2 inline-block w-full"
       >
         <ClientOnly>
@@ -156,12 +176,12 @@ const fullSectionUrl = computed(() => {
       <slot v-else name="title">{{ title }}</slot>
     </component>
     <slot name="description">
-      <p v-if="description" :class="descriptionText()">
+      <p v-if="description" :class="descriptionText({ class: rc.descriptionText })">
         {{ description }}
       </p>
     </slot>
-    <USeparator :class="separator()" />
-    <div :class="content()">
+    <USeparator :class="separator({ class: rc.separator })" />
+    <div :class="content({ class: rc.content })">
       <slot />
     </div>
   </section>

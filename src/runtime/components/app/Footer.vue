@@ -1,13 +1,32 @@
 <script setup lang="ts">
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
-export interface FooterProps {}
+export interface FooterProps {
+  rc?: {
+    root?: string
+    container?: string
+    left?: string
+    center?: string
+    right?: string
+  }
+}
 
-const {} = defineProps<FooterProps>()
+const { rc: rcProp } = defineProps<FooterProps>()
 
 export interface FooterEmits {}
 
 const emit = defineEmits<FooterEmits>()
+
+export interface FooterSlots {
+  left: (props: {}) => any
+  center: (props: {}) => any
+  right: (props: {}) => any
+}
+
+const slots = defineSlots<FooterSlots>()
+
+const { rc } = useRC('Footer', rcProp)
 
 const footerStyles = tv({
   slots: {
@@ -23,15 +42,15 @@ const { root, container, left, center, right } = footerStyles()
 </script>
 
 <template>
-  <footer :class="root()">
-    <UContainer :class="container()">
-      <div :class="left()">
+  <footer :class="root({ class: rc.root })">
+    <UContainer :class="container({ class: rc.container })">
+      <div :class="left({ class: rc.left })">
         <slot name="left" />
       </div>
-      <div :class="center()">
+      <div :class="center({ class: rc.center })">
         <slot name="center" />
       </div>
-      <div :class="right()">
+      <div :class="right({ class: rc.right })">
         <slot name="right" />
       </div>
     </UContainer>

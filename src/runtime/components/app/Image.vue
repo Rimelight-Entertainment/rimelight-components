@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, useTemplateRef, watch, nextTick } from "vue"
-import { tv } from "tailwind-variants"
-import { useImage } from "#imports"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface ImageProps {
   src: string
@@ -10,6 +10,9 @@ export interface ImageProps {
   width?: string | number
   loading?: "lazy" | "eager"
   fit?: "cover" | "contain" | "fill" | "inside" | "outside"
+  rc?: {
+    base?: string
+  }
 }
 
 const {
@@ -18,12 +21,19 @@ const {
   height,
   width,
   loading = "lazy",
-  fit = "cover"
+  fit = "cover",
+  rc: rcProp
 } = defineProps<ImageProps>()
 
 export interface ImageEmits {}
 
 const emit = defineEmits<ImageEmits>()
+
+export interface ImageSlots {}
+
+const slots = defineSlots<ImageSlots>()
+
+const { rc } = useRC('Image', rcProp)
 
 const imageStyles = tv({
   slots: {
@@ -161,7 +171,7 @@ watch(() => imgElement.value, (newVal) => {
         :height="height"
         :width="width"
         :loading="loading"
-        :class="base({ isExpanded: false })"
+        :class="base({ isExpanded: false, class: rc.base })"
         @click="isOpen = true"
         @load="handleImageLoad"
       />
@@ -174,7 +184,7 @@ watch(() => imgElement.value, (newVal) => {
           <NuxtImg
             :src="src"
             :alt="alt"
-            :class="base({ isExpanded: true })"
+            :class="base({ isExpanded: true, class: rc.base })"
           />
         </div>
 

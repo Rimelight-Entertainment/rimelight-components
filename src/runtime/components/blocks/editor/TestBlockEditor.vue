@@ -1,17 +1,27 @@
 <script setup lang="ts">
 import {inject, ref, watch} from "vue"
 import type {TestBlockProps} from "../../../types"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 
 export interface TestBlockEditorProps extends TestBlockProps {
   id: string
+  rc?: {
+    input?: string
+  }
 }
 
-const { text, id } = defineProps<TestBlockEditorProps>()
+const { text, id, rc: rcProp } = defineProps<TestBlockEditorProps>()
 
 export interface TestBlockEditorEmits {}
 
 const emit = defineEmits<TestBlockEditorEmits>()
+
+export interface TestBlockEditorSlots {}
+
+const slots = defineSlots<TestBlockEditorSlots>()
+
+const { rc } = useRC('TestBlockEditor', rcProp)
 
 const testBlockEditorStyles = tv({
   slots: {
@@ -71,7 +81,7 @@ watch(
         placeholder="Type here..."
         @input="updateLocalText"
         @blur="commitOnBlur"
-        :class="input()"
+        :class="input({ class: rc.input })"
       />
     </template>
   </RCTest>

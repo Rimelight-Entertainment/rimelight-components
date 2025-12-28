@@ -1,17 +1,35 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from "vue"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface ScrollToTopProps {
   circleStrokeWidth?: number
   duration?: number
+  rc?: {
+    button?: string
+    progressBase?: string
+    svg?: string
+    iconContainer?: string
+    icon?: string
+  }
 }
 
-const { circleStrokeWidth = 4, duration = 0.1 } = defineProps<ScrollToTopProps>()
+const {
+  circleStrokeWidth = 4,
+  duration = 0.1,
+  rc: rcProp
+} = defineProps<ScrollToTopProps>()
 
 export interface ScrollToTopEmits {}
 
 const emit = defineEmits<ScrollToTopEmits>()
+
+export interface ScrollToTopSlots {}
+
+const slots = defineSlots<ScrollToTopSlots>()
+
+const { rc } = useRC('ScrollToTop', rcProp)
 
 const scrollToTopStyles = tv({
   slots: {
@@ -94,9 +112,9 @@ const durationInSeconds = computed(() => `${duration}s`)
     leave-to-class="opacity-0"
   >
     <div v-if="isVisible">
-      <UButton variant="ghost" :class="button()" @click="scrollToTop">
-        <div :class="progressBase()">
-          <svg :class="svg()" viewBox="0 0 100 100">
+      <UButton variant="ghost" :class="button({ class: rc.button })" @click="scrollToTop">
+        <div :class="progressBase({ class: rc.progressBase })">
+          <svg :class="svg({ class: rc.svg })" viewBox="0 0 100 100">
             <circle
               cx="50"
               cy="50"
@@ -118,8 +136,8 @@ const durationInSeconds = computed(() => `${duration}s`)
               class="gauge-primary-stroke opacity-100"
             />
           </svg>
-          <div :class="iconContainer()">
-            <UIcon name="lucide:arrow-up" :class="icon()" />
+          <div :class="iconContainer({ class: rc.iconContainer })">
+            <UIcon name="lucide:arrow-up" :class="icon({ class: rc.icon })" />
           </div>
         </div>
       </UButton>

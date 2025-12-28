@@ -1,21 +1,36 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 import { type ImageBlockProps } from "../../../types"
 import { useObjectUrl } from "@vueuse/core"
 
-export interface ImageBlockEditorProps extends ImageBlockProps {}
+export interface ImageBlockEditorProps extends ImageBlockProps {
+  rc?: {
+    root?: string
+    upload?: string
+    previewContainer?: string
+    previewImage?: string
+    emptyPreview?: string
+  }
+}
 
-const { src, alt, caption, } = defineProps<ImageBlockEditorProps>()
+const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockEditorProps>()
 
 export interface ImageBlockEditorEmits {
-  (e: "update:src", value: string | null): void
-  (e: "update:alt", value: string): void
-  (e: "update:caption", value: string | null): void
-  (e: "update:file", value: File | null): void
+  "update:src": [value: string | null]
+  "update:alt": [value: string]
+  "update:caption": [value: string | null]
+  "update:file": [value: File | null]
 }
 
 const emit = defineEmits<ImageBlockEditorEmits>()
+
+export interface ImageBlockEditorSlots {}
+
+const slots = defineSlots<ImageBlockEditorSlots>()
+
+const { rc } = useRC('ImageBlockEditor', rcProp)
 
 const imageBlockEditorStyles = tv({
   slots: {
@@ -59,26 +74,26 @@ watch(fileToUpload, (newFile) => {
 </script>
 
 <template>
-  <figure :class="root()">
+  <figure :class="root({ class: rc.root })">
     <UFileUpload
       v-slot="{ open }"
       v-model="fileToUpload"
       accept="image/*"
-      :class="upload()"
+      :class="upload({ class: rc.upload })"
       variant="area"
       color="neutral"
       label="Drop image here"
       description="JPG, PNG, GIF or WEBP. Click to select."
     >
       <div class="flex flex-col items-center justify-center space-y-3 p-4">
-        <div :class="previewContainer()">
+        <div :class="previewContainer({ class: rc.previewContainer })">
           <img
             v-if="previewSrc"
             :src="previewSrc"
             :alt="localAlt || 'Image preview'"
-            :class="previewImage()"
+            :class="previewImage({ class: rc.previewImage })"
           />
-          <div v-else :class="emptyPreview()">
+          <div v-else :class="emptyPreview({ class: rc.emptyPreview })">
             <UIcon name="i-lucide-image" class="w-10 h-10 text-muted" />
           </div>
 

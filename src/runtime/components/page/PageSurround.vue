@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 import { useI18n } from "vue-i18n"
 
 
@@ -11,6 +12,17 @@ export interface PageSurroundProps {
   nextTitle?: string
   nextDescription?: string
   nextTo?: string
+  rc?: {
+    grid?: string
+    card?: string
+    cardContent?: string
+    headingGroup?: string
+    button?: string
+    typeLabel?: string
+    infoGroup?: string
+    title?: string
+    description?: string
+  }
 }
 
 const {
@@ -20,12 +32,19 @@ const {
   previousTo,
   nextTitle,
   nextDescription,
-  nextTo
+  nextTo,
+  rc: rcProp
 } = defineProps<PageSurroundProps>()
 
 export interface PageSurroundEmits {}
 
 const emit = defineEmits<PageSurroundEmits>()
+
+export interface PageSurroundSlots {}
+
+const slots = defineSlots<PageSurroundSlots>()
+
+const { rc } = useRC('PageSurround', rcProp)
 
 const pageSurroundStyles = tv({
   slots: {
@@ -68,27 +87,27 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div :class="grid()">
+  <div :class="grid({ class: rc.grid })">
     <div>
       <ULink v-if="previousTitle" :to="previousTo" class="h-full">
-        <UCard variant="soft" :class="card()">
-          <div :class="cardContent()">
-            <div :class="headingGroup()">
+        <UCard variant="soft" :class="card({ class: rc.card })">
+          <div :class="cardContent({ class: rc.cardContent })">
+            <div :class="headingGroup({ class: rc.headingGroup })">
               <UButton
                 variant="outline"
                 icon="lucide:arrow-left"
-                :class="button()"
+                :class="button({ class: rc.button })"
               />
-              <span :class="typeLabel()">
+              <span :class="typeLabel({ class: rc.typeLabel })">
                 {{ t("navigation_previous") }}
                 {{ t(pageType) }}
               </span>
             </div>
-            <div :class="infoGroup()">
-              <p :class="titleClass()">
+            <div :class="infoGroup({ class: rc.infoGroup })">
+              <p :class="titleClass({ class: rc.title })">
                 {{ previousTitle }}
               </p>
-              <p :class="descriptionClass()">
+              <p :class="descriptionClass({ class: rc.description })">
                 {{ previousDescription }}
               </p>
             </div>
@@ -98,24 +117,24 @@ const { t } = useI18n()
     </div>
     <div>
       <ULink v-if="nextTitle" :to="nextTo" class="h-full">
-        <UCard variant="soft" :class="card()">
-          <div :class="[cardContent(), cardContentEnd()]">
-            <div :class="[headingGroup(), headingGroupEnd()]">
+        <UCard variant="soft" :class="card({ class: rc.card })">
+          <div :class="[cardContent({ class: rc.cardContent }), cardContentEnd()]">
+            <div :class="[headingGroup({ class: rc.headingGroup }), headingGroupEnd()]">
               <UButton
                 variant="outline"
                 icon="lucide:arrow-right"
-                :class="button()"
+                :class="button({ class: rc.button })"
               />
-              <span :class="typeLabel()">
+              <span :class="typeLabel({ class: rc.typeLabel })">
                 {{ t("navigation_next") }}
                 {{ t(pageType) }}</span
               >
             </div>
-            <div :class="[infoGroup(), infoGroupEnd()]">
-              <p :class="[titleClass(), titleEnd()]">
+            <div :class="[infoGroup({ class: rc.infoGroup }), infoGroupEnd()]">
+              <p :class="[titleClass({ class: rc.title }), titleEnd()]">
                 {{ nextTitle }}
               </p>
-              <p :class="[descriptionClass(), descriptionEnd()]">
+              <p :class="[descriptionClass({ class: rc.description }), descriptionEnd()]">
                 {{ nextDescription }}
               </p>
             </div>

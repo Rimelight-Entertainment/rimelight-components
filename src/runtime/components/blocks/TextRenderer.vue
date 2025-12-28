@@ -9,7 +9,8 @@ import {
 import TextNode from "../nodes/TextNode.vue"
 import LinkNode from "../nodes/LinkNode.vue"
 import PageMention from "../page/PageMention.vue"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 defineOptions({
   name: "TextRenderer"
@@ -17,13 +18,22 @@ defineOptions({
 
 export interface TextRendererProps {
   content: RichTextContent
+  rc?: {
+    root?: string
+  }
 }
 
-const { content } = defineProps<TextRendererProps>()
+const { content, rc: rcProp } = defineProps<TextRendererProps>()
 
 export interface TextRendererEmits {}
 
 const emit = defineEmits<TextRendererEmits>()
+
+export interface TextRendererSlots {}
+
+const slots = defineSlots<TextRendererSlots>()
+
+const { rc } = useRC('TextRenderer', rcProp)
 
 const textRendererStyles = tv({
   slots: {
@@ -91,9 +101,11 @@ const getProps = (item: InlineContent): Record<string, any> => {
 </script>
 
 <template>
-  <template v-for="item in content" :key="item.id">
-    <component :is="getTag(item)" v-bind="getProps(item)" />
-  </template>
+  <div :class="root({ class: rc.root })">
+    <template v-for="item in content" :key="item.id">
+      <component :is="getTag(item)" v-bind="getProps(item)" />
+    </template>
+  </div>
 </template>
 
 <style scoped></style>

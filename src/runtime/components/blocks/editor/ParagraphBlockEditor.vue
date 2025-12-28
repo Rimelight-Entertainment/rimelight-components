@@ -1,19 +1,29 @@
 <script setup lang="ts">
 import { inject, ref, watch, onMounted, nextTick } from "vue"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 import type { ParagraphBlockProps, RichTextContent } from "../../../types"
 import { richTextToHtml, parseHtmlToRichText } from "../../../utils"
 
 // The external dependencies
 export interface ParagraphBlockEditorProps extends ParagraphBlockProps {
   id: string
+  rc?: {
+    root?: string
+  }
 }
 
-const { id, text } = defineProps<ParagraphBlockEditorProps>()
+const { id, text, rc: rcProp } = defineProps<ParagraphBlockEditorProps>()
 
 export interface ParagraphBlockEditorEmits {}
 
 const emit = defineEmits<ParagraphBlockEditorEmits>()
+
+export interface ParagraphBlockEditorSlots {}
+
+const slots = defineSlots<ParagraphBlockEditorSlots>()
+
+const { rc } = useRC('ParagraphBlockEditor', rcProp)
 
 const paragraphBlockEditorStyles = tv({
   slots: {
@@ -99,7 +109,7 @@ onMounted(() => {
     ref="editorRef"
     contenteditable="true"
     @blur="commitContentOnBlur"
-    :class="root()"
+    :class="root({ class: rc.root })"
   ></div>
 </template>
 

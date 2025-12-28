@@ -1,13 +1,27 @@
 <script setup lang="ts">
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
-export interface PlaceholderProps {}
+export interface PlaceholderProps {
+  rc?: {
+    base?: string
+    svg?: string
+  }
+}
 
-const {} = defineProps<PlaceholderProps>()
+const { rc: rcProp } = defineProps<PlaceholderProps>()
 
 export interface PlaceholderEmits {}
 
 const emit = defineEmits<PlaceholderEmits>()
+
+export interface PlaceholderSlots {
+  default: (props: {}) => any
+}
+
+const slots = defineSlots<PlaceholderSlots>()
+
+const { rc } = useRC('Placeholder', rcProp)
 
 const placeholderStyles = tv({
   slots: {
@@ -20,8 +34,8 @@ const { base, svg } = placeholderStyles()
 </script>
 
 <template>
-  <div :class="base()">
-    <svg :class="svg()">
+  <div :class="base({ class: rc.base })">
+    <svg :class="svg({ class: rc.svg })">
       <defs>
         <pattern
           id="pattern-5c1e4f0e-62d5-498b-8ff0-cf77bb448c8e"

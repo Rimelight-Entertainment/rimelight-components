@@ -4,16 +4,30 @@ import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { type Page } from "../../types"
 import { useAsyncData } from "#imports"
-import { tv } from "tailwind-variants"
+import { tv } from "../../utils/tv"
+import { useRC } from "../../composables/useRC"
 
 export interface PageMentionProps {
   pageId: string
+  rc?: {
+    link?: string
+    icon?: string
+    text?: string
+    skeleton?: string
+  }
 }
+
+const { pageId, rc: rcProp } = defineProps<PageMentionProps>()
 
 export interface PageMentionEmits {}
 
-const { pageId } = defineProps<PageMentionProps>()
 const emit = defineEmits<PageMentionEmits>()
+
+export interface PageMentionSlots {}
+
+const slots = defineSlots<PageMentionSlots>()
+
+const { rc } = useRC('PageMention', rcProp)
 
 const pageMentionStyles = tv({
   slots: {
@@ -48,19 +62,19 @@ const { data: linkedPage, status } = await useAsyncData(`page-mention-${pageId}`
   <NuxtLink
     v-if="linkedPage"
     :to="`/${linkedPage.slug}`"
-    :class="link()"
+    :class="link({ class: rc.link })"
   >
     <NuxtImg
       v-if="linkedPage.icon?.src"
       :src="linkedPage.icon.src"
       :alt="linkedPage.icon.alt"
-      :class="icon()"
+      :class="icon({ class: rc.icon })"
     />
-    <span :class="text()">
+    <span :class="text({ class: rc.text })">
       {{ getLocalizedContent(linkedPage.title, locale) }}
     </span>
   </NuxtLink>
-  <USkeleton v-else-if="status === 'pending'" :class="skeleton()" />
+  <USkeleton v-else-if="status === 'pending'" :class="skeleton({ class: rc.skeleton })" />
 </template>
 
 <style scoped></style>

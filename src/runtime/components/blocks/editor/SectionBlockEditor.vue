@@ -2,17 +2,29 @@
 import { inject, ref, type Ref, computed, watch } from "vue"
 import { type SectionBlockProps, type HeadingLevel } from "../../../types"
 import { type SelectItem } from "@nuxt/ui/components/Select.vue"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 
 export interface SectionBlockEditorProps extends SectionBlockProps {
   id: string
+  rc?: {
+    root?: string
+    headerContainer?: string
+    titleInput?: string
+  }
 }
 
-const { level, title, description, children, id } = defineProps<SectionBlockEditorProps>()
+const { level, title, description, children, id, rc: rcProp } = defineProps<SectionBlockEditorProps>()
 
 export interface SectionBlockEditorEmits {}
 
 const emit = defineEmits<SectionBlockEditorEmits>()
+
+export interface SectionBlockEditorSlots {}
+
+const slots = defineSlots<SectionBlockEditorSlots>()
+
+const { rc } = useRC('SectionBlockEditor', rcProp)
 
 const sectionBlockEditorStyles = tv({
   slots: {
@@ -98,10 +110,10 @@ watch(
 </script>
 
 <template>
-  <div :class="root()">
+  <div :class="root({ class: rc.root })">
     <RCSection :level="localLevel" :title="localTitle" :description="description" is-editing>
       <template #title>
-        <div :class="headerContainer()">
+        <div :class="headerContainer({ class: rc.headerContainer })">
           <USelect
             v-model="localLevel"
             :items="levelItems"
@@ -118,7 +130,7 @@ watch(
             placeholder="Section Title..."
             @input="updateLocalTitle"
             @blur="commitTitleOnBlur"
-            :class="titleInput()"
+            :class="titleInput({ class: rc.titleInput })"
           />
         </div>
       </template>

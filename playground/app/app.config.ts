@@ -4,6 +4,7 @@ export default defineAppConfig({
   cdn: "https://cdn.rimelight.com",
   logomark: "first-party:logomark-white",
   logotype: "first-party:logotype-white",
+
   rimelightComponents: {
     callouts: {
       info: {

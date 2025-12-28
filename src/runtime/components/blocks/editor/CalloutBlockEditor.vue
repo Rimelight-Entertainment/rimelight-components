@@ -1,14 +1,25 @@
 <script setup lang="ts">
 import type { CalloutBlockProps } from "../../../types"
-import { tv } from "tailwind-variants"
+import { tv } from "../../../utils/tv"
+import { useRC } from "../../../composables/useRC"
 
-export interface CalloutBlockEditorProps extends CalloutBlockProps {}
+export interface CalloutBlockEditorProps extends CalloutBlockProps {
+  rc?: {
+    root?: string
+  }
+}
 
-const { variant, children, to, target } = defineProps<CalloutBlockEditorProps>()
+const { variant, children, to, target, rc: rcProp } = defineProps<CalloutBlockEditorProps>()
 
 export interface CalloutBlockEditorEmits {}
 
 const emit = defineEmits<CalloutBlockEditorEmits>()
+
+export interface CalloutBlockEditorSlots {}
+
+const slots = defineSlots<CalloutBlockEditorSlots>()
+
+const { rc } = useRC('CalloutBlockEditor', rcProp)
 
 const calloutBlockEditorStyles = tv({
   slots: {
@@ -20,7 +31,9 @@ const { root } = calloutBlockEditorStyles()
 </script>
 
 <template>
-  <RCCallout :variant="variant" :to="to" :target="target">
-    <RCBlockViewRenderer :blocks="children" />
-  </RCCallout>
+  <div :class="root({ class: rc.root })">
+    <RCCallout :variant="variant" :to="to" :target="target">
+      <RCBlockViewRenderer :blocks="children" />
+    </RCCallout>
+  </div>
 </template>
