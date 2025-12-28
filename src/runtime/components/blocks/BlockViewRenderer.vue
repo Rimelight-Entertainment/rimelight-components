@@ -2,7 +2,7 @@
 import { type Component } from "vue"
 import { getBlockRendererComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 
 export interface BlockViewRendererProps {

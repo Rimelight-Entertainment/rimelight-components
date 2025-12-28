@@ -4,7 +4,7 @@ import { type Page, type PageSurround, type PageDefinition } from "../../types"
 import { usePageEditor, usePageRegistry, useRC } from "../../composables"
 import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 
 export interface PageEditorProps {
   isSaving: boolean

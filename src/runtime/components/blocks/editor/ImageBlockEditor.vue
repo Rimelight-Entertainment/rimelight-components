@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue"
-import { tv } from "../../../utils/tv"
-import { useRC } from "../../../composables/useRC"
+import { tv } from "../../../internal/tv"
+import { useRC } from "~/src/runtime/composables"
 import { type ImageBlockProps } from "../../../types"
 import { useObjectUrl } from "@vueuse/core"
 

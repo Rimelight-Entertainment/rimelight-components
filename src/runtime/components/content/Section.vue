@@ -3,9 +3,13 @@ import { useRoute } from "#imports"
 import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { useToast } from "@nuxt/ui/composables"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 import { slugify } from "../../utils"
+
+defineOptions({
+  name: 'SectionComponent'
+})
 
 export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6
 
@@ -149,7 +153,7 @@ const fullSectionUrl = computed(() => {
 
 <template>
   <section :id="sectionId" :class="section({ class: rc.section })" v-bind="$attrs">
-    <component :id="sectionId" :is="`h${level}`" :class="heading({ class: rc.heading })">
+    <component :id="`${sectionId}-heading`" :is="`h${level}`" :class="heading({ class: rc.heading })">
       <NuxtLink
         v-if="!isEditing"
         :href="`#${sectionId}`"

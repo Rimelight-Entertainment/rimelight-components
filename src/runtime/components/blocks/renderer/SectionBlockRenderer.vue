@@ -2,8 +2,8 @@
 import { computed } from "vue"
 import type { SectionBlockProps } from "../../../types"
 import { slugify } from "../../../utils"
-import { tv } from "../../../utils/tv"
-import { useRC } from "../../../composables/useRC"
+import { tv } from "../../../internal/tv"
+import { useRC } from "~/src/runtime/composables"
 
 export interface SectionBlockRendererProps extends SectionBlockProps {
   rc?: {

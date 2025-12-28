@@ -9,7 +9,7 @@ import {
 import TextNode from "../nodes/TextNode.vue"
 import LinkNode from "../nodes/LinkNode.vue"
 import PageMention from "../page/PageMention.vue"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 
 defineOptions({

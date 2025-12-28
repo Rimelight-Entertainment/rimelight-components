@@ -2,7 +2,7 @@
 import { computed, ref, onMounted, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { useIntersectionObserver } from "@vueuse/core"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 import type { Block, SectionBlockProps, HeadingLevel } from "../../types"
 import { slugify } from "../../utils"

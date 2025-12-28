@@ -2,7 +2,7 @@
 import { useAppConfig } from "#imports"
 import { computed } from "#imports"
 import { useI18n } from "vue-i18n"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 
 export type CalloutVariant =

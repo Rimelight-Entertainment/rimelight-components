@@ -2,7 +2,7 @@
 import { provide } from "vue"
 import type { Block } from "../../types"
 import { useBlockEditor } from "../../composables"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 
 export interface BlockEditorProps {

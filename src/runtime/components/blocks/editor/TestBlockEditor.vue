@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {inject, ref, watch} from "vue"
 import type {TestBlockProps} from "../../../types"
-import { tv } from "../../../utils/tv"
-import { useRC } from "../../../composables/useRC"
+import { tv } from "../../../internal/tv"
+import { useRC } from "~/src/runtime/composables"
 
 export interface TestBlockEditorProps extends TestBlockProps {
   id: string

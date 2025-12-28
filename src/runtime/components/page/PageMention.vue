@@ -4,7 +4,7 @@ import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { type Page } from "../../types"
 import { useAsyncData } from "#imports"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 
 export interface PageMentionProps {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 
 export interface ImageSwatchProps {

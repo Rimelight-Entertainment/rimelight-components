@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted, watch, computed, nextTick } from "vue"
 import { useHeaderStack, useRC } from "../../composables"
 import { useWindowScroll } from "@vueuse/core"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 
 export interface HeaderLayerProps {
   id: string

@@ -5,7 +5,7 @@ import { usePageRegistry, useInfobox, useRC } from "../../composables"
 import { getLocalizedContent } from "../../utils"
 import { type TabsItem } from "@nuxt/ui/components/Tabs.vue"
 import { type Page } from "../../types"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 
 export interface PagePropertiesEditorProps {
   rc?: {

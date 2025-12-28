@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue"
 import { type PageDefinition, type PageType, type Page } from "../../../types"
-import { tv } from "../../../utils/tv"
-import { useRC } from "../../../composables/useRC"
+import { tv } from "../../../internal/tv"
+import { useRC } from "~/src/runtime/composables"
 import { useI18n } from "vue-i18n"
 
 export interface CreatePageModalProps {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CalloutBlockProps } from "../../../types"
-import { tv } from "../../../utils/tv"
-import { useRC } from "../../../composables/useRC"
+import { tv } from "../../../internal/tv"
+import { useRC } from "~/src/runtime/composables"
 
 export interface CalloutBlockEditorProps extends CalloutBlockProps {
   rc?: {

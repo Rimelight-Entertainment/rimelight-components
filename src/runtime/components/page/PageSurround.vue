@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 import { useI18n } from "vue-i18n"
 

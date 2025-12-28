@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
 import { useI18n } from "vue-i18n"
-import { tv } from "../../../utils/tv"
-import { useRC } from "../../../composables/useRC"
+import { tv } from "../../../internal/tv"
+import { useRC } from "~/src/runtime/composables"
 
 export interface DeletePageModalProps {
   isOpen: boolean

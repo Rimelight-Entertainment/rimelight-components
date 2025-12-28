@@ -4,7 +4,7 @@ import { type Page, type PageSurround } from "../../types"
 import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { usePageRegistry, useRC } from "../../composables"
-import { tv } from "../../utils/tv"
+import { tv } from "../../internal/tv"
 
 export interface PageRendererProps {
   useSurround?: boolean
