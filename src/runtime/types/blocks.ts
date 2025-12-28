@@ -8,7 +8,6 @@ export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
  * This union type is the single source of truth for component names.
  */
 export type BlockType =
-  | "TestBlock"
   | "SectionBlock"
   | "ParagraphBlock"
   | "CalloutBlock"
@@ -27,10 +26,6 @@ export interface BaseBlock {
   type: BlockType
   isTemplated?: boolean
   props: Record<string, any>
-}
-
-export interface TestBlockProps {
-  text: string
 }
 
 export interface SectionBlockProps {
@@ -81,11 +76,6 @@ export interface CollapsibleCardBlockProps {
   children: Block[]
 }
 
-export interface TestBlock extends BaseBlock {
-  type: "TestBlock"
-  props: TestBlockProps
-}
-
 export interface SectionBlock extends BaseBlock {
   type: "SectionBlock"
   props: SectionBlockProps
@@ -131,7 +121,6 @@ export interface QuoteContentBlock extends BaseBlock {
  * payload based on the block 'type'.
  */
 export type Block =
-  | TestBlock
   | SectionBlock
   | ParagraphContentBlock
   | CalloutContentBlock
