@@ -104,7 +104,8 @@ const durationInSeconds = computed(() => `${duration}s`)
 </script>
 
 <template>
-  <Transition
+  <ClientOnly>
+    <Transition
     name="fade"
     enter-active-class="transition-opacity duration-500 ease-in"
     leave-active-class="transition-opacity duration-500 ease-out"
@@ -143,6 +144,7 @@ const durationInSeconds = computed(() => `${duration}s`)
       </UButton>
     </div>
   </Transition>
+  </ClientOnly>
 </template>
 
 <style scoped>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref } from "vue"
 import { tv } from "../../internal/tv"
-import { useRC } from "../../composables/useRC"
+import { useRC } from "../../composables"
 
 export interface BlockProps {
   id: string

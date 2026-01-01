@@ -3,7 +3,7 @@ import { inject, ref, type Ref, computed, watch } from "vue"
 import { type SectionBlockProps, type HeadingLevel } from "../../../types"
 import { type SelectItem } from "@nuxt/ui/components/Select.vue"
 import { tv } from "../../../internal/tv"
-import { useRC } from "~/src/runtime/composables"
+import { useRC } from "../../../composables"
 
 export interface SectionBlockEditorProps extends SectionBlockProps {
   id: string

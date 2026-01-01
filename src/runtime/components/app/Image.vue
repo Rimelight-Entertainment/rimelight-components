@@ -53,7 +53,6 @@ const imageStyles = tv({
 
 const { base } = imageStyles()
 
-const img = useImage()
 const isOpen = ref(false)
 const imgElement = useTemplateRef<{ $el: HTMLImageElement }>('imgRef')
 

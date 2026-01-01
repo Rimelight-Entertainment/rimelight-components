@@ -3,7 +3,7 @@ import { type Component } from "vue"
 import { getBlockRendererComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
 import { tv } from "../../internal/tv"
-import { useRC } from "../../composables/useRC"
+import { useRC } from "../../composables"
 
 export interface BlockViewRendererProps {
   blocks: Block[]

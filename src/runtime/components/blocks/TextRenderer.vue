@@ -10,7 +10,7 @@ import TextNode from "../nodes/TextNode.vue"
 import LinkNode from "../nodes/LinkNode.vue"
 import PageMention from "../page/PageMention.vue"
 import { tv } from "../../internal/tv"
-import { useRC } from "../../composables/useRC"
+import { useRC } from "../../composables"
 
 defineOptions({
   name: "TextRenderer"

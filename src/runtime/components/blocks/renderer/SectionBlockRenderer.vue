@@ -3,7 +3,7 @@ import { computed } from "vue"
 import type { SectionBlockProps } from "../../../types"
 import { slugify } from "../../../utils"
 import { tv } from "../../../internal/tv"
-import { useRC } from "~/src/runtime/composables"
+import { useRC } from "../../../composables"
 
 export interface SectionBlockRendererProps extends SectionBlockProps {
   rc?: {

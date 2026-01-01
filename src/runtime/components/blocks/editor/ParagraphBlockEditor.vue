@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref, watch, onMounted, nextTick } from "vue"
 import { tv } from "../../../internal/tv"
-import { useRC } from "~/src/runtime/composables"
+import { useRC } from "../../../composables"
 import type { ParagraphBlockProps, RichTextContent } from "../../../types"
 import { richTextToHtml, parseHtmlToRichText } from "../../../utils"
 
