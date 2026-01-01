@@ -2,7 +2,7 @@
 import { ref, computed, watch } from "vue"
 import { type PageDefinition, type PageType, type Page } from "../../../types"
 import { tv } from "../../../internal/tv"
-import { useRC } from "~/src/runtime/composables"
+import { useRC } from "../../../composables"
 import { useI18n } from "vue-i18n"
 
 export interface CreatePageModalProps {
