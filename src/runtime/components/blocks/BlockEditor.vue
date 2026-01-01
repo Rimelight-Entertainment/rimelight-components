@@ -26,9 +26,9 @@ const slots = defineSlots<BlockEditorSlots>()
 
 const { rc } = useRC('BlockEditor', rcProp)
 
-const blockEditorStyles = tv({})
+//const blockEditorStyles = tv({})
 
-const {} = blockEditorStyles()
+//const {} = blockEditorStyles()
 
 const {
   removeBlock,
