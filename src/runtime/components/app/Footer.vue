@@ -3,6 +3,7 @@ import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 
 export interface FooterProps {
+  contain?: boolean
   rc?: {
     root?: string
     container?: string
@@ -12,7 +13,7 @@ export interface FooterProps {
   }
 }
 
-const { rc: rcProp } = defineProps<FooterProps>()
+const { contain = true, rc: rcProp } = defineProps<FooterProps>()
 
 export interface FooterEmits {}
 
@@ -35,10 +36,17 @@ const footerStyles = tv({
     left: "order-last flex flex-col items-center justify-between gap-xl lg:order-1 lg:items-start",
     center: "flex flex-col items-start lg:order-2",
     right: "order-first flex flex-col items-center justify-between gap-xl lg:order-3 lg:flex-1 lg:items-end"
+  },
+  variants: {
+    contain: {
+      false: {
+        container: "max-w-none"
+      }
+    }
   }
 })
 
-const { root, container, left, center, right } = footerStyles()
+const { root, container, left, center, right } = footerStyles({ contain })
 </script>
 
 <template>

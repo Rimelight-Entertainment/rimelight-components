@@ -39,7 +39,7 @@ const columns: FooterColumn[] = [
 </script>
 
 <template>
-  <RCFooter class="bg-black">
+  <RCFooter :contain="false" class="bg-black">
     <template #left>
       <RCNewsletterSignup class="max-w-64" />
       <div class="flex flex-col items-center gap-sm lg:items-start">
