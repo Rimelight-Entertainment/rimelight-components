@@ -42,9 +42,9 @@ const headerStyles = tv({
     left: "hidden lg:flex flex-none items-center justify-start",
     center: "hidden lg:flex flex-1 items-center justify-center",
     right: "hidden lg:flex flex-none items-center justify-end",
-    collapsedLeft: "flex lg:hidden flex-none items-center justify-start",
-    collapsedCenter: "flex lg:hidden flex-1 items-center justify-center",
-    collapsedRight: "flex lg:hidden flex-none items-center justify-end"
+    collapsedLeft: "flex lg:hidden flex-1 items-center justify-start",
+    collapsedCenter: "flex lg:hidden flex-none items-center justify-center",
+    collapsedRight: "flex lg:hidden flex-1 items-center justify-end"
   },
   variants: {
     contain: {
