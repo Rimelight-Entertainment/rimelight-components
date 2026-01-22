@@ -34,7 +34,7 @@ const footerStyles = tv({
     root: "py-8 lg:py-12",
     container: "flex flex-col justify-between gap-xl lg:flex-row lg:items-stretch",
     left: "order-last flex flex-col items-center justify-between gap-xl lg:order-1 lg:flex-none lg:items-start",
-    center: "flex flex-col items-center justify-center lg:order-2 lg:flex-1",
+    center: "flex flex-col items-center justify-start lg:order-2 lg:flex-1",
     right: "order-first flex flex-col items-center justify-between gap-xl lg:order-3 lg:flex-none lg:items-end"
   },
   variants: {
