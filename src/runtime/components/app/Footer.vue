@@ -32,10 +32,10 @@ const { rc } = useRC('Footer', rcProp)
 const footerStyles = tv({
   slots: {
     root: "py-8 lg:py-12",
-    container: "flex flex-col justify-between gap-xl lg:flex-row",
-    left: "order-last flex flex-col items-center justify-between gap-xl lg:order-1 lg:items-start",
-    center: "flex flex-col items-start lg:order-2",
-    right: "order-first flex flex-col items-center justify-between gap-xl lg:order-3 lg:flex-1 lg:items-end"
+    container: "flex flex-col justify-between gap-xl lg:flex-row lg:items-stretch",
+    left: "order-last flex flex-col items-center justify-between gap-xl lg:order-1 lg:flex-none lg:items-start",
+    center: "flex flex-col items-center justify-center lg:order-2 lg:flex-1",
+    right: "order-first flex flex-col items-center justify-between gap-xl lg:order-3 lg:flex-none lg:items-end"
   },
   variants: {
     contain: {

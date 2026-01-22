@@ -39,12 +39,12 @@ const headerStyles = tv({
   slots: {
     root: "h-(--ui-header-height)",
     container: "h-full flex flex-row items-center p-sm",
-    left: "hidden lg:flex flex-1 justify-start",
-    center: "hidden lg:flex flex-none",
-    right: "hidden lg:flex flex-1 justify-end items-end",
-    collapsedLeft: "lg:hidden flex-1 justify-start",
-    collapsedCenter: "lg:hidden flex-none",
-    collapsedRight: "lg:hidden flex-1 justify-end"
+    left: "hidden lg:flex flex-none items-center justify-start",
+    center: "hidden lg:flex flex-1 items-center justify-center",
+    right: "hidden lg:flex flex-none items-center justify-end",
+    collapsedLeft: "flex lg:hidden flex-none items-center justify-start",
+    collapsedCenter: "flex lg:hidden flex-1 items-center justify-center",
+    collapsedRight: "flex lg:hidden flex-none items-center justify-end"
   },
   variants: {
     contain: {
