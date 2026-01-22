@@ -3,6 +3,7 @@ import { tv } from "../../internal/tv"
 import { useRC } from "../../composables/useRC"
 
 export interface HeaderProps {
+  contain?: boolean
   rc?: {
     root?: string
     container?: string
@@ -15,7 +16,7 @@ export interface HeaderProps {
   }
 }
 
-const { rc: rcProp } = defineProps<HeaderProps>()
+const { contain = true, rc: rcProp } = defineProps<HeaderProps>()
 
 export interface HeaderEmits {}
 
@@ -44,6 +45,13 @@ const headerStyles = tv({
     collapsedLeft: "lg:hidden flex-1 justify-start",
     collapsedCenter: "lg:hidden flex-none",
     collapsedRight: "lg:hidden flex-1 justify-end"
+  },
+  variants: {
+    contain: {
+      false: {
+        container: "max-w-none"
+      }
+    }
   }
 })
 
@@ -56,7 +64,7 @@ const {
   collapsedLeft,
   collapsedCenter,
   collapsedRight
-} = headerStyles()
+} = headerStyles({ contain })
 </script>
 
 <template>

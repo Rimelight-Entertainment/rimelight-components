@@ -158,24 +158,46 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
 </script>
 
 <template>
-  <RCHeader class="bg-black">
+  <RCHeader :contain="false" class="bg-black">
     <template #left>
-      <RCLogo variant="mark" class="h-6 w-auto" />
-    </template>
-    <template #center>
-      <UNavigationMenu
-        :items="items"
-        variant="link"
-        :ui="{
-          viewportWrapper: 'top-0 flex fixed w-screen mt-(--ui-header-height)',
-          viewport: 'rounded-none'
-        }"
-      >
-        <template #megamenu-content="{ item }">
-          <UContainer>
-            <div class="flex h-full flex-row gap-xl">
-              <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
-              <ul v-if="(item as NavigationMenuItem).children">
+      <div class="flex flex-row items-center gap-md">
+        <RCLogo variant="mark" class="h-6 w-auto" />
+        <UNavigationMenu
+          :items="items"
+          variant="link"
+          :ui="{
+            viewportWrapper: 'top-0 flex fixed w-screen mt-(--ui-header-height)',
+            viewport: 'rounded-none'
+          }"
+        >
+          <template #megamenu-content="{ item }">
+            <UContainer>
+              <div class="flex h-full flex-row gap-xl">
+                <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
+                <ul v-if="(item as NavigationMenuItem).children">
+                  <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
+                    <ULink
+                      class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
+                    >
+                      <p class="font-medium text-highlighted">
+                        {{ child.label }}
+                      </p>
+                      <p class="line-clamp-2 text-muted">
+                        {{ child.description }}
+                      </p>
+                    </ULink>
+                  </li>
+                </ul>
+              </div>
+            </UContainer>
+          </template>
+          <template #megamenu2-content="{ item }">
+            <UContainer>
+              <ul class="grid gap-2 p-4 lg:w-125 lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]">
+                <li class="row-span-3">
+                  <RCPlaceholder class="size-full min-h-48" />
+                </li>
+
                 <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
                   <ULink
                     class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
@@ -189,32 +211,13 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                   </ULink>
                 </li>
               </ul>
-            </div>
-          </UContainer>
-        </template>
-        <template #megamenu2-content="{ item }">
-          <UContainer>
-            <ul class="grid gap-2 p-4 lg:w-[500px] lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]">
-              <li class="row-span-3">
-                <RCPlaceholder class="size-full min-h-48" />
-              </li>
+            </UContainer>
+          </template>
+        </UNavigationMenu>
+      </div>
+    </template>
+    <template #center>
 
-              <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
-                <ULink
-                  class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
-                >
-                  <p class="font-medium text-highlighted">
-                    {{ child.label }}
-                  </p>
-                  <p class="line-clamp-2 text-muted">
-                    {{ child.description }}
-                  </p>
-                </ULink>
-              </li>
-            </ul>
-          </UContainer>
-        </template>
-      </UNavigationMenu>
     </template>
     <template #right>
       <div class="flex flex-row gap-md">
