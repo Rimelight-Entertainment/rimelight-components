@@ -18,8 +18,10 @@ const { totalOffset } = useHeaderStack()
       <AppHeader />
     </RCHeaderLayer>
 
-    <UMain class="bg-primary-900 transition-[padding-top] duration-400 ease-in-out"
-           :style="{ paddingTop: 'var(--total-header-offset)' }">
+    <UMain
+      class="bg-primary-900 transition-[padding-top] duration-400 ease-in-out"
+      :style="{ paddingTop: 'var(--total-header-offset)' }"
+    >
       <slot />
     </UMain>
     <AppFooter />

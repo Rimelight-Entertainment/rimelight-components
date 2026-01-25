@@ -56,5 +56,11 @@ const pageResolver = async (id: string) => {
 </script>
 
 <template>
-  <RCPageEditor v-model="moviePage" :page-definitions="PAGE_MAP" :resolve-page="pageResolver" :is-saving="isSaving" @save="onSave" />
+  <RCPageEditor
+    v-model="moviePage"
+    :page-definitions="PAGE_MAP"
+    :resolve-page="pageResolver"
+    :is-saving="isSaving"
+    @save="onSave"
+  />
 </template>

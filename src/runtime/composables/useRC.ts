@@ -1,6 +1,6 @@
-import { computed } from 'vue'
-import { useAppConfig } from '#imports'
-import { defu } from 'defu'
+import { computed } from "vue"
+import { useAppConfig } from "#imports"
+import { defu } from "defu"
 
 export function useRC<T extends Record<string, any>>(namespace: string, propsProp: T | undefined) {
   const appConfig = useAppConfig()

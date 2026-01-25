@@ -74,8 +74,12 @@ const {
       <div :class="center({ class: rc.center })"><slot name="center" /></div>
       <div :class="right({ class: rc.right })"><slot name="right" /></div>
       <div :class="collapsedLeft({ class: rc.collapsedLeft })"><slot name="collapsed-left" /></div>
-      <div :class="collapsedCenter({ class: rc.collapsedCenter })"><slot name="collapsed-center" /></div>
-      <div :class="collapsedRight({ class: rc.collapsedRight })"><slot name="collapsed-right" /></div>
+      <div :class="collapsedCenter({ class: rc.collapsedCenter })">
+        <slot name="collapsed-center" />
+      </div>
+      <div :class="collapsedRight({ class: rc.collapsedRight })">
+        <slot name="collapsed-right" />
+      </div>
     </UContainer>
   </header>
 </template>

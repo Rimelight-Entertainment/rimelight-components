@@ -154,37 +154,37 @@ watch(() => imgElement.value, (newVal) => {
     updateMetadata(el)
   }
 }, { immediate: true })
-
 </script>
 
 <template>
-  <UModal v-model="isOpen" title="Image Viewer" :description="`${src}`" :ui="{
+  <UModal
+    v-model="isOpen"
+    title="Image Viewer"
+    :description="`${src}`"
+    :ui="{
       content: 'w-fit max-w-[98vw] sm:max-w-[95vw] mx-auto',
-    }">
+    }"
+  >
     <template #default>
       <div class="relative">
-      <NuxtImg
-        ref="imgRef"
-        :src="src"
-        :alt="alt"
-        :height="height"
-        :width="width"
-        :loading="loading"
-        :class="base({ isExpanded: false, class: rc.base })"
-        @click="isOpen = true"
-        @load="handleImageLoad"
-      />
+        <NuxtImg
+          ref="imgRef"
+          :src="src"
+          :alt="alt"
+          :height="height"
+          :width="width"
+          :loading="loading"
+          :class="base({ isExpanded: false, class: rc.base })"
+          @click="isOpen = true"
+          @load="handleImageLoad"
+        />
       </div>
     </template>
 
     <template #body>
       <div class="flex flex-col gap-md">
         <div class="flex-1 min-h-0 w-full flex items-center">
-          <NuxtImg
-            :src="src"
-            :alt="alt"
-            :class="base({ isExpanded: true, class: rc.base })"
-          />
+          <NuxtImg :src="src" :alt="alt" :class="base({ isExpanded: true, class: rc.base })" />
         </div>
 
         <USeparator />
@@ -193,27 +193,32 @@ watch(() => imgElement.value, (newVal) => {
           <div class="flex flex-col gap-xs">
             <div class="flex flex-row gap-xs items-center">
               <UIcon name="lucide:image" class="size-4" />
-              <p class="text-sm">Source: <span class="text-dimmed">{{ src }}</span></p>
+              <p class="text-sm">
+                Source: <span class="text-dimmed">{{ src }}</span>
+              </p>
             </div>
             <div class="flex flex-row gap-xs items-center">
               <UIcon name="lucide:file-question-mark" class="size-4" />
-              <p class="text-sm">Format: <span class="text-dimmed">{{ metadata.format }}</span></p>
+              <p class="text-sm">
+                Format: <span class="text-dimmed">{{ metadata.format }}</span>
+              </p>
             </div>
             <div class="flex flex-row gap-xs items-center">
               <UIcon name="lucide:weight" class="size-4" />
-              <p class="text-sm">Size: <span class="text-dimmed">{{ metadata.size || 'Unknown' }}</span></p>
+              <p class="text-sm">
+                Size: <span class="text-dimmed">{{ metadata.size || 'Unknown' }}</span>
+              </p>
             </div>
             <div class="flex flex-row gap-xs items-center">
               <UIcon name="lucide:image-upscale" class="size-4" />
-              <p class="text-sm">Dimensions: <span class="text-dimmed">{{ metadata.width }} × {{ metadata.height }}</span></p>
+              <p class="text-sm">
+                Dimensions:
+                <span class="text-dimmed">{{ metadata.width }} × {{ metadata.height }}</span>
+              </p>
             </div>
           </div>
 
-          <UButton
-            icon="lucide:download"
-            label="Download Original"
-            @click="downloadImage"
-          />
+          <UButton icon="lucide:download" label="Download Original" @click="downloadImage" />
         </div>
       </div>
     </template>

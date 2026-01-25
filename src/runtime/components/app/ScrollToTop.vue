@@ -106,44 +106,44 @@ const durationInSeconds = computed(() => `${duration}s`)
 <template>
   <ClientOnly>
     <Transition
-    name="fade"
-    enter-active-class="transition-opacity duration-500 ease-in"
-    leave-active-class="transition-opacity duration-500 ease-out"
-    enter-from-class="opacity-0"
-    leave-to-class="opacity-0"
-  >
-    <div v-if="isVisible">
-      <UButton variant="ghost" :class="button({ class: rc.button })" @click="scrollToTop">
-        <div :class="progressBase({ class: rc.progressBase })">
-          <svg :class="svg({ class: rc.svg })" viewBox="0 0 100 100">
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              fill="var(--color-primary-950)"
-              :stroke-width="circleStrokeWidth"
-              stroke-dashoffset="0"
-              stroke-linecap="round"
-              class="gauge-secondary-stroke opacity-100"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              fill="transparent"
-              :stroke-width="circleStrokeWidth"
-              stroke-dashoffset="0"
-              stroke-linecap="round"
-              class="gauge-primary-stroke opacity-100"
-            />
-          </svg>
-          <div :class="iconContainer({ class: rc.iconContainer })">
-            <UIcon name="lucide:arrow-up" :class="icon({ class: rc.icon })" />
+      name="fade"
+      enter-active-class="transition-opacity duration-500 ease-in"
+      leave-active-class="transition-opacity duration-500 ease-out"
+      enter-from-class="opacity-0"
+      leave-to-class="opacity-0"
+    >
+      <div v-if="isVisible">
+        <UButton variant="ghost" :class="button({ class: rc.button })" @click="scrollToTop">
+          <div :class="progressBase({ class: rc.progressBase })">
+            <svg :class="svg({ class: rc.svg })" viewBox="0 0 100 100">
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="var(--color-primary-950)"
+                :stroke-width="circleStrokeWidth"
+                stroke-dashoffset="0"
+                stroke-linecap="round"
+                class="gauge-secondary-stroke opacity-100"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="transparent"
+                :stroke-width="circleStrokeWidth"
+                stroke-dashoffset="0"
+                stroke-linecap="round"
+                class="gauge-primary-stroke opacity-100"
+              />
+            </svg>
+            <div :class="iconContainer({ class: rc.iconContainer })">
+              <UIcon name="lucide:arrow-up" :class="icon({ class: rc.icon })" />
+            </div>
           </div>
-        </div>
-      </UButton>
-    </div>
-  </Transition>
+        </UButton>
+      </div>
+    </Transition>
   </ClientOnly>
 </template>
 

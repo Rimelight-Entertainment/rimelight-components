@@ -257,17 +257,12 @@ const handleDeleteConfirm = async () => {
           />
           <RCCreatePageModal
             :is-open="isCreateModalOpen"
-             :definitions="pageDefinitions"
-             :loading="isCreating"
-             @close="isCreateModalOpen = false"
-             @confirm="handleCreateConfirm"
+            :definitions="pageDefinitions"
+            :loading="isCreating"
+            @close="isCreateModalOpen = false"
+            @confirm="handleCreateConfirm"
           >
-            <UButton
-              icon="lucide:file-plus"
-              label="Create Page"
-              color="primary"
-              size="xs"
-            />
+            <UButton icon="lucide:file-plus" label="Create Page" color="primary" size="xs" />
           </RCCreatePageModal>
           <RCDeletePageModal
             :is-open="isDeleteModalOpen"
@@ -276,35 +271,23 @@ const handleDeleteConfirm = async () => {
             @close="isDeleteModalOpen = false"
             @confirm="handleDeleteConfirm"
           >
-            <UButton
-              icon="lucide:file-plus"
-              label="Delete Page"
-              color="error"
-              size="xs"
-            />
+            <UButton icon="lucide:file-plus" label="Delete Page" color="error" size="xs" />
           </RCDeletePageModal>
         </div>
       </template>
     </UHeader>
   </RCHeaderLayer>
 
-  <div
-    ref="split-container"
-    :class="splitContainer({ class: rc.splitContainer })"
-  >
+  <div ref="split-container" :class="splitContainer({ class: rc.splitContainer })">
     <div
       :class="editorColumn({ class: rc.editorColumn })"
       :style="{ width: showPreview ? `${editorWidth}%` : '100%' }"
     >
       <UContainer :class="container({ class: rc.container })">
         <div :class="grid({ class: rc.grid })">
-          <RCPageTOC
-            :page-blocks="page.blocks"
-            :levels="[2, 3, 4]"
-            :class="toc({ class: rc.toc })"
-          >
-              <template #bottom> </template>
-            </RCPageTOC>
+          <RCPageTOC :page-blocks="page.blocks" :levels="[2, 3, 4]" :class="toc({ class: rc.toc })">
+            <template #bottom> </template>
+          </RCPageTOC>
           <RCPagePropertiesEditor v-model="page" :class="properties({ class: rc.properties })" />
           <div :class="contentWrapper({ class: rc.contentWrapper })">
             <RCImage
@@ -326,17 +309,18 @@ const handleDeleteConfirm = async () => {
                     :alt="page.icon?.alt"
                     :class="icon({ class: rc.icon })"
                   />
-                  <h1 :class="titleClass({ class: rc.title })">{{ getLocalizedContent(page.title, locale) }}</h1>
+                  <h1 :class="titleClass({ class: rc.title })">
+                    {{ getLocalizedContent(page.title, locale) }}
+                  </h1>
                 </div>
               </template>
             </UPageHeader>
-            <RCBlockEditor
-              ref="editor"
-              v-model="page.blocks"
-              @mutation="captureSnapshot"
-            />
+            <RCBlockEditor ref="editor" v-model="page.blocks" @mutation="captureSnapshot" />
             <template v-if="useSurround">
-              <div v-if="surroundStatus === 'pending'" :class="surroundSkeleton({ class: rc.surroundSkeleton })">
+              <div
+                v-if="surroundStatus === 'pending'"
+                :class="surroundSkeleton({ class: rc.surroundSkeleton })"
+              >
                 <USkeleton :class="skeleton({ class: rc.skeleton })" />
                 <USkeleton :class="skeleton({ class: rc.skeleton })" />
               </div>
@@ -359,41 +343,41 @@ const handleDeleteConfirm = async () => {
                 <h6>Metadata</h6>
                 <span>Page ID: {{ page.id }}</span>
                 <span
-                >Created At:
-              <NuxtTime
-                :datetime="page.created_at ?? ''"
-                year="numeric"
-                month="numeric"
-                day="numeric"
-                hour="numeric"
-                minute="numeric"
-                second="numeric"
-                time-zone-name="short"
-              /></span>
+                  >Created At:
+                  <NuxtTime
+                    :datetime="page.created_at ?? ''"
+                    year="numeric"
+                    month="numeric"
+                    day="numeric"
+                    hour="numeric"
+                    minute="numeric"
+                    second="numeric"
+                    time-zone-name="short"
+                /></span>
                 <span
-                >Posted At:
-              <NuxtTime
-                :datetime="page.created_at ?? ''"
-                year="numeric"
-                month="numeric"
-                day="numeric"
-                hour="numeric"
-                minute="numeric"
-                second="numeric"
-                time-zone-name="short"
-              /></span>
+                  >Posted At:
+                  <NuxtTime
+                    :datetime="page.created_at ?? ''"
+                    year="numeric"
+                    month="numeric"
+                    day="numeric"
+                    hour="numeric"
+                    minute="numeric"
+                    second="numeric"
+                    time-zone-name="short"
+                /></span>
                 <span
-                >Updated At:
-              <NuxtTime
-                :datetime="page.created_at ?? ''"
-                year="numeric"
-                month="numeric"
-                day="numeric"
-                hour="numeric"
-                minute="numeric"
-                second="numeric"
-                time-zone-name="short"
-              /></span>
+                  >Updated At:
+                  <NuxtTime
+                    :datetime="page.created_at ?? ''"
+                    year="numeric"
+                    month="numeric"
+                    day="numeric"
+                    hour="numeric"
+                    minute="numeric"
+                    second="numeric"
+                    time-zone-name="short"
+                /></span>
               </div>
             </template>
           </div>
@@ -420,6 +404,4 @@ const handleDeleteConfirm = async () => {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

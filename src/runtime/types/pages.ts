@@ -46,7 +46,7 @@ export interface PageDefinition {
 }
 
 export interface BasePageProperties {
-  [key: string]: PropertyGroup | undefined;
+  [key: string]: PropertyGroup | undefined
 }
 
 /**

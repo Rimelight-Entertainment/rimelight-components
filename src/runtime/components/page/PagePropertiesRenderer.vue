@@ -200,14 +200,20 @@ const imageTabs = computed<TabsItem[]>(() => {
               :class="tabs({ class: rc.tabs })"
             >
               <template #content="{ item }">
-                <RCImage :src="item.img.src" :alt="item.img.alt" :class="image({ class: rc.image })" />
+                <RCImage
+                  :src="item.img.src"
+                  :alt="item.img.alt"
+                  :class="image({ class: rc.image })"
+                />
               </template>
             </UTabs>
 
             <div v-else-if="page.images[0]">
-              <RCImage :src="page.images[0].src"
-                       :alt="page.images[0].alt"
-                       :class="image({ class: rc.image })" />
+              <RCImage
+                :src="page.images[0].src"
+                :alt="page.images[0].alt"
+                :class="image({ class: rc.image })"
+              />
             </div>
           </div>
         </div>
@@ -235,10 +241,7 @@ const imageTabs = computed<TabsItem[]>(() => {
                   v-for="[fieldKey, schema] in getSortedFields(group.fields)"
                   :key="fieldKey"
                 >
-                  <div
-                    v-if="isFieldVisible(schema, true)"
-                    :class="field({ class: rc.field })"
-                  >
+                  <div v-if="isFieldVisible(schema, true)" :class="field({ class: rc.field })">
                     <dt :class="fieldLabel({ class: rc.fieldLabel })">
                       {{ getLocalizedContent(schema.label, locale) }}
                     </dt>
@@ -266,7 +269,11 @@ const imageTabs = computed<TabsItem[]>(() => {
                         v-else-if="schema.type === 'page-array' && Array.isArray(schema.value)"
                         :class="pageArrayList({ class: rc.pageArrayList })"
                       >
-                        <li v-for="id in schema.value" :key="id" :class="pageArrayItem({ class: rc.pageArrayItem })">
+                        <li
+                          v-for="id in schema.value"
+                          :key="id"
+                          :class="pageArrayItem({ class: rc.pageArrayItem })"
+                        >
                           <span
                             :class="pageArrayBullet({ class: rc.pageArrayBullet })"
                             aria-hidden="true"

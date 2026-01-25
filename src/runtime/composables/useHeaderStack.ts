@@ -1,5 +1,5 @@
-import { computed } from 'vue'
-import { useState } from '#app'
+import { computed } from "vue"
+import { useState } from "#app"
 
 interface HeaderLayer {
   id: string
@@ -8,7 +8,7 @@ interface HeaderLayer {
 }
 
 export const useHeaderStack = () => {
-  const layers = useState<HeaderLayer[]>('header-layers', () => [])
+  const layers = useState<HeaderLayer[]>("header-layers", () => [])
 
   const registerHeader = (id: string, height: number, order: number = 10) => {
     const existingLayer = layers.value.find((l) => l.id === id)
@@ -26,9 +26,7 @@ export const useHeaderStack = () => {
     layers.value = layers.value.filter((l) => l.id !== id)
   }
 
-  const totalOffset = computed(() =>
-    layers.value.reduce((acc, l) => acc + l.height, 0)
-  )
+  const totalOffset = computed(() => layers.value.reduce((acc, l) => acc + l.height, 0))
 
   const getOffsetFor = (id: string) => {
     const index = layers.value.findIndex((l) => l.id === id)

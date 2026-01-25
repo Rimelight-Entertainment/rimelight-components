@@ -1,8 +1,4 @@
-import {
-  defineNuxtModule,
-  addComponentsDir,
-  createResolver
-} from "@nuxt/kit"
+import { defineNuxtModule, addComponentsDir, createResolver } from "@nuxt/kit"
 import { name, version, homepage } from "../package.json"
 import { type CalloutOptions, defaultOptions } from "./defaults"
 import { defu } from "defu"
@@ -96,9 +92,9 @@ export default defineNuxtModule<ModuleOptions>().with({
       options
     )
 
-    nuxt.options.alias['rimelight-components/composables'] = resolve('./runtime/composables')
-    nuxt.options.alias['rimelight-components/types'] = resolve('./runtime/types')
-    nuxt.options.alias['rimelight-components/utils'] = resolve('./runtime/utils')
+    nuxt.options.alias["rimelight-components/composables"] = resolve("./runtime/composables")
+    nuxt.options.alias["rimelight-components/types"] = resolve("./runtime/types")
+    nuxt.options.alias["rimelight-components/utils"] = resolve("./runtime/utils")
 
     addComponentsDir({
       path: resolve("./runtime/components/"),

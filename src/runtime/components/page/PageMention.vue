@@ -59,11 +59,7 @@ const { data: linkedPage, status } = await useAsyncData(`page-mention-${pageId}`
 </script>
 
 <template>
-  <NuxtLink
-    v-if="linkedPage"
-    :to="`/${linkedPage.slug}`"
-    :class="link({ class: rc.link })"
-  >
+  <NuxtLink v-if="linkedPage" :to="`/${linkedPage.slug}`" :class="link({ class: rc.link })">
     <NuxtImg
       v-if="linkedPage.icon?.src"
       :src="linkedPage.icon.src"

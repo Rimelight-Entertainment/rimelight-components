@@ -83,7 +83,6 @@ const {
 } = pageSurroundStyles()
 
 const { t } = useI18n()
-
 </script>
 
 <template>

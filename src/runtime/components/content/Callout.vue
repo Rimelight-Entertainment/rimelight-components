@@ -83,7 +83,10 @@ const tooltip = computed(() => config.value.tooltip)
       </template>
       <template #close>
         <UTooltip v-if="tooltip" :text="t(tooltip)">
-          <UIcon name="lucide:circle-question-mark" :class="tooltipIcon({ class: rc.tooltipIcon })" />
+          <UIcon
+            name="lucide:circle-question-mark"
+            :class="tooltipIcon({ class: rc.tooltipIcon })"
+          />
         </UTooltip>
       </template>
     </UAlert>

@@ -146,7 +146,11 @@ const updateTextArray = (schema: any, vals: string[]) => {
               :class="tabs({ class: rc.tabs })"
             >
               <template #content="{ item }">
-                <RCImage :src="item.img.src" :alt="item.img.alt" :class="image({ class: rc.image })" />
+                <RCImage
+                  :src="item.img.src"
+                  :alt="item.img.alt"
+                  :class="image({ class: rc.image })"
+                />
               </template>
             </UTabs>
 
@@ -180,7 +184,10 @@ const updateTextArray = (schema: any, vals: string[]) => {
             <template #content>
               <ClientOnly>
                 <dl :class="details({ class: rc.details })">
-                  <template v-for="[fieldKey, schema] in getSortedFields(group.fields)" :key="fieldKey">
+                  <template
+                    v-for="[fieldKey, schema] in getSortedFields(group.fields)"
+                    :key="fieldKey"
+                  >
                     <UFormField
                       v-if="isFieldVisible(schema, false)"
                       :label="getLocalizedContent(schema.label, locale)"

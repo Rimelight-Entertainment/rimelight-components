@@ -71,7 +71,7 @@ const handleConfirm = () => {
 
 <template>
   <UModal :model-value="isOpen" @update:model-value="emits('close')">
-    <slot/>
+    <slot />
     <template #content>
       <UCard :ui="{ body: 'space-y-4' }">
         <template #header>
@@ -91,8 +91,8 @@ const handleConfirm = () => {
 
         <div :class="body({ class: rc.body })">
           <p>
-            Are you sure you want to delete <strong>{{ pageTitle }}</strong>?
-            This action is permanent and cannot be undone.
+            Are you sure you want to delete <strong>{{ pageTitle }}</strong
+            >? This action is permanent and cannot be undone.
           </p>
         </div>
 
@@ -132,6 +132,4 @@ const handleConfirm = () => {
   </UModal>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

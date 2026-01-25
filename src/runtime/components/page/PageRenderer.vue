@@ -89,11 +89,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
 <template>
   <UContainer :class="container({ class: rc.container })">
     <div :class="grid({ class: rc.grid })">
-      <RCPageTOC
-        :page-blocks="page.blocks"
-        :levels="[2, 3, 4]"
-        :class="toc({ class: rc.toc })"
-      >
+      <RCPageTOC :page-blocks="page.blocks" :levels="[2, 3, 4]" :class="toc({ class: rc.toc })">
         <template #bottom> </template>
       </RCPageTOC>
       <RCPagePropertiesRenderer v-model="page" :class="properties({ class: rc.properties })" />
@@ -117,13 +113,18 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
                 :alt="page.icon?.alt"
                 :class="icon({ class: rc.icon })"
               />
-              <h1 :class="titleClass({ class: rc.title })">{{ getLocalizedContent(page.title, locale) }}</h1>
+              <h1 :class="titleClass({ class: rc.title })">
+                {{ getLocalizedContent(page.title, locale) }}
+              </h1>
             </div>
           </template>
         </UPageHeader>
         <RCBlockViewRenderer :blocks="page.blocks" />
         <template v-if="useSurround">
-          <div v-if="surroundStatus === 'pending'" :class="surroundSkeleton({ class: rc.surroundSkeleton })">
+          <div
+            v-if="surroundStatus === 'pending'"
+            :class="surroundSkeleton({ class: rc.surroundSkeleton })"
+          >
             <USkeleton :class="skeleton({ class: rc.skeleton })" />
             <USkeleton :class="skeleton({ class: rc.skeleton })" />
           </div>

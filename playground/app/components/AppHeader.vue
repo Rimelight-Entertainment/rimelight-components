@@ -216,9 +216,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
         </UNavigationMenu>
       </div>
     </template>
-    <template #center>
-
-    </template>
+    <template #center> </template>
     <template #right>
       <div class="flex flex-row gap-md">
         <UButton variant="solid" color="primary" label="Button 1" />

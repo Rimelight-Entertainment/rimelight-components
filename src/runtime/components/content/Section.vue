@@ -153,7 +153,11 @@ const fullSectionUrl = computed(() => {
 
 <template>
   <section :id="sectionId" :class="section({ class: rc.section })" v-bind="$attrs">
-    <component :id="`${sectionId}-heading`" :is="`h${level}`" :class="heading({ class: rc.heading })">
+    <component
+      :id="`${sectionId}-heading`"
+      :is="`h${level}`"
+      :class="heading({ class: rc.heading })"
+    >
       <NuxtLink
         v-if="!isEditing"
         :href="`#${sectionId}`"

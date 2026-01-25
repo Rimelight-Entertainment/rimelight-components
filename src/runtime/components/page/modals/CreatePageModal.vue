@@ -110,52 +110,56 @@ const handleConfirm = () => {
 
 <template>
   <UModal :model-value="isOpen" @update:model-value="emit('close')">
-    <slot/>
+    <slot />
     <template #content>
       <UCard>
-      <template #header>
-        <div :class="headerClass({ class: rc.header })">
-          <h3 :class="headerTitle({ class: rc.headerTitle })">Create New Page</h3>
-          <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark-20-solid" :class="closeButton({ class: rc.closeButton })" @click="emit('close')" />
+        <template #header>
+          <div :class="headerClass({ class: rc.header })">
+            <h3 :class="headerTitle({ class: rc.headerTitle })">Create New Page</h3>
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              :class="closeButton({ class: rc.closeButton })"
+              @click="emit('close')"
+            />
+          </div>
+        </template>
+
+        <div :class="body({ class: rc.body })">
+          <UFormField label="Page Template" required>
+            <USelect
+              v-model="selectedType"
+              :items="typeOptions"
+              :placeholder="t('editor.template_placeholder', 'Select a template...')"
+              :class="field({ class: rc.field })"
+            />
+          </UFormField>
+
+          <UFormField label="Title" required>
+            <UInput v-model="title" placeholder="e.g. My Awesome Movie" />
+          </UFormField>
+
+          <UFormField label="Slug" required>
+            <UInput v-model="slug" placeholder="my-awesome-movie" />
+          </UFormField>
         </div>
-      </template>
 
-      <div :class="body({ class: rc.body })">
-        <UFormField label="Page Template" required>
-          <USelect
-            v-model="selectedType"
-            :items="typeOptions"
-            :placeholder="t('editor.template_placeholder', 'Select a template...')"
-            :class="field({ class: rc.field })"
-          />
-        </UFormField>
-
-        <UFormField label="Title" required>
-          <UInput v-model="title" placeholder="e.g. My Awesome Movie" />
-        </UFormField>
-
-        <UFormField label="Slug" required>
-          <UInput v-model="slug" placeholder="my-awesome-movie" />
-        </UFormField>
-      </div>
-
-      <template #footer>
-        <div :class="footer({ class: rc.footer })">
-          <UButton color="neutral" variant="ghost" label="Cancel" @click="emit('close')" />
-          <UButton
-            color="primary"
-            label="Create & Edit"
-            :loading="loading"
-            :disabled="!selectedType || !title"
-            @click="handleConfirm"
-          />
-        </div>
-      </template>
-    </UCard>
+        <template #footer>
+          <div :class="footer({ class: rc.footer })">
+            <UButton color="neutral" variant="ghost" label="Cancel" @click="emit('close')" />
+            <UButton
+              color="primary"
+              label="Create & Edit"
+              :loading="loading"
+              :disabled="!selectedType || !title"
+              @click="handleConfirm"
+            />
+          </div>
+        </template>
+      </UCard>
     </template>
   </UModal>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
