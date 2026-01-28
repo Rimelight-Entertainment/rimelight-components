@@ -18,7 +18,7 @@ export const useHeaderStack = () => {
       }
     } else {
       layers.value.push({ id, height, order })
-      layers.value.sort((a, b) => a.order - b.order)
+      layers.value.sort((a, b) => (a.order !== b.order ? a.order - b.order : 0))
     }
   }
 
@@ -26,19 +26,47 @@ export const useHeaderStack = () => {
     layers.value = layers.value.filter((l) => l.id !== id)
   }
 
-  const totalOffset = computed(() => layers.value.reduce((acc, l) => acc + l.height, 0))
+  const totalHeight = computed(() =>
+    layers.value.reduce((acc, l) => acc + l.height, 0)
+  )
 
-  const getOffsetFor = (id: string) => {
-    const index = layers.value.findIndex((l) => l.id === id)
-    if (index === -1) return 0
-    return layers.value.slice(0, index).reduce((acc, l) => acc + l.height, 0)
-  }
+  /**
+   * Returns a map of ID -> Top Offset (Sum of heights of layers above)
+   */
+  const offsets = computed(() => {
+    const map: Record<string, number> = {}
+    let currentOffset = 0
+
+    layers.value.forEach((layer) => {
+      map[layer.id] = currentOffset
+      currentOffset += layer.height
+    })
+
+    return map
+  })
+
+  /**
+   * Returns a map of ID -> Bottom Offset (Sum of heights including this layer)
+   * Useful for dropdowns/menus that need to sit flush below the header
+   */
+  const bottomOffsets = computed(() => {
+    const map: Record<string, number> = {}
+    let currentOffset = 0
+
+    layers.value.forEach((layer) => {
+      currentOffset += layer.height
+      map[layer.id] = currentOffset
+    })
+
+    return map
+  })
 
   return {
     registerHeader,
     unregisterHeader,
-    totalOffset,
-    getOffsetFor,
+    totalHeight,
+    offsets,
+    bottomOffsets,
     layers: computed(() => layers.value)
   }
 }

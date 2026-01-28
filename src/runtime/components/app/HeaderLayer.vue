@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed, nextTick } from "vue"
+import { ref, onMounted, onUnmounted, watch, computed, nextTick, provide } from "vue"
 import { useHeaderStack, useRC } from "../../composables"
 import { useWindowScroll } from "@vueuse/core"
 import { tv } from "../../internal/tv"
@@ -37,7 +37,11 @@ const headerLayerStyles = tv({
 
 const { root, content } = headerLayerStyles()
 
-const { registerHeader, unregisterHeader, getOffsetFor } = useHeaderStack()
+
+const { registerHeader, unregisterHeader, offsets } = useHeaderStack()
+
+provide('header_layer_id', id)
+
 const { y: scrollY } = useWindowScroll()
 
 const contentRef = ref<HTMLElement | null>(null)
@@ -47,7 +51,7 @@ const lastScrollY = ref(0)
 // This tracks the "measured" height of the children
 const naturalHeight = ref(0)
 
-const topOffset = computed(() => getOffsetFor(id))
+const topOffset = computed(() => offsets.value[id] ?? 0)
 
 watch(scrollY, (current) => {
   if (!hideOnScroll) return
