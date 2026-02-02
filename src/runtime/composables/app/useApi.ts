@@ -1,7 +1,7 @@
 import { useFetch, useRuntimeConfig } from "#imports";
 import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { hash } from "ohash";
-import type { UseFetchOptions } from "#app";
+import type { UseFetchOptions, AsyncData } from "#app";
 
 /**
  * $api: For imperative calls (buttons, save actions, Pinia Colada)
@@ -46,7 +46,7 @@ export const $api = async <T>(path: string, opts: any = {}) => {
 /**
  * useApi: For reactive data fetching in setup
  */
-export const useApi = <T>(path: string | (() => string), opts: UseFetchOptions<T> = {}) => {
+export const useApi = <T>(path: string | (() => string), opts: UseFetchOptions<T> = {}): AsyncData<T, Error | null> => {
     const config = useRuntimeConfig();
     const apiBase = config.public.apiBase as string;
     const isTauri = config.public.isTauri as boolean;
@@ -71,5 +71,5 @@ export const useApi = <T>(path: string | (() => string), opts: UseFetchOptions<T
         fetch: isTauri ? tauriFetch : undefined,
         // Key ensures unique state tracking in Nuxt
         key: opts.key || hash([path, typeof path === "function" ? path() : path]),
-    } as UseFetchOptions<T> & { fetch?: unknown });
+    } as UseFetchOptions<T> & { fetch?: unknown }) as AsyncData<T, Error | null>;
 };
