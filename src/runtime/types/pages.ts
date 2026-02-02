@@ -64,9 +64,9 @@ export interface BasePage {
   links?: Link[]
   authorsIds?: string[]
   blocks: Block[]
-  posted_at?: Date | null
-  created_at: Date
-  updated_at: Date
+  postedAt?: Date | null
+  createdAt: Date
+  updatedAt: Date
 }
 
 /**

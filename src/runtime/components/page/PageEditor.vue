@@ -345,7 +345,7 @@ const handleDeleteConfirm = async () => {
                 <span
                   >Created At:
                   <NuxtTime
-                    :datetime="page.created_at ?? ''"
+                    :datetime="page.createdAt ?? ''"
                     year="numeric"
                     month="numeric"
                     day="numeric"
@@ -357,7 +357,7 @@ const handleDeleteConfirm = async () => {
                 <span
                   >Posted At:
                   <NuxtTime
-                    :datetime="page.created_at ?? ''"
+                    :datetime="page.createdAt ?? ''"
                     year="numeric"
                     month="numeric"
                     day="numeric"
@@ -369,7 +369,7 @@ const handleDeleteConfirm = async () => {
                 <span
                   >Updated At:
                   <NuxtTime
-                    :datetime="page.created_at ?? ''"
+                    :datetime="page.createdAt ?? ''"
                     year="numeric"
                     month="numeric"
                     day="numeric"

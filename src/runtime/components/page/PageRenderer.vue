@@ -149,7 +149,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
             <span
               >Created At:
               <NuxtTime
-                :datetime="page.created_at ?? ''"
+                :datetime="page.createdAt ?? ''"
                 year="numeric"
                 month="numeric"
                 day="numeric"
@@ -161,7 +161,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
             <span
               >Posted At:
               <NuxtTime
-                :datetime="page.created_at ?? ''"
+                :datetime="page.createdAt ?? ''"
                 year="numeric"
                 month="numeric"
                 day="numeric"
@@ -173,7 +173,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
             <span
               >Updated At:
               <NuxtTime
-                :datetime="page.created_at ?? ''"
+                :datetime="page.createdAt ?? ''"
                 year="numeric"
                 month="numeric"
                 day="numeric"
