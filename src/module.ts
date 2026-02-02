@@ -92,6 +92,7 @@ export default defineNuxtModule<ModuleOptions>().with({
       options
     )
 
+    nuxt.options.alias["rimelight-components/components"] = resolve("./runtime/components")
     nuxt.options.alias["rimelight-components/composables"] = resolve("./runtime/composables")
     nuxt.options.alias["rimelight-components/types"] = resolve("./runtime/types")
     nuxt.options.alias["rimelight-components/utils"] = resolve("./runtime/utils")
