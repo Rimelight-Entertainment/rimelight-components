@@ -42,6 +42,11 @@
       "types": "./dist/runtime/utils/index.d.ts",
       "import": "./dist/runtime/utils/index.mjs",
       "default": "./dist/runtime/utils/index.mjs"
+    },
+    "./auth": {
+      "types": "./dist/runtime/auth/index.d.ts",
+      "import": "./dist/runtime/auth/index.mjs",
+      "default": "./dist/runtime/auth/index.mjs"
     }
   },
   "style": "./dist/runtime/index.css",
