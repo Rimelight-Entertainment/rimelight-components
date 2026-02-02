@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { useToast } from "@nuxt/ui/composables"
 import { tv } from "../../internal/tv"
-import { useRC } from "../../composables/useRC"
+import { useRC } from "~/src/runtime/composables"
 
 export interface ColorSwatchProps {
   name?: string

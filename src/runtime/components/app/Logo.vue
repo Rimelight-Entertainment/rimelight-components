@@ -2,7 +2,7 @@
 import { useAppConfig } from "nuxt/app"
 import { computed } from "#imports"
 import { tv } from "../../internal/tv"
-import { useRC } from "../../composables/useRC"
+import { useRC } from "~/src/runtime/composables"
 
 export interface LogoProps {
   variant?: "mark" | "type"

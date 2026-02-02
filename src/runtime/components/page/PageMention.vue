@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n"
 import { type Page } from "../../types"
 import { useAsyncData } from "#imports"
 import { tv } from "../../internal/tv"
-import { useRC } from "../../composables/useRC"
+import { useRC } from "~/src/runtime/composables"
 
 export interface PageMentionProps {
   pageId: string

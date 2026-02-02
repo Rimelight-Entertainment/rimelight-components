@@ -7,6 +7,15 @@ export interface CalloutOptions {
 export const defaultOptions = {
   enabled: true,
   prefix: "RC",
+  auth: {
+    restrictedUsernames: [] as string[],
+    adminEmailDomain: null as string | null,
+    session: {
+      expiresIn: 60 * 60 * 24 * 7, // 7 days
+      updateAge: 60 * 60 * 24, // 1 day
+      freshAge: 60 * 15 // 15 minutes
+    }
+  },
   callouts: {
     info: {
       icon: "lucide:shield-alert",

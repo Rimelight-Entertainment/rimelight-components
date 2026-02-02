@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, useTemplateRef, watch, nextTick } from "vue"
 import { tv } from "../../internal/tv"
-import { useRC } from "../../composables/useRC"
+import { useRC } from "~/src/runtime/composables"
 
 export interface ImageProps {
   src: string

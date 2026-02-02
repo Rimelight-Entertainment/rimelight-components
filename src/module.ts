@@ -95,6 +95,8 @@ export default defineNuxtModule<ModuleOptions>().with({
     nuxt.options.alias["rimelight-components/composables"] = resolve("./runtime/composables")
     nuxt.options.alias["rimelight-components/types"] = resolve("./runtime/types")
     nuxt.options.alias["rimelight-components/utils"] = resolve("./runtime/utils")
+    nuxt.options.alias["rimelight-components/auth"] = resolve("./runtime/auth")
+    nuxt.options.alias["rimelight-components/db"] = resolve("./runtime/db")
 
     addComponentsDir({
       path: resolve("./runtime/components/"),

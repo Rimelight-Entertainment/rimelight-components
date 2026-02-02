@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { tv } from "../../internal/tv"
-import { useRC } from "../../composables/useRC"
+import { useRC } from "~/src/runtime/composables"
 
 export interface TextNodeProps {
   content: string
