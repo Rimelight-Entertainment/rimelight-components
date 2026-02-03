@@ -22,6 +22,11 @@
   },
   "exports": {
     ".": "./dist/module.mjs",
+    "./components": {
+      "types": "./dist/runtime/components/index.d.ts",
+      "import": "./dist/runtime/components/index.mjs",
+      "default": "./dist/runtime/components/index.mjs"
+    },
     "./components/*": "./dist/runtime/components/*",
     "./composables": {
       "types": "./dist/runtime/composables/index.d.ts",
