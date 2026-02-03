@@ -104,7 +104,8 @@ export default defineNuxtModule<ModuleOptions>().with({
       pathPrefix: false,
       //TODO Figure out if this can be typed better
       prefix: options.prefix ?? undefined,
-      global: true
+      global: true,
+      ignore: ["**/index.*"]
     })
 
     // Scan the directory for all .vue files
