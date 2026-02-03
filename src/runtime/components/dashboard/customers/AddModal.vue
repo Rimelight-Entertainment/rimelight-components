@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import * as z from "zod"
-import type { FormSubmitEvent } from "#ui/types"
+import type { FormSubmitEvent } from "@nuxt/ui"
 import { ref, reactive } from "vue"
-import { useToast } from "#imports"
+import { useToast } from "@nuxt/ui/composables/useToast"
 
 const schema = z.object({
   name: z.string().min(2, "Too short"),

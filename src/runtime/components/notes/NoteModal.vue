@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type SelectMenuItem } from "#ui/types"
+import { type SelectMenuItem } from "@nuxt/ui"
 import {useDebounceFn} from "@vueuse/core"
 import {computed, reactive, ref, watch} from "vue"
 import type {Label, Note} from "../../db/auth"

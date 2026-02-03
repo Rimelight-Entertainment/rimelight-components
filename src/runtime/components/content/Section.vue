@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useRoute, useToast } from "#imports"
+import { useRoute } from "#imports"
+import { useToast } from "@nuxt/ui/composables/useToast"
 import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { tv } from "../../internal/tv"
