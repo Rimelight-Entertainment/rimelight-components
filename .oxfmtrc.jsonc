@@ -1,5 +1,5 @@
 {
   "extends": [
-    "./.rimelight-utils/.oxfmtrc.json"
+    "./.rimelight-utilities/.oxfmtrc.json"
   ]
 }
