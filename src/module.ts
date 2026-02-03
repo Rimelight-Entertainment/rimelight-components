@@ -53,7 +53,7 @@ export default defineNuxtModule<ModuleOptions>().with({
         }
       },
       "@nuxt/ui": {
-        version: ">=4.4.0",
+        version: ">=4.2.1",
         optional: false,
         overrides: {},
         defaults: {
