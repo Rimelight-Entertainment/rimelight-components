@@ -1,17 +1,15 @@
 import { createAccessControl } from "better-auth/plugins/access"
 import { adminAc, defaultStatements, ownerAc } from "better-auth/plugins/organization/access"
 
-const customStatements = {
+export const statement = {
+    organization: ["update", "delete", "create"],
+    member: ["update", "delete", "create"],
+    invitation: ["create", "cancel"],
+    team: ["update", "delete", "create"],
+    ac: ["update", "delete", "read", "create"],
     admin: ["access"],
-    organization: ["create", "update", "delete"],
-    team: ["create", "update", "delete"],
     project: ["create", "share", "update", "delete"],
     blogPost: ["create", "edit", "publish", "delete"]
-} as const
-
-export const statement = {
-    ...defaultStatements,
-    ...customStatements
 } as const
 
 export const ac = createAccessControl(statement)
