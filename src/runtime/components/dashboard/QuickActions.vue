@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from "@nuxt/ui";
+import type { DropdownMenuItem } from "#ui/types";
 import { useQuickActions} from "../../composables";
 import { computed } from "vue"
 

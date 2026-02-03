@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type {DropdownMenuItem} from "@nuxt/ui"
+import { type DropdownMenuItem } from "#ui/types"
 import { ref, computed } from "vue"
 
 export interface TeamsMenuProps {

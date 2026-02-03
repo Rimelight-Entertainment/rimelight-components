@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import type {SelectMenuItem} from "@nuxt/ui"
+import { type SelectMenuItem } from "#ui/types"
 import {useDebounceFn} from "@vueuse/core"
 import {computed, reactive, ref, watch} from "vue"
 import type {Label, Note} from "../../db/auth"
 import { useApi, $api } from "../../composables"
-import type { UseFetchOptions } from "#app"
 
 const open = defineModel<boolean>("open", {default: false})
 

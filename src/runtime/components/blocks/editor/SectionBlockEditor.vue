@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref, type Ref, computed, watch } from "vue"
 import { type SectionBlockProps, type HeadingLevel } from "../../../types"
-import type { SelectItem } from "@nuxt/ui"
+import type { SelectItem } from "#ui/types"
 import { tv } from "../../../internal/tv"
 import { useRC } from "../../../composables"
 
