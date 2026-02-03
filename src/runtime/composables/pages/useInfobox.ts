@@ -1,7 +1,7 @@
 // composables/useInfobox.ts
 
 import { useI18n } from "vue-i18n"
-import type { Property, PropertyGroup, BasePageProperties } from "~/src/runtime/types"
+import type { Property, PropertyGroup, BasePageProperties } from "../../types"
 
 export const useInfobox = (properties: BasePageProperties) => {
   const { locale } = useI18n()

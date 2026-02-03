@@ -1,5 +1,4 @@
-import { useNuxtApp, useState } from "#imports"
-import { useToast } from "@nuxt/ui/composables"
+import { useNuxtApp, useState, useToast } from "#imports"
 import { Time } from "@internationalized/date"
 import { computed } from "vue"
 
@@ -123,7 +122,7 @@ export const useFocusTimer = () => {
     }
 
     const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
-    audio.play().catch(() => {})
+    audio.play().catch(() => { })
 
     if ("Notification" in window && Notification.permission === "granted") {
       new Notification("Focus Timer Done!", {

@@ -1,4 +1,4 @@
-import type { AvatarProps } from "@nuxt/ui"
+import type { AvatarProps } from "#ui/types"
 
 export type UserStatus = "subscribed" | "unsubscribed" | "bounced"
 export type SaleStatus = "paid" | "failed" | "refunded"

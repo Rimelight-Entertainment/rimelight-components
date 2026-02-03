@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { useI18n } from "vue-i18n"
 import { usePageRegistry, useInfobox, useRC } from "../../composables"
 import { getLocalizedContent } from "../../utils"
-import { type TabsItem } from "@nuxt/ui/components/Tabs.vue"
+import type { TabsItem } from "#ui/types"
 import { type Page } from "../../types"
 import { tv } from "../../internal/tv"
 

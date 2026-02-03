@@ -1,6 +1,6 @@
 import { type Ref, computed, ref, shallowRef } from "vue"
 import { v7 as uuidv7 } from "uuid"
-import type { Block } from "~/src/runtime/types"
+import type { Block } from "../../types"
 
 /**
  * Helper: Recursively finds the parent array and index of a block by ID.
@@ -253,7 +253,7 @@ export function useBlockEditor(
     targetId: string | null = null,
     position: "before" | "after" = "after"
   ) => {
-    executeMutation(() => {})
+    executeMutation(() => { })
   }
 
   const commitChanges = (): Block[] => {

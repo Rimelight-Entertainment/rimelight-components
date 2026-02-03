@@ -1,5 +1,5 @@
 import { computed, type Ref, shallowRef, watch } from "vue"
-import type { Page } from "~/src/runtime/types"
+import { type Page } from "../../types"
 
 export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
   const history = shallowRef<string[]>([]) // Store as JSON strings for clean snapshots
