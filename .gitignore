@@ -1,37 +1,50 @@
+# Outputs
+.output
+.data
+.nuxt
+.nitro
+.vercel_build_output
+.build-*
+dist
+
 # Dependencies
 node_modules
 
 # Logs
-*.log*
+logs
+*.log
+
+# Misc
+.fleet
 
 # Temp directories
 .temp
 .tmp
 .cache
 
-# Yarn
-**/.yarn/cache
-**/.yarn/*state*
-
-# Generated dirs
-dist
-
-# Nuxt
-.nuxt
-.output
-.data
-.vercel_build_output
-.build-*
-.netlify
-
-# Env
-.env
-
 # Testing
 reports
 coverage
 *.lcov
 .nyc_output
+
+# Local env Files
+.env
+.env.*
+!.env.example
+
+# Drizzle‑Kit
+/server/database/drizzle/*.json
+/server/db/drizzle/_journal.json
+/server/db/drizzle/*_draft.sql
+
+# Cloudflare Files
+.wrangler
+
+# Tauri Files
+*.keystore
+*.jks
+/src-tauri/gen/android/keystore.properties
 
 # VSCode
 .vscode/*
@@ -40,6 +53,7 @@ coverage
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+
 
 # Intellij idea
 *.iml

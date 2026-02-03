@@ -49,6 +49,7 @@
     "dist"
   ],
   "scripts": {
+    "prepare": "git submodule update --init --recursive && bun ./.rimelight-utilities/scripts/sync.ts",
     "build": "nuxt-module-build build",
     "dev": "bun run dev:prepare && nuxt dev playground",
     "dev:build": "nuxt build playground",
@@ -75,12 +76,6 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "drizzle-orm": "^0.45.1",
-    "zod": "^4.3.6",
-    "vue": "^3.5.27",
-    "@vueuse/core": "^14.1.0",
-    "better-auth": "^1.4.18",
-    "date-fns": "^4.1.0",
     "@iconify-json/lucide": "^1.2.86",
     "@nuxt/devtools": "^3.1.1",
     "@nuxt/image": "^2.0.0",
@@ -89,9 +84,13 @@
     "@nuxt/test-utils": "^3.23.0",
     "@nuxt/ui": "^4.4.0",
     "@nuxtjs/i18n": "^10.2.1",
-    "@types/node": "latest",
+    "@types/node": "^25.2.0",
+    "@vueuse/core": "^14.1.0",
     "@vueuse/nuxt": "^14.1.0",
+    "better-auth": "^1.4.18",
     "changelogen": "^0.6.2",
+    "date-fns": "^4.1.0",
+    "drizzle-orm": "^0.45.1",
     "nuxt": "^4.3.0",
     "oxfmt": "^0.18.0",
     "oxlint": "^1.41.0",
@@ -99,7 +98,9 @@
     "tailwind-merge": "^3.4.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "vue-tsc": "^3.2.3"
+    "vue": "^3.5.27",
+    "vue-tsc": "^3.2.3",
+    "zod": "^4.3.6"
   },
   "peerDependencies": {
     "@nuxt/ui": "^4.4.0",
