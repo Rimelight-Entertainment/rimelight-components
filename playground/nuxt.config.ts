@@ -16,10 +16,8 @@ export default defineNuxtConfig({
   },
   css: ["~/assets/css/main.css"],
   icon: {
-    provider: "server",
     class: "icon",
     size: "24px",
-    mode: "svg",
     customCollections: [
       {
         prefix: "first-party",
