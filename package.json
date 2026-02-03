@@ -102,8 +102,8 @@
     "vue-tsc": "^3.2.3"
   },
   "peerDependencies": {
+    "@nuxt/ui": "^4.4.0",
     "@nuxt/image": "^2.0.0",
-    "@nuxt/ui": "^4.2.0",
     "@nuxtjs/i18n": "^10.2.1",
     "@vueuse/nuxt": "^14.1.0",
     "nuxt": "^4.3.0"

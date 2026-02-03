@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import * as z from "zod"
 import { type FormSubmitEvent } from "@nuxt/ui"
-import { useToast } from "@nuxt/ui/composables"
 import { ref, reactive } from "vue"
+import { useToast } from "@nuxt/ui/composables/useToast"
 
 const schema = z.object({
   name: z.string().min(2, "Too short"),
-  email: z.string().email("Invalid email")
+  email: z.email("Invalid email")
 })
 const open = ref(false)
 

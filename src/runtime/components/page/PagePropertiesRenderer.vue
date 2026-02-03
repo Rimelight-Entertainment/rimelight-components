@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { getLocalizedContent } from "../../utils"
 import { usePageRegistry, useInfobox, useRC } from "../../composables"
-import { useToast } from "@nuxt/ui/composables"
+import { useToast } from "@nuxt/ui/composables/useToast"
 import { type TabsItem } from "@nuxt/ui/components/Tabs.vue"
 import { useI18n } from "vue-i18n"
 import { useShare, useClipboard } from "@vueuse/core"
