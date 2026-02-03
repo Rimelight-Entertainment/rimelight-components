@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useFloatingTools } from "~/src/runtime/composables"
+import { useFloatingTools } from "../composables"
 
 const {
   activeToolIds,

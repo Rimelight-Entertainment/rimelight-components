@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFocusTimer } from "~/src/runtime/composables"
+import { useFocusTimer } from "../../../composables"
 
 const focusTimer = useFocusTimer()
 </script>

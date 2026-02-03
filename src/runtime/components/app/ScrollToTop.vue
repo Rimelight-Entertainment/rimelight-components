@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from "vue"
 import { tv } from "../../internal/tv"
-import { useRC } from "~/src/runtime/composables"
+import { useRC } from "../../composables"
 
 export interface ScrollToTopProps {
   circleStrokeWidth?: number

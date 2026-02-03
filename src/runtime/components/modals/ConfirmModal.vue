@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useConfirm } from "~/src/runtime/composables"
+import { useConfirm } from "../../composables"
 import { computed } from "vue"
 
 const { state, handleConfirm, handleCancel } = useConfirm()

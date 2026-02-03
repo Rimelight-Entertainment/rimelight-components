@@ -3,7 +3,7 @@ import type {SelectMenuItem} from "@nuxt/ui"
 import {useDebounceFn} from "@vueuse/core"
 import {computed, reactive, ref, watch} from "vue"
 import type {Label, Note} from "../../db/auth"
-import { useApi, $api } from "~/src/runtime/composables"
+import { useApi, $api } from "../../composables"
 import type { UseFetchOptions } from "#app"
 
 const open = defineModel<boolean>("open", {default: false})

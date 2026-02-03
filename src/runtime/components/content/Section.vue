@@ -4,7 +4,7 @@ import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { useToast } from "@nuxt/ui/composables"
 import { tv } from "../../internal/tv"
-import { useRC } from "~/src/runtime/composables"
+import { useRC } from "../../composables"
 import { slugify } from "../../utils"
 
 defineOptions({

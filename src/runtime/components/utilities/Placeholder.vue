@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { tv } from "../../internal/tv"
-import { useRC } from "~/src/runtime/composables"
+import { useRC } from "../../composables"
 
 export interface PlaceholderProps {
   rc?: {
