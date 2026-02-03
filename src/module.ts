@@ -32,7 +32,7 @@ export default defineNuxtModule<ModuleOptions>().with({
     docs: homepage,
     configKey: "rimelightComponents",
     compatibility: {
-      nuxt: ">=4.0.0"
+      nuxt: ">=4.3.0"
     }
   },
   defaults: defaultOptions,
@@ -54,7 +54,7 @@ export default defineNuxtModule<ModuleOptions>().with({
         }
       },
       "@nuxt/ui": {
-        version: ">=4.2.0",
+        version: ">=4.4.0",
         optional: false,
         overrides: {},
         defaults: {
