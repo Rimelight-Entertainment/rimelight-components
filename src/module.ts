@@ -5,7 +5,6 @@ import { defu } from "defu"
 import { addBlockMapTemplates, addEditorBlockMapTemplates } from "./templates"
 import { readdirSync } from "node:fs"
 import { basename } from "node:path"
-import type { Nuxt } from "@nuxt/schema"
 
 export interface ModuleOptions {
   /**
@@ -77,12 +76,6 @@ export default defineNuxtModule<ModuleOptions>().with({
       }
     }
     return dependencies
-  },
-  onInstall(_nuxt: Nuxt) {
-    console.log(`Setting up ${name}.`)
-  },
-  onUpgrade(_nuxt: Nuxt, _options: ModuleOptions, previousVersion: string) {
-    console.log(`Upgrading ${name} from ${previousVersion} to ${version}.`)
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
