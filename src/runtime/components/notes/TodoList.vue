@@ -83,8 +83,8 @@ watch(todoRefreshTrigger, () => {
           >
             <div class="flex items-center gap-sm flex-1">
               <UCheckbox
-                :model-value="todo.completed"
-                @update:model-value="(val) => toggleTodo(todo.id, val)"
+                v-model="todo.completed"
+                @change="toggleTodo(todo.id, todo.completed)"
               />
               <span
                 class="text-sm transition-all"
