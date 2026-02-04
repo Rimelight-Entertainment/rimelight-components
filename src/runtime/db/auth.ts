@@ -188,6 +188,19 @@ export const teamMember = pgTable("team_member", {
 // Note Tables (shared feature)
 // ============================================================================
 
+export const todo = pgTable("todo", {
+  id: id.primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  completed: boolean("completed").default(false).notNull(),
+  completedAt: timestamp("completed_at"),
+  isArchived: boolean("is_archived").default(false).notNull(),
+  ...timestamps
+})
+
 export const note = pgTable("note", {
     id: id.primaryKey(),
     userId: uuid("user_id")
@@ -234,7 +247,8 @@ export const userRelations = relations(user, ({ many }) => ({
     members: many(member),
     invitations: many(invitation),
     notes: many(note),
-    noteLabels: many(noteLabel)
+    noteLabels: many(noteLabel),
+    todos: many(todo)
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -331,6 +345,13 @@ export const note_noteLabelRelations = relations(note_noteLabel, ({ one }) => ({
     })
 }))
 
+export const todoRelations = relations(todo, ({ one }) => ({
+    user: one(user, {
+        fields: [todo.userId],
+        references: [user.id]
+    })
+}))
+
 // ============================================================================
 // Type Exports
 // ============================================================================
@@ -352,3 +373,4 @@ export type Note = typeof note.$inferSelect & {
     >
 }
 export type Label = typeof noteLabel.$inferSelect
+export type Todo = typeof todo.$inferSelect

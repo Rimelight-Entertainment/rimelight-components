@@ -65,11 +65,22 @@ export const useApi = <T>(path: string | (() => string), opts: UseFetchOptions<T
         }
     }
 
-    return useFetch(path, {
+    const fetchOptions = {
         baseURL: isExternal ? apiBase : "",
         ...opts,
         fetch: isTauri ? tauriFetch : undefined,
-        // Key ensures unique state tracking in Nuxt
-        key: opts.key || hash([path, typeof path === "function" ? path() : path]),
-    } as UseFetchOptions<T> & { fetch?: unknown }) as AsyncData<T, Error | null>;
+    } as UseFetchOptions<T>;
+
+    // Use a unique key based on path, method, and query to avoid collisions
+    if (!fetchOptions.key) {
+        const pathStr = typeof path === "function" ? path() : path;
+        fetchOptions.key = hash([
+            pathStr,
+            opts.method || "GET",
+            opts.query,
+            opts.params,
+        ]);
+    }
+
+    return useFetch(path, fetchOptions as any) as AsyncData<T, Error | null>;
 };

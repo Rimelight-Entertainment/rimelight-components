@@ -1,4 +1,5 @@
 import { useState } from "#imports"
+import { $api } from "../../composables"
 
 export const useNotes = () => {
   const noteRefreshTrigger = useState("notes-refresh-trigger", () => 0)
@@ -23,7 +24,7 @@ export const useNotes = () => {
 
   const executeBatchAction = async (action: "delete" | "archive" | "restore" | "hard-delete") => {
     if (selectedIds.value.length === 0) return
-    await $fetch("/api/notes/batch", {
+    await $api("/api/notes/batch", {
       method: "POST",
       body: { ids: selectedIds.value, action }
     })
@@ -36,19 +37,19 @@ export const useNotes = () => {
     action: "togglePin" | "archive" | "restore" | "delete" | "hard-delete"
   ) => {
     if (action === "togglePin") {
-      await $fetch(`/api/notes/${id}`, {
+      await $api(`/api/notes/${id}`, {
         method: "PUT",
         body: { togglePin: true }
       })
     } else if (action === "archive") {
-      await $fetch(`/api/notes/${id}`, {
+      await $api(`/api/notes/${id}`, {
         method: "PUT",
         body: { isArchived: true, isPinned: false }
       })
     } else if (action === "delete") {
-      await $fetch(`/api/notes/${id}`, { method: "DELETE" })
+      await $api(`/api/notes/${id}`, { method: "DELETE" })
     } else if (action === "hard-delete") {
-      await $fetch(`/api/notes/${id}?permanent=true`, {
+      await $api(`/api/notes/${id}?permanent=true`, {
         method: "DELETE",
         query: { permanent: true }
       })

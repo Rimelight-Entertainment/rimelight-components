@@ -50,14 +50,14 @@ const emit = defineEmits<NoteCardEmits>()
           class="flex flex-row flex-nowrap gap-xs overflow-hidden mask-[linear-gradient(90deg,black_85%,transparent)]"
         >
           <UBadge
-            v-for="labelEntry in note.labels"
-            :key="labelEntry.label.id"
+            v-for="(labelEntry, index) in note.labels"
+            :key="labelEntry.label?.id || index"
             color="neutral"
             variant="subtle"
             size="sm"
             class="shrink-0 truncate"
           >
-            {{ labelEntry.label.name }}
+            {{ labelEntry.label?.name || 'Unknown' }}
           </UBadge>
         </div>
       </template>
