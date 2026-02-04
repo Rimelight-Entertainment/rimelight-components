@@ -39,10 +39,10 @@ export const useTodos = () => {
         triggerRefresh()
     }
 
-    const createTodo = async (title: string) => {
+    const createTodo = async (title: string, description?: string) => {
         await $api("/api/todos", {
             method: "POST",
-            body: { title }
+            body: { title, description }
         })
         triggerRefresh()
     }

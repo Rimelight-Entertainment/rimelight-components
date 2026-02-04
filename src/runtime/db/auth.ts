@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm"
+import { relations } from "drizzle-orm"
 import {
     type AnyPgColumn,
     bigint,
@@ -189,16 +189,16 @@ export const teamMember = pgTable("team_member", {
 // ============================================================================
 
 export const todo = pgTable("todo", {
-  id: id.primaryKey(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  completed: boolean("completed").default(false).notNull(),
-  completedAt: timestamp("completed_at"),
-  isArchived: boolean("is_archived").default(false).notNull(),
-  ...timestamps
+    id: id.primaryKey(),
+    userId: uuid("user_id")
+        .notNull()
+        .references(() => user.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description"),
+    completed: boolean("completed").default(false).notNull(),
+    completedAt: timestamp("completed_at"),
+    isArchived: boolean("is_archived").default(false).notNull(),
+    ...timestamps
 })
 
 export const note = pgTable("note", {
