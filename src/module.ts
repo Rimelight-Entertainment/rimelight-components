@@ -12,6 +12,16 @@ export interface ModuleOptions {
    * @defaultValue `RC`
    */
   prefix?: string
+  /**
+   * Logos configuration
+   */
+  logos?: {
+    mark?: string | { light?: string; dark?: string }
+    type?: string | { light?: string; dark?: string }
+    classic?: string | { light?: string; dark?: string }
+    symbol?: string | { light?: string; dark?: string }
+    [key: string]: any
+  }
   callouts: {
     info: CalloutOptions
     success: CalloutOptions

@@ -7,6 +7,12 @@ export interface CalloutOptions {
 export const defaultOptions = {
   enabled: true,
   prefix: "RC",
+  logos: {
+    mark: "",
+    type: "",
+    classic: "",
+    symbol: ""
+  } as Record<string, any>,
   callouts: {
     info: {
       icon: "lucide:shield-alert",
