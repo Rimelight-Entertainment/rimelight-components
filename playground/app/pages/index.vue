@@ -25,6 +25,25 @@ useHead({
             </div>
           </RCSection>
         </RCSection>
+        <RCSection :level="2" title="App" description="App-level components.">
+          <RCSection
+            :level="3"
+            title="Logo"
+            description="Logos are used to represent the brand."
+          >
+            <div class="flex flex-row items-center gap-md bg-black p-md text-white border border-white/10">
+              <RCLogo variant="mark" class="h-12 w-auto" />
+              <RCLogo variant="type" class="h-12 w-auto" />
+              <RCLogo variant="symbol" class="h-12 w-auto" />
+              <UIcon name="lucide:check" class="h-12 w-auto" />
+            </div>
+            <div class="mt-md flex flex-row items-center gap-md bg-white p-md text-black border border-black/10">
+              <RCLogo variant="mark" class="h-12 w-auto" mode="light" />
+              <RCLogo variant="type" class="h-12 w-auto" mode="light" />
+              <UIcon name="lucide:check" class="h-12 w-auto" />
+            </div>
+          </RCSection>
+        </RCSection>
         <RCSection :level="2" title="Swatches" description="Lorem ipsum dolor sit amet.">
           <RCSection :level="3" title="Logotype">
             <div class="flex flex-col gap-lg lg:flex-row">

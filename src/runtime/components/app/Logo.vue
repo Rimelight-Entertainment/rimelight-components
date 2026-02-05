@@ -49,7 +49,7 @@ const appConfig = useAppConfig()
 
 const logoStyles = tv({
   slots: {
-    root: "inline-flex transition-opacity hover:opacity-80 shrink-0"
+    root: "inline-flex items-center justify-center transition-opacity hover:opacity-80 shrink-0 select-none overflow-hidden"
   }
 })
 
@@ -87,10 +87,16 @@ const isIcon = computed(() => {
 </script>
 
 <template>
-  <NuxtLink :to="to" :class="root({ class: [rc.root, attrs.class as any] })" :aria-label="alt || variant" v-bind="attrs">
+  <NuxtLink 
+    v-bind="attrs" 
+    :to="to" 
+    :class="root({ class: [rc.root, attrs.class as any] })" 
+    :aria-label="alt || variant"
+  >
     <template v-if="logoSrc">
-      <UIcon v-if="isIcon" :name="logoSrc" class="h-full w-auto block" />
-      <NuxtImg v-else :src="logoSrc" :alt="alt" class="h-full w-auto object-contain" />
+      <!-- Using mode='svg' ensures the icon has an intrinsic aspect ratio, allowing w-auto to work -->
+      <UIcon v-if="isIcon" :name="logoSrc" mode="svg" class="h-full w-auto block shrink-0" />
+      <NuxtImg v-else :src="logoSrc" :alt="alt" class="h-full w-auto block object-contain shrink-0" />
     </template>
     <slot v-else />
   </NuxtLink>

@@ -6,6 +6,10 @@ export default defineAppConfig({
   logotype: "first-party:logotype-white",
 
   rimelightComponents: {
+    logos: {
+      mark: "first-party:logomark-white",
+      type: "first-party:logotype-white"
+    },
     callouts: {
       info: {
         icon: "lucide:shield-alert",

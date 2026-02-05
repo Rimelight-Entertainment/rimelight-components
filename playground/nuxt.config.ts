@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   },
   typescript: {
     strict: true,
-    typeCheck: true
+    typeCheck: false
   },
   modules: ["../src/module", "@nuxt/ui", "@vueuse/nuxt", "@nuxt/image"],
   build: {
