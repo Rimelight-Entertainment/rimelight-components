@@ -59,20 +59,22 @@ const activeMode = computed(() => props.mode || (nuxtApp as any).$colorMode?.val
 
 const logoSrc = computed<string | null>(() => {
   const rcLogos = appConfig.rimelightComponents?.logos
-
+  let src: any = null
+  
   if (rcLogos && typeof rcLogos === 'object') {
-    const variantConfig = (rcLogos as any)[props.variant]
-    if (variantConfig) {
-      if (typeof variantConfig === 'string') return variantConfig
-      return (variantConfig as any)[activeMode.value] || (variantConfig as any).light || (variantConfig as any).dark || null
+    src = (rcLogos as any)[props.variant]
+    if (src && typeof src === 'object') {
+      src = src[activeMode.value] || src.light || src.dark
     }
   }
 
-  // Fallback to legacy top-level properties
-  if (props.variant === "mark") return (appConfig.logomark as string) || null
-  if (props.variant === "type") return (appConfig.logotype as string) || null
+  if (src && typeof src === 'string' && src) return src
 
-  // Try to find variant at top level of appConfig (e.g. appConfig.classic)
+  // Fallback to legacy top-level properties or rimelightComponents scoped legacy
+  const legacy = appConfig.rimelightComponents as any
+  if (props.variant === "mark") return (appConfig.logomark as string) || (legacy?.logomark as string) || null
+  if (props.variant === "type") return (appConfig.logotype as string) || (legacy?.logotype as string) || null
+  
   return (appConfig[props.variant] as string) || null
 })
 
@@ -87,8 +89,8 @@ const isIcon = computed(() => {
 <template>
   <NuxtLink :to="to" :class="root({ class: [rc.root, attrs.class as any] })" :aria-label="alt || variant" v-bind="attrs">
     <template v-if="logoSrc">
-      <UIcon v-if="isIcon" :name="logoSrc" class="size-full" />
-      <NuxtImg v-else :src="logoSrc" :alt="alt" class="size-full object-contain" />
+      <UIcon v-if="isIcon" :name="logoSrc" class="h-full w-auto block" />
+      <NuxtImg v-else :src="logoSrc" :alt="alt" class="h-full w-auto object-contain" />
     </template>
     <slot v-else />
   </NuxtLink>
