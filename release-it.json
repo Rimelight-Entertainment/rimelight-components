@@ -1,5 +1,5 @@
 {
-  "requireCleanWorkingDir": false,
+  "requireCleanWorkingDir": true,
   "git": {
     "commit": true,
     "commitMessage": "chore:(release): v${version}",
@@ -18,9 +18,7 @@
     "autoGenerate": true,
     "tokenRef": "GITHUB_TOKEN"
   },
-  "hooks": {
-    "before:init": "git add . && git reset --hard"
-  },
+  "hooks": {},
   "plugins": {
     "@release-it/conventional-changelog": {
       "preset": {

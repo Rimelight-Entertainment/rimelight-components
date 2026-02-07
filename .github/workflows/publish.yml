@@ -49,9 +49,11 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Clean Up Generated Files
+      - name: Reset Working Directory
         run: |
-          git clean -fdx
+          # Remove all untracked files (generated files)
+          git clean -fd
+          # Revert all modified files (like synced .gitignore or bunfig.toml)
           git checkout .
 
       - name: Configure Git Identity
