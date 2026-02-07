@@ -22,15 +22,15 @@ const menuItems = computed<DropdownMenuItem[][]>(() => {
 </script>
 
 <template>
-  <div class="fixed bottom-6 right-6 z-10000">
+  <div v-if="menuItems.length > 0" class="fixed bottom-6 right-6 z-[10000]">
     <ClientOnly>
       <UDropdownMenu :items="menuItems" :ui="{ content: 'w-48' }">
         <UButton
-          icon="lucide:plus"
+          icon="i-lucide-plus"
           color="primary"
           square
           :ui="{
-            base: 'rounded-full size-16 lg:size-12 justify-center',
+            base: 'rounded-full size-14 lg:size-12 justify-center shadow-lg',
             leadingIcon: 'size-6'
           }"
         />
