@@ -2,10 +2,12 @@
   "requireCleanWorkingDir": false,
   "git": {
     "commit": true,
-    "commitMessage": "chore:(release): v${version}",
+    "commitMessage": "chore(release): v${version}",
     "tag": true,
     "tagName": "v${version}",
-    "requireCleanWorkingDir": false
+    "requireCleanWorkingDir": false,
+    "requireUpstream": false,
+    "addUntrackedFiles": true
   },
   "npm": {
     "publish": true,
