@@ -1,5 +1,5 @@
 {
-  "requireCleanWorkingDir": true,
+  "requireCleanWorkingDir": false,
   "git": {
     "commit": true,
     "commitMessage": "chore:(release): v${version}",
