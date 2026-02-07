@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { SelectMenuItem } from "@nuxt/ui"
-import {useDebounceFn} from "@vueuse/core"
-import {computed, reactive, ref, watch} from "vue"
+import {computed, reactive, ref, watch, onUnmounted} from "vue"
 import type {Label, Note} from "../../db/auth"
 import { useApi, $api } from "../../composables"
 
@@ -87,8 +86,21 @@ const syncState = () => {
 
 watch(() => note, syncState)
 
+const saveTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
+const isSaving = ref(false)
+const hasPendingSave = ref(false)
+
 const saveNote = async () => {
+  // If the note is empty, don't save
   if (!state.title.trim() && !state.content.trim()) return
+
+  // If already saving, mark that we have a pending save (so we save again with latest data after current save finishes)
+  if (isSaving.value) {
+    hasPendingSave.value = true
+    return
+  }
+
+  isSaving.value = true
 
   try {
     let savedNote: Note
@@ -128,9 +140,16 @@ const saveNote = async () => {
         })
       }
     }
-    emit("saved", savedNote)
+    emit("saved", savedNote!)
   } catch (e) {
     console.error("Failed to save note", e)
+  } finally {
+    isSaving.value = false
+    // If a save was requested while we were saving, execute it now to ensure latest state is persisted
+    if (hasPendingSave.value) {
+      hasPendingSave.value = false
+      saveNote()
+    }
   }
 }
 
@@ -151,7 +170,14 @@ const createLabel = async (newLabelName: string) => {
   }
 }
 
-const debouncedSave = useDebounceFn(saveNote, 1000)
+const debouncedSave = () => {
+  if (saveTimeout.value) {
+    clearTimeout(saveTimeout.value)
+  }
+  saveTimeout.value = setTimeout(() => {
+    saveNote()
+  }, 1000)
+}
 
 watch(
     () => [
@@ -170,8 +196,17 @@ watch(open, (isOpen) => {
   if (isOpen) {
     syncState()
   } else {
+    if (saveTimeout.value) {
+      clearTimeout(saveTimeout.value)
+    }
     saveNote()
     emit("close")
+  }
+})
+
+onUnmounted(() => {
+  if (saveTimeout.value) {
+    clearTimeout(saveTimeout.value)
   }
 })
 </script>
