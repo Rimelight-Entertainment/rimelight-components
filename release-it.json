@@ -1,10 +1,11 @@
 {
+  "requireCleanWorkingDir": false,
   "git": {
     "commit": true,
     "commitMessage": "chore:(release): v${version}",
     "tag": true,
     "tagName": "v${version}",
-    "requireCleanWorkingDir": false,
+    "requireCleanWorkingDir": false
   },
   "npm": {
     "publish": true,

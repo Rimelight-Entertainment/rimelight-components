@@ -49,9 +49,10 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Stage Synced Files
+      - name: Clean Up Generated Files
         run: |
-          git add .
+          git clean -fdx
+          git checkout .
 
       - name: Configure Git Identity
         run: |
