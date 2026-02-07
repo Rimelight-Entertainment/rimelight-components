@@ -24,7 +24,7 @@ const menuItems = computed<DropdownMenuItem[][]>(() => {
 <template>
   <div class="fixed bottom-6 right-6 z-10000">
     <ClientOnly>
-      <UDropdownMenu v-if="menuItems.length > 0" :items="menuItems" :ui="{ content: 'w-48' }">
+      <UDropdownMenu :items="menuItems" :ui="{ content: 'w-48' }">
         <UButton
           icon="lucide:plus"
           color="primary"
