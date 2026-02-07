@@ -4,7 +4,7 @@
     "commitMessage": "chore:(release): v${version}",
     "tag": true,
     "tagName": "v${version}",
-    "requireCleanWorkingDir": false
+    "requireCleanWorkingDir": false,
   },
   "npm": {
     "publish": true,
@@ -17,7 +17,9 @@
     "autoGenerate": true,
     "tokenRef": "GITHUB_TOKEN"
   },
-  "hooks": {},
+  "hooks": {
+    "before:init": "git add . && git reset --hard"
+  },
   "plugins": {
     "@release-it/conventional-changelog": {
       "preset": {

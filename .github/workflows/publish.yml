@@ -49,14 +49,14 @@ jobs:
       - name: Build
         run: bun run build
 
+      - name: Stage Synced Files
+        run: |
+          git add .
+
       - name: Configure Git Identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Stage Sync Changes
-        run: |
-          git add .
 
       - name: Release
         run: bun run release
