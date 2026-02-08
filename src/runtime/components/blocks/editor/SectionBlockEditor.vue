@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, type Ref, computed, watch } from "vue"
+import { inject, ref, type Ref, computed, watch, nextTick } from "vue"
 import { type SectionBlockProps, type HeadingLevel } from "../../../types"
 import type { SelectItem } from "@nuxt/ui"
 import { tv } from "../../../internal/tv"
@@ -14,7 +14,8 @@ export interface SectionBlockEditorProps extends SectionBlockProps {
   }
 }
 
-const { level, title, description, children, id, rc: rcProp } = defineProps<SectionBlockEditorProps>()
+const props = defineProps<SectionBlockEditorProps>()
+const { rc: rcProp } = props
 
 export interface SectionBlockEditorEmits {}
 
@@ -35,13 +36,12 @@ const sectionBlockEditorStyles = tv({
 })
 
 const { root, headerContainer, titleInput } = sectionBlockEditorStyles()
-const hasChildren = computed(() => children && children.length > 0)
 
 const editorApi = inject<any>("block-editor-api")
 
-const localLevel: Ref<HeadingLevel> = ref(level as HeadingLevel)
-const localTitle = ref(title)
-const localDescription = ref(description)
+const localLevel: Ref<HeadingLevel> = ref(props.level as HeadingLevel)
+const localTitle = ref(props.title)
+const localDescription = ref(props.description)
 
 const levelItems: SelectItem[] = [
   { label: "H1", value: 1 },
@@ -60,8 +60,8 @@ const updateLocalTitle = (e: Event) => {
  * Commits the final local title value to the global store when the input loses focus.
  */
 const commitTitleOnBlur = () => {
-  if (editorApi && id && localTitle.value !== title) {
-    editorApi.updateBlockProps(id, { title: localTitle.value })
+  if (editorApi && props.id && localTitle.value !== props.title) {
+    editorApi.updateBlockProps(props.id, { title: localTitle.value })
   }
 }
 
@@ -70,19 +70,19 @@ const updateLocalDescription = (e: Event) => {
 }
 
 const commitDescriptionOnBlur = () => {
-  if (editorApi && id && localDescription.value !== description) {
-    editorApi.updateBlockProps(id, { description: localDescription.value })
+  if (editorApi && props.id && localDescription.value !== props.description) {
+    editorApi.updateBlockProps(props.id, { description: localDescription.value })
   }
 }
 
 watch(localLevel, (newLocalLevel) => {
-  if (editorApi && id && newLocalLevel !== level) {
-    editorApi.updateBlockProps(id, { level: newLocalLevel })
+  if (editorApi && props.id && newLocalLevel !== props.level) {
+    editorApi.updateBlockProps(props.id, { level: newLocalLevel })
   }
 })
 
 watch(
-  () => title,
+  () => props.title,
   (newVal) => {
     if (newVal !== localTitle.value) {
       localTitle.value = newVal
@@ -91,7 +91,7 @@ watch(
 )
 
 watch(
-  () => level,
+  () => props.level,
   (newVal) => {
     if (newVal !== localLevel.value) {
       localLevel.value = newVal
@@ -100,13 +100,28 @@ watch(
 )
 
 watch(
-  () => description,
+  () => props.description,
   (newVal) => {
     if (newVal !== localDescription.value) {
       localDescription.value = newVal
     }
   }
 )
+
+const localChildren = ref(props.children ? JSON.parse(JSON.stringify(props.children)) : [])
+
+const handleChildrenMutation = async () => {
+  await nextTick()
+  if (editorApi) {
+    editorApi.updateBlockProps(props.id, { children: JSON.parse(JSON.stringify(localChildren.value)) })
+  }
+}
+
+watch(() => props.children, (newChildren) => {
+  if (JSON.stringify(newChildren) !== JSON.stringify(localChildren.value)) {
+    localChildren.value = newChildren ? JSON.parse(JSON.stringify(newChildren)) : []
+  }
+}, { deep: true })
 </script>
 
 <template>
@@ -144,7 +159,10 @@ watch(
         />
       </template>
       <template #default>
-        <RCBlockEditRenderer v-if="hasChildren" :blocks="children" />
+        <RCBlockEditor 
+          v-model="localChildren"
+          @mutation="handleChildrenMutation"
+        />
       </template>
     </RCSection>
   </div>

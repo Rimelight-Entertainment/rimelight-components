@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, computed } from "vue"
+import { inject, computed, ref, watch, nextTick } from "vue"
 import { useI18n } from "vue-i18n"
 import type { CalloutBlockProps, CalloutVariant } from "../../../types"
 import { useAppConfig } from "#imports"
@@ -13,7 +13,8 @@ export interface CalloutBlockEditorProps extends CalloutBlockProps {
   }
 }
 
-const { id, variant, children, to, target, rc: rcProp } = defineProps<CalloutBlockEditorProps>()
+const props = defineProps<CalloutBlockEditorProps>()
+const { rc: rcProp } = props
 
 export interface CalloutBlockEditorEmits {}
 
@@ -67,17 +68,32 @@ const items = computed(() => [
       description: t(config.description || config.tooltip),
       onSelect: () => {
         if (editorApi) {
-          editorApi.updateBlockProps(id, { variant: type })
+          editorApi.updateBlockProps(props.id, { variant: type })
         }
       }
     }
   })
 ])
+
+const localChildren = ref(props.children ? JSON.parse(JSON.stringify(props.children)) : [])
+
+const handleChildrenMutation = async () => {
+  await nextTick()
+  if (editorApi) {
+    editorApi.updateBlockProps(props.id, { children: JSON.parse(JSON.stringify(localChildren.value)) })
+  }
+}
+
+watch(() => props.children, (newChildren) => {
+  if (JSON.stringify(newChildren) !== JSON.stringify(localChildren.value)) {
+    localChildren.value = newChildren ? JSON.parse(JSON.stringify(newChildren)) : []
+  }
+}, { deep: true })
 </script>
 
 <template>
   <div :class="root({ class: rc.root })">
-    <RCCallout :variant="variant" :to="to" :target="target">
+    <RCCallout :variant="props.variant" :to="props.to" :target="props.target">
       <template #leading="{ icon, iconClass }">
         <UDropdownMenu :items="items" :ui="{ content: 'w-64' }">
           <template #item="{ item }">
@@ -97,7 +113,14 @@ const items = computed(() => [
           />
         </UDropdownMenu>
       </template>
-      <RCBlockViewRenderer :blocks="children" />
+      <template #default>
+        <div class="w-full mt-2">
+          <RCBlockEditor 
+            v-model="localChildren"
+            @mutation="handleChildrenMutation"
+          />
+        </div>
+      </template>
     </RCCallout>
   </div>
 </template>

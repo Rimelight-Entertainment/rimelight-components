@@ -66,7 +66,7 @@ defineExpose({ undo, redo, canUndo, canRedo })
 
 <template>
   <div class="flex flex-col gap-8 w-full">
-    <RCBlockEditRenderer :blocks="blocks" />
+    <RCBlockEditRenderer v-if="blocks && blocks.length > 0" :blocks="blocks" />
 
     <div class="flex flex-col items-center justify-center gap-md p-sm">
       <UButton

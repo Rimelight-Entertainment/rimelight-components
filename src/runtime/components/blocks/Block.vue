@@ -94,8 +94,14 @@ const items = ref([
 <template>
   <div :class="root({ class: rc.root })">
     <div :class="menuContainer({ class: rc.menuContainer })">
+      <UButton
+        icon="lucide:grip-vertical"
+        variant="ghost"
+        color="neutral"
+        class="drag-handle cursor-grab active:cursor-grabbing"
+      />
       <UDropdownMenu :items="items">
-        <UButton icon="lucide:grip-vertical" variant="ghost" color="neutral" />
+        <UButton icon="lucide:ellipsis-vertical" variant="ghost" color="neutral" />
       </UDropdownMenu>
     </div>
 

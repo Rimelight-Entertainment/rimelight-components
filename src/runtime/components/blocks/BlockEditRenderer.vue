@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { type Component } from "vue"
+import draggable from "vuedraggable"
 import { getBlockEditorComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
 import { tv } from "../../internal/tv"
@@ -12,9 +13,14 @@ export interface BlockEditRendererProps {
   }
 }
 
-const { blocks, rc: rcProp } = defineProps<BlockEditRendererProps>()
+const { rc: rcProp } = defineProps<BlockEditRendererProps>()
 
-export interface BlockEditRendererEmits {}
+const blocks = defineModel<Block[]>('blocks', { required: true })
+
+export interface BlockEditRendererEmits {
+  start: []
+  end: []
+}
 
 const emit = defineEmits<BlockEditRendererEmits>()
 
@@ -26,7 +32,7 @@ const { rc } = useRC('BlockEditRenderer', rcProp)
 
 const blockEditRendererStyles = tv({
   slots: {
-    root: "flex flex-col gap-lg w-full"
+    root: "flex flex-col gap-lg w-full min-h-20"
   }
 })
 
@@ -55,32 +61,45 @@ const getComponent = (block: Block): Component | null => {
       v-if="!blocks || blocks.length === 0"
       variant="naked"
       icon="lucide:blocks"
-      title="No blocks found for this page."
-      description="It looks like there isn't any content added to this page yet."
+      title="No blocks"
+      description="No content has been added yet."
     />
     <template v-else>
-      <template v-for="block in blocks" :key="block.id">
-        <template v-if="getComponent(block)">
-          <RCBlock :id="block.id" :type="block.type" class="w-full">
-            <component
-              :is="getComponent(block)"
-              :id="block.id"
-              v-bind="block.props"
-              :type="block.type"
-              class="w-full"
-            />
-          </RCBlock>
+    <template v-else>
+      <draggable
+        v-model="blocks"
+        item-key="id"
+        handle=".drag-handle"
+        ghost-class="opacity-50"
+        @start="$emit('start')"
+        @end="$emit('end')"
+        :class="root({ class: rc.root })"
+      >
+        <template #item="{ element: block }">
+          <div class="w-full">
+            <template v-if="getComponent(block)">
+              <RCBlock :id="block.id" :type="block.type" class="w-full">
+                <component
+                  :is="getComponent(block)"
+                  :id="block.id"
+                  v-bind="block.props"
+                  :type="block.type"
+                  class="w-full"
+                />
+              </RCBlock>
+            </template>
+            <template v-else>
+              <UAlert
+                color="error"
+                variant="subtle"
+                icon="lucide:octagon-alert"
+                title="Rendering Error"
+                :description="`Block component for type '${block.type || 'UNKNOWN_OR_MISSING'}' was not found. This block will be skipped or the type is invalid/empty.`"
+              />
+            </template>
+          </div>
         </template>
-        <template v-else>
-          <UAlert
-            color="error"
-            variant="subtle"
-            icon="lucide:octagon-alert"
-            title="Rendering Error"
-            :description="`Block component for type '${block.type || 'UNKNOWN_OR_MISSING'}' was not found. This block will be skipped or the type is invalid/empty.`"
-          />
-        </template>
-      </template>
+      </draggable>
     </template>
   </div>
 </template>

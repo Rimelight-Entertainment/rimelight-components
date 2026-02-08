@@ -75,13 +75,7 @@ function createDefaultBlock(type: Block["type"]): Block {
         type: "CalloutBlock",
         props: {
           variant: "info",
-          children: [
-            {
-              id: uuidv7(),
-              type: "ParagraphBlock",
-              props: { text: [{ type: "text", id: uuidv7(), props: { content: "Callout content" } }] }
-            }
-          ]
+          children: []
         }
       }
     case "ImageBlock":
