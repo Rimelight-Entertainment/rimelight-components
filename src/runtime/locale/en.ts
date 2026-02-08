@@ -61,7 +61,11 @@ export default defineLocale<Messages>({
             page_id: 'Page ID',
             created_at: 'Created At',
             posted_at: 'Posted At',
-            updated_at: 'Updated At'
+            updated_at: 'Updated At',
+            add_block: 'Add Block',
+            search_blocks: 'Search blocks...',
+            append_new_block: 'Append new block to page',
+            no_blocks_found: 'No blocks found matching your search.'
         },
         page_properties: {
             links: 'Links',

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { provide, computed } from "vue"
+import { provide, ref } from "vue"
 import type { Block } from "../../types"
-import { useBlockEditor } from "../../composables"
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
+import { useBlockEditor, useRC } from "../../composables"
+import { type BlockDefinition } from "../../utils/blocks"
+import { useI18n } from "vue-i18n"
 
 export interface BlockEditorProps {
   historyLimit?: number
@@ -21,25 +21,8 @@ export interface BlockEditorEmits {
 
 const emit = defineEmits<BlockEditorEmits>()
 
-export interface BlockEditorSlots {}
-
-const slots = defineSlots<BlockEditorSlots>()
-const blockTypes = [
-  { label: 'Paragraph', value: 'ParagraphBlock', icon: 'i-lucide-pilcrow' },
-  { label: 'Section', value: 'SectionBlock', icon: 'i-lucide-heading' },
-  { label: 'Image', value: 'ImageBlock', icon: 'i-lucide-image' },
-  { label: 'Callout', value: 'CalloutBlock', icon: 'i-lucide-info' },
-  { label: 'Quote', value: 'QuoteBlock', icon: 'i-lucide-quote' },
-  { label: 'List', value: 'UnorderedListBlock', icon: 'i-lucide-list' },
-  { label: 'Card', value: 'CardBlock', icon: 'i-lucide-square' },
-  { label: 'Collapsible Card', value: 'CollapsibleCardBlock', icon: 'i-lucide-chevron-right-square' }
-]
-
+const { t } = useI18n()
 const { rc } = useRC('BlockEditor', rcProp)
-
-//const blockEditorStyles = tv({})
-
-//const {} = blockEditorStyles()
 
 const {
   removeBlock,
@@ -53,13 +36,17 @@ const {
   canRedo
 } = useBlockEditor(blocks, { maxHistorySize: historyLimit, onMutation: () => emit('mutation') })
 
-const dropdownItems = computed(() => [
-  blockTypes.map(type => ({
-    label: type.label,
-    icon: type.icon,
-    onSelect: () => insertBlock(type.value as any)
-  }))
-])
+const isAddBlockModalOpen = ref(false)
+const addBlockTarget = ref<{ id: string | null, position: 'before' | 'after' }>({ id: null, position: 'after' })
+
+const openAddBlockModal = (targetId: string | null = null, position: 'before' | 'after' = 'after') => {
+  addBlockTarget.value = { id: targetId, position }
+  isAddBlockModalOpen.value = true
+}
+
+const handleBlockSelect = (definition: BlockDefinition) => {
+  insertBlock(definition.type, addBlockTarget.value.id, addBlockTarget.value.position)
+}
 
 provide("block-editor-api", {
   removeBlock,
@@ -70,7 +57,8 @@ provide("block-editor-api", {
   canUndo,
   canRedo,
   undo,
-  redo
+  redo,
+  openAddBlockModal
 })
 
 defineExpose({ undo, redo, canUndo, canRedo })
@@ -81,19 +69,20 @@ defineExpose({ undo, redo, canUndo, canRedo })
     <RCBlockEditRenderer :blocks="blocks" />
 
     <div class="flex flex-col items-center justify-center p-4 border-t border-neutral-200 dark:border-neutral-800 border-dashed rounded-lg">
-      <span class="text-sm text-dimmed mb-2">Append new block to page</span>
-      <UDropdownMenu
-        :items="dropdownItems"
-      >
-        <UButton
-          color="neutral"
-          label="Add Block"
-          trailing-icon="i-heroicons-chevron-down-20-solid"
-          variant="outline"
-          icon="i-lucide-plus"
-        />
-      </UDropdownMenu>
+      <span class="text-sm text-dimmed mb-2">{{ t('page_editor.append_new_block') }}</span>
+      <UButton
+        color="neutral"
+        :label="t('page_editor.add_block', 'Add Block')"
+        variant="outline"
+        icon="i-lucide-plus"
+        @click="openAddBlockModal()"
+      />
     </div>
+
+    <RCAddBlockModal
+      v-model:open="isAddBlockModalOpen"
+      @select="handleBlockSelect"
+    />
   </div>
 </template>
 

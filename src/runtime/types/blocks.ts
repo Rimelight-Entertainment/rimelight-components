@@ -12,10 +12,7 @@ export type BlockType =
   | "ParagraphBlock"
   | "CalloutBlock"
   | "ImageBlock"
-  | "QuoteBlock"
-  | "UnorderedListBlock"
   | "CardBlock"
-  | "CollapsibleCardBlock"
 
 /**
  * Defines the common structure for any content block object.
@@ -52,14 +49,6 @@ export interface ImageBlockProps {
   caption?: string
 }
 
-export interface QuoteBlockProps {
-  quote: string
-  source?: string
-}
-
-export interface UnorderedListBlockProps {
-  items: Block[]
-}
 
 export interface CardBlockProps {
   title: string
@@ -69,12 +58,6 @@ export interface CardBlockProps {
   children: Block[]
 }
 
-export interface CollapsibleCardBlockProps {
-  openText: string
-  closeText: string
-  name?: string
-  children: Block[]
-}
 
 export interface SectionBlock extends BaseBlock {
   type: "SectionBlock"
@@ -96,25 +79,12 @@ export interface ImageContentBlock extends BaseBlock {
   props: ImageBlockProps
 }
 
-export interface UnorderedListContentBlock extends BaseBlock {
-  type: "UnorderedListBlock"
-  props: UnorderedListBlockProps
-}
 
 export interface CardBlockContent extends BaseBlock {
   type: "CardBlock"
   props: CardBlockProps
 }
 
-export interface CollapsibleCardContentBlock extends BaseBlock {
-  type: "CollapsibleCardBlock"
-  props: CollapsibleCardBlockProps
-}
-
-export interface QuoteContentBlock extends BaseBlock {
-  type: "QuoteBlock"
-  props: QuoteBlockProps
-}
 
 /**
  * The full union type for a single block. This allows for type-checking the
@@ -125,10 +95,7 @@ export type Block =
   | ParagraphContentBlock
   | CalloutContentBlock
   | ImageContentBlock
-  | QuoteContentBlock
-  | UnorderedListContentBlock
   | CardBlockContent
-  | CollapsibleCardContentBlock
 
 /**
  * Text Rendering Components

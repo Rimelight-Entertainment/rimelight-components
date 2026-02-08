@@ -47,6 +47,9 @@ const onDuplicate = () => editorApi.duplicateBlock(id)
 const onMoveUp = () => editorApi.moveBlock(id, -1)
 const onMoveDown = () => editorApi.moveBlock(id, 1)
 
+const onAddAbove = () => editorApi.openAddBlockModal(id, "before")
+const onAddBelow = () => editorApi.openAddBlockModal(id, "after")
+
 const items = ref([
   [
     {
@@ -64,12 +67,12 @@ const items = ref([
     {
       icon: "lucide:corner-right-up",
       label: "Add Block Above",
-      //onSelect: handleAddBlockAbove
+      onSelect: onAddAbove
     },
     {
       icon: "lucide:corner-right-down",
       label: "Add Block Below",
-      //onSelect: handleAddBlockBelow
+      onSelect: onAddBelow
     }
   ],
   [
