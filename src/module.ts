@@ -150,3 +150,5 @@ export default defineNuxtModule<ModuleOptions>().with({
     })
   }
 })
+
+// Trigger rebuild

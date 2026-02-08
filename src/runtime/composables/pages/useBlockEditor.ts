@@ -93,42 +93,10 @@ function createDefaultBlock(type: Block["type"]): Block {
           alt: "Placeholder Image"
         }
       }
-    case "QuoteBlock":
-      return {
-        id,
-        type: "QuoteBlock",
-        props: {
-          quote: "Quote text...",
-          source: "Source"
-        }
-      }
-    case "UnorderedListBlock":
-      return {
-        id,
-        type: "UnorderedListBlock",
-        props: {
-          items: []
-        }
-      }
-    case "CardBlock":
-      return {
-        id,
-        type: "CardBlock",
-        props: {
-          title: "New Card",
-          children: []
-        }
-      }
-    case "CollapsibleCardBlock":
-      return {
-        id,
-        type: "CollapsibleCardBlock",
-        props: {
-          openText: "Show Less",
-          closeText: "Show More",
-          children: []
-        }
-      }
+
+
+
+
     default:
       return {
         id,

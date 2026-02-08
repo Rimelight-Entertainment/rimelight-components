@@ -12,7 +12,7 @@ export type BlockType =
   | "ParagraphBlock"
   | "CalloutBlock"
   | "ImageBlock"
-  | "CardBlock"
+  | "ImageBlock"
 
 /**
  * Defines the common structure for any content block object.
@@ -36,8 +36,10 @@ export interface ParagraphBlockProps {
   text: RichTextContent
 }
 
+export type CalloutVariant = "info" | "success" | "warning" | "error" | "commentary" | "ideation" | "source"
+
 export interface CalloutBlockProps {
-  variant: "info" | "success" | "warning" | "error" | "commentary" | "ideation" | "source"
+  variant: CalloutVariant
   children: Block[]
   to?: string
   target?: string
@@ -50,13 +52,6 @@ export interface ImageBlockProps {
 }
 
 
-export interface CardBlockProps {
-  title: string
-  to?: string
-  target?: string
-  description?: string
-  children: Block[]
-}
 
 
 export interface SectionBlock extends BaseBlock {
@@ -80,10 +75,6 @@ export interface ImageContentBlock extends BaseBlock {
 }
 
 
-export interface CardBlockContent extends BaseBlock {
-  type: "CardBlock"
-  props: CardBlockProps
-}
 
 
 /**
@@ -95,7 +86,6 @@ export type Block =
   | ParagraphContentBlock
   | CalloutContentBlock
   | ImageContentBlock
-  | CardBlockContent
 
 /**
  * Text Rendering Components

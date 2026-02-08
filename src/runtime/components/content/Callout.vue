@@ -32,6 +32,7 @@ const emit = defineEmits<CalloutEmits>()
 
 export interface CalloutSlots {
   default: (props: {}) => any
+  leading: (props: { icon: string, iconClass: string }) => any
 }
 
 const slots = defineSlots<CalloutSlots>()
@@ -66,7 +67,7 @@ const tooltip = computed(() => config.value.tooltip)
 </script>
 
 <template>
-  <NuxtLink :to="to" :target="target">
+  <component :is="to ? 'NuxtLink' : 'div'" :to="to" :target="target">
     <UAlert
       :title="t(title)"
       :color="variant"
@@ -76,7 +77,9 @@ const tooltip = computed(() => config.value.tooltip)
       }"
     >
       <template #leading>
-        <UIcon :name="icon" :class="iconClass({ class: rc.icon })" />
+        <slot name="leading" :icon="icon" :icon-class="iconClass({ class: rc.icon })">
+          <UIcon :name="icon" :class="iconClass({ class: rc.icon })" />
+        </slot>
       </template>
       <template #description>
         <slot />
@@ -90,7 +93,7 @@ const tooltip = computed(() => config.value.tooltip)
         </UTooltip>
       </template>
     </UAlert>
-  </NuxtLink>
+  </component>
 </template>
 
 <style scoped></style>

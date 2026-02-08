@@ -18,13 +18,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
         category: "Layout",
         description: "A header section to organice your page."
     },
-    {
-        type: "CardBlock",
-        label: "Card",
-        icon: "i-lucide-square",
-        category: "Layout",
-        description: "A container for content with an optional title."
-    },
+
     {
         type: "ParagraphBlock",
         label: "Paragraph",
