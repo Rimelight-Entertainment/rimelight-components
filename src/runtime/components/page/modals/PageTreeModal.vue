@@ -135,51 +135,53 @@ const getKey = (item: TreeItem) => item.slug || item.label
 </script>
 
 <template>
-  <UModal v-model:open="open">
-    <UCard :ui="{ body: 'p-0 sm:p-0' }">
-      <template #header>
-        <div :class="headerClass({ class: rc.header })">
-          <h3 :class="headerTitle({ class: rc.headerTitle })">Page Hierarchy</h3>
-          <UButton
-            color="neutral"
-            variant="ghost"
-            icon="i-heroicons-x-mark-20-solid"
-            :class="closeButton({ class: rc.closeButton })"
-            @click="open = false"
-          />
-        </div>
-      </template>
+  <UModal v-model:open="open" title="Page Hierarchy" description="Navigate through your pages">
+    <template #content>
+      <UCard :ui="{ body: 'p-0 sm:p-0' }">
+        <template #header>
+          <div :class="headerClass({ class: rc.header })">
+            <h3 :class="headerTitle({ class: rc.headerTitle })">Page Hierarchy</h3>
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              :class="closeButton({ class: rc.closeButton })"
+              @click="open = false"
+            />
+          </div>
+        </template>
 
-      <div :class="body({ class: rc.body })">
-        <div v-if="loading" class="p-4 flex justify-center">
-            <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin" />
+        <div :class="body({ class: rc.body })">
+          <div v-if="loading" class="p-4 flex justify-center">
+              <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin" />
+          </div>
+          <div v-else-if="treeItems.length === 0" class="p-4 text-center text-gray-500">
+              No pages found directly.
+          </div>
+          <UTree 
+              v-else
+              :items="treeItems" 
+              :ui="{ item: 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800' }"
+          >
+              <template #item="{ item }">
+                  <div class="flex items-center gap-2 py-1 w-full" @click="handleSelect(item)">
+                      <UIcon :name="item.icon || (item.children?.length ? 'i-lucide-folder' : 'i-lucide-file')" class="w-4 h-4 text-gray-400" />
+                      <span :class="{'text-gray-900 dark:text-gray-100': item.slug, 'text-gray-500 font-medium': !item.slug}">
+                          {{ item.label }}
+                      </span>
+                      <UIcon v-if="item.slug" name="i-heroicons-arrow-right-20-solid" class="w-3 h-3 ml-auto text-gray-300 opacity-0 group-hover:opacity-100" />
+                  </div>
+              </template>
+          </UTree>
         </div>
-        <div v-else-if="treeItems.length === 0" class="p-4 text-center text-gray-500">
-            No pages found directly.
-        </div>
-        <UTree 
-            v-else
-            :items="treeItems" 
-            :ui="{ item: 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800' }"
-        >
-             <template #item="{ item }">
-                <div class="flex items-center gap-2 py-1 w-full" @click="handleSelect(item)">
-                    <UIcon :name="item.icon || (item.children?.length ? 'i-lucide-folder' : 'i-lucide-file')" class="w-4 h-4 text-gray-400" />
-                    <span :class="{'text-gray-900 dark:text-gray-100': item.slug, 'text-gray-500 font-medium': !item.slug}">
-                        {{ item.label }}
-                    </span>
-                    <UIcon v-if="item.slug" name="i-heroicons-arrow-right-20-solid" class="w-3 h-3 ml-auto text-gray-300 opacity-0 group-hover:opacity-100" />
-                </div>
-             </template>
-        </UTree>
-      </div>
 
-      <template #footer>
-        <div :class="footer({ class: rc.footer })">
-          <UButton color="neutral" variant="ghost" label="Close" @click="open = false" />
-        </div>
-      </template>
-    </UCard>
+        <template #footer>
+          <div :class="footer({ class: rc.footer })">
+            <UButton color="neutral" variant="ghost" label="Close" @click="open = false" />
+          </div>
+        </template>
+      </UCard>
+    </template>
   </UModal>
 </template>
 

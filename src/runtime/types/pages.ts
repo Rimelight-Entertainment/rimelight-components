@@ -3,7 +3,7 @@ import { type Block, type Image, type Link } from "../types"
 export type Localized<T = string> = Record<string, T>
 
 declare global {
-  interface RimelightRegisterPageTypes {}
+  interface RimelightRegisterPageTypes { }
 }
 
 export interface RegisterPageTypes extends RimelightRegisterPageTypes {
@@ -81,4 +81,16 @@ export type SurroundItem = Pick<BasePage, "id" | "slug" | "title" | "description
 export interface PageSurround {
   previous: SurroundItem | null
   next: SurroundItem | null
+}
+
+export interface PageVersion extends BasePage {
+  status: "pending" | "approved" | "rejected"
+  type: PageType
+  content: {
+    blocks: Block[]
+    properties: RegisterPageTypes[PageType]
+  }
+  createdBy: string
+  approvedBy?: string | null
+  approvedAt?: Date | null
 }

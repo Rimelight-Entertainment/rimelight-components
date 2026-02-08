@@ -52,37 +52,37 @@ const items = ref([
     {
       icon: "lucide:arrow-up",
       label: "Move Block Up",
-      click: onMoveUp
+      onSelect: onMoveUp
     },
     {
       icon: "lucide:arrow-down",
       label: "Move Block Down",
-      click: onMoveDown
+      onSelect: onMoveDown
     }
   ],
   [
     {
       icon: "lucide:corner-right-up",
       label: "Add Block Above",
-      //click: handleAddBlockAbove
+      //onSelect: handleAddBlockAbove
     },
     {
       icon: "lucide:corner-right-down",
       label: "Add Block Below",
-      //click: handleAddBlockBelow
+      //onSelect: handleAddBlockBelow
     }
   ],
   [
     {
       icon: "lucide:copy-plus",
       label: "Duplicate Block",
-      click: onDuplicate
+      onSelect: onDuplicate
     },
     {
-      color: "error",
+      color: "danger",
       icon: "lucide:trash-2",
       label: "Delete Block",
-      click: onDelete
+      onSelect: onDelete
     }
   ]
 ])

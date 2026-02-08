@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {ref, computed, useTemplateRef, provide} from "vue"
-import { type Page, type PageSurround, type PageDefinition } from "../../types"
+import { ref, computed, useTemplateRef, provide } from "vue"
+import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types"
 import { usePageEditor, usePageRegistry, useRC } from "../../composables"
 import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
@@ -17,6 +17,9 @@ export interface PageEditorProps {
   onDeletePage?: (id: string) => Promise<void>
   onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug'>[]>
   onNavigateToPage?: (slug: string) => void
+  currentVersionId?: string | null
+  isViewingVersion?: boolean
+  isAdmin?: boolean
   rc?: {
     header?: string
     headerGroup?: string
@@ -48,18 +51,25 @@ const {
   onDeletePage,
   onFetchPages,
   onNavigateToPage,
+  currentVersionId = null,
+  isViewingVersion = false,
+  isAdmin = false,
   rc: rcProp
 } = defineProps<PageEditorProps>()
 
 const page = defineModel<Page>({ required: true })
+const versionId = defineModel<string | null>("currentVersionId", { default: null })
 
 export interface PageEditorEmits {
   save: [value: Page]
+  'version-navigate': [version: PageVersion]
 }
 
 const emit = defineEmits<PageEditorEmits>()
 
-export interface PageEditorSlots {}
+export interface PageEditorSlots {
+  'header-actions'?: (props: {}) => any
+}
 
 const slots = defineSlots<PageEditorSlots>()
 
@@ -241,6 +251,23 @@ const handleTreeNavigate = (slug: string) => {
 </script>
 
 <template>
+  <div
+    v-if="isViewingVersion"
+    class="fixed top-12 left-0 right-0 z-40 bg-warning-500 text-white px-4 py-2 text-sm text-center"
+  >
+    <div class="flex items-center justify-center gap-2">
+      <UIcon name="lucide:eye" />
+      <span>Viewing a previous version. Changes made here will create a new version.</span>
+      <UButton
+        icon="lucide:x"
+        color="neutral"
+        variant="ghost"
+        size="xs"
+        @click="versionId = null"
+      />
+    </div>
+  </div>
+
   <RCHeaderLayer id="editor-header" :order="3">
     <UHeader :class="header({ class: rc.header })">
       <template #left>
@@ -297,6 +324,14 @@ const handleTreeNavigate = (slug: string) => {
             :loading="isFetchingTree"
             @navigate="handleTreeNavigate"
           />
+          <RCPageVersionSelector
+            v-if="page.id"
+            v-model:current-version-id="versionId"
+            :page-id="page.id"
+            :is-admin="isAdmin"
+            @version-selected="(v: any) => emit('version-navigate', v)"
+          />
+          <slot name="header-actions" />
           <RCCreatePageModal
             :is-open="isCreateModalOpen"
             :definitions="pageDefinitions"

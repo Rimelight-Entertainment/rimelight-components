@@ -56,7 +56,7 @@ const dropdownItems = computed(() => [
   blockTypes.map(type => ({
     label: type.label,
     icon: type.icon,
-    click: () => insertBlock(type.value as any)
+    onSelect: () => insertBlock(type.value as any)
   }))
 ])
 
@@ -81,17 +81,17 @@ defineExpose({ undo, redo, canUndo, canRedo })
 
     <div class="flex flex-col items-center justify-center p-4 border-t border-neutral-200 dark:border-neutral-800 border-dashed rounded-lg">
       <span class="text-sm text-dimmed mb-2">Append new block to page</span>
-      <UDropdown
+      <UDropdownMenu
         :items="dropdownItems"
       >
         <UButton
-          color="white"
+          color="neutral"
           label="Add Block"
           trailing-icon="i-heroicons-chevron-down-20-solid"
-          variant="solid"
+          variant="outline"
           icon="i-lucide-plus"
         />
-      </UDropdown>
+      </UDropdownMenu>
     </div>
   </div>
 </template>
