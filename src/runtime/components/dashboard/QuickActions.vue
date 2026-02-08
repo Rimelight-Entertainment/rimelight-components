@@ -12,7 +12,7 @@ const menuItems = computed<DropdownMenuItem[][]>(() => {
     acc[groupId].push({
       label: action.label,
       icon: action.icon,
-      onSelect: action.onSelect
+      click: action.onSelect
     })
     return acc
   }, {} as Record<number, DropdownMenuItem[]>)

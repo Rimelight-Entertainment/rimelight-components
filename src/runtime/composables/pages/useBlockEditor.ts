@@ -48,6 +48,96 @@ function regenerateIds(block: Block): void {
   // No need for an 'else' block, as blocks without children simply terminate the recursion here.
 }
 
+function createDefaultBlock(type: Block["type"]): Block {
+  const id = uuidv7()
+  switch (type) {
+    case "SectionBlock":
+      return {
+        id,
+        type: "SectionBlock",
+        props: {
+          level: 2,
+          title: "New Section",
+          children: []
+        }
+      }
+    case "ParagraphBlock":
+      return {
+        id,
+        type: "ParagraphBlock",
+        props: {
+          text: []
+        }
+      }
+    case "CalloutBlock":
+      return {
+        id,
+        type: "CalloutBlock",
+        props: {
+          variant: "info",
+          children: [
+            {
+              id: uuidv7(),
+              type: "ParagraphBlock",
+              props: { text: [{ type: "text", id: uuidv7(), props: { content: "Callout content" } }] }
+            }
+          ]
+        }
+      }
+    case "ImageBlock":
+      return {
+        id,
+        type: "ImageBlock",
+        props: {
+          src: "https://placehold.co/600x400",
+          alt: "Placeholder Image"
+        }
+      }
+    case "QuoteBlock":
+      return {
+        id,
+        type: "QuoteBlock",
+        props: {
+          quote: "Quote text...",
+          source: "Source"
+        }
+      }
+    case "UnorderedListBlock":
+      return {
+        id,
+        type: "UnorderedListBlock",
+        props: {
+          items: []
+        }
+      }
+    case "CardBlock":
+      return {
+        id,
+        type: "CardBlock",
+        props: {
+          title: "New Card",
+          children: []
+        }
+      }
+    case "CollapsibleCardBlock":
+      return {
+        id,
+        type: "CollapsibleCardBlock",
+        props: {
+          openText: "Show Less",
+          closeText: "Show More",
+          children: []
+        }
+      }
+    default:
+      return {
+        id,
+        type: "ParagraphBlock",
+        props: { text: [] }
+      } as Block
+  }
+}
+
 export function useBlockEditor(
   initialBlocks: Ref<Block[]>,
   { maxHistorySize = 100, onMutation }: { maxHistorySize?: number; onMutation?: () => void } = {}
@@ -253,7 +343,21 @@ export function useBlockEditor(
     targetId: string | null = null,
     position: "before" | "after" = "after"
   ) => {
-    executeMutation(() => { })
+    executeMutation(() => {
+      const newBlock = createDefaultBlock(newBlockType)
+
+      if (!targetId) {
+        initialBlocks.value.push(newBlock)
+        return
+      }
+
+      const loc = findBlockLocation(initialBlocks.value, targetId)
+      if (!loc) return
+
+      const { parentArray, index } = loc
+      const insertIndex = position === "after" ? index + 1 : index
+      parentArray.splice(insertIndex, 0, newBlock)
+    })
   }
 
   const commitChanges = (): Block[] => {

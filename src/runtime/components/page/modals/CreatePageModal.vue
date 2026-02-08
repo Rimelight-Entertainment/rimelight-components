@@ -6,7 +6,6 @@ import { useRC } from "../../../composables"
 import { useI18n } from "vue-i18n"
 
 export interface CreatePageModalProps {
-  isOpen: boolean
   definitions: Record<string, PageDefinition>
   loading?: boolean
   rc?: {
@@ -19,7 +18,8 @@ export interface CreatePageModalProps {
   }
 }
 
-const { isOpen, loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>()
+const open = defineModel<boolean>("open", { default: false })
+const { loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>()
 
 export interface CreatePageModalEmits {
   close: []
@@ -65,7 +65,7 @@ const slug = ref('')
 
 const typeOptions = computed(() => {
   return Object.entries(definitions).map(([key, def]) => ({
-    label: t(def.typeLabelKey),
+    label: t(def.typeLabelKey) === def.typeLabelKey ? key : t(def.typeLabelKey),
     value: key
   }))
 })
@@ -106,10 +106,16 @@ const handleConfirm = () => {
 
   emit('confirm', newPage)
 }
+
+watch(open, (isOpen) => {
+  if (!isOpen) {
+    emit("close")
+  }
+})
 </script>
 
 <template>
-  <UModal :model-value="isOpen" @update:model-value="emit('close')">
+  <UModal v-model:open="open">
     <slot />
     <template #content>
       <UCard>
