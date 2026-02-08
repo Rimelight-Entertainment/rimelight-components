@@ -1,49 +1,71 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
-import { MOCK_MOVIE_PAGE, MOCK_MOVIE_SURROUND } from "~/mocks/pages"
-import { type PageSurround } from "rimelight-components/types";
+import { ref, watch, onMounted } from "vue"
+import { MOCK_PAGES_LIST, MOCK_MOVIE_SURROUND } from "~/mocks/pages"
+import { type Page, type PageSurround } from "rimelight-components/types";
 
-const moviePage = ref(MOCK_MOVIE_PAGE)
+const route = useRoute()
+const slug = computed(() => {
+  const s = route.params.slug
+  if (Array.isArray(s)) return s.join('/')
+  return s
+})
+
+const moviePage = ref<Page | null>(null)
+
+const surround = ref<PageSurround | null>(null)
+const surroundStatus = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
+
+const loadPage = () => {
+  const found = MOCK_PAGES_LIST.find(p => p.slug === slug.value)
+  if (found) {
+    moviePage.value = found
+    
+    // Simulate API Fetch Delay for surround
+    surroundStatus.value = 'pending'
+    setTimeout(() => {
+      // For simplicity in the mock, we just use the same surround for Matrix movies
+      surround.value = MOCK_MOVIE_SURROUND
+      surroundStatus.value = 'success'
+    }, 1000)
+  } else {
+    moviePage.value = null
+  }
+}
+
+onMounted(loadPage)
+watch(slug, loadPage)
 
 /**
  * Mock Resolver for the Playground
  */
 const pageResolver = async (id: string) => {
-  // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 500))
-
-  // Logic to return mock data based on ID
-  if (id === 'movie-1' || id === MOCK_MOVIE_PAGE.id) {
+  const found = MOCK_PAGES_LIST.find(p => p.id === id)
+  if (found) {
     return {
-      title: MOCK_MOVIE_PAGE.title,
-      icon: MOCK_MOVIE_PAGE.icon,
-      slug: MOCK_MOVIE_PAGE.slug
+      title: found.title,
+      icon: found.icon,
+      slug: found.slug
     }
   }
-
   throw new Error(`Page with ID ${id} not found`)
 }
-
-const surround = ref<PageSurround | null>(null)
-const surroundStatus = ref<'idle' | 'pending' | 'success' | 'error'>('pending')
-
-// Simulate API Fetch Delay
-onMounted(() => {
-  setTimeout(() => {
-    surround.value = MOCK_MOVIE_SURROUND
-    surroundStatus.value = 'success'
-  }, 2000)
-})
 </script>
 
 <template>
-  <RCPageRenderer
-    v-model="moviePage"
-    :resolve-page="pageResolver"
-    use-surround
-    :surround="surround"
-    :surround-status="surroundStatus"
-  />
+  <div v-if="moviePage">
+    <RCPageRenderer
+      v-model="moviePage"
+      :resolve-page="pageResolver"
+      use-surround
+      :surround="surround"
+      :surround-status="surroundStatus"
+    />
+  </div>
+  <div v-else class="flex items-center justify-center min-h-[50vh]">
+    <UPageError
+      title="Page Not Found"
+      description="The requested showcase page could not be found in the mock database."
+    />
+  </div>
 </template>
-
-<style scoped></style>

@@ -160,13 +160,43 @@ export const MOCK_PAGES_LIST: Page[] = [
     ...MOCK_MOVIE_PAGE,
     id: "movie-2",
     slug: "the-matrix-reloaded",
-    title: { en: "The Matrix Reloaded" }
+    title: { en: "The Matrix Reloaded" },
+    description: { en: "Neo and the rebel leaders estimate they have 72 hours until 250,000 probes discover Zion." },
+    blocks: [
+      { id: "r1", type: "SectionBlock", props: { level: 2, title: "Zion", children: [] } },
+      { id: "r2", type: "SectionBlock", props: { level: 2, title: "The Architect", children: [] } }
+    ],
+    properties: {
+      ...MOCK_MOVIE_PAGE.properties,
+      info: {
+        ...MOCK_MOVIE_PAGE.properties.info,
+        fields: {
+          ...MOCK_MOVIE_PAGE.properties.info.fields,
+          releaseYear: { value: 2003, label: { en: "Release Year" }, type: "number" }
+        }
+      }
+    }
   },
   {
     ...MOCK_MOVIE_PAGE,
     id: "movie-3",
     slug: "the-matrix-revolutions",
-    title: { en: "The Matrix Revolutions" }
+    title: { en: "The Matrix Revolutions" },
+    description: { en: "The human city of Zion defends itself against the massive invasion of the machines." },
+    blocks: [
+      { id: "rev1", type: "SectionBlock", props: { level: 2, title: "The Battle for Zion", children: [] } },
+      { id: "rev2", type: "SectionBlock", props: { level: 2, title: "Club Hel", children: [] } }
+    ],
+    properties: {
+      ...MOCK_MOVIE_PAGE.properties,
+      info: {
+        ...MOCK_MOVIE_PAGE.properties.info,
+        fields: {
+          ...MOCK_MOVIE_PAGE.properties.info.fields,
+          releaseYear: { value: 2003, label: { en: "Release Year" }, type: "number" }
+        }
+      }
+    }
   }
 ]
 
