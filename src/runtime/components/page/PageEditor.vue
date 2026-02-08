@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, useTemplateRef, provide } from "vue"
 import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types"
-import { usePageEditor, usePageRegistry, useRC } from "../../composables"
+import { usePageEditor, usePageRegistry, useRC, useHeaderStack } from "../../composables"
 import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { tv } from "../../internal/tv"
@@ -79,7 +79,7 @@ const pageEditorStyles = tv({
   slots: {
     header: "h-12 w-full bg-muted",
     headerGroup: "flex items-center gap-xs",
-    splitContainer: "flex w-full overflow-hidden",
+    splitContainer: "flex w-full overflow-hidden min-h-0",
     editorColumn: "h-full overflow-y-auto",
     container: "flex flex-col py-16",
     grid: "grid grid-cols-1 lg:grid-cols-24 gap-xl items-start",
@@ -143,6 +143,8 @@ provide('page-resolver', resolvePage)
 const previousPage = computed(() => surround?.previous)
 const nextPage = computed(() => surround?.next)
 const hasSurround = computed(() => !!(surround?.previous || surround?.next))
+
+const { totalHeight } = useHeaderStack()
 
 const containerRef = useTemplateRef<HTMLElement>('split-container')
 const editorWidth = ref(50)
@@ -355,7 +357,11 @@ const handleTreeNavigate = (slug: string) => {
     </UHeader>
   </RCHeaderLayer>
 
-  <div ref="split-container" :class="splitContainer({ class: rc.splitContainer })">
+  <div 
+    ref="split-container" 
+    :class="splitContainer({ class: rc.splitContainer })"
+    :style="{ height: `calc(100vh - ${totalHeight}px)` }"
+  >
     <div
       :class="editorColumn({ class: rc.editorColumn })"
       :style="{ width: showPreview ? `${editorWidth}%` : '100%' }"

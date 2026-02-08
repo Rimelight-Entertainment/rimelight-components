@@ -152,6 +152,59 @@ export const MOCK_MOVIE_PAGE: Page = {
 }
 
 /**
+ * Mock List of Pages for Tree
+ */
+export const MOCK_PAGES_LIST: Page[] = [
+  MOCK_MOVIE_PAGE,
+  {
+    ...MOCK_MOVIE_PAGE,
+    id: "movie-2",
+    slug: "the-matrix-reloaded",
+    title: { en: "The Matrix Reloaded" }
+  },
+  {
+    ...MOCK_MOVIE_PAGE,
+    id: "movie-3",
+    slug: "the-matrix-revolutions",
+    title: { en: "The Matrix Revolutions" }
+  }
+]
+
+/**
+ * Mock Versions
+ */
+export const MOCK_VERSIONS = [
+  {
+    id: "v1",
+    pageId: "movie-1",
+    status: "approved",
+    type: "Movie",
+    title: { en: "The Matrix (Original Version)" },
+    authorIds: ["user-1"],
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+    content: {
+      blocks: MOCK_MOVIE_PAGE.blocks,
+      properties: MOCK_MOVIE_PAGE.properties
+    }
+  },
+  {
+    id: "v2",
+    pageId: "movie-1",
+    status: "pending",
+    type: "Movie",
+    title: { en: "The Matrix (Draft Changes)" },
+    authorIds: ["user-1"],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    content: {
+      blocks: MOCK_MOVIE_PAGE.blocks,
+      properties: MOCK_MOVIE_PAGE.properties
+    }
+  }
+]
+
+/**
  * Mock Surround Data
  */
 export const MOCK_MOVIE_SURROUND: PageSurround = {
