@@ -31,8 +31,9 @@ const items = computed<NavigationMenuItem[]>(() => {
       ]
     },
     {
-      label: "Link 1",
-      active: route.path.startsWith("/link-1")
+      label: "Page View",
+      to: "/page-view",
+      active: route.path.startsWith("/page-view")
     },
     {
       label: "Events",
