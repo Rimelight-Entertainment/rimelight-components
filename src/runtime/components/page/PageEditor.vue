@@ -91,7 +91,7 @@ const pageEditorStyles = tv({
     title: "",
     surroundSkeleton: "grid grid-cols-1 gap-md sm:grid-cols-2",
     skeleton: "h-48 w-full rounded-xl",
-    metadata: "flex flex-col gap-xs text-xs text-dimmed p-xl",
+    metadata: "flex flex-col gap-xs text-xs text-dimmed p-lg",
     resizer: "relative flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16",
     previewColumn: "h-full overflow-y-auto"
   }
@@ -357,8 +357,8 @@ const handleTreeNavigate = (slug: string) => {
     </UHeader>
   </RCHeaderLayer>
 
-  <div 
-    ref="split-container" 
+  <div
+    ref="split-container"
     :class="splitContainer({ class: rc.splitContainer })"
     :style="{ height: `calc(100vh - ${totalHeight}px)` }"
   >

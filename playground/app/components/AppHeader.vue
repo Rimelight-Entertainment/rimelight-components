@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { NavigationMenuItem, DropdownMenuItem } from "@nuxt/ui"
 import { useHeaderStack } from "rimelight-components/composables"
+import { MOCK_PAGES_LIST } from "~/mocks/pages"
 
 const { bottomOffsets } = useHeaderStack()
 const headerLayerId = inject<string>("header_layer_id", "global-header")
@@ -31,39 +32,25 @@ const availabilityChip = computed(() => ({
 
 const items = computed<NavigationMenuItem[]>(() => [
   {
-    label: "Megamenu",
-    active: route.path.startsWith("/megamenu"),
+    label: "Wiki",
+    active: route.path.startsWith("/wiki") || MOCK_PAGES_LIST.some(page => route.path.startsWith(`/${page.slug}`)),
     slot: "megamenu" as const,
-    children: [
-      {
-        label: "Overview",
-        description: "You have nothing to do, @nuxt/icon will handle it automatically."
-      },
-      {
-        label: "Characters",
-        description: "Choose a primary and a neutral color from your Tailwind CSS theme."
-      },
-      {
-        label: "Tales",
-        description:
-          'You can customize components by using the "class" / "ui" props or in your app.config.ts.'
-      }
-    ]
+    children: MOCK_PAGES_LIST.map(page => ({
+      label: page.title.en,
+      description: page.description?.en,
+      to: `/${page.slug}`
+    }))
   },
   {
     label: "Components",
     to: "/components",
     active: route.path === "/components"
   },
+
   {
     label: "Branding",
     to: "/branding",
     active: route.path === "/branding"
-  },
-  {
-    label: "Sample Wiki",
-    to: "/sample-wiki",
-    active: route.path.startsWith("/sample-wiki")
   },
   {
     label: "Megamenu 2",
@@ -159,10 +146,11 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
             <UContainer>
               <div class="flex h-full flex-row gap-xl">
                 <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
-                <ul v-if="(item as NavigationMenuItem).children">
+                <ul v-if="(item as NavigationMenuItem).children" class="grid gap-2 flex-1 p-md">
                   <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
                     <ULink
-                      class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
+                      :to="child.to"
+                      class="block w-full rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
                     >
                       <p class="font-medium text-highlighted">
                         {{ child.label }}

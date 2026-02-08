@@ -8,10 +8,6 @@ const columns: FooterColumn[] = [
     label: "Resources",
     children: [
       {
-        label: "Components",
-        to: "/components"
-      },
-      {
         label: "Branding",
         to: "/branding"
       },

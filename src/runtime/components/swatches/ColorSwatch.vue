@@ -12,6 +12,7 @@ export interface ColorSwatchProps {
   hsl?: string
   oklch?: string
   cmyk?: string
+  textColor?: string
   rc?: {
     card?: string
     title?: string
@@ -23,7 +24,7 @@ export interface ColorSwatchProps {
   }
 }
 
-const { name, hex, rgb, hsl, oklch, cmyk, rc: rcProp } = defineProps<ColorSwatchProps>()
+const { name, hex, rgb, hsl, oklch, cmyk, textColor, rc: rcProp } = defineProps<ColorSwatchProps>()
 
 export interface ColorSwatchEmits {}
 
@@ -103,8 +104,8 @@ const color = computed(() => {
     </template>
     <div :class="content({ class: rc.content })">
       <div :class="preview({ class: rc.preview })" :style="{ backgroundColor: color }">
-        <div :class="details({ class: rc.details })">
-          <span v-if="name" class="text-sm">{{ formatColor(name) }}</span>
+        <div :class="details({ class: rc.details })" :style="{ color: textColor || 'white' }">
+          <span v-if="name" class="text-sm font-bold uppercase tracking-wider mb-2 border-b border-current pb-1">{{ name }}</span>
           <span v-if="hex">HEX {{ formatColor(hex) }}</span>
           <span v-if="rgb">{{ formatColor(rgb) }}</span>
           <span v-if="hsl">{{ formatColor(hsl) }}</span>

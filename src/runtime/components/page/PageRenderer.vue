@@ -58,7 +58,7 @@ const pageRendererStyles = tv({
     title: "",
     surroundSkeleton: "grid grid-cols-1 gap-md sm:grid-cols-2",
     skeleton: "h-48 w-full rounded-xl",
-    metadata: "flex flex-col gap-xs text-xs text-dimmed p-xl"
+    metadata: "flex flex-col gap-xs text-xs text-dimmed p-lg"
   }
 })
 

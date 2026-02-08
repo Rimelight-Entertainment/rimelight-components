@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue"
+import chroma from "chroma-js"
 import { useRC, useHeaderStack } from "../../composables"
 import { tv } from "../../internal/tv"
 
@@ -42,18 +43,93 @@ interface FontData {
 
 interface ColorData {
   name: string
-  value: string
+  fullVarName: string
+  lightValue: string
+  lightBg: string
+  darkValue: string
+  darkBg: string
+}
+
+function parseOklch(str: string): [number, number, number] | null {
+  const match = str.match(/oklch\(([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+%?)?\)/)
+  if (match) {
+    let l = parseFloat(match[1] ?? "0")
+    if (match[1]?.endsWith("%")) l /= 100
+    const c = parseFloat(match[2] ?? "0")
+    const h = parseFloat(match[3] ?? "0")
+    return [l, c, h]
+  }
+  return null
+}
+
+function getColor(value: string): chroma.Color | null {
+  try {
+    if (value.startsWith("oklch")) {
+      const oklchValues = parseOklch(value)
+      if (oklchValues) {
+        return (chroma as any).oklch(...oklchValues)
+      }
+    } else if (value.startsWith("#") || value.startsWith("rgb") || value.startsWith("hsl")) {
+      return chroma(value)
+    }
+  } catch (e) {
+    // ignore
+  }
+  return null
+}
+
+function resolveVariable(
+  varName: string,
+  map: Map<string, string>,
+  fallbackMap?: Map<string, string>
+): string {
+  let value = map.get(varName)
+  if (!value && fallbackMap) {
+    value = fallbackMap.get(varName)
+  }
+  if (!value) return varName // Return original if not found (might be a raw color)
+
+  const varMatch = value.match(/^var\(([\w-]+)\)$/)
+  if (varMatch) {
+    return resolveVariable(varMatch[1], map, fallbackMap)
+  }
+  return value
 }
 
 const parsedData = computed(() => {
   if (!css) return { fonts: [], colors: [] }
 
   const fonts: FontData[] = []
-  const colors: ColorData[] = []
+  const rootVars = new Map<string, string>()
+  const darkVars = new Map<string, string>()
+
   const lines = css.split("\n")
+  let currentBlock = "root" // 'root' or 'dark'
 
   lines.forEach((line) => {
-    // Parse Fonts
+    // Detect block context
+    if (line.includes(".dark {")) {
+      currentBlock = "dark"
+      return
+    }
+    if (line.includes("}") && currentBlock === "dark") {
+      currentBlock = "root"
+      return
+    }
+
+    // Parse Variables
+    const varMatch = line.match(/^\s*(--[\w-]+):\s*(.*?);/)
+    if (varMatch && !line.trim().startsWith("/*")) {
+      const key = varMatch[1] ?? ""
+      const value = varMatch[2]?.trim() ?? ""
+      if (currentBlock === "root") {
+        rootVars.set(key, value)
+      } else {
+        darkVars.set(key, value)
+      }
+    }
+
+    // Parse Fonts (Independent of block, usually root/static)
     const fontMatch = line.match(/^\s*--font-([\w-]+):\s*(.*?);/)
     if (fontMatch && !line.trim().startsWith("/*")) {
       fonts.push({
@@ -61,31 +137,53 @@ const parsedData = computed(() => {
         family: fontMatch[2]?.trim() ?? ""
       })
     }
+  })
 
-    // Parse Text Colors (Variables only, excluding sizes)
-    const textColorMatch = line.match(/^\s*--text-([\w-]+):\s*(.*?);/)
-    if (textColorMatch && !line.trim().startsWith("/*")) {
-      const name = textColorMatch[1] ?? ""
-      // Filter out size variables
-      const isSize = /^(xs|sm|md|lg|xl|\d+xl|hero|base|desc)$/.test(name)
-      if (!isSize) {
+  // Collect Text Colors
+  const colors: ColorData[] = []
+  const keys = new Set([...rootVars.keys(), ...darkVars.keys()])
+
+  keys.forEach((key) => {
+    // Filter for --text- or --ui-text-
+    if (key.startsWith("--text-") || key.startsWith("--ui-text-")) {
+      const name = key.replace(/^--(?:ui-)?text-/, "")
+
+      // Filter out size variables based on resolve check
+      // We resolve the LIGHT value to check if it's a color
+      const resolvedLight = resolveVariable(key, rootVars)
+      const colorCheck = getColor(resolvedLight)
+
+      // Heuristic: If it parses as a color, it's a color variable.
+      // Also exclude known size keys if strict check needed, but color check is robust.
+      if (colorCheck) {
+        // Resolve Dark Value
+        // For dark mode: look in darkVars, fallback to rootVars
+        // BUT when resolving nested vars, we must prioritize darkVars context
+        const resolvedDark = resolveVariable(key, darkVars, rootVars)
+
+        // Calculate Backgrounds
+        const lightBg = "bg-white"
+        const darkBg = "bg-black"
+
+        // Handle 'inverted' explicitly if needed, but contrast check should cover it
+        // ...
+
         colors.push({
           name,
-          value: textColorMatch[2]?.trim() ?? ""
+          fullVarName: key,
+          lightValue: resolvedLight, // stored for debugging/info if needed
+          lightBg,
+          darkValue: resolvedDark,
+          darkBg
         })
       }
     }
   })
 
-  // Deduplicate colors
-  const uniqueColors: ColorData[] = []
-  colors.forEach((c) => {
-    if (!uniqueColors.find((uc) => uc.name === c.name)) {
-      uniqueColors.push(c)
-    }
-  })
+  // Deduplicate by name if needed, but keys are unique variable names.
+  // Actually, standard Set iteration ensures unique keys.
 
-  return { fonts, colors: uniqueColors }
+  return { fonts, colors }
 })
 
 const sampleText = "The quick brown fox jumps over the lazy dog"
@@ -143,7 +241,7 @@ function getFontStyles(family: string) {
             :items="[
               { label: 'Specimen', slot: 'specimen' },
               { label: 'Hierarchy', slot: 'hierarchy' },
-              { label: 'Color Test', slot: 'colors' }
+              { label: 'Color', slot: 'colors' }
             ]"
             :ui="{
               item: 'border-b border-default last:border-b-0',
@@ -153,26 +251,45 @@ function getFontStyles(family: string) {
           >
             <template #specimen>
               <div
-                class="flex flex-col gap-4 py-4 text-highlighted"
+                class="flex flex-col gap-8 py-4 text-highlighted"
                 :style="getFontStyles((item as any).font.family)"
               >
-                <div class="text-4xl break-all line-height-none tracking-tight">
-                  {{ alphabet }}
+                <div class="flex flex-col md:flex-row md:items-baseline gap-4">
+                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0"
+                    >Uppercase</span
+                  >
+                  <div class="text-4xl break-all line-height-none tracking-tight">
+                    {{ alphabet }}
+                  </div>
                 </div>
-                <div class="text-4xl break-all line-height-none tracking-tight">
-                  {{ alphabetLower }}
+                <div class="flex flex-col md:flex-row md:items-baseline gap-4">
+                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0"
+                    >Lowercase</span
+                  >
+                  <div class="text-4xl break-all line-height-none tracking-tight">
+                    {{ alphabetLower }}
+                  </div>
                 </div>
-                <div class="text-4xl">
-                  {{ numbers }}
+                <div class="flex flex-col md:flex-row md:items-baseline gap-4">
+                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">Numbers</span>
+                  <div class="text-4xl">
+                    {{ numbers }}
+                  </div>
                 </div>
-                <div class="text-4xl">
-                  {{ symbols }}
+                <div class="flex flex-col md:flex-row md:items-baseline gap-4">
+                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">Symbols</span>
+                  <div class="text-4xl">
+                    {{ symbols }}
+                  </div>
                 </div>
               </div>
             </template>
 
             <template #hierarchy>
-              <div class="flex flex-col gap-8" :style="getFontStyles((item as any).font.family)">
+              <div
+                class="flex flex-col gap-8 pb-8"
+                :style="getFontStyles((item as any).font.family)"
+              >
                 <div
                   v-for="h in headingLevels"
                   :key="h.tag"
@@ -197,25 +314,45 @@ function getFontStyles(family: string) {
 
             <template #colors>
               <div
-                class="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8"
+                class="flex flex-col gap-8 pb-8"
                 :style="getFontStyles((item as any).font.family)"
               >
                 <div
                   v-for="c in parsedData.colors"
                   :key="c.name"
-                  class="flex flex-col gap-2 p-4 rounded border border-transparent hover:border-default transition-colors"
+                  class="flex flex-col md:flex-row gap-4"
                 >
-                  <div class="flex items-center justify-between text-xs font-mono text-muted mb-2">
-                    <span>--text-{{ c.name }}</span>
-                    <span class="opacity-50 uppercase">{{ c.value }}</span>
-                  </div>
+                  <span class="w-32 text-xs text-muted font-mono shrink-0 pt-2">{{
+                    c.fullVarName
+                  }}</span>
                   <div
-                    class="p-4 rounded border border-default/10"
-                    :class="c.name === 'inverted' ? 'bg-highlighted' : 'bg-default/5'"
+                    class="flex-1 grid grid-cols-2 rounded-lg overflow-hidden h-20"
                   >
-                    <p class="text-xl font-bold" :style="{ color: `var(--text-${c.name})` }">
-                      {{ sampleText }}
-                    </p>
+                    <!-- Light Mode -->
+                    <div
+                      class="flex flex-col items-center justify-center p-2 gap-1"
+                      :class="c.lightBg"
+                    >
+                      <p class="text-2xl font-bold" :style="{ color: c.lightValue }">Aa</p>
+                      <span
+                        class="text-[10px] opacity-50 font-mono hidden md:block"
+                        :style="{ color: c.lightValue }"
+                        >{{ c.lightValue.slice(0, 15) }}...</span
+                      >
+                    </div>
+
+                    <!-- Dark Mode -->
+                    <div
+                      class="flex flex-col items-center justify-center p-2 gap-1"
+                      :class="c.darkBg"
+                    >
+                      <p class="text-2xl font-bold" :style="{ color: c.darkValue }">Aa</p>
+                      <span
+                        class="text-[10px] opacity-50 font-mono hidden md:block"
+                        :style="{ color: c.darkValue }"
+                        >{{ c.darkValue.slice(0, 15) }}...</span
+                      >
+                    </div>
                   </div>
                 </div>
               </div>

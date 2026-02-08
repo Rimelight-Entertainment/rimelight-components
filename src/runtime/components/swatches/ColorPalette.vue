@@ -166,6 +166,9 @@ function getSwatchProps(swatch: SwatchData) {
 
     const [cy, m, y, k] = color.cmyk()
     p.cmyk = `cmyk(${Math.round(cy * 100)}%, ${Math.round(m * 100)}%, ${Math.round(y * 100)}%, ${Math.round(k * 100)}%)`
+    
+    // Calculate best contrasting text color
+    p.textColor = color.luminance() > 0.45 ? '#000000' : '#FFFFFF'
   } catch (e) {
     // Fallback if conversion fails
     if (swatch.format !== "unknown") {
@@ -173,6 +176,7 @@ function getSwatchProps(swatch: SwatchData) {
     } else {
       p.oklch = swatch.value
     }
+    p.textColor = '#FFFFFF'
   }
 
   return p
