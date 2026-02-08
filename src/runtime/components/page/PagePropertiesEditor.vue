@@ -324,7 +324,7 @@ const removeLink = (index: number) => {
     </UCard>
     <div :class="links({ class: rc.links })">
       <div class="flex items-center justify-between mb-xs">
-        <h6>Links</h6>
+        <h6>{{ t('page_properties.links') }}</h6>
         <UButton
           icon="lucide:plus"
           size="xs"
@@ -369,31 +369,31 @@ const removeLink = (index: number) => {
           </div>
         </div>
       </div>
-      <p v-else class="text-xs text-dimmed italic">No links added yet.</p>
+      <p v-else class="text-xs text-dimmed italic">{{ t('page_properties.no_links') }}</p>
 
       <!-- Link management modal -->
-      <UModal v-model:open="isLinkModalOpen" :title="editingLinkIndex !== null ? 'Edit Link' : 'Add Link'">
+      <UModal v-model:open="isLinkModalOpen" :title="editingLinkIndex !== null ? t('page_properties.edit_link') : t('page_properties.add_link')">
         <template #content>
           <UCard>
             <div class="flex flex-col gap-sm">
-              <UFormField label="Label">
+              <UFormField :label="t('page_properties.label')">
                 <UInput v-model="linkDraft.label" placeholder="Check my GitHub" class="w-full" />
               </UFormField>
-              <UFormField label="URL (to)">
+              <UFormField :label="t('page_properties.url')">
                 <UInput v-model="linkDraft.to" placeholder="https://github.com/..." class="w-full" />
               </UFormField>
-              <UFormField label="Icon">
+              <UFormField :label="t('page_properties.icon')">
                 <UInput v-model="linkDraft.icon" placeholder="lucide:github" class="w-full" />
               </UFormField>
               <div class="grid grid-cols-2 gap-sm">
-                <UFormField label="Color">
+                <UFormField :label="t('page_properties.color')">
                   <USelect
                     v-model="linkDraft.color"
                     :items="['primary', 'secondary', 'neutral', 'error', 'warning', 'success', 'info']"
                     class="w-full"
                   />
                 </UFormField>
-                <UFormField label="Variant">
+                <UFormField :label="t('page_properties.variant')">
                   <USelect
                     v-model="linkDraft.variant"
                     :items="['solid', 'outline', 'subtle', 'soft', 'ghost', 'link']"
@@ -405,9 +405,9 @@ const removeLink = (index: number) => {
 
             <template #footer>
               <div class="flex justify-end gap-sm">
-                <UButton label="Cancel" variant="ghost" color="neutral" @click="isLinkModalOpen = false" />
+                <UButton :label="t('common.cancel')" variant="ghost" color="neutral" @click="isLinkModalOpen = false" />
                 <UButton
-                  :label="editingLinkIndex !== null ? 'Update Link' : 'Add Link'"
+                  :label="editingLinkIndex !== null ? t('page_properties.update_link') : t('page_properties.add_link')"
                   color="primary"
                   @click="saveLink"
                 />

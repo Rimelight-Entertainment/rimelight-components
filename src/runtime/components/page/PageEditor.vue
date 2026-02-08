@@ -93,7 +93,7 @@ const pageEditorStyles = tv({
     skeleton: "h-48 w-full rounded-xl",
     metadata: "flex flex-col gap-xs text-xs text-dimmed p-lg",
     resizer: "relative flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16",
-    previewColumn: "h-full overflow-y-auto"
+    previewColumn: "h-full overflow-y-auto min-h-0"
   }
 })
 
@@ -259,7 +259,7 @@ const handleTreeNavigate = (slug: string) => {
   >
     <div class="flex items-center justify-center gap-2">
       <UIcon name="lucide:eye" />
-      <span>Viewing a previous version. Changes made here will create a new version.</span>
+      <span>{{ t('page_editor.viewing_version_notice') }}</span>
       <UButton
         icon="lucide:x"
         color="neutral"
@@ -297,7 +297,7 @@ const handleTreeNavigate = (slug: string) => {
         <div :class="headerGroup({ class: rc.headerGroup })">
           <UButton
             :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
-            label="Preview"
+            :label="t('page_editor.preview')"
             variant="outline"
             color="neutral"
             size="xs"
@@ -305,7 +305,7 @@ const handleTreeNavigate = (slug: string) => {
           />
           <UButton
             icon="lucide:save"
-            label="Save"
+            :label="t('page_editor.save')"
             color="primary"
             size="xs"
             :loading="isSaving"
@@ -341,7 +341,7 @@ const handleTreeNavigate = (slug: string) => {
             @close="isCreateModalOpen = false"
             @confirm="handleCreateConfirm"
           >
-            <UButton icon="lucide:file-plus" label="Create Page" color="primary" size="xs" />
+            <UButton icon="lucide:file-plus" :label="t('page_editor.create_page')" color="primary" size="xs" />
           </RCCreatePageModal>
           <RCDeletePageModal
             :is-open="isDeleteModalOpen"
@@ -350,7 +350,7 @@ const handleTreeNavigate = (slug: string) => {
             @close="isDeleteModalOpen = false"
             @confirm="handleDeleteConfirm"
           >
-            <UButton icon="lucide:file-plus" label="Delete Page" color="error" size="xs" />
+            <UButton icon="lucide:file-plus" :label="t('page_editor.delete_page')" color="error" size="xs" />
           </RCDeletePageModal>
         </div>
       </template>
@@ -423,10 +423,10 @@ const handleTreeNavigate = (slug: string) => {
               <USeparator />
 
               <div :class="metadata({ class: rc.metadata })">
-                <h6>Metadata</h6>
-                <span>Page ID: {{ page.id }}</span>
+                <h6>{{ t('page_editor.metadata') }}</h6>
+                <span>{{ t('page_editor.page_id') }}: {{ page.id }}</span>
                 <span
-                  >Created At:
+                  >{{ t('page_editor.created_at') }}:
                   <NuxtTime
                     :datetime="page.createdAt ?? ''"
                     year="numeric"
@@ -438,7 +438,7 @@ const handleTreeNavigate = (slug: string) => {
                     time-zone-name="short"
                 /></span>
                 <span
-                  >Posted At:
+                  >{{ t('page_editor.posted_at') }}:
                   <NuxtTime
                     :datetime="page.createdAt ?? ''"
                     year="numeric"
@@ -450,7 +450,7 @@ const handleTreeNavigate = (slug: string) => {
                     time-zone-name="short"
                 /></span>
                 <span
-                  >Updated At:
+                  >{{ t('page_editor.updated_at') }}:
                   <NuxtTime
                     :datetime="page.createdAt ?? ''"
                     year="numeric"
@@ -482,7 +482,13 @@ const handleTreeNavigate = (slug: string) => {
       :class="previewColumn({ class: rc.previewColumn })"
       :style="{ width: `${100 - editorWidth}%` }"
     >
-      <RCPageRenderer v-model="page" :resolve-page="resolvePage" />
+      <RCPageRenderer 
+        v-model="page" 
+        :resolve-page="resolvePage"
+        :use-surround="useSurround"
+        :surround="surround"
+        :surround-status="surroundStatus"
+      />
     </div>
   </div>
 </template>

@@ -143,7 +143,7 @@ const handleVersionNavigate = (version: PageVersion) => {
     />
   </div>
   <div v-else class="flex items-center justify-center min-h-[50vh]">
-    <UPageError
+    <UError
       title="Editor: Page Not Found"
       description="The requested showcase page could not be found to edit."
     />

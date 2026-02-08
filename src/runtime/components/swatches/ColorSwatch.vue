@@ -3,7 +3,7 @@ import { useToast } from "@nuxt/ui/composables/useToast"
 import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
+import { useRC, useLocale } from "../../composables"
 
 export interface ColorSwatchProps {
   name?: string
@@ -60,19 +60,20 @@ const {
 
 const { copy } = useClipboard()
 const toast = useToast()
+const { t } = useI18n()
 
 const copyToClipboard = async (text: string) => {
   try {
     await copy(`${text}`)
     toast.add({
-      title: "Color copied to clipboard!",
+      title: t('swatch.color_copied'),
       description: text,
       color: "success"
     })
   } catch {
     toast.add({
-      title: "Failed to copy color to clipboard.",
-      description: "An unexpected error occurred. Please try again.",
+      title: t('swatch.color_copy_failed'),
+      description: t('swatch.copy_error_description'),
       color: "error"
     })
   }
@@ -119,7 +120,7 @@ const color = computed(() => {
           variant="outline"
           size="sm"
           icon="lucide:copy"
-          label="Copy HEX"
+          :label="t('swatch.copy_hex')"
           :class="button({ class: rc.button })"
           @click="copyToClipboard(hex)"
         />
@@ -128,7 +129,7 @@ const color = computed(() => {
           variant="outline"
           size="sm"
           icon="lucide:copy"
-          label="Copy RGB"
+          :label="t('swatch.copy_rgb')"
           :class="button({ class: rc.button })"
           @click="copyToClipboard(rgb)"
         />
@@ -137,7 +138,7 @@ const color = computed(() => {
           variant="outline"
           size="sm"
           icon="lucide:copy"
-          label="Copy HSL"
+          :label="t('swatch.copy_hsl')"
           :class="button({ class: rc.button })"
           @click="copyToClipboard(hsl)"
         />
@@ -146,7 +147,7 @@ const color = computed(() => {
           variant="outline"
           size="sm"
           icon="lucide:copy"
-          label="Copy OKLCH"
+          :label="t('swatch.copy_oklch')"
           :class="button({ class: rc.button })"
           @click="copyToClipboard(oklch)"
         />
@@ -155,7 +156,7 @@ const color = computed(() => {
           variant="outline"
           size="sm"
           icon="lucide:copy"
-          label="Copy CMYK"
+          :label="t('swatch.copy_cmyk')"
           :class="button({ class: rc.button })"
           @click="copyToClipboard(cmyk)"
         />

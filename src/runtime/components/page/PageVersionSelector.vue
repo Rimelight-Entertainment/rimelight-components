@@ -77,7 +77,7 @@ const fetchVersions = async () => {
   } catch (error) {
     console.error("Failed to fetch versions:", error)
     // Avoid toast if not available, but usually it is in this project
-    try { toast.add({ color: "error", title: "Failed to load versions" }) } catch(e) {}
+    try { toast.add({ color: "error", title: t('page_version.failed_to_load') }) } catch(e) {}
   } finally {
     isLoading.value = false
   }
@@ -101,7 +101,7 @@ const approveVersion = async (version: PageVersion) => {
     try {
       toast.add({
         color: "success",
-        title: "Version approved successfully",
+        title: t('page_version.approved_successfully'),
         description: result?.message || "The page has been updated with the approved version"
       })
     } catch(e) {}
@@ -117,7 +117,7 @@ const approveVersion = async (version: PageVersion) => {
     try {
       toast.add({
         color: "error",
-        title: "Failed to approve version",
+        title: t('page_version.failed_to_approve'),
         description: error.message || "An error occurred"
       })
     } catch(e) {}
@@ -138,7 +138,7 @@ const revertVersion = async (version: PageVersion) => {
     try {
       toast.add({
         color: "success",
-        title: "Version reverted successfully",
+        title: t('page_version.reverted_successfully'),
         description: result?.message || "The page has been reverted to this version."
       })
     } catch(e) {}
@@ -151,7 +151,7 @@ const revertVersion = async (version: PageVersion) => {
     try {
       toast.add({
         color: "error",
-        title: "Failed to revert version",
+        title: t('page_version.failed_to_revert'),
         description: error.message || "An error occurred"
       })
     } catch(e) {}
@@ -186,7 +186,7 @@ watch(() => pageId, () => {
       :loading="isLoading"
       color="neutral"
       icon="lucide:git-branch"
-      label="Versions"
+      :label="t('common.versions')"
       size="xs"
       variant="ghost"
       :class="buttonClass({ class: rc.button })"

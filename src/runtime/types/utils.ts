@@ -58,3 +58,7 @@ export interface Range {
   start: Date
   end: Date
 }
+
+export type DeepPartial<T> = T extends object ? {
+  [P in keyof T]?: DeepPartial<T[P]>;
+} : T

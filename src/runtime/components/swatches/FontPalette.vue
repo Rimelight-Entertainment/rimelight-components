@@ -3,6 +3,7 @@ import { computed } from "vue"
 import chroma from "chroma-js"
 import { useRC, useHeaderStack } from "../../composables"
 import { tv } from "../../internal/tv"
+import { useI18n } from "vue-i18n"
 
 export interface FontPaletteProps {
   /**
@@ -23,6 +24,7 @@ export interface FontPaletteProps {
 const { css = "", rc: rcProp } = defineProps<FontPaletteProps>()
 
 const { rc } = useRC("FontPalette", rcProp)
+const { t } = useI18n()
 
 const { totalHeight } = useHeaderStack()
 const stickyTop = computed(() => `${totalHeight.value + 32}px`)
@@ -193,12 +195,12 @@ const numbers = "0123456789"
 const symbols = "!@#$%^&*()_+-=[]{};':\",./<>?"
 
 const headingLevels = [
-  { tag: "h1", label: "Heading 1" },
-  { tag: "h2", label: "Heading 2" },
-  { tag: "h3", label: "Heading 3" },
-  { tag: "h4", label: "Heading 4" },
-  { tag: "h5", label: "Heading 5" },
-  { tag: "h6", label: "Heading 6" }
+  { tag: "h1", label: t('font_palette.heading_1') },
+  { tag: "h2", label: t('font_palette.heading_2') },
+  { tag: "h3", label: t('font_palette.heading_3') },
+  { tag: "h4", label: t('font_palette.heading_4') },
+  { tag: "h5", label: t('font_palette.heading_5') },
+  { tag: "h6", label: t('font_palette.heading_6') }
 ]
 
 const tabItems = computed(() => {
@@ -239,9 +241,9 @@ function getFontStyles(family: string) {
           <UAccordion
             multiple
             :items="[
-              { label: 'Specimen', slot: 'specimen' },
-              { label: 'Hierarchy', slot: 'hierarchy' },
-              { label: 'Color', slot: 'colors' }
+              { label: t('font_palette.specimen'), slot: 'specimen' },
+              { label: t('font_palette.hierarchy'), slot: 'hierarchy' },
+              { label: t('font_palette.color'), slot: 'colors' }
             ]"
             :ui="{
               item: 'border-b border-default last:border-b-0',
@@ -256,7 +258,7 @@ function getFontStyles(family: string) {
               >
                 <div class="flex flex-col md:flex-row md:items-baseline gap-4">
                   <span class="w-32 text-xs text-muted font-mono uppercase shrink-0"
-                    >Uppercase</span
+                    >{{ t('font_palette.uppercase') }}</span
                   >
                   <div class="text-4xl break-all line-height-none tracking-tight">
                     {{ alphabet }}
@@ -264,20 +266,20 @@ function getFontStyles(family: string) {
                 </div>
                 <div class="flex flex-col md:flex-row md:items-baseline gap-4">
                   <span class="w-32 text-xs text-muted font-mono uppercase shrink-0"
-                    >Lowercase</span
+                    >{{ t('font_palette.lowercase') }}</span
                   >
                   <div class="text-4xl break-all line-height-none tracking-tight">
                     {{ alphabetLower }}
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row md:items-baseline gap-4">
-                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">Numbers</span>
+                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">{{ t('font_palette.numbers') }}</span>
                   <div class="text-4xl">
                     {{ numbers }}
                   </div>
                 </div>
                 <div class="flex flex-col md:flex-row md:items-baseline gap-4">
-                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">Symbols</span>
+                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">{{ t('font_palette.symbols') }}</span>
                   <div class="text-4xl">
                     {{ symbols }}
                   </div>

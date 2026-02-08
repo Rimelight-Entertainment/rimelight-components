@@ -2,6 +2,27 @@ export * from "./richTextHelpers"
 export * from "./page"
 
 /**
+ * Gets a value from an object by path
+ * @param obj The object to get the value from
+ * @param path The path to the value (e.g., "messages.common.cancel")
+ * @param defaultValue The default value to return if the path doesn't exist
+ * @returns The value at the path or the default value
+ */
+export function get<T = any>(obj: any, path: string, defaultValue?: T): T {
+  const keys = path.split('.')
+  let result = obj
+
+  for (const key of keys) {
+    if (result == null) {
+      return defaultValue as T
+    }
+    result = result[key]
+  }
+
+  return result ?? defaultValue as T
+}
+
+/**
  * Converts a string into a URL-friendly slug.
  * - Converts to lowercase.
  * - Replaces non-alphanumeric characters (except hyphens and spaces) with nothing.

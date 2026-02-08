@@ -133,7 +133,7 @@ watch(open, (isOpen) => {
         </template>
 
         <div :class="body({ class: rc.body })">
-          <UFormField label="Page Template" required>
+          <UFormField :label="t('page_properties.page_template')" required>
             <USelect
               v-model="selectedType"
               :items="typeOptions"
@@ -142,21 +142,21 @@ watch(open, (isOpen) => {
             />
           </UFormField>
 
-          <UFormField label="Title" required>
+          <UFormField :label="t('page_properties.title')" required>
             <UInput v-model="title" placeholder="e.g. My Awesome Movie" />
           </UFormField>
 
-          <UFormField label="Slug" required>
+          <UFormField :label="t('page_properties.slug')" required>
             <UInput v-model="slug" placeholder="my-awesome-movie" />
           </UFormField>
         </div>
 
         <template #footer>
           <div :class="footer({ class: rc.footer })">
-            <UButton color="neutral" variant="ghost" label="Cancel" @click="emit('close')" />
+            <UButton color="neutral" variant="ghost" :label="t('common.cancel')" @click="emit('close')" />
             <UButton
               color="primary"
-              label="Create & Edit"
+              :label="t('page_properties.create_and_edit')"
               :loading="loading"
               :disabled="!selectedType || !title"
               @click="handleConfirm"

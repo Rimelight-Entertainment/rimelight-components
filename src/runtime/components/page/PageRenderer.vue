@@ -11,6 +11,8 @@ export interface PageRendererProps {
   surround?: PageSurround | null
   surroundStatus?: 'idle' | 'pending' | 'success' | 'error'
   resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
+  canEdit?: boolean
+  editUrl?: string
   rc?: {
     container?: string
     grid?: string
@@ -31,6 +33,8 @@ const {
   surroundStatus = 'idle',
   surround = null,
   resolvePage,
+  canEdit = false,
+  editUrl,
   rc: rcProp
 } = defineProps<PageRendererProps>()
 
@@ -92,7 +96,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
       <RCPageTOC :page-blocks="page.blocks" :levels="[2, 3, 4]" :class="toc({ class: rc.toc })">
         <template #bottom> </template>
       </RCPageTOC>
-      <RCPagePropertiesRenderer v-model="page" :class="properties({ class: rc.properties })" />
+      <RCPagePropertiesRenderer v-model="page" :can-edit="canEdit" :edit-url="editUrl" :class="properties({ class: rc.properties })" />
       <div :class="contentWrapper({ class: rc.contentWrapper })">
         <RCImage
           v-if="page.banner?.src"

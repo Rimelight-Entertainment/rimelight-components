@@ -2,6 +2,7 @@
 import { computed } from "vue"
 import { tv } from "../../internal/tv"
 import { useRC } from "../../composables"
+import { useI18n } from "vue-i18n"
 
 export interface ImageSwatchProps {
   name?: string
@@ -30,6 +31,7 @@ export interface ImageSwatchSlots {}
 const slots = defineSlots<ImageSwatchSlots>()
 
 const { rc } = useRC('ImageSwatch', rcProp)
+const { t } = useI18n()
 
 const imageSwatchStyles = tv({
   slots: {
@@ -67,7 +69,7 @@ const image = computed(() => {
           variant="outline"
           size="sm"
           icon="lucide:download"
-          label="Download JPG"
+          :label="t('swatch.download_jpg')"
           :class="button({ class: rc.button })"
           :to="jpg"
           target="_blank"
@@ -77,7 +79,7 @@ const image = computed(() => {
           variant="outline"
           size="sm"
           icon="lucide:download"
-          label="Download PNG"
+          :label="t('swatch.download_png')"
           :class="button({ class: rc.button })"
           :to="png"
           target="_blank"
@@ -87,7 +89,7 @@ const image = computed(() => {
           variant="outline"
           size="sm"
           icon="lucide:download"
-          label="Download WEBP"
+          :label="t('swatch.download_webp')"
           :class="button({ class: rc.button })"
           :to="webp"
           target="_blank"
@@ -97,7 +99,7 @@ const image = computed(() => {
           variant="outline"
           size="sm"
           icon="lucide:download"
-          label="Download SVG"
+          :label="t('swatch.download_svg')"
           :class="button({ class: rc.button })"
           :to="svg"
           target="_blank"

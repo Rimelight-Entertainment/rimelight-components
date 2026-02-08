@@ -19,7 +19,7 @@ const loadPage = () => {
   const found = MOCK_PAGES_LIST.find(p => p.slug === slug.value)
   if (found) {
     moviePage.value = found
-    
+
     // Simulate API Fetch Delay for surround
     surroundStatus.value = 'pending'
     setTimeout(() => {
@@ -60,10 +60,12 @@ const pageResolver = async (id: string) => {
       use-surround
       :surround="surround"
       :surround-status="surroundStatus"
+      :can-edit="true"
+      :edit-url="`/${slug}/edit`"
     />
   </div>
   <div v-else class="flex items-center justify-center min-h-[50vh]">
-    <UPageError
+    <UError
       title="Page Not Found"
       description="The requested showcase page could not be found in the mock database."
     />

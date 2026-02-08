@@ -2,8 +2,10 @@
 import { ref, computed, watch } from 'vue'
 import { useTodos, useApi } from '../../composables'
 import type { Todo } from '../../db/auth'
+import { useI18n } from 'vue-i18n'
 
 const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo, todoRefreshTrigger } = useTodos()
+const { t } = useI18n()
 
 const { data: todos, refresh: refreshTodos } = await useApi<Todo[]>('/api/todos')
 
@@ -47,13 +49,13 @@ watch(todoRefreshTrigger, () => {
 <template>
   <div class="flex flex-col gap-md">
     <div class="flex items-center justify-between">
-      <h3 class="text-sm font-semibold tracking-wider text-gray-500 uppercase">To-do List</h3>
+      <h3 class="text-sm font-semibold tracking-wider text-gray-500 uppercase">{{ t('todo.title') }}</h3>
       <UButton
         :icon="showArchived ? 'lucide:archive-x' : 'lucide:archive'"
         color="neutral"
         size="xs"
         variant="ghost"
-        :label="showArchived ? 'Hide Archive' : 'Show Archive'"
+        :label="showArchived ? t('todo.hide_archive') : t('todo.show_archive')"
         @click="showArchived = !showArchived"
       />
     </div>
@@ -65,7 +67,7 @@ watch(todoRefreshTrigger, () => {
           <div class="flex gap-sm items-center">
             <UInput
               v-model="newTodoTitle"
-              placeholder="Add a to-do..."
+              :placeholder="t('todo.add_placeholder')"
               class="flex-1"
               @keydown.enter="handleAddTodo"
             />
@@ -87,7 +89,7 @@ watch(todoRefreshTrigger, () => {
             <div v-if="newTodoTitle.length > 0" class="pl-0">
                <UInput
                  v-model="newTodoDescription"
-                 placeholder="Add a description (optional)..."
+                 :placeholder="t('todo.description_placeholder')"
                  size="xs"
                  variant="outline"
                  color="neutral"
@@ -139,13 +141,13 @@ watch(todoRefreshTrigger, () => {
           </div>
 
           <p v-if="activeTodos.length === 0" class="text-xs text-dimmed text-center py-sm">
-            No active to-dos.
+            {{ t('todo.no_active') }}
           </p>
         </div>
 
         <!-- Archived Section -->
         <template v-if="showArchived">
-          <USeparator label="Archive" />
+          <USeparator :label="t('common.archive')" />
           <div class="flex flex-col gap-xs">
             <div
               v-for="todo in archivedTodos"

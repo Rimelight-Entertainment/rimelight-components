@@ -10,6 +10,8 @@ import { type Page } from '../../types'
 import { tv } from '../../internal/tv'
 
 export interface PagePropertiesRendererProps {
+  canEdit?: boolean
+  editUrl?: string
   rc?: {
     aside?: string
     actions?: string
@@ -33,7 +35,7 @@ export interface PagePropertiesRendererProps {
   }
 }
 
-const { rc: rcProp } = defineProps<PagePropertiesRendererProps>()
+const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>()
 
 const page = defineModel<Page>({ required: true })
 
@@ -50,7 +52,7 @@ const { rc } = useRC('PagePropertiesRenderer', rcProp)
 const pagePropertiesRendererStyles = tv({
   slots: {
     aside: "flex flex-col gap-md",
-    actions: "flex flex-row flex-wrap gap-sm",
+    actions: "flex flex-row justify-between gap-sm",
     icon: "rounded-full w-12 h-12 object-cover",
     title: "",
     type: "text-sm",
@@ -155,8 +157,13 @@ const imageTabs = computed<TabsItem[]>(() => {
 <template>
   <aside :class="aside({ class: rc.aside })">
     <div :class="actions({ class: rc.actions })">
-      <UButton variant="soft" color="neutral" icon="lucide:share" size="sm" @click="sharePage()" />
-      <UButton variant="soft" color="neutral" icon="lucide:link" size="sm" @click="copyLink()" />
+      <div class="flex flex-row gap-sm">
+        <UButton variant="soft" color="neutral" icon="lucide:share" size="sm" @click="sharePage()" />
+        <UButton variant="soft" color="neutral" icon="lucide:link" size="sm" @click="copyLink()" />
+      </div>
+      <div v-if="canEdit && editUrl" class="flex flex-row gap-sm">
+        <UButton variant="soft" color="neutral" icon="lucide:pencil" size="sm" :to="editUrl" />
+      </div>
     </div>
     <UCard
       variant="soft"
