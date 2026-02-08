@@ -83,7 +83,6 @@ defineExpose({ undo, redo, canUndo, canRedo })
       <span class="text-sm text-dimmed mb-2">Append new block to page</span>
       <UDropdown
         :items="dropdownItems"
-        :popper="{ placement: 'bottom' }"
       >
         <UButton
           color="white"

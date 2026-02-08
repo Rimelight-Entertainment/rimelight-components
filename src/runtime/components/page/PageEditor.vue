@@ -15,6 +15,8 @@ export interface PageEditorProps {
   pageDefinitions: Record<string, PageDefinition>
   onCreatePage?: (page: Partial<Page>) => Promise<void>
   onDeletePage?: (id: string) => Promise<void>
+  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug'>[]>
+  onNavigateToPage?: (slug: string) => void
   rc?: {
     header?: string
     headerGroup?: string
@@ -44,6 +46,8 @@ const {
   resolvePage,
   onCreatePage,
   onDeletePage,
+  onFetchPages,
+  onNavigateToPage,
   rc: rcProp
 } = defineProps<PageEditorProps>()
 
@@ -211,6 +215,29 @@ const handleDeleteConfirm = async () => {
     isDeleting.value = false
   }
 }
+
+const isPageTreeModalOpen = ref(false)
+const isFetchingTree = ref(false)
+const treePages = ref<Pick<Page, 'title' | 'slug'>[]>([])
+
+const handleOpenTree = async () => {
+  if (!onFetchPages) return
+  isFetchingTree.value = true
+  try {
+    treePages.value = await onFetchPages()
+    isPageTreeModalOpen.value = true
+  } catch (e) {
+    console.error("Failed to fetch pages for tree", e)
+  } finally {
+    isFetchingTree.value = false
+  }
+}
+
+const handleTreeNavigate = (slug: string) => {
+  if (onNavigateToPage) {
+    onNavigateToPage(slug)
+  }
+}
 </script>
 
 <template>
@@ -254,6 +281,21 @@ const handleDeleteConfirm = async () => {
             size="xs"
             :loading="isSaving"
             @click="handleSave"
+          />
+          <UButton
+            icon="lucide:list-tree"
+            variant="outline"
+            color="neutral"
+            size="xs"
+            :loading="isFetchingTree"
+            :disabled="!onFetchPages"
+            @click="handleOpenTree"
+          />
+          <RCPageTreeModal
+            v-model:open="isPageTreeModalOpen"
+            :pages="treePages"
+            :loading="isFetchingTree"
+            @navigate="handleTreeNavigate"
           />
           <RCCreatePageModal
             :is-open="isCreateModalOpen"
