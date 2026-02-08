@@ -5,7 +5,6 @@ import { tv } from "../../../internal/tv"
 import { useRC } from "../../../composables"
 
 export interface DeletePageModalProps {
-  isOpen: boolean
   loading?: boolean
   pageTitle: string
   rc?: {
@@ -17,7 +16,8 @@ export interface DeletePageModalProps {
   }
 }
 
-const { isOpen, loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>()
+const open = defineModel<boolean>("open", { default: false })
+const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>()
 
 export interface DeletePageModalEmits {
   close: []
@@ -58,8 +58,11 @@ const confirmationInput = ref('')
 const CONFIRMATION_TEXT = "DELETE"
 
 // Reset input when modal closes
-watch(() => isOpen, (val) => {
-  if (!val) confirmationInput.value = ''
+watch(open, (val) => {
+  if (!val) {
+    confirmationInput.value = ''
+    emits('close')
+  }
 })
 
 const handleConfirm = () => {
@@ -70,7 +73,7 @@ const handleConfirm = () => {
 </script>
 
 <template>
-  <UModal :model-value="isOpen" @update:model-value="emits('close')">
+  <UModal v-model:open="open">
     <slot />
     <template #content>
       <UCard :ui="{ body: 'space-y-4' }">
@@ -84,7 +87,7 @@ const handleConfirm = () => {
               variant="ghost"
               icon="lucide:x"
               :class="closeButton({ class: rc.closeButton })"
-              @click="emits('close')"
+              @click="open = false"
             />
           </div>
         </template>
@@ -115,7 +118,7 @@ const handleConfirm = () => {
               color="neutral"
               variant="ghost"
               :label="t('common.cancel', 'Cancel')"
-              @click="emits('close')"
+              @click="open = false"
             />
             <UButton
               color="error"

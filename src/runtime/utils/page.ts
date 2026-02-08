@@ -1,5 +1,5 @@
 import { type MaybeRefOrGetter, toValue } from "vue"
-import { type Localized, type Page, type PageDefinition, type Property } from "../types"
+import { type Localized, type Page, type PageDefinition, type PageVersion, type Property } from "../types"
 
 export const getLocalizedContent = <T = string>(
   field: Localized<T> | undefined,
@@ -15,12 +15,12 @@ export const getLocalizedContent = <T = string>(
 type WidenProperty<T> = T extends string
   ? string
   : T extends number
-    ? number
-    : T extends never[]
-      ? Localized[]
-      : T extends object
-        ? { [K in keyof T]: WidenProperty<T[K]> }
-        : T
+  ? number
+  : T extends never[]
+  ? Localized[]
+  : T extends object
+  ? { [K in keyof T]: WidenProperty<T[K]> }
+  : T
 
 /**
  * Helper to define a page with full type safety and literal preservation.
@@ -29,20 +29,20 @@ type WidenProperty<T> = T extends string
 export function definePageDefinition<T extends PageDefinition>(
   def: T
 ): {
-  [K in keyof T]: K extends "properties"
+    [K in keyof T]: K extends "properties"
     ? {
-        [G in keyof T["properties"]]: {
-          label: Localized<string>
-          defaultOpen: boolean
-          fields: {
-            [F in keyof T["properties"][G]["fields"]]: Property<
-              WidenProperty<T["properties"][G]["fields"][F]["value"]>
-            >
-          }
+      [G in keyof T["properties"]]: {
+        label: Localized<string>
+        defaultOpen: boolean
+        fields: {
+          [F in keyof T["properties"][G]["fields"]]: Property<
+            WidenProperty<T["properties"][G]["fields"][F]["value"]>
+          >
         }
       }
+    }
     : T[K]
-} {
+  } {
   return def as any
 }
 
@@ -159,4 +159,18 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
   }
 
   return page
+}
+
+/**
+ * Converts a PageVersion to a Page structure for display in the editor.
+ */
+export function convertVersionToPage(version: PageVersion): Page {
+  return {
+    ...version,
+    id: version.pageId,
+    type: version.type,
+    blocks: version.content?.blocks || version.blocks,
+    properties: version.content?.properties,
+    authorsIds: version.authorsIds
+  } as Page
 }

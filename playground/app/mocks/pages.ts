@@ -6,7 +6,7 @@ import { type Page, type PageSurround } from "../../../src/runtime/types"
 export const MOCK_MOVIE_PAGE: Page = {
   id: "movie-1",
   type: "Movie",
-  slug: "the-matrix",
+  slug: "matrix/the-matrix",
   icon: {
     src: "https://placehold.co/100x100",
     alt: "The Matrix Icon",
@@ -151,15 +151,35 @@ export const MOCK_MOVIE_PAGE: Page = {
   updatedAt: new Date()
 }
 
+export const MOCK_FRANCHISE_PAGE: Page = {
+  id: "franchise-1",
+  type: "Wiki",
+  slug: "matrix",
+  title: { en: "The Matrix Franchise" },
+  description: { en: "A media franchise consisting of four feature films, starting with The Matrix (1999) and continuing with three sequels." },
+  blocks: [
+    { id: "f1", type: "SectionBlock", props: { level: 2, title: "Films", children: [] } },
+    { id: "f2", type: "SectionBlock", props: { level: 2, title: "Impact", children: [] } }
+  ],
+  properties: {},
+  createdAt: new Date(),
+  postedAt: new Date(),
+  updatedAt: new Date()
+}
+
 /**
  * Mock List of Pages for Tree
  */
 export const MOCK_PAGES_LIST: Page[] = [
-  MOCK_MOVIE_PAGE,
+  MOCK_FRANCHISE_PAGE,
+  {
+    ...MOCK_MOVIE_PAGE,
+    slug: "matrix/the-matrix",
+  },
   {
     ...MOCK_MOVIE_PAGE,
     id: "movie-2",
-    slug: "the-matrix-reloaded",
+    slug: "matrix/the-matrix-reloaded",
     title: { en: "The Matrix Reloaded" },
     description: { en: "Neo and the rebel leaders estimate they have 72 hours until 250,000 probes discover Zion." },
     blocks: [
@@ -180,7 +200,7 @@ export const MOCK_PAGES_LIST: Page[] = [
   {
     ...MOCK_MOVIE_PAGE,
     id: "movie-3",
-    slug: "the-matrix-revolutions",
+    slug: "matrix/the-matrix-revolutions",
     title: { en: "The Matrix Revolutions" },
     description: { en: "The human city of Zion defends itself against the massive invasion of the machines." },
     blocks: [
@@ -210,7 +230,7 @@ export const MOCK_VERSIONS = [
     status: "approved",
     type: "Movie",
     title: { en: "The Matrix (Original Version)" },
-    authorIds: ["user-1"],
+    authorsIds: ["user-1"],
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
     updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
     content: {
@@ -224,7 +244,7 @@ export const MOCK_VERSIONS = [
     status: "pending",
     type: "Movie",
     title: { en: "The Matrix (Draft Changes)" },
-    authorIds: ["user-1"],
+    authorsIds: ["user-1"],
     createdAt: new Date(),
     updatedAt: new Date(),
     content: {
@@ -248,7 +268,7 @@ export const MOCK_MOVIE_SURROUND: PageSurround = {
   },
   next: {
     id: "movie-2",
-    slug: "the-matrix-reloaded",
+    slug: "matrix/the-matrix-reloaded",
     title: { en: "The Matrix Reloaded" },
     description: {
       en: "Neo and the rebel leaders estimate they have 72 hours until 250,000 probes discover Zion."

@@ -84,6 +84,7 @@ export interface PageSurround {
 }
 
 export interface PageVersion extends BasePage {
+  pageId: string
   status: "pending" | "approved" | "rejected"
   type: PageType
   content: {

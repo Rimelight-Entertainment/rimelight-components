@@ -125,9 +125,9 @@ watch(open, (isOpen) => {
             <UButton
               color="neutral"
               variant="ghost"
-              icon="i-heroicons-x-mark-20-solid"
+              icon="lucide:x"
               :class="closeButton({ class: rc.closeButton })"
-              @click="emit('close')"
+              @click="open = false"
             />
           </div>
         </template>
@@ -153,7 +153,7 @@ watch(open, (isOpen) => {
 
         <template #footer>
           <div :class="footer({ class: rc.footer })">
-            <UButton color="neutral" variant="ghost" :label="t('common.cancel')" @click="emit('close')" />
+            <UButton color="neutral" variant="ghost" :label="t('common.cancel')" @click="open = false" />
             <UButton
               color="primary"
               :label="t('page_properties.create_and_edit')"

@@ -47,6 +47,7 @@ interface TreeItem {
   label: string
   icon?: string
   slug?: string
+  path: string
   children?: TreeItem[]
   defaultExpanded?: boolean
 }
@@ -66,6 +67,7 @@ const treeItems = computed<TreeItem[]>(() => {
 
       const newNode: TreeItem = {
         label,
+        path,
         slug: pageObj ? pageObj.slug : undefined,
         icon: pageObj ? 'i-lucide-file' : 'i-lucide-folder',
         children: []
@@ -108,17 +110,35 @@ const treeItems = computed<TreeItem[]>(() => {
     })
   })
 
-  // Sort nodes
-  const sortNodes = (nodes: TreeItem[]) => {
+  // Sort and process hierarchy
+  const processNodes = (nodes: TreeItem[]) => {
     nodes.sort((a, b) => a.label.localeCompare(b.label))
-    nodes.forEach(n => {
-      if (n.children && n.children.length > 0) {
-        sortNodes(n.children)
+
+    for (const node of nodes) {
+      // If this node is both a page AND has children, we add a synthetic child
+      // so the parent can act as a folder (toggle only) and the child as the page link.
+      if (node.slug && node.children && node.children.length > 0) {
+          const indexNode: TreeItem = {
+              label: node.label, // Or t('common.overview') / same name
+              slug: node.slug,
+              path: `${node.path}:index`,
+              icon: 'i-lucide-file-text',
+              children: []
+          }
+          node.children.unshift(indexNode)
+          
+          // Convert parent to folder-only
+          node.slug = undefined
+          node.icon = 'i-lucide-folder'
       }
-    })
+
+      if (node.children && node.children.length > 0) {
+        processNodes(node.children)
+      }
+    }
   }
 
-  sortNodes(rootNodes)
+  processNodes(rootNodes)
   return rootNodes
 })
 
@@ -130,7 +150,7 @@ const handleSelect = (node: TreeItem) => {
 }
 
 // UTree requires keys
-const getKey = (item: TreeItem) => item.slug || item.label
+const getKey = (item: TreeItem) => item.path
 
 </script>
 
@@ -144,7 +164,7 @@ const getKey = (item: TreeItem) => item.slug || item.label
             <UButton
               color="neutral"
               variant="ghost"
-              icon="i-heroicons-x-mark-20-solid"
+              icon="lucide:x"
               :class="closeButton({ class: rc.closeButton })"
               @click="open = false"
             />
@@ -161,12 +181,16 @@ const getKey = (item: TreeItem) => item.slug || item.label
           <UTree 
               v-else
               :items="treeItems" 
-              :ui="{ item: 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800' }"
+              :get-key="getKey"
+              :ui="{ 
+                item: 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800',
+                linkLabel: 'w-full'
+              }"
+              @select="(e, item) => handleSelect(item)"
           >
-              <template #item="{ item }">
-                  <div class="flex items-center gap-2 py-1 w-full" @click="handleSelect(item)">
-                      <UIcon :name="item.icon || (item.children?.length ? 'i-lucide-folder' : 'i-lucide-file')" class="w-4 h-4 text-gray-400" />
-                      <span :class="{'text-gray-900 dark:text-gray-100': item.slug, 'text-gray-500 font-medium': !item.slug}">
+              <template #item-label="{ item }">
+                  <div class="flex items-center gap-2 py-1 w-full">
+                      <span :class="{'text-gray-900 dark:text-gray-100 font-medium': item.slug, 'text-gray-400': !item.slug}">
                           {{ item.label }}
                       </span>
                       <UIcon v-if="item.slug" name="i-heroicons-arrow-right-20-solid" class="w-3 h-3 ml-auto text-gray-300 opacity-0 group-hover:opacity-100" />

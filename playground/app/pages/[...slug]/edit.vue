@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted, nextTick } from "vue"
 import { PAGE_MAP } from "~/types"
 import { MOCK_PAGES_LIST, MOCK_MOVIE_SURROUND, MOCK_VERSIONS } from "~/mocks/pages"
 import { type Page, type PageSurround, type PageVersion } from "rimelight-components/types";
+import { convertVersionToPage } from "rimelight-components/utils";
 
 const route = useRoute()
 const slug = computed(() => {
@@ -117,17 +118,7 @@ const handleVersionNavigate = (version: PageVersion) => {
   isViewingVersion.value = true
   currentVersionId.value = version.id
   
-  if (moviePage.value) {
-    moviePage.value = {
-      ...moviePage.value,
-      title: version.title,
-      blocks: version.content.blocks,
-      properties: {
-        ...moviePage.value.properties,
-        ...version.content.properties
-      }
-    } as any
-  }
+  moviePage.value = convertVersionToPage(version)
 }
 </script>
 

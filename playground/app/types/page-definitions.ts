@@ -56,12 +56,20 @@ export const MOVIE_DEFINITION = definePageDefinition({
   initialBlocks: () => []
 })
 
+export const WIKI_DEFINITION = definePageDefinition({
+  typeLabelKey: "page.type.wiki",
+  properties: {},
+  initialBlocks: () => []
+})
+
 declare global {
   interface RimelightRegisterPageTypes {
     Movie: typeof MOVIE_DEFINITION.properties
+    Wiki: typeof WIKI_DEFINITION.properties
   }
 }
 
 export const PAGE_MAP = {
-  Movie: MOVIE_DEFINITION
+  Movie: MOVIE_DEFINITION,
+  Wiki: WIKI_DEFINITION
 }

@@ -35,10 +35,15 @@ const items = computed<NavigationMenuItem[]>(() => [
     label: "Wiki",
     active: route.path.startsWith("/wiki") || MOCK_PAGES_LIST.some(page => route.path.startsWith(`/${page.slug}`)),
     slot: "megamenu" as const,
-    children: MOCK_PAGES_LIST.map(page => ({
-      label: page.title.en,
-      description: page.description?.en,
-      to: `/${page.slug}`
+    children: MOCK_PAGES_LIST.filter(p => !p.slug.includes('/')).map(parent => ({
+      label: parent.title.en,
+      description: parent.description?.en,
+      to: `/${parent.slug}`,
+      children: MOCK_PAGES_LIST.filter(p => p.slug.startsWith(`${parent.slug}/`)).map(child => ({
+        label: child.title.en,
+        description: child.description?.en,
+        to: `/${child.slug}`
+      }))
     }))
   },
   {
@@ -146,19 +151,31 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
             <UContainer>
               <div class="flex h-full flex-row gap-xl">
                 <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
-                <ul v-if="(item as NavigationMenuItem).children" class="grid gap-2 flex-1 p-md">
-                  <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
+                <ul v-if="(item as NavigationMenuItem).children" class="grid gap-4 flex-1 p-md grid-cols-2">
+                  <li v-for="parent in (item as NavigationMenuItem).children" :key="parent.label" class="space-y-2">
                     <ULink
-                      :to="child.to"
-                      class="block w-full rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
+                      :to="parent.to"
+                      class="block w-full rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50 bg-muted/30"
                     >
-                      <p class="font-medium text-highlighted">
-                        {{ child.label }}
+                      <p class="font-bold text-highlighted">
+                        {{ parent.label }}
                       </p>
-                      <p class="line-clamp-2 text-muted">
-                        {{ child.description }}
+                      <p class="line-clamp-2 text-muted text-xs">
+                        {{ parent.description }}
                       </p>
                     </ULink>
+                    
+                    <ul v-if="parent.children" class="pl-4 space-y-1">
+                      <li v-for="child in parent.children" :key="child.label">
+                        <ULink
+                          :to="child.to"
+                          class="block w-full rounded-md px-3 py-1 text-left text-sm transition-colors hover:text-primary"
+                        >
+                          <span class="text-xs text-muted mr-2">/</span>
+                          <span class="font-medium">{{ child.label }}</span>
+                        </ULink>
+                      </li>
+                    </ul>
                   </li>
                 </ul>
               </div>

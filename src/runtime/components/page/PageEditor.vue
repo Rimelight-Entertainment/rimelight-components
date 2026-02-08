@@ -66,6 +66,8 @@ const versionId = defineModel<string | null>("currentVersionId", { default: null
 export interface PageEditorEmits {
   save: [value: Page]
   'version-navigate': [version: PageVersion]
+  'version-approved': [version: PageVersion]
+  'version-reverted': [version: PageVersion]
 }
 
 const emit = defineEmits<PageEditorEmits>()
@@ -364,22 +366,22 @@ const handleTreeNavigate = (slug: string) => {
             :page-id="page.id"
             :is-admin="isAdmin"
             @version-selected="(v: any) => emit('version-navigate', v)"
+            @version-approved="(v: any) => emit('version-approved', v)"
+            @version-reverted="(v: any) => emit('version-reverted', v)"
           />
           <slot name="header-actions" />
           <RCCreatePageModal
-            :is-open="isCreateModalOpen"
+            v-model:open="isCreateModalOpen"
             :definitions="pageDefinitions"
             :loading="isCreating"
-            @close="isCreateModalOpen = false"
             @confirm="handleCreateConfirm"
           >
             <UButton icon="lucide:file-plus" :label="t('page_editor.create_page')" color="primary" size="xs" />
           </RCCreatePageModal>
           <RCDeletePageModal
-            :is-open="isDeleteModalOpen"
+            v-model:open="isDeleteModalOpen"
             :loading="isDeleting"
             :page-title="getLocalizedContent(page.title, locale)"
-            @close="isDeleteModalOpen = false"
             @confirm="handleDeleteConfirm"
           >
             <UButton icon="lucide:file-plus" :label="t('page_editor.delete_page')" color="error" size="xs" />
