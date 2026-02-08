@@ -32,16 +32,18 @@ const items = computed<NavigationMenuItem[]>(() => {
     },
     {
       label: "Page View",
-      to: "/page-view",
-      active: route.path.startsWith("/page-view")
+      to: "/id/movie-1",
+      active: route.path === "/id/movie-1"
     },
     {
-      label: "Events",
-      active: route.path.startsWith("/events")
+      label: "Page Edit",
+      to: "/id/movie-1/edit",
+      active: route.path === "/id/movie-1/edit"
     },
     {
-      label: "Store",
-      active: route.path.startsWith("/store")
+      label: "Colors",
+      to: "/colors",
+      active: route.path === "/colors"
     },
     {
       label: "Megamenu 2",

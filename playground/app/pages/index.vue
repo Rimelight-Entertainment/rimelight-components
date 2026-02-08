@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const mainCss = import.meta.glob('../assets/css/main.css', { query: '?raw', import: 'default', eager: true })['../assets/css/main.css'] as string
+
 useHead({
   title: "Home"
 })
@@ -71,14 +73,20 @@ useHead({
             </div>
           </RCSection>
           <RCSection :level="3" title="Color" description="Lorem ipsum dolor sit amet.">
-            <RCColorSwatch
-              name="Color"
-              hex="#1d6ebe"
-              rgb="rgb(29, 110, 190)"
-              hsl="hsl(209 73% 43%)"
-              oklch="oklch(0.5338 0.1455 252.53)"
-              cmyk="cmyk(84%, 42%, 0%, 25%)"
-            />
+            <div class="flex flex-col gap-xl">
+              <RCColorSwatch
+                name="Color"
+                hex="#1d6ebe"
+                rgb="rgb(29, 110, 190)"
+                hsl="hsl(209 73% 43%)"
+                oklch="oklch(0.5338 0.1455 252.53)"
+                cmyk="cmyk(84%, 42%, 0%, 25%)"
+              />
+
+              <USeparator label="Palette" />
+
+              <RCColorPalette :css="mainCss" />
+            </div>
           </RCSection>
           <RCSection :level="3" title="Image" description="Lorem ipsum dolor sit amet.">
             <RCImageSwatch

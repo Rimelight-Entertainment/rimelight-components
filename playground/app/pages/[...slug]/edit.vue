@@ -95,7 +95,7 @@ const handleVersionNavigate = (version: PageVersion) => {
       ...moviePage.value.properties,
       ...version.content.properties
     }
-  }
+  } as any
 }
 </script>
 
@@ -114,7 +114,7 @@ const handleVersionNavigate = (version: PageVersion) => {
     :on-fetch-pages="handleFetchPages"
     :on-create-page="handleCreatePage"
     :on-delete-page="handleDeletePage"
-    :on-navigate-to-page="(slug: string) => console.log('NAVIGATE TO:', slug)"
+    :on-navigate-to-page="(slug: string) => navigateTo(`/${slug}/edit`)"
     @save="handleSave"
     @version-navigate="handleVersionNavigate"
   />

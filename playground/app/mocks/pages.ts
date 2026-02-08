@@ -146,9 +146,9 @@ export const MOCK_MOVIE_PAGE: Page = {
       }
     }
   },
-  created_at: new Date(),
-  posted_at: new Date(),
-  updated_at: new Date()
+  createdAt: new Date(),
+  postedAt: new Date(),
+  updatedAt: new Date()
 }
 
 /**
