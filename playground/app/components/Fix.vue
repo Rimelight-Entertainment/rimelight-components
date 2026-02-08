@@ -26,7 +26,7 @@
   <!-- prettier-ignore -->
   <div class="mt-1 mt-2 mt-3 mt-4 mt-6 mt-8 mt-10 mt-12 mt-16 mt-20 mt-24 mt-32 mt-40 mt-48 mt-56 mt-64 mt-96 mt-128 mt-256 lg:mt-1 lg:mt-2 lg:mt-3 lg:mt-4 lg:mt-6 lg:mt-8 lg:mt-10 lg:mt-12 lg:mt-16 lg:mt-20 lg:mt-24 lg:mt-32 lg:mt-40 lg:mt-48 lg:mt-56 lg:mt-64 lg:mt-96 lg:mt-128 lg:mt-256"/>
   <!-- prettier-ignore -->
-  <div class="mb-1 mb-2 mb-3 mb-4 mb-6 mb-8 mb-10 mb-12 mb-16 mb-20 mb-24 mb-32 mb-40 mb-48 mb-56 mb-64 mb-96 mb-128 mb-256 lg:mb-1 lg:mb-2 lg:mb-3 lg:mb-4 lg:mb-6 lg:mb-8 lg:mb-10 lg:mb-12 lg:mb-16 lg:mb-20 lg:mb-24 lg:mb-32 lg:mb-40 lg:mb-48 lg:mb-56 lg:mb-64 lg:mb-96 lg:mb-128 lg:mb-256"/>
+  <div class="md:sticky md:top-[var(--palette-sticky-top)] self-start z-10 overflow-visible mb-1 mb-2 mb-3 mb-4 mb-6 mb-8 mb-10 mb-12 mb-16 mb-20 mb-24 mb-32 mb-40 mb-48 mb-56 mb-64 mb-96 mb-128 mb-256 lg:mb-1 lg:mb-2 lg:mb-3 lg:mb-4 lg:mb-6 lg:mb-8 lg:mb-10 lg:mb-12 lg:mb-16 lg:mb-20 lg:mb-24 lg:mb-32 lg:mb-40 lg:mb-48 lg:mb-56 lg:mb-64 lg:mb-96 lg:mb-128 lg:mb-256"/>
   <!-- prettier-ignore -->
   <div class="ml-1 ml-2 ml-3 ml-4 ml-6 ml-8 ml-10 ml-12 ml-16 ml-20 ml-24 ml-32 ml-40 ml-48 ml-56 ml-64 ml-96 ml-128 ml-256 lg:ml-1 lg:ml-2 lg:ml-3 lg:ml-4 lg:ml-6 lg:ml-8 lg:ml-10 lg:ml-12 lg:ml-16 lg:ml-20 lg:ml-24 lg:ml-32 lg:ml-40 lg:ml-48 lg:ml-56 lg:ml-64 lg:ml-96 lg:ml-128 lg:ml-256"/>
   <!-- prettier-ignore -->

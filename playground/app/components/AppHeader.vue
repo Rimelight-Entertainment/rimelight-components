@@ -1,158 +1,134 @@
 <script setup lang="ts">
 import type { NavigationMenuItem, DropdownMenuItem } from "@nuxt/ui"
+import { useHeaderStack } from "rimelight-components/composables"
+
+const { bottomOffsets } = useHeaderStack()
+const headerLayerId = inject<string>("header_layer_id", "global-header")
 
 const route = useRoute()
 
-const leftDrawerOpen = ref(false)
-const rightDrawerOpen = ref(false)
-
-const items = computed<NavigationMenuItem[]>(() => {
-  const baseItems: NavigationMenuItem[] = [
-    {
-      label: "Megamenu",
-      active: route.path.startsWith("/megamenu"),
-      slot: "megamenu" as const,
-      children: [
-        {
-          label: "Overview",
-          description:
-            "You have nothing to do, @nuxt/icon will handle it automatically."
-        },
-        {
-          label: "Characters",
-          description:
-            "Choose a primary and a neutral color from your Tailwind CSS theme."
-        },
-        {
-          label: "Tales",
-          description:
-            'You can customize components by using the "class" / "ui" props or in your app.config.ts.'
-        }
-      ]
-    },
-    {
-      label: "Page View",
-      to: "/id/movie-1",
-      active: route.path === "/id/movie-1"
-    },
-    {
-      label: "Page Edit",
-      to: "/id/movie-1/edit",
-      active: route.path === "/id/movie-1/edit"
-    },
-    {
-      label: "Colors",
-      to: "/colors",
-      active: route.path === "/colors"
-    },
-    {
-      label: "Megamenu 2",
-      active: route.path.startsWith("/megamenu2"),
-      slot: "megamenu2" as const,
-      children: [
-        {
-          label: "History",
-          icon: "lucide:book",
-          description: "Learn about our beginnings and our mission."
-        },
-        {
-          label: "Jobs",
-          icon: "lucide:briefcase",
-          description:
-            "Check out our currently open positions and their requirements.!"
-        },
-        {
-          label: "Studios",
-          icon: "lucide:building-2",
-          description: "Take a tour of our facilities."
-        },
-        {
-          label: "Benefits",
-          icon: "lucide:hand-heart",
-          description:
-            "Discover what benefits and compensations are available to our employees."
-        }
-      ]
-    }
-  ]
-  return baseItems
+const slideoverState = reactive({
+  left: false,
+  right: false,
+  notifications: false
 })
-const accountMenuItems = ref<DropdownMenuItem[][]>([
+
+// Mock Session Data
+const session = ref({
+  user: {
+    name: "idantity.me",
+    tag: "0000",
+    image: "https://github.com/idantitydotme.png",
+    status: "Accessing me.",
+    availability: "available"
+  }
+})
+
+const availabilityChip = computed(() => ({
+  color: "success" as const,
+  position: "bottom-right" as const
+}))
+
+const items = computed<NavigationMenuItem[]>(() => [
+  {
+    label: "Megamenu",
+    active: route.path.startsWith("/megamenu"),
+    slot: "megamenu" as const,
+    children: [
+      {
+        label: "Overview",
+        description: "You have nothing to do, @nuxt/icon will handle it automatically."
+      },
+      {
+        label: "Characters",
+        description: "Choose a primary and a neutral color from your Tailwind CSS theme."
+      },
+      {
+        label: "Tales",
+        description:
+          'You can customize components by using the "class" / "ui" props or in your app.config.ts.'
+      }
+    ]
+  },
+  {
+    label: "Components",
+    to: "/components",
+    active: route.path === "/components"
+  },
+  {
+    label: "Branding",
+    to: "/branding",
+    active: route.path === "/branding"
+  },
+  {
+    label: "Sample Wiki",
+    to: "/sample-wiki",
+    active: route.path.startsWith("/sample-wiki")
+  },
+  {
+    label: "Megamenu 2",
+    active: route.path.startsWith("/megamenu2"),
+    slot: "megamenu2" as const,
+    children: [
+      {
+        label: "History",
+        icon: "lucide:book",
+        description: "Learn about our beginnings and our mission."
+      },
+      {
+        label: "Jobs",
+        icon: "lucide:briefcase",
+        description: "Check out our currently open positions and their requirements.!"
+      },
+      {
+        label: "Studios",
+        icon: "lucide:building-2",
+        description: "Take a tour of our facilities."
+      },
+      {
+        label: "Benefits",
+        icon: "lucide:hand-heart",
+        description: "Discover what benefits and compensations are available to our employees."
+      }
+    ]
+  }
+])
+
+const accountMenuItems = computed<DropdownMenuItem[][]>(() => [
   [
     {
-      label: "username",
-      avatar: {
-        src: "https://github.com/benjamincanac.png"
-      },
-      type: "label"
+      slot: "user" as const
+    },
+    {
+      label: "Dashboard",
+      icon: "lucide:layout-dashboard",
+      to: "/components"
     }
   ],
   [
     {
       label: "Profile",
-      icon: "i-lucide-user"
+      icon: "lucide:user"
     },
     {
       label: "Billing",
-      icon: "i-lucide-credit-card"
+      icon: "lucide:credit-card"
     }
   ],
   [
     {
       label: "Team",
-      icon: "i-lucide-users"
+      icon: "lucide:users"
     },
-    {
-      label: "Invite users",
-      icon: "i-lucide-user-plus",
-      children: [
-        [
-          {
-            label: "Email",
-            icon: "i-lucide-mail"
-          },
-          {
-            label: "Message",
-            icon: "i-lucide-message-square"
-          }
-        ],
-        [
-          {
-            label: "More",
-            icon: "i-lucide-circle-plus"
-          }
-        ]
-      ]
-    },
-    {
-      label: "New team",
-      icon: "i-lucide-plus",
-      kbds: ["meta", "n"]
-    }
-  ],
-  [
-    {
-      label: "Support",
-      icon: "lucide:headset",
-      to: "/docs/components/dropdown-menu"
-    }
-  ],
-  [
     {
       label: "Settings",
-      icon: "i-lucide-cog",
+      icon: "lucide:cog",
       kbds: [","]
     },
     {
       label: "Logout",
       icon: "lucide:log-out",
-      kbds: ["shift", "meta", "q"],
-      click: async () => {
-        await $fetch("/api/logout", {
-          method: "POST"
-        })
-        await navigateTo("/")
-      }
+      kbds: ["shift", "meta", "q"]
     }
   ]
 ])
@@ -164,13 +140,19 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
   <RCHeader :contain="false" class="bg-black">
     <template #left>
       <div class="flex flex-row items-center gap-md">
-        <RCLogo variant="mark" class="h-6 w-auto" />
+        <ClientOnly>
+          <RCLogo variant="mark" class="h-6 w-auto" />
+        </ClientOnly>
         <UNavigationMenu
           :items="items"
           variant="link"
+          :style="{ '--header-bottom-boundary': `${(bottomOffsets[headerLayerId] || 0) - 64}px` }"
           :ui="{
-            viewportWrapper: 'top-0 flex fixed w-screen mt-(--ui-header-height)',
-            viewport: 'rounded-none'
+            viewportWrapper:
+              'top-[var(--header-bottom-boundary)] flex fixed w-screen mt-[var(--ui-header-height)]',
+            viewport: 'rounded-none',
+            label: 'text-white',
+            link: 'hover:text-primary-200 active:text-500'
           }"
         >
           <template #megamenu-content="{ item }">
@@ -219,72 +201,187 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
         </UNavigationMenu>
       </div>
     </template>
-    <template #center> </template>
+
     <template #right>
-      <div class="flex flex-row gap-md">
-        <UButton variant="solid" color="primary" label="Button 1" />
-        <UButton variant="outline" color="primary" label="Button 2" />
+      <div class="flex flex-row items-center gap-sm">
+        <ClientOnly>
+          <div class="flex flex-row items-center gap-md">
+            <UButton color="neutral" variant="link" label="Dashboard" to="/components" />
+            <UTooltip text="Notifications">
+              <UButton
+                color="neutral"
+                variant="ghost"
+                square
+                @click="slideoverState.notifications = true"
+              >
+                <UChip color="error" inset>
+                  <UIcon name="lucide:bell" class="size-5 shrink-0" />
+                </UChip>
+              </UButton>
+            </UTooltip>
+            <UPopover mode="hover" arrow :ui="{ content: 'w-64' }">
+              <template #default>
+                <UButton variant="ghost">
+                  <UUser
+                    size="md"
+                    :avatar="{
+                      src: session.user.image,
+                      alt: session.user.name
+                    }"
+                    :name="session.user.name"
+                    :description="session.user.status"
+                    :chip="availabilityChip"
+                    :ui="{ description: 'text-left' }"
+                  />
+                </UButton>
+              </template>
+              <template #content>
+                <div class="flex flex-col">
+                  <div class="flex flex-col gap-xs bg-elevated p-sm">
+                    <UUser
+                      size="md"
+                      :avatar="{
+                        src: session.user.image,
+                        alt: session.user.name
+                      }"
+                      :description="session.user.status"
+                      :ui="{ name: 'text-left', description: 'text-left' }"
+                    >
+                      <template #name>
+                        <span
+                          >{{ session.user.name }}
+                          <span class="text-dimmed">#{{ session.user.tag }}</span></span
+                        >
+                      </template>
+                    </UUser>
+                    <UButton variant="ghost" color="neutral" leading-icon="lucide:user" label="Profile" />
+                  </div>
+                  <div class="flex flex-col gap-xs bg-muted p-sm">
+                    <UButton
+                      variant="ghost"
+                      color="neutral"
+                      leading-icon="lucide:headset"
+                      label="Support"
+                    />
+                    <UButton
+                      variant="ghost"
+                      color="neutral"
+                      leading-icon="lucide:cog"
+                      label="Settings"
+                    />
+                    <UButton
+                      variant="ghost"
+                      color="neutral"
+                      leading-icon="lucide:log-out"
+                      label="Sign out"
+                    />
+                  </div>
+                </div>
+              </template>
+            </UPopover>
+          </div>
+        </ClientOnly>
       </div>
     </template>
+
     <template #collapsed-left>
-      <UDrawer
-        v-model:open="leftDrawerOpen"
-        direction="left"
-        :handle="false"
-        :ui="{
-          header: 'flex items-center justify-between',
-          content: 'w-full max-w-2/3'
-        }"
-      >
-        <UButton color="neutral" variant="ghost" icon="lucide:menu" />
-        <template #header>
-          <h2 class="font-semibold text-highlighted">Drawer 1</h2>
+      <ClientOnly>
+        <USlideover
+          v-model:open="slideoverState.left"
+          side="left"
+          :handle="false"
+          :ui="{
+            header: 'flex items-center justify-between',
+            content: 'w-full max-w-4/5 rounded-none'
+          }"
+        >
           <UButton
             color="neutral"
             variant="ghost"
-            icon="lucide:x"
-            @click="leftDrawerOpen = false"
+            icon="lucide:menu"
+            @click="slideoverState.left = true"
           />
-        </template>
-        <template #body>
-          <div class="flex size-full flex-col items-start gap-md">
-            <UNavigationMenu :items="items" variant="link" orientation="vertical" />
-          </div>
-        </template>
-      </UDrawer>
-    </template>
-    <template #collapsed-center>
-      <RCLogo variant="mark" class="h-12" />
-    </template>
-    <template #collapsed-right>
-      <UDrawer
-        v-model:open="rightDrawerOpen"
-        direction="right"
-        :handle="false"
-        :ui="{
-          header: 'flex items-center justify-between',
-          content: 'w-full max-w-2/3'
-        }"
-      >
-        <UButton color="neutral" variant="ghost" icon="lucide:user" />
-        <template #header>
-          <h2 class="font-semibold text-highlighted">Drawer 2</h2>
-          <UButton
-            color="neutral"
-            variant="ghost"
-            icon="lucide:x"
-            @click="rightDrawerOpen = false"
-          />
-        </template>
-        <template #body>
-          <div class="flex size-full flex-col gap-md">
-            <div class="flex flex-col gap-sm">
-              <UButton size="xl" variant="solid" color="primary" label="Button 1" block />
-              <UButton size="xl" variant="outline" color="primary" label="Button 2" block />
+          <template #header>
+            <RCLogo variant="mark" class="h-6 w-auto" />
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="lucide:x"
+              @click="slideoverState.left = false"
+            />
+          </template>
+          <template #body>
+            <div class="flex size-full flex-col items-start gap-md">
+              <UNavigationMenu :items="items" variant="link" orientation="vertical" />
             </div>
-          </div>
-        </template>
-      </UDrawer>
+          </template>
+        </USlideover>
+      </ClientOnly>
+    </template>
+
+    <template #collapsed-center>
+      <ClientOnly>
+        <RCLogo variant="mark" class="h-12" />
+      </ClientOnly>
+    </template>
+
+    <template #collapsed-right>
+      <div class="flex flex-row justify-end gap-sm">
+        <ClientOnly>
+          <UTooltip text="Notifications">
+            <UButton color="neutral" variant="ghost" square @click="slideoverState.notifications = true">
+              <UChip color="error" inset>
+                <UIcon name="lucide:bell" class="size-5 shrink-0" />
+              </UChip>
+            </UButton>
+          </UTooltip>
+          <USlideover
+            v-model:open="slideoverState.right"
+            side="right"
+            :handle="false"
+            :ui="{
+              header: 'flex items-center justify-between',
+              content: 'w-full max-w-4/5 rounded-none'
+            }"
+          >
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="lucide:user"
+              @click="slideoverState.right = true"
+            />
+            <template #header>
+              <UUser
+                size="md"
+                :avatar="{
+                  src: session.user.image,
+                  alt: session.user.name
+                }"
+                :description="session.user.status"
+                :ui="{ description: 'text-left' }"
+              >
+                <template #name>
+                  <span
+                    >{{ session.user.name }}
+                    <span class="text-dimmed">#{{ session.user.tag }}</span></span
+                  >
+                </template>
+              </UUser>
+              <UButton
+                color="neutral"
+                variant="ghost"
+                icon="lucide:x"
+                @click="slideoverState.right = false"
+              />
+            </template>
+            <template #body>
+              <div class="flex flex-col gap-md">
+                <UNavigationMenu orientation="vertical" :items="accountMenuItems" />
+              </div>
+            </template>
+          </USlideover>
+        </ClientOnly>
+      </div>
     </template>
   </RCHeader>
 </template>
