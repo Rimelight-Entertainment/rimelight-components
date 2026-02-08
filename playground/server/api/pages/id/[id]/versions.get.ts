@@ -1,6 +1,5 @@
 export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, 'id')
-    console.log(`[Mock API] Fetching versions for page: ${id}`)
 
     await new Promise(resolve => setTimeout(resolve, 500))
 

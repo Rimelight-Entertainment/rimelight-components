@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from "vue"
+import { ref, computed, watch, onMounted, nextTick } from "vue"
 import { PAGE_MAP } from "~/types"
 import { MOCK_PAGES_LIST, MOCK_MOVIE_SURROUND, MOCK_VERSIONS } from "~/mocks/pages"
 import { type Page, type PageSurround, type PageVersion } from "rimelight-components/types";
@@ -34,9 +34,14 @@ const loadPage = () => {
     
     // Simulate API Fetch Delay for surround
     surroundStatus.value = 'pending'
-    setTimeout(() => {
+    setTimeout(async () => {
       surround.value = MOCK_MOVIE_SURROUND
       surroundStatus.value = 'success'
+      
+      await nextTick()
+      if (editorRef.value) {
+        editorRef.value.resetHistory()
+      }
     }, 1000)
   } else {
     moviePage.value = null
@@ -47,11 +52,16 @@ onMounted(loadPage)
 watch(slug, loadPage)
 
 const isSaving = ref(false)
+const editorRef = ref<any>(null)
+
 const handleSave = (page: Page) => {
   isSaving.value = true
   console.log('Saving page:', page)
   setTimeout(() => {
     isSaving.value = false
+    if (editorRef.value) {
+      editorRef.value.resetHistory()
+    }
     alert('Page saved! (Check console for data)')
   }, 1500)
 }
@@ -124,6 +134,7 @@ const handleVersionNavigate = (version: PageVersion) => {
 <template>
   <div v-if="moviePage">
     <RCPageEditor
+      ref="editorRef"
       v-model="moviePage"
       v-model:current-version-id="currentVersionId"
       :page-definitions="PAGE_MAP"

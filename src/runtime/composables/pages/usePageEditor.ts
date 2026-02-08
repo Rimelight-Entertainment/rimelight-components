@@ -5,29 +5,53 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
   const history = shallowRef<string[]>([]) // Store as JSON strings for clean snapshots
   const future = shallowRef<string[]>([])
 
+  // Store the state as it was when it was last "captured" or loaded
+  let lastCapturedState = JSON.stringify(page.value)
+
   const captureSnapshot = () => {
-    const snapshot = JSON.stringify(page.value)
+    const currentSnapshot = JSON.stringify(page.value)
+
     // Only push if the state actually changed to avoid "empty" undo steps
-    if (history.value.length > 0 && history.value[history.value.length - 1] === snapshot) return
+    if (currentSnapshot === lastCapturedState) return
 
     future.value = []
-    const newHistory = [...history.value, snapshot]
+    const newHistory = [...history.value, lastCapturedState]
     if (newHistory.length > maxHistorySize) newHistory.shift()
     history.value = newHistory
+
+    lastCapturedState = currentSnapshot
   }
 
   const undo = () => {
     if (history.value.length === 0) return
-    future.value = [JSON.stringify(page.value), ...future.value]
 
-    page.value = JSON.parse(history.value.pop()!)
+    const currentState = JSON.stringify(page.value)
+    future.value = [currentState, ...future.value]
+
+    const previousStateString = history.value[history.value.length - 1]!
+    lastCapturedState = previousStateString // Update last captured to the one we are moving to
+
+    page.value = JSON.parse(previousStateString)
+
+    const newHistory = [...history.value]
+    newHistory.pop()
+    history.value = newHistory
   }
 
   const redo = () => {
     if (future.value.length === 0) return
-    history.value = [...history.value, JSON.stringify(page.value)]
 
-    page.value = JSON.parse(future.value.shift()!)
+    const currentState = JSON.stringify(page.value)
+    history.value = [...history.value, currentState]
+    lastCapturedState = currentState
+
+    const nextStateString = future.value[0]!
+    page.value = JSON.parse(nextStateString)
+    lastCapturedState = nextStateString
+
+    const newFuture = [...future.value]
+    newFuture.shift()
+    future.value = newFuture
   }
 
   const canUndo = computed(() => history.value.length > 0)
@@ -37,10 +61,9 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
     return JSON.parse(JSON.stringify(page.value))
   }
 
-  // This is the "Magic": we watch for property changes to trigger history snapshots
-  // We use deep: true to catch nested property updates
+  // Watch for changes in properties, title, and blocks
   watch(
-    () => page.value.properties,
+    [() => page.value.properties, () => page.value.title, () => page.value.blocks],
     () => {
       // We might want to debounce this so typing in a text field
       // doesn't create 50 history states
@@ -49,12 +72,19 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
     { deep: true }
   )
 
+  const resetHistory = () => {
+    history.value = []
+    future.value = []
+    lastCapturedState = JSON.stringify(page.value)
+  }
+
   return {
     undo,
     redo,
     canUndo,
     canRedo,
     save,
-    captureSnapshot
+    captureSnapshot,
+    resetHistory
   }
 }

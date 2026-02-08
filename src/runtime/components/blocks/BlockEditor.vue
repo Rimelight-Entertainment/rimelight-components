@@ -16,6 +16,7 @@ const blocks = defineModel<Block[]>({ required: true })
 
 export interface BlockEditorEmits {
   save: []
+  mutation: []
 }
 
 const emit = defineEmits<BlockEditorEmits>()
@@ -50,7 +51,7 @@ const {
   redo,
   canUndo,
   canRedo
-} = useBlockEditor(blocks, { maxHistorySize: historyLimit })
+} = useBlockEditor(blocks, { maxHistorySize: historyLimit, onMutation: () => emit('mutation') })
 
 const dropdownItems = computed(() => [
   blockTypes.map(type => ({

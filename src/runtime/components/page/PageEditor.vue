@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, useTemplateRef, provide } from "vue"
+import { navigateTo } from "#imports"
 import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types"
-import { usePageEditor, usePageRegistry, useRC, useHeaderStack } from "../../composables"
+import { usePageEditor, usePageRegistry, useRC, useHeaderStack, useConfirm } from "../../composables"
 import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { tv } from "../../internal/tv"
@@ -17,6 +18,7 @@ export interface PageEditorProps {
   onDeletePage?: (id: string) => Promise<void>
   onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug'>[]>
   onNavigateToPage?: (slug: string) => void
+  onViewPage?: (slug: string) => void
   currentVersionId?: string | null
   isViewingVersion?: boolean
   isAdmin?: boolean
@@ -51,6 +53,7 @@ const {
   onDeletePage,
   onFetchPages,
   onNavigateToPage,
+  onViewPage,
   currentVersionId = null,
   isViewingVersion = false,
   isAdmin = false,
@@ -120,7 +123,27 @@ const {
 const { getTypeLabelKey } = usePageRegistry();
 const { t, locale } = useI18n()
 
-const { undo, redo, canUndo, canRedo, captureSnapshot } = usePageEditor(page)
+const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory } = usePageEditor(page)
+const { confirm } = useConfirm()
+
+const handleViewPage = async () => {
+  if (canUndo.value) {
+    const confirmed = await confirm({
+      title: t("page_editor.unsaved_changes_title"),
+      description: t("page_editor.unsaved_changes_description"),
+      confirmLabel: t("page_editor.leave_anyway"),
+      cancelLabel: t("common.cancel"),
+      danger: true,
+    })
+    if (!confirmed) return
+  }
+
+  if (onViewPage) {
+    onViewPage(page.value.slug)
+  } else {
+    navigateTo(`/${page.value.slug}`)
+  }
+}
 
 const handleSave = () => {
   const dataToPersist = JSON.parse(JSON.stringify(page.value))
@@ -132,6 +155,7 @@ defineExpose({
   redo,
   canUndo,
   canRedo,
+  resetHistory,
 })
 
 const editorRef = useTemplateRef('editor')
@@ -302,6 +326,14 @@ const handleTreeNavigate = (slug: string) => {
             color="neutral"
             size="xs"
             @click="showPreview = !showPreview"
+          />
+          <UButton
+            icon="lucide:external-link"
+            :label="t('page_editor.view_page')"
+            variant="outline"
+            color="neutral"
+            size="xs"
+            @click="handleViewPage"
           />
           <UButton
             icon="lucide:save"
@@ -491,6 +523,7 @@ const handleTreeNavigate = (slug: string) => {
       />
     </div>
   </div>
+  <RCConfirmModal />
 </template>
 
 <style scoped></style>
