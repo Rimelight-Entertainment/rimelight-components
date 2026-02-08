@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { ref, watch, onMounted } from "vue"
+import { PAGE_MAP } from "./types/page-definitions"
+import type { Page } from "rimelight-components/types"
 import { ULink } from "#components"
+import { useQuickActions } from "rimelight-components/composables"
 
 const toast = useToast()
 
@@ -44,7 +48,43 @@ const cookie = useCookie("cookie-consent", {
   sameSite: "lax"
 })
 
+const { registerAction } = useQuickActions()
+const isCreateModalOpen = ref(false)
+const isCreating = ref(false)
+
+watch(isCreateModalOpen, (val) => {
+  console.log('[App] isCreateModalOpen changed:', val)
+})
+
+const handleCreateConfirm = async (newPageData: Partial<Page>) => {
+  try {
+    isCreating.value = true
+    console.log('Creating page via Quick Action:', newPageData)
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    alert(`Page created: ${JSON.stringify(newPageData.title)}. In a real app, this would navigate to the new page.`)
+    isCreateModalOpen.value = false
+  } finally {
+    isCreating.value = false
+  }
+}
+
 onMounted(() => {
+  if (typeof window !== 'undefined') {
+    (window as any).triggerCreatePageModal = () => {
+      isCreateModalOpen.value = true
+    }
+  }
+
+  registerAction({
+    id: 'create-page',
+    label: 'Create Page',
+    icon: 'lucide:plus',
+    onSelect: () => {
+      console.log('Quick Action triggered: opening modal')
+      isCreateModalOpen.value = true
+    }
+  })
+
   if (cookie.value === "accepted") {
     return
   }
@@ -92,6 +132,13 @@ onMounted(() => {
       <NuxtPage />
     </NuxtLayout>
     <ClientOnly>
+      <RCQuickActions />
+      <RCCreatePageModal
+        v-model:open="isCreateModalOpen"
+        :definitions="PAGE_MAP"
+        :loading="isCreating"
+        @confirm="handleCreateConfirm"
+      />
       <RCScrollToTop />
     </ClientOnly>
   </UApp>

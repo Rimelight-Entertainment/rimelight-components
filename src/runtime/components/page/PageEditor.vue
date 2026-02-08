@@ -14,7 +14,6 @@ export interface PageEditorProps {
   surroundStatus?: 'idle' | 'pending' | 'success' | 'error'
   resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
   pageDefinitions: Record<string, PageDefinition>
-  onCreatePage?: (page: Partial<Page>) => Promise<void>
   onDeletePage?: (id: string) => Promise<void>
   onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug'>[]>
   onNavigateToPage?: (slug: string) => void
@@ -49,7 +48,6 @@ const {
   surroundStatus = 'idle',
   surround = null,
   resolvePage,
-  onCreatePage,
   onDeletePage,
   onFetchPages,
   onNavigateToPage,
@@ -84,8 +82,8 @@ const pageEditorStyles = tv({
   slots: {
     header: "h-12 w-full bg-muted",
     headerGroup: "flex items-center gap-xs",
-    splitContainer: "flex w-full overflow-hidden min-h-0",
-    editorColumn: "h-full overflow-y-auto",
+    splitContainer: "flex w-full min-h-0",
+    editorColumn: "relative",
     container: "flex flex-col py-16",
     grid: "grid grid-cols-1 lg:grid-cols-24 gap-xl items-start",
     toc: "hidden lg:flex lg:col-span-4 sticky top-20 self-start",
@@ -97,8 +95,8 @@ const pageEditorStyles = tv({
     surroundSkeleton: "grid grid-cols-1 gap-md sm:grid-cols-2",
     skeleton: "h-48 w-full rounded-xl",
     metadata: "flex flex-col gap-xs text-xs text-dimmed p-lg",
-    resizer: "relative flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16",
-    previewColumn: "h-full overflow-y-auto min-h-0"
+    resizer: "sticky flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16 self-start",
+    previewColumn: "sticky self-start overflow-y-auto min-h-0"
   }
 })
 
@@ -220,21 +218,6 @@ const stopResizing = () => {
 
 /* Handlers */
 
-// Create Page
-const isCreateModalOpen = ref(false)
-const isCreating = ref(false)
-
-const handleCreateConfirm = async (newPageData: Partial<Page>) => {
-  if (!onCreatePage) return
-
-  try {
-    isCreating.value = true
-    await onCreatePage(newPageData)
-    isCreateModalOpen.value = false
-  } finally {
-    isCreating.value = false
-  }
-}
 
 // Delete Page
 const isDeleteModalOpen = ref(false)
@@ -297,12 +280,38 @@ const handleTreeNavigate = (slug: string) => {
   </div>
 
   <RCHeaderLayer id="editor-header" :order="3">
-    <UHeader :class="header({ class: rc.header })">
+    <RCHeader :contain="false" :class="header({ class: rc.header })">
       <template #left>
         <div :class="headerGroup({ class: rc.headerGroup })">
           <UButton
+            icon="lucide:list-tree"
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            :loading="isFetchingTree"
+            :disabled="!onFetchPages"
+            @click="handleOpenTree"
+          />
+
+          <span class="text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap">
+            {{ t('common.editing', 'Editing') }}: <span class="text-neutral-900 dark:text-white">{{ getLocalizedContent(page.title, locale) }}</span>
+          </span>
+
+          <USeparator orientation="vertical" class="h-4 mx-1" />
+
+          <RCPageVersionSelector
+            v-if="page.id"
+            v-model:current-version-id="versionId"
+            :page-id="page.id"
+            :is-admin="isAdmin"
+            @version-selected="(v: any) => emit('version-navigate', v)"
+            @version-approved="(v: any) => emit('version-approved', v)"
+            @version-reverted="(v: any) => emit('version-reverted', v)"
+          />
+        
+          <UButton
             icon="lucide:rotate-ccw"
-            variant="outline"
+            variant="ghost"
             color="neutral"
             size="xs"
             :disabled="!canUndo"
@@ -310,7 +319,7 @@ const handleTreeNavigate = (slug: string) => {
           />
           <UButton
             icon="lucide:rotate-cw"
-            variant="outline"
+            variant="ghost"
             color="neutral"
             size="xs"
             :disabled="!canRedo"
@@ -322,21 +331,26 @@ const handleTreeNavigate = (slug: string) => {
       <template #right>
         <div :class="headerGroup({ class: rc.headerGroup })">
           <UButton
-            :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
-            :label="t('page_editor.preview')"
-            variant="outline"
-            color="neutral"
-            size="xs"
-            @click="showPreview = !showPreview"
-          />
-          <UButton
             icon="lucide:external-link"
             :label="t('page_editor.view_page')"
-            variant="outline"
+            variant="ghost"
             color="neutral"
             size="xs"
             @click="handleViewPage"
           />
+          <UButton
+            :icon="showPreview ? 'lucide:eye-off' : 'lucide:eye'"
+            :label="t('page_editor.preview')"
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            @click="showPreview = !showPreview"
+          />
+
+          <USeparator orientation="vertical" class="h-4 mx-1" />
+
+          <slot name="header-actions" />
+
           <UButton
             icon="lucide:save"
             :label="t('page_editor.save')"
@@ -345,56 +359,29 @@ const handleTreeNavigate = (slug: string) => {
             :loading="isSaving"
             @click="handleSave"
           />
-          <UButton
-            icon="lucide:list-tree"
-            variant="outline"
-            color="neutral"
-            size="xs"
-            :loading="isFetchingTree"
-            :disabled="!onFetchPages"
-            @click="handleOpenTree"
-          />
-          <RCPageTreeModal
-            v-model:open="isPageTreeModalOpen"
-            :pages="treePages"
-            :loading="isFetchingTree"
-            @navigate="handleTreeNavigate"
-          />
-          <RCPageVersionSelector
-            v-if="page.id"
-            v-model:current-version-id="versionId"
-            :page-id="page.id"
-            :is-admin="isAdmin"
-            @version-selected="(v: any) => emit('version-navigate', v)"
-            @version-approved="(v: any) => emit('version-approved', v)"
-            @version-reverted="(v: any) => emit('version-reverted', v)"
-          />
-          <slot name="header-actions" />
-          <RCCreatePageModal
-            v-model:open="isCreateModalOpen"
-            :definitions="pageDefinitions"
-            :loading="isCreating"
-            @confirm="handleCreateConfirm"
+
+          <UDropdownMenu
+            :items="[
+              [
+                {
+                  label: t('page_editor.delete_page'),
+                  icon: 'lucide:trash-2',
+                  color: 'error' as const,
+                  onSelect: () => (isDeleteModalOpen = true)
+                }
+              ]
+            ]"
           >
-            <UButton icon="lucide:file-plus" :label="t('page_editor.create_page')" color="primary" size="xs" />
-          </RCCreatePageModal>
-          <RCDeletePageModal
-            v-model:open="isDeleteModalOpen"
-            :loading="isDeleting"
-            :page-title="getLocalizedContent(page.title, locale)"
-            @confirm="handleDeleteConfirm"
-          >
-            <UButton icon="lucide:file-plus" :label="t('page_editor.delete_page')" color="error" size="xs" />
-          </RCDeletePageModal>
+            <UButton icon="lucide:ellipsis-vertical" variant="ghost" color="neutral" size="xs" />
+          </UDropdownMenu>
         </div>
       </template>
-    </UHeader>
+    </RCHeader>
   </RCHeaderLayer>
 
   <div
     ref="split-container"
     :class="splitContainer({ class: rc.splitContainer })"
-    :style="{ height: `calc(100vh - ${totalHeight}px)` }"
   >
     <div
       :class="editorColumn({ class: rc.editorColumn })"
@@ -505,6 +492,7 @@ const handleTreeNavigate = (slug: string) => {
     <div
       v-if="showPreview"
       :class="[cursorClass, resizer({ class: rc.resizer })]"
+      :style="{ top: `${totalHeight}px`, height: `calc(100vh - ${totalHeight}px)` }"
       @mousedown="startResizing"
       @dblclick="editorWidth = 50"
     >
@@ -514,7 +502,11 @@ const handleTreeNavigate = (slug: string) => {
     <div
       v-if="showPreview"
       :class="previewColumn({ class: rc.previewColumn })"
-      :style="{ width: `${100 - editorWidth}%` }"
+      :style="{ 
+        width: `${100 - editorWidth}%`, 
+        top: `${totalHeight}px`, 
+        height: `calc(100vh - ${totalHeight}px)` 
+      }"
     >
       <RCPageRenderer 
         v-model="page" 
@@ -525,6 +517,18 @@ const handleTreeNavigate = (slug: string) => {
       />
     </div>
   </div>
+  <RCDeletePageModal
+    v-model:open="isDeleteModalOpen"
+    :loading="isDeleting"
+    :page-title="getLocalizedContent(page.title, locale)"
+    @confirm="handleDeleteConfirm"
+  />
+  <RCPageTreeModal
+    v-model:open="isPageTreeModalOpen"
+    :pages="treePages"
+    :loading="isFetchingTree"
+    @navigate="handleTreeNavigate"
+  />
   <RCConfirmModal />
 </template>
 

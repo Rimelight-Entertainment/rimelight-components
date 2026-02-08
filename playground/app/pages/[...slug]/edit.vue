@@ -137,7 +137,6 @@ const handleVersionNavigate = (version: PageVersion) => {
       :surround="surround"
       :surround-status="surroundStatus"
       :on-fetch-pages="handleFetchPages"
-      :on-create-page="handleCreatePage"
       :on-delete-page="handleDeletePage"
       :on-navigate-to-page="(slug: string) => navigateTo(`/${slug}/edit`)"
       @save="handleSave"

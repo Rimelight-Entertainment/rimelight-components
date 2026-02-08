@@ -1,12 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+</script>
 
 <template>
   <span
-    >This component exists due to an issue with tailwind. I currently do not have the time to figure
+  >This component exists due to an issue with tailwind. I currently do not have the time to figure
     out the issue, therefore this workaround exists to force classes to be loaded.</span
   >
   <!-- prettier-ignore -->
-  <div class="h-full max-h-full w-auto h-auto max-w-full max-h-[calc(90dvh-200px)] object-contain mx-auto block rounded-lg shadow-sm self-start max-w-[75vw] max-h-[75vh] hover:scale-[1.02] active:scale-95 max-w-[98vw] sm:max-w-[95vw] max-w-7xl max-w-full duration-400 duration-500 duration-600 duration-200 duration-100 duration-150 h-fit sm:h-fit md:h-fit lg:h-fit xl:h-fit h-auto h-1 lg:h-2 h-3 h-4 h-6 h-8 h-10 h-12 h-16 h-20 h-24 h-32 h-40 h-48 h-56 h-64 h-96 h-128 h-256 lg:h-1 lg:h-2 lg:h-3 lg:h-4 lg:h-6 lg:h-8 lg:h-10 lg:h-12 lg:h-16 lg:h-20 lg:h-24 lg:h-32 lg:h-40 lg:h-48 lg:h-56 lg:h-64 lg:h-96 lg:h-128 lg:h-256"/>
+  <div class="h-full self-start duration-400 duration-500 duration-600 duration-200 duration-100 duration-150 h-fit sm:h-fit md:h-fit lg:h-fit xl:h-fit h-auto h-1 lg:h-2 h-3 h-4 h-6 h-8 h-10 h-12 h-16 h-20 h-24 h-32 h-40 h-48 h-56 h-64 h-96 h-128 h-256 lg:h-1 lg:h-2 lg:h-3 lg:h-4 lg:h-6 lg:h-8 lg:h-10 lg:h-12 lg:h-16 lg:h-20 lg:h-24 lg:h-32 lg:h-40 lg:h-48 lg:h-56 lg:h-64 lg:h-96 lg:h-128 lg:h-256"/>
   <!-- prettier-ignore -->
   <div class="w-full w-fit py-32 mb-16 pb-16 sm:w-fit md:w-fit lg:w-fit xl:w-fit w-auto w-1 w-2 w-3 w-4 w-6 w-8 w-10 w-12 w-16 w-20 w-24 w-32 w-36 xl:w-36 w-40 w-48 xl:w-48 w-56 w-64 w-96 w-128 w-256 lg:w-1 lg:w-2 lg:w-3 lg:w-4 lg:w-6 lg:w-8 lg:w-10 lg:w-12 lg:w-16 lg:w-20 lg:w-24 lg:w-32 lg:w-40 lg:w-48 lg:w-56 lg:w-64 lg:w-96 lg:w-128 lg:w-256"/>
   <!-- prettier-ignore -->
@@ -26,7 +27,7 @@
   <!-- prettier-ignore -->
   <div class="mt-1 mt-2 mt-3 mt-4 mt-6 mt-8 mt-10 mt-12 mt-16 mt-20 mt-24 mt-32 mt-40 mt-48 mt-56 mt-64 mt-96 mt-128 mt-256 lg:mt-1 lg:mt-2 lg:mt-3 lg:mt-4 lg:mt-6 lg:mt-8 lg:mt-10 lg:mt-12 lg:mt-16 lg:mt-20 lg:mt-24 lg:mt-32 lg:mt-40 lg:mt-48 lg:mt-56 lg:mt-64 lg:mt-96 lg:mt-128 lg:mt-256"/>
   <!-- prettier-ignore -->
-  <div class="md:sticky md:top-[var(--palette-sticky-top)] self-start z-10 overflow-visible mb-1 mb-2 mb-3 mb-4 mb-6 mb-8 mb-10 mb-12 mb-16 mb-20 mb-24 mb-32 mb-40 mb-48 mb-56 mb-64 mb-96 mb-128 mb-256 lg:mb-1 lg:mb-2 lg:mb-3 lg:mb-4 lg:mb-6 lg:mb-8 lg:mb-10 lg:mb-12 lg:mb-16 lg:mb-20 lg:mb-24 lg:mb-32 lg:mb-40 lg:mb-48 lg:mb-56 lg:mb-64 lg:mb-96 lg:mb-128 lg:mb-256"/>
+  <div class="mb-1 mb-2 mb-3 mb-4 mb-6 mb-8 mb-10 mb-12 mb-16 mb-20 mb-24 mb-32 mb-40 mb-48 mb-56 mb-64 mb-96 mb-128 mb-256 lg:mb-1 lg:mb-2 lg:mb-3 lg:mb-4 lg:mb-6 lg:mb-8 lg:mb-10 lg:mb-12 lg:mb-16 lg:mb-20 lg:mb-24 lg:mb-32 lg:mb-40 lg:mb-48 lg:mb-56 lg:mb-64 lg:mb-96 lg:mb-128 lg:mb-256"/>
   <!-- prettier-ignore -->
   <div class="ml-1 ml-2 ml-3 ml-4 ml-6 ml-8 ml-10 ml-12 ml-16 ml-20 ml-24 ml-32 ml-40 ml-48 ml-56 ml-64 ml-96 ml-128 ml-256 lg:ml-1 lg:ml-2 lg:ml-3 lg:ml-4 lg:ml-6 lg:ml-8 lg:ml-10 lg:ml-12 lg:ml-16 lg:ml-20 lg:ml-24 lg:ml-32 lg:ml-40 lg:ml-48 lg:ml-56 lg:ml-64 lg:ml-96 lg:ml-128 lg:ml-256"/>
   <!-- prettier-ignore -->
@@ -42,7 +43,7 @@
   <!-- prettier-ignore -->
   <div class="min-w-96 min-w-128 col-span-1 col-span-2 col-span-3 min-w-64 min-w-32 gap-xs pl-8 pl-16 pl-32 align-baseline sm:align-baseline md:align-baseline lg:align-baseline xl:align-baseline"/>
   <!-- prettier-ignore -->
-  <div class="lg:order-1 lg:col-span-2 lg:col-span-3 order-2 order-1 lg:order-2 lg:col-span-1 lg:grid-cols-4 lg:grid-cols-3 lg:grid-cols-5 relative absolute -ms-12 -ms-16 -ms-10 scroll-mt-24 group lg:ps-2 lg:-ms-2 -ms-8 hidden absolute top-0 -ms-8 hidden rounded-md p-1 opacity-0 transition top-1 group-hover:opacity-100 group-focus:opacity-100 lg:flex rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"/>
+  <div class="z-[10000] z-9999 z-10000 fixed bottom-6 top-0 left-0 right-6 right-12 lg:order-1 min-h-screen flex items-center justify-center lg:col-span-2 lg:col-span-3 order-2 order-1 lg:order-2 lg:col-span-1 lg:grid-cols-4 lg:grid-cols-3 lg:grid-cols-5 relative absolute -ms-12 -ms-16 -ms-10 scroll-mt-24 group lg:ps-2 lg:-ms-2 -ms-8 hidden absolute top-0 -ms-8 hidden rounded-md p-1 opacity-0 transition top-1 group-hover:opacity-100 group-focus:opacity-100 lg:flex rounded-md p-1 opacity-0 transition group-hover:opacity-100 group-focus:opacity-100 lg:flex"/>
 </template>
 
 <style scoped></style>

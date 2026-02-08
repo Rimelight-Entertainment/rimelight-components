@@ -68,13 +68,12 @@ defineExpose({ undo, redo, canUndo, canRedo })
   <div class="flex flex-col gap-8 w-full">
     <RCBlockEditRenderer :blocks="blocks" />
 
-    <div class="flex flex-col items-center justify-center p-4 border-t border-neutral-200 dark:border-neutral-800 border-dashed rounded-lg">
-      <span class="text-sm text-dimmed mb-2">{{ t('page_editor.append_new_block') }}</span>
+    <div class="flex flex-col items-center justify-center gap-md p-sm">
       <UButton
         color="neutral"
         :label="t('page_editor.add_block', 'Add Block')"
         variant="outline"
-        icon="i-lucide-plus"
+        icon="lucide:plus"
         @click="openAddBlockModal()"
       />
     </div>
