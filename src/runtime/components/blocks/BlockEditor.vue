@@ -1,9 +1,21 @@
 <script setup lang="ts">
 import { provide, inject, ref, watch, nextTick, type Ref } from "vue"
+import { v7 as uuidv7 } from "uuid"
 import type { Block } from "../../types"
 import { useBlockEditor, useRC } from "../../composables"
 import { type BlockDefinition } from "../../utils/blocks"
 import { useI18n } from "vue-i18n"
+
+/**
+ * Helper: Recursively regenerates IDs for a block and its children.
+ * Crucial for avoiding duplicate keys during cross-container moves.
+ */
+function regenerateIds(block: Block): void {
+  block.id = uuidv7()
+  if (block.props && "children" in block.props && Array.isArray(block.props.children)) {
+    block.props.children.forEach((child: Block) => regenerateIds(child))
+  }
+}
 
 export interface BlockEditorProps {
   historyLimit?: number
@@ -85,11 +97,20 @@ const handleDragEnd = async () => {
 // Handle changes from draggable (added, removed, moved)
 const handleBlockChange = (event: any) => {
   console.log('[BlockEditor] handleBlockChange:', event)
+  
+  // If a block was added (dropped from another list), regenerate its ID and its children's IDs
+  // This prevents Vue "Duplicate Key" errors because the source list might not have 
+  // removed the old instance yet, or the update cycle hasn't completed.
+  if (event.added) {
+    const block = event.added.element
+    if (block) {
+       console.log('[BlockEditor] Regenerating IDs for added block:', block.id)
+       regenerateIds(block)
+    }
+  }
+
   emit('change', event)
   
-  // We strictly rely on the 'mutation' event for state syncing.
-  // Child components (nested editors) now handle their own updates via computed setters,
-  // so we don't need complex logic here to prevent race conditions.
   if (event.added || event.removed || event.moved) {
      emit('mutation') 
   }

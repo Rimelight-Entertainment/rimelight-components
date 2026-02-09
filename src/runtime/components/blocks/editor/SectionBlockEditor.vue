@@ -113,7 +113,6 @@ watch(
 const localChildren = computed({
   get: () => props.children ?? [],
   set: (newChildren) => {
-    console.log('[SectionBlockEditor] localChildren setter called:', newChildren.length)
     if (editorApi && props.id) {
        // Deep copy to ensure we break references before sending to store
        const childrenCopy = JSON.parse(JSON.stringify(newChildren))

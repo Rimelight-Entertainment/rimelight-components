@@ -206,7 +206,10 @@ export function useBlockEditor(
   // 💡 All public mutation methods must now call executeMutation()
 
   const updateBlockProps = (id: string, newProps: Record<string, any>) => {
-    console.log('[useBlockEditor] updateBlockProps called for ID:', id, 'with props:', Object.keys(newProps))
+    console.log('[useBlockEditor] updateBlockProps called for ID:', id, 'Keys:', Object.keys(newProps))
+    if (newProps.children) {
+      console.log('[useBlockEditor] Updating children. Count:', newProps.children.length)
+    }
     executeMutation(() => {
       const loc = findBlockLocation(initialBlocks.value, id)
       if (!loc) {
