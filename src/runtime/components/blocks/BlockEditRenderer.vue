@@ -155,10 +155,8 @@ const handleChange = (event: any) => {
       :group="{ name: 'blocks', pull: true, put: true }"
       :animation="200"
       :force-fallback="true"
-      fallback-class="drag-fallback"
-      ghost-class="drag-placeholder"
-      @start="handleStart"
-      @end="handleEnd"
+      fallback-class="fallback"
+      :ghost-class="blocks.length === 0 ? 'ghost-hidden' : 'ghost'"
       @change="handleChange"
       class="flex flex-col w-full flex-1"
       :class="[blocks && blocks.length > 0 ? 'gap-lg min-h-16 pb-32' : 'gap-0 min-h-32']"
@@ -192,7 +190,11 @@ const handleChange = (event: any) => {
       </template>
 
       <template #item="{ element: block }">
-        <div class="w-full">
+        <div class="w-full relative
+         [&.ghost]:bg-blue-500 [&.ghost]:h-1 [&.ghost]:min-h-0 [&.ghost]:my-2 [&.ghost]:rounded-sm [&.ghost]:overflow-hidden [&.ghost_>_*]:hidden
+         [&.ghost-hidden]:hidden
+         [&.fallback]:opacity-90 [&.fallback]:shadow-lg [&.fallback]:rounded-lg [&.fallback]:bg-white [&.fallback]:z-[9999] [&.fallback]:cursor-grabbing
+        ">
           <template v-if="getComponent(block)">
             <RCBlock :id="block.id" :type="block.type" class="w-full">
               <component
@@ -218,39 +220,3 @@ const handleChange = (event: any) => {
     </draggable>
   </div>
 </template>
-
-<style scoped>
-
-:deep(.drag-placeholder) {
-  opacity: 1;
-  background: #3b82f6; /* blue-500 */
-  height: 4px;
-  border-radius: 2px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  overflow: hidden;
-}
-
-:deep(.drag-fallback) {
-  opacity: 0.9;
-  transform: scale(1.01);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  border-radius: 0.5rem;
-  background-color: white; /* Ensure it has a background so it's not transparent */
-  z-index: 9999; /* Ensure it's on top */
-}
-
-/* Hide children of the placeholder to just show the line */
-:deep(.drag-placeholder > *) {
-  display: none !important;
-}
-
-.is-empty :deep(.drag-placeholder) {
-  display: none !important;
-  visibility: hidden !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-}
-</style>
