@@ -92,7 +92,7 @@ function resolveVariable(
   if (!value) return varName // Return original if not found (might be a raw color)
 
   const varMatch = value.match(/^var\(([\w-]+)\)$/)
-  if (varMatch) {
+  if (varMatch && varMatch[1]) {
     return resolveVariable(varMatch[1], map, fallbackMap)
   }
   return value

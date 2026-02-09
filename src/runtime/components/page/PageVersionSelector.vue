@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { formatDistanceToNow } from "date-fns"
-import { useToast } from "#imports"
+import { useToast } from "@nuxt/ui/composables/useToast"
 import { computed, ref, watch } from "vue"
 import { useRC, $api } from "../../composables"
 import { useI18n } from "vue-i18n"

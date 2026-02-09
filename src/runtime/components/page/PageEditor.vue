@@ -452,11 +452,7 @@ const handleTreeNavigate = (slug: string) => {
               @start="pauseHistory"
               @mutation="() => {
                 resumeHistory()
-                if (!editorRef?.isDragging) {
-                  captureSnapshot()
-                } else {
-                  console.log('[PageEditor] Skipping snapshot - editor is dragging')
-                }
+                captureSnapshot()
               }" 
             />
             <template v-if="useSurround">

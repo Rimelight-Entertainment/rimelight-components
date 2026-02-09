@@ -186,7 +186,7 @@ const getKey = (item: TreeItem) => item.path
                 item: 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800',
                 linkLabel: 'w-full'
               }"
-              @select="(e, item) => handleSelect(item)"
+              @select="(e: Event, item: TreeItem) => handleSelect(item)"
           >
               <template #item-label="{ item }">
                   <div class="flex items-center gap-2 py-1 w-full">

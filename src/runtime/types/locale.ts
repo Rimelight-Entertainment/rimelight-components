@@ -43,15 +43,26 @@ export type Messages = {
     }
     page_editor: {
         preview: string
+        view_page: string
         save: string
+        publish: string
+        publish_page: string
+        publish_confirmation: string
         create_page: string
         delete_page: string
         viewing_version_notice: string
+        unsaved_changes_title: string
+        unsaved_changes_description: string
+        leave_anyway: string
         metadata: string
         page_id: string
         created_at: string
         posted_at: string
         updated_at: string
+        add_block: string
+        search_blocks: string
+        append_new_block: string
+        no_blocks_found: string
     }
     page_properties: {
         links: string
