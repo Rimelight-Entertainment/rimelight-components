@@ -66,6 +66,7 @@ export interface PageEditorEmits {
   'version-navigate': [version: PageVersion]
   'version-approved': [version: PageVersion]
   'version-reverted': [version: PageVersion]
+  publish: [value: Page]
 }
 
 const emit = defineEmits<PageEditorEmits>()
@@ -148,6 +149,20 @@ const handleViewPage = async () => {
 const handleSave = () => {
   const dataToPersist = JSON.parse(JSON.stringify(page.value))
   emit("save", dataToPersist)
+}
+
+const handlePublish = async () => {
+  const confirmed = await confirm({
+    title: t("page_editor.publish_page", "Publish Page"),
+    description: t("page_editor.publish_confirmation", "Are you sure you want to publish this page? This will make it visible to the public."),
+    confirmLabel: t("page_editor.publish", "Publish"),
+    cancelLabel: t("common.cancel", "Cancel")
+  })
+
+  if (confirmed) {
+    const dataToPersist = JSON.parse(JSON.stringify(page.value))
+    emit("publish", dataToPersist)
+  }
 }
 
 defineExpose({
@@ -352,6 +367,17 @@ const handleTreeNavigate = (slug: string) => {
           <slot name="header-actions" />
 
           <UButton
+            v-if="!isViewingVersion"
+            icon="lucide:globe"
+            :label="t('page_editor.publish', 'Publish')"
+            color="neutral"
+            variant="outline"
+            size="xs"
+            :loading="isSaving"
+            @click="handlePublish"
+          />
+
+          <UButton
             icon="lucide:save"
             :label="t('page_editor.save')"
             color="primary"
@@ -421,6 +447,7 @@ const handleTreeNavigate = (slug: string) => {
             </UPageHeader>
             <RCBlockEditor 
               ref="editor"
+              :key="versionId ?? 'live'"
               v-model="page.blocks" 
               @start="pauseHistory"
               @mutation="() => {
