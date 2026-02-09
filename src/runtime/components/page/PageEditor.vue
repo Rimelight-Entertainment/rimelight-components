@@ -123,7 +123,7 @@ const {
 const { getTypeLabelKey } = usePageRegistry();
 const { t, locale } = useI18n()
 
-const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory } = usePageEditor(page)
+const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } = usePageEditor(page)
 const { confirm } = useConfirm()
 
 const handleViewPage = async () => {
@@ -419,7 +419,19 @@ const handleTreeNavigate = (slug: string) => {
                 </div>
               </template>
             </UPageHeader>
-            <RCBlockEditor ref="editor" v-model="page.blocks" @mutation="captureSnapshot" />
+            <RCBlockEditor 
+              ref="editor"
+              v-model="page.blocks" 
+              @start="pauseHistory"
+              @mutation="() => {
+                resumeHistory()
+                if (!editorRef?.isDragging) {
+                  captureSnapshot()
+                } else {
+                  console.log('[PageEditor] Skipping snapshot - editor is dragging')
+                }
+              }" 
+            />
             <template v-if="useSurround">
               <div
                 v-if="surroundStatus === 'pending'"

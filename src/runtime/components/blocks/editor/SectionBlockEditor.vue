@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { inject, ref, type Ref, computed, watch, nextTick } from "vue"
-import { type SectionBlockProps, type HeadingLevel } from "../../../types"
+import { inject, ref, type Ref, computed, watch, nextTick, shallowRef } from "vue"
+import { type SectionBlockProps, type HeadingLevel, type Block } from "../../../types"
 import type { SelectItem } from "@nuxt/ui"
 import { tv } from "../../../internal/tv"
 import { useRC } from "../../../composables"
@@ -108,21 +108,26 @@ watch(
   }
 )
 
-const localChildren = ref(props.children ? JSON.parse(JSON.stringify(props.children)) : [])
-
-const handleChildrenMutation = async () => {
-  await nextTick()
-  if (editorApi) {
-    editorApi.updateBlockProps(props.id, { children: JSON.parse(JSON.stringify(localChildren.value)) })
+// Use a computed property to bridge vuedraggable and the central store directly
+// This avoids maintaining a separate local state that can get out of sync
+const localChildren = computed({
+  get: () => props.children ?? [],
+  set: (newChildren) => {
+    console.log('[SectionBlockEditor] localChildren setter called:', newChildren.length)
+    if (editorApi && props.id) {
+       // Deep copy to ensure we break references before sending to store
+       const childrenCopy = JSON.parse(JSON.stringify(newChildren))
+       editorApi.updateBlockProps(props.id, { children: childrenCopy })
+    }
   }
-}
+})
 
-watch(() => props.children, (newChildren) => {
-  if (JSON.stringify(newChildren) !== JSON.stringify(localChildren.value)) {
-    localChildren.value = newChildren ? JSON.parse(JSON.stringify(newChildren)) : []
-  }
-}, { deep: true })
-</script>
+// We no longer need to manually handle mutations since the setter does it immediately
+const handleChildrenMutation = () => {
+    // This might still be called by RCBlockEditor's events, but the work is done in the setter.
+    // We can keep it empty or log for debugging.
+    console.log('[SectionBlockEditor] Mutation event received (handled by setter)')
+}</script>
 
 <template>
   <div :class="root({ class: rc.root })">
@@ -161,7 +166,9 @@ watch(() => props.children, (newChildren) => {
       <template #default>
         <RCBlockEditor 
           v-model="localChildren"
+          :container-id="props.id"
           @mutation="handleChildrenMutation"
+          @end="handleChildrenMutation"
         />
       </template>
     </RCSection>

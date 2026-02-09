@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { inject, computed, ref, watch, nextTick } from "vue"
+import { inject, computed, ref, watch, nextTick, type Ref, shallowRef } from "vue"
 import { useI18n } from "vue-i18n"
-import type { CalloutBlockProps, CalloutVariant } from "../../../types"
+import type { CalloutBlockProps, CalloutVariant, Block } from "../../../types"
 import { useAppConfig } from "#imports"
 import { tv } from "../../../internal/tv"
 import { useRC } from "../../../composables"
@@ -75,20 +75,21 @@ const items = computed(() => [
   })
 ])
 
-const localChildren = ref(props.children ? JSON.parse(JSON.stringify(props.children)) : [])
-
-const handleChildrenMutation = async () => {
-  await nextTick()
-  if (editorApi) {
-    editorApi.updateBlockProps(props.id, { children: JSON.parse(JSON.stringify(localChildren.value)) })
+// Use a computed property to bridge vuedraggable and the central store directly
+const localChildren = computed({
+  get: () => props.children ?? [],
+  set: (newChildren) => {
+    console.log('[CalloutBlockEditor] localChildren setter called:', newChildren.length)
+    if (editorApi && props.id) {
+       const childrenCopy = JSON.parse(JSON.stringify(newChildren))
+       editorApi.updateBlockProps(props.id, { children: childrenCopy })
+    }
   }
+})
+
+const handleChildrenMutation = () => {
+    console.log('[CalloutBlockEditor] Mutation event received (handled by setter)')
 }
-
-watch(() => props.children, (newChildren) => {
-  if (JSON.stringify(newChildren) !== JSON.stringify(localChildren.value)) {
-    localChildren.value = newChildren ? JSON.parse(JSON.stringify(newChildren)) : []
-  }
-}, { deep: true })
 </script>
 
 <template>
@@ -117,7 +118,9 @@ watch(() => props.children, (newChildren) => {
         <div class="w-full mt-2">
           <RCBlockEditor 
             v-model="localChildren"
+            :container-id="props.id"
             @mutation="handleChildrenMutation"
+            @end="handleChildrenMutation"
           />
         </div>
       </template>

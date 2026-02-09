@@ -62,9 +62,25 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
   }
 
   // Watch for changes in properties, title, and blocks
+  let isPaused = false
+
+  const pauseHistory = () => {
+    console.log('[usePageEditor] History paused')
+    isPaused = true
+  }
+
+  const resumeHistory = () => {
+    console.log('[usePageEditor] History resumed')
+    isPaused = false
+  }
+
   watch(
     [() => page.value.properties, () => page.value.title, () => page.value.blocks],
     () => {
+      if (isPaused) {
+        console.log('[usePageEditor] Skipping auto-snapshot - history is paused')
+        return
+      }
       // We might want to debounce this so typing in a text field
       // doesn't create 50 history states
       captureSnapshot()
@@ -85,6 +101,8 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
     canRedo,
     save,
     captureSnapshot,
-    resetHistory
+    resetHistory,
+    pauseHistory,
+    resumeHistory
   }
 }

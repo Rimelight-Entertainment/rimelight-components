@@ -206,55 +206,26 @@ export function useBlockEditor(
   // 💡 All public mutation methods must now call executeMutation()
 
   const updateBlockProps = (id: string, newProps: Record<string, any>) => {
+    console.log('[useBlockEditor] updateBlockProps called for ID:', id, 'with props:', Object.keys(newProps))
     executeMutation(() => {
       const loc = findBlockLocation(initialBlocks.value, id)
-      if (!loc) return
-
-      // 1. TS18048 FIX: Safely retrieve the block from the array location.
-      // The previous check (if (!loc) return) guarantees parentArray and index exist.
-      // TypeScript, however, still warns about array indexing.
-      const oldBlock = loc.parentArray[loc.index]
-
-      // We check if oldBlock is truthy. Since loc exists, oldBlock should too,
-      // but this satisfies TS strict mode for array access inside a loop context.
-      if (!oldBlock) return
-
-      // --- TS2322 FIX: Solving the Block Union Assignment ---
-
-      // The error occurs because TypeScript cannot guarantee that the result of:
-      // { ...oldBlock, props: newPropsObject }
-      // still adheres to the strict structure of the Block union type.
-      // Specifically, when we spread the properties, TypeScript can lose track of the
-      // discriminant property (`type`) relative to the expected `props`.
-
-      // We have to explicitly define the required properties (`id` and `type`)
-      // when constructing the new block object, even though they come from the spread.
-
-      // 2. Create the new props object
-      const newPropsObject: Record<string, any> = {
-        ...oldBlock.props,
-        ...newProps
+      if (!loc) {
+        console.warn('[useBlockEditor] Block not found for update:', id)
+        return
       }
 
-      // 3. Construct the new block, explicitly ensuring the required Block fields are present.
-      // The easiest fix is to cast the final object back to the Block type,
-      // assuming we know the structure is preserved.
-      const newBlock: Block = {
-        id: oldBlock.id, // Explicitly carry over the required BaseBlock properties
-        type: oldBlock.type, // Explicitly carry over the required BaseBlock properties
-        props: newPropsObject
-      } as Block // We use an 'as Block' cast as the structure is preserved
+      const oldBlock = loc.parentArray[loc.index]
+      if (!oldBlock) return
 
-      // Alternative FIX for Step 3 (safer but verbose):
-      /*
-      const newBlock = {
-        ...oldBlock, // This brings over id, type, and props
-        props: newPropsObject // This overwrites the props property
-      } as Block
-      */
+      // CRITICAL FIX: Instead of creating a new block object (which causes Vue to remount),
+      // we mutate the existing block's props in place to preserve component instance
+      Object.assign(oldBlock.props, newProps)
 
-      // 4. Replace the old block with the new one
-      loc.parentArray.splice(loc.index, 1, newBlock)
+      console.log('[useBlockEditor] Block props updated in place:', {
+        id: oldBlock.id,
+        type: oldBlock.type,
+        childrenCount: (oldBlock.props as any).children?.length
+      })
     })
   }
 
@@ -333,6 +304,78 @@ export function useBlockEditor(
     return committedSnapshot
   }
 
+  /**
+   * Relocates a block from its current position to a new position.
+   * Used for cross-container drag and drop operations.
+   * 
+   * @param blockId - The ID of the block to relocate
+   * @param targetContainerId - The ID of the target container block (null for root level)
+   * @param targetIndex - The index within the target container where the block should be inserted
+   */
+  const relocateBlock = (
+    blockId: string,
+    targetContainerId: string | null,
+    targetIndex: number
+  ) => {
+    console.log('[useBlockEditor] relocateBlock called:', { blockId, targetContainerId, targetIndex })
+
+    executeMutation(() => {
+      // 1. Find and remove the block from its current location
+      const sourceLoc = findBlockLocation(initialBlocks.value, blockId)
+      if (!sourceLoc) {
+        console.warn('[useBlockEditor] Block not found for relocation:', blockId)
+        return
+      }
+
+      const block = sourceLoc.parentArray[sourceLoc.index]
+      if (!block) {
+        console.warn('[useBlockEditor] Block is undefined at location')
+        return
+      }
+
+      // Remove from source
+      sourceLoc.parentArray.splice(sourceLoc.index, 1)
+      console.log('[useBlockEditor] Block removed from source, now inserting at target')
+
+      // 2. Find the target container
+      let targetArray: Block[]
+
+      if (targetContainerId === null) {
+        // Target is root level
+        targetArray = initialBlocks.value
+      } else {
+        // Target is a container block
+        const targetLoc = findBlockLocation(initialBlocks.value, targetContainerId)
+        if (!targetLoc) {
+          console.warn('[useBlockEditor] Target container not found:', targetContainerId)
+          // Put block back at source location if target not found
+          sourceLoc.parentArray.splice(sourceLoc.index, 0, block)
+          return
+        }
+
+        const targetBlock = targetLoc.parentArray[targetLoc.index]
+        if (!targetBlock || !('children' in targetBlock.props)) {
+          console.warn('[useBlockEditor] Target block does not have children prop')
+          sourceLoc.parentArray.splice(sourceLoc.index, 0, block)
+          return
+        }
+
+        targetArray = targetBlock.props.children as Block[]
+      }
+
+      // 3. Insert at target position (clamp index to valid range)
+      const safeIndex = Math.max(0, Math.min(targetIndex, targetArray.length))
+      targetArray.splice(safeIndex, 0, block)
+
+      console.log('[useBlockEditor] Block relocated successfully:', {
+        blockId,
+        targetContainerId,
+        targetIndex: safeIndex,
+        newTargetLength: targetArray.length
+      })
+    })
+  }
+
   return {
     // Mutations
     updateBlockProps,
@@ -340,6 +383,7 @@ export function useBlockEditor(
     moveBlock,
     duplicateBlock,
     insertBlock,
+    relocateBlock,
     // History
     undo,
     redo,
