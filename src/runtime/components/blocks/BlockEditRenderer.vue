@@ -62,12 +62,12 @@ const onDrop = () => {
 
 const blockEditRendererStyles = tv({
   slots: {
-    root: "flex flex-col w-full min-h-32 bg-neutral-50/10 rounded-lg transition-all border border-neutral-200/30"
+    root: "flex flex-col w-full min-h-32 transition-all border-l-2 border-neutral-200/50 p-4 pl-6 rounded-r-lg"
   },
   variants: {
     isDraggingOver: {
       true: {
-        root: "border-primary-500 bg-primary-50/40 ring-4 ring-primary-500/20 z-10 scale-[1.005]"
+        root: "border-l-4 border-primary-500 bg-primary-50/30 ring-1 ring-primary-500/10 z-10"
       }
     }
   }
@@ -164,15 +164,19 @@ const handleChange = (event: any) => {
       :class="[blocks && blocks.length > 0 ? 'gap-lg min-h-16 pb-32' : 'gap-0 min-h-32']"
     >
       <template #header>
-        <div v-if="!blocks || blocks.length === 0" class="w-full p-8 flex items-center justify-center transition-colors" :class="[isDraggingOver ? 'bg-primary-50/50' : '']">
+        <div 
+          v-if="!blocks || blocks.length === 0" 
+          class="w-full p-4 flex items-center justify-center transition-all rounded-lg border-2 border-transparent" 
+          :class="[isDraggingOver ? 'bg-primary-50/50 border-dashed border-primary-500/50' : '']"
+        >
           <UEmpty
             icon="i-lucide-layers"
             title="Empty Section"
             description="This area has no blocks yet. Drag items here or click to add your first block."
             variant="naked"
             class="w-full"
-            :ui="{ root: 'transition-transform px-4', title: isDraggingOver ? 'text-primary-600' : '' }"
-            :class="[isDraggingOver ? 'scale-105' : '']"
+            :ui="{ root: 'transition-transform px-4', title: isDraggingOver ? 'text-primary-600 font-bold' : '' }"
+            :class="[isDraggingOver ? 'scale-[1.02]' : '']"
           >
             <template #actions>
               <UButton
