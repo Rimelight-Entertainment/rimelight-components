@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Component, watch, ref, inject } from "vue"
-import draggable from "vuedraggable"
+import draggable from "vuedraggable/src/vuedraggable"
 import { getBlockEditorComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
 import { tv } from "../../internal/tv"
