@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { type Component, watch, ref, inject } from "vue"
-// @ts-ignore
 import draggable from "vuedraggable"
 import { getBlockEditorComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
@@ -9,7 +8,7 @@ import { useRC } from "../../composables"
 
 export interface BlockEditRendererProps {
   blocks: Block[]
-  containerId?: string | null // ID of the container block, null for root
+  containerId?: string | null
   rc?: {
     root?: string
   }
@@ -120,28 +119,29 @@ const handleChange = (event: any) => {
     containerId,
     blockIds: blocks.value.map((b: any) => ({ id: b.id, type: b.type }))
   })
-  
-  // With shallowRef in container editors, vuedraggable modifies the actual 
+
+  // With shallowRef in container editors, vuedraggable modifies the actual
   // block.props.children array directly, so the central state is already updated.
   // We just need to emit the change event for the parent to know something happened.
-  
+
   if (event.added) {
     console.log(`[BlockEditRenderer ${rendererId}] Block ADDED to this container:`, event.added.element.id)
   }
-  
+
   if (event.removed) {
     console.log(`[BlockEditRenderer ${rendererId}] Block REMOVED from this container:`, event.removed.element.id)
   }
-  
+
   if (event.moved) {
     console.log(`[BlockEditRenderer ${rendererId}] Block MOVED within same container`)
   }
-  
+
   emit('change', event)
-}</script>
+}
+</script>
 
 <template>
-  <div 
+  <div
     :class="[root({ isDraggingOver }), rc.root, 'relative', { 'is-empty': blocks.length === 0 }]"
     @dragenter="onDragEnter"
     @dragover.prevent
@@ -164,9 +164,9 @@ const handleChange = (event: any) => {
       :class="[blocks && blocks.length > 0 ? 'gap-lg min-h-16 pb-32' : 'gap-0 min-h-32']"
     >
       <template #header>
-        <div 
-          v-if="!blocks || blocks.length === 0" 
-          class="w-full p-4 flex items-center justify-center transition-all rounded-lg border-2 border-transparent" 
+        <div
+          v-if="!blocks || blocks.length === 0"
+          class="w-full p-4 flex items-center justify-center transition-all rounded-lg border-2 border-transparent"
           :class="[isDraggingOver ? 'bg-primary-50/50 border-dashed border-primary-500/50' : '']"
         >
           <UEmpty
@@ -220,6 +220,7 @@ const handleChange = (event: any) => {
 </template>
 
 <style scoped>
+
 :deep(.drag-placeholder) {
   opacity: 1;
   background: #3b82f6; /* blue-500 */
