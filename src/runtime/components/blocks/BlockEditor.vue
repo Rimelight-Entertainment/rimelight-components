@@ -150,7 +150,7 @@ defineExpose({ undo, redo, canUndo, canRedo })
       @change="handleBlockChange"
     />
 
-    <div class="flex flex-col items-center justify-center gap-md p-sm">
+    <div v-if="blocks && blocks.length > 0" class="flex flex-col items-center justify-center gap-md p-sm">
       <UButton
         color="neutral"
         :label="t('page_editor.add_block', 'Add Block')"

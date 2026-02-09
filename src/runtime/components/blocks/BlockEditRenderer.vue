@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Component, watch } from "vue"
+import { type Component, watch, ref, inject } from "vue"
 // @ts-ignore
 import draggable from "vuedraggable"
 import { getBlockEditorComponent } from "../../internal/blockMapper"
@@ -37,9 +37,39 @@ const { rc } = useRC('BlockEditRenderer', rcProp)
 const rendererId = Math.random().toString(36).substring(7)
 console.log('[BlockEditRenderer] Instance created with ID:', rendererId, 'containerId:', containerId, 'initial blocks:', blocks.value.length)
 
+const editorApi = inject<any>("block-editor-api")
+
+const isDraggingOver = ref(false)
+const dragCounter = ref(0)
+
+const onDragEnter = () => {
+  dragCounter.value++
+  isDraggingOver.value = true
+}
+
+const onDragLeave = () => {
+  dragCounter.value--
+  if (dragCounter.value <= 0) {
+    isDraggingOver.value = false
+    dragCounter.value = 0
+  }
+}
+
+const onDrop = () => {
+  dragCounter.value = 0
+  isDraggingOver.value = false
+}
+
 const blockEditRendererStyles = tv({
   slots: {
-    root: "flex flex-col w-full min-h-64 bg-neutral-50/50 rounded-lg transition-all"
+    root: "flex flex-col w-full min-h-32 bg-neutral-50/10 rounded-lg transition-all border border-neutral-200/30"
+  },
+  variants: {
+    isDraggingOver: {
+      true: {
+        root: "border-primary-500 bg-primary-50/40 ring-4 ring-primary-500/20 z-10 scale-[1.005]"
+      }
+    }
   }
 })
 
@@ -111,14 +141,13 @@ const handleChange = (event: any) => {
 }</script>
 
 <template>
-  <div :class="[root({ class: rc.root }), 'relative']">
-    <div v-if="!blocks || blocks.length === 0" class="absolute inset-0 flex items-center justify-center pointer-events-none border-2 border-dashed border-neutral-200 rounded-lg">
-      <div class="flex flex-col items-center gap-2 text-neutral-400">
-        <UIcon name="lucide:arrow-down-to-line" class="size-6" />
-        <span class="text-sm font-medium">Drop items here</span>
-      </div>
-    </div>
-    
+  <div 
+    :class="[root({ isDraggingOver }), rc.root, 'relative', { 'is-empty': blocks.length === 0 }]"
+    @dragenter="onDragEnter"
+    @dragover.prevent
+    @dragleave="onDragLeave"
+    @drop="onDrop"
+  >
     <draggable
       v-model="blocks"
       item-key="id"
@@ -131,8 +160,33 @@ const handleChange = (event: any) => {
       @start="handleStart"
       @end="handleEnd"
       @change="handleChange"
-      class="flex flex-col gap-lg w-full min-h-32 flex-1 pb-32"
+      class="flex flex-col w-full flex-1"
+      :class="[blocks && blocks.length > 0 ? 'gap-lg min-h-16 pb-32' : 'gap-0 min-h-32']"
     >
+      <template #header>
+        <div v-if="!blocks || blocks.length === 0" class="w-full p-8 flex items-center justify-center transition-colors" :class="[isDraggingOver ? 'bg-primary-50/50' : '']">
+          <UEmpty
+            icon="i-lucide-layers"
+            title="Empty Section"
+            description="This area has no blocks yet. Drag items here or click to add your first block."
+            variant="naked"
+            class="w-full"
+            :ui="{ root: 'transition-transform px-4', title: isDraggingOver ? 'text-primary-600' : '' }"
+            :class="[isDraggingOver ? 'scale-105' : '']"
+          >
+            <template #actions>
+              <UButton
+                label="Add Block"
+                icon="i-lucide-plus"
+                color="neutral"
+                variant="subtle"
+                @click="editorApi?.openAddBlockModal()"
+              />
+            </template>
+          </UEmpty>
+        </div>
+      </template>
+
       <template #item="{ element: block }">
         <div class="w-full">
           <template v-if="getComponent(block)">
@@ -184,5 +238,14 @@ const handleChange = (event: any) => {
 /* Hide children of the placeholder to just show the line */
 :deep(.drag-placeholder > *) {
   display: none !important;
+}
+
+.is-empty :deep(.drag-placeholder) {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
 }
 </style>
