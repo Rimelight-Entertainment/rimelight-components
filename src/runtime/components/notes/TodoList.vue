@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useTodos, useApi } from '../../composables'
+import { ref } from 'vue'
+import { useTodos } from '../../composables'
 import type { Todo } from '../../db/auth'
 import { useI18n } from 'vue-i18n'
+import TodoCard from './TodoCard.vue'
 
-const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo, todoRefreshTrigger } = useTodos()
+export interface TodoListProps {
+  todos: Todo[]
+  archivedTodos?: Todo[]
+  loading?: boolean
+}
+
+const { todos, archivedTodos = [], loading = false } = defineProps<TodoListProps>()
+
+const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos()
 const { t } = useI18n()
-
-const { data: todos, refresh: refreshTodos } = await useApi<Todo[]>('/api/todos')
-
-watch(todoRefreshTrigger, () => {
-  refreshTodos()
-})
-
-const activeTodos = computed(() => todos.value?.filter(t => !t.isArchived) || [])
 
 const newTodoTitle = ref('')
 const newTodoDescription = ref('')
@@ -32,18 +33,6 @@ const handleAddTodo = async () => {
 }
 
 const showArchived = ref(false)
-const { data: archivedTodos, refresh: refreshArchived } = await useApi<Todo[]>('/api/todos/archived', {
-  immediate: false,
-  watch: [showArchived]
-})
-
-watch(showArchived, (val) => {
-  if (val) refreshArchived()
-})
-
-watch(todoRefreshTrigger, () => {
-  if (showArchived.value) refreshArchived()
-})
 </script>
 
 <template>
@@ -101,46 +90,15 @@ watch(todoRefreshTrigger, () => {
 
         <!-- Active Todos -->
         <div class="flex flex-col gap-xs">
-          <div
-            v-for="todo in activeTodos"
+          <TodoCard
+            v-for="todo in todos"
             :key="todo.id"
-            class="group flex items-center justify-between gap-sm p-xs rounded-lg hover:bg-muted/50 transition-colors"
-          >
-            <div class="flex items-start gap-sm flex-1">
-              <div class="pt-0.5">
-                <UCheckbox
-                  v-model="todo.completed"
-                  @change="toggleTodo(todo.id, todo.completed)"
-                />
-              </div>
-              <div class="flex flex-col gap-0">
-                <span
-                  class="text-sm transition-all"
-                  :class="{ 'line-through text-dimmed': todo.completed }"
-                >
-                  {{ todo.title }}
-                </span>
-                <span
-                  v-if="todo.description"
-                  class="text-xs text-dimmed transition-all"
-                  :class="{ 'line-through': todo.completed }"
-                >
-                  {{ todo.description }}
-                </span>
-              </div>
-            </div>
-            <div class="flex items-center gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
-              <UButton
-                icon="lucide:archive"
-                size="xs"
-                variant="ghost"
-                color="neutral"
-                @click="archiveTodo(todo.id)"
-              />
-            </div>
-          </div>
+            :todo="todo"
+            @toggle="(completed) => toggleTodo(todo.id, completed)"
+            @archive="archiveTodo(todo.id)"
+          />
 
-          <p v-if="activeTodos.length === 0" class="text-xs text-dimmed text-center py-sm">
+          <p v-if="todos.length === 0" class="text-xs text-dimmed text-center py-sm">
             {{ t('todo.no_active') }}
           </p>
         </div>
@@ -149,44 +107,13 @@ watch(todoRefreshTrigger, () => {
         <template v-if="showArchived">
           <USeparator :label="t('common.archive')" />
           <div class="flex flex-col gap-xs">
-            <div
+            <TodoCard
               v-for="todo in archivedTodos"
               :key="todo.id"
-              class="flex items-center justify-between gap-sm p-xs rounded-lg opacity-60"
-            >
-              <div class="flex items-start gap-sm">
-                <div class="pt-0.5">
-                  <UIcon
-                    :name="todo.completed ? 'lucide:check-circle-2' : 'lucide:circle'"
-                    class="w-4 h-4 text-dimmed"
-                  />
-                </div>
-                <div class="flex flex-col gap-0">
-                  <span class="text-sm line-through text-dimmed">
-                    {{ todo.title }}
-                  </span>
-                  <span v-if="todo.description" class="text-xs line-through text-dimmed">
-                    {{ todo.description }}
-                  </span>
-                </div>
-              </div>
-              <div class="flex items-center gap-xs">
-                <UButton
-                  icon="lucide:rotate-ccw"
-                  size="xs"
-                  variant="ghost"
-                  color="neutral"
-                  @click="restoreTodo(todo.id)"
-                />
-                <UButton
-                  icon="lucide:trash-2"
-                  size="xs"
-                  variant="ghost"
-                  color="error"
-                  @click="deleteTodo(todo.id)"
-                />
-              </div>
-            </div>
+              :todo="todo"
+              @restore="restoreTodo(todo.id)"
+              @delete="deleteTodo(todo.id)"
+            />
           </div>
         </template>
       </div>
