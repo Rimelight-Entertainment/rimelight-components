@@ -37,7 +37,6 @@ const state = reactive<{
 })
 
 const { data: fetchedLabels } = useApi<Label[]>("/api/notes/labels", {
-  lazy: true,
   default: () => [] as any
 })
 
@@ -204,6 +203,20 @@ watch(open, (isOpen) => {
   }
 })
 
+const deleteNote = async () => {
+  if (!state.id) return
+  
+  try {
+    await $api(`/api/notes/${state.id}`, {
+      method: "DELETE"
+    })
+    open.value = false
+    emit("saved", null as any) // Trigger refresh
+  } catch (e) {
+    console.error("Failed to delete note", e)
+  }
+}
+
 onUnmounted(() => {
   if (saveTimeout.value) {
     clearTimeout(saveTimeout.value)
@@ -264,7 +277,7 @@ onUnmounted(() => {
             variant="ghost"
             @click="state.isArchived = !state.isArchived"
           />
-          <UButton color="error" icon="lucide:trash-2" size="sm" variant="ghost" @click="" />
+          <UButton color="error" icon="lucide:trash-2" size="sm" variant="ghost" @click="deleteNote" />
         </div>
       </div>
       <div class="flex items-center justify-between">
