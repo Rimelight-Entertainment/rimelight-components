@@ -15,7 +15,7 @@ export const $api = async <T>(path: string, opts: any = {}) => {
     // Logic: If not Tauri, and not Dev, and is Client...
     // check if current hostname matches apiBase hostname.
     let isExternal = isTauri;
-    if (!isExternal && !import.meta.dev && import.meta.client) {
+    if (!isExternal && !import.meta.dev && import.meta.client && typeof window !== 'undefined') {
         try {
             if (apiBase.startsWith("http")) {
                 const apiHost = new URL(apiBase).hostname;
@@ -52,7 +52,7 @@ export const useApi = <T>(path: string | (() => string), opts: UseFetchOptions<T
     const isTauri = config.public.isTauri as boolean;
 
     let isExternal = isTauri;
-    if (!isExternal && !import.meta.dev && import.meta.client) {
+    if (!isExternal && !import.meta.dev && import.meta.client && typeof window !== 'undefined') {
         try {
             if (apiBase.startsWith("http")) {
                 const apiHost = new URL(apiBase).hostname;
