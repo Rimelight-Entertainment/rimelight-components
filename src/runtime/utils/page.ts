@@ -165,12 +165,19 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
  * Converts a PageVersion to a Page structure for display in the editor.
  */
 export function convertVersionToPage(version: PageVersion): Page {
+  // Ensure we fallback to empty arrays/objects if missing
+  const blocks = version.content?.blocks || version.blocks || []
+  const properties = version.content?.properties || (version as any).properties
+
   return {
     ...version,
-    id: version.pageId,
+    // Use the pageId if available as this is a version OF a page, 
+    // but fall back to id if pageId is missing (e.g. if type is just BasePage)
+    // However, version.id is the version's ID. version.pageId is the page's ID.
+    id: version.pageId || version.id,
     type: version.type,
-    blocks: version.content?.blocks || version.blocks,
-    properties: version.content?.properties,
-    authorsIds: version.authorsIds
+    blocks: JSON.parse(JSON.stringify(blocks)), // Deep copy to avoid reference issues
+    properties: properties ? JSON.parse(JSON.stringify(properties)) : {},
+    authorsIds: version.authorsIds || []
   } as Page
 }
