@@ -27,7 +27,7 @@ const emit = defineEmits<TodoCardEmits>()
         <template v-if="!todo.isArchived">
           <UCheckbox
             :model-value="todo.completed"
-            @update:model-value="(val: boolean) => emit('toggle', val)"
+            @update:model-value="(val: boolean | 'indeterminate') => emit('toggle', val === true)"
           />
         </template>
         <template v-else>
