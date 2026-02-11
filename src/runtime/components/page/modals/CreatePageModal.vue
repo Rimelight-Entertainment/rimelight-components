@@ -86,12 +86,15 @@ const handleConfirm = () => {
     return
   }
 
-  // Initialize properties from definition defaults
+  // Initialize properties from definition defaults using the correct structure
   const properties: Record<string, any> = {}
   Object.entries(definition.properties).forEach(([groupKey, group]) => {
-    properties[groupKey] = {}
+    properties[groupKey] = {
+      ...group,
+      fields: {}
+    }
     Object.entries(group.fields).forEach(([fieldKey, field]) => {
-      properties[groupKey][fieldKey] = field.value
+      properties[groupKey].fields[fieldKey] = { ...field }
     })
   })
 
@@ -101,7 +104,8 @@ const handleConfirm = () => {
     slug: slug.value,
     properties: properties as any,
     blocks: definition.initialBlocks ? definition.initialBlocks() : [],
-
+    createdAt: new Date(),
+    updatedAt: new Date()
   }
 
   emit('confirm', newPage)

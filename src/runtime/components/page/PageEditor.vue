@@ -3,7 +3,7 @@ import { ref, computed, useTemplateRef, provide } from "vue"
 import { navigateTo } from "#imports"
 import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types"
 import { usePageEditor, usePageRegistry, useRC, useHeaderStack, useConfirm } from "../../composables"
-import { getLocalizedContent } from "../../utils"
+import { getLocalizedContent, syncPageWithDefinition } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { tv } from "../../internal/tv"
 
@@ -127,6 +127,16 @@ const { t, locale } = useI18n()
 const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } = usePageEditor(page)
 const { confirm } = useConfirm()
 
+const currentDefinition = computed(() => pageDefinitions[page.value.type])
+
+// Sync page with definition on load/change
+watch([() => page.value.id, () => versionId.value, () => page.value.type], () => {
+  if (page.value && currentDefinition.value) {
+    console.log('[PageEditor] Syncing page with definition', page.value.id, versionId.value)
+    syncPageWithDefinition(page.value, currentDefinition.value)
+  }
+}, { immediate: true })
+
 const handleViewPage = async () => {
   if (canUndo.value) {
     const confirmed = await confirm({
@@ -147,6 +157,9 @@ const handleViewPage = async () => {
 }
 
 const handleSave = () => {
+  if (currentDefinition.value) {
+    syncPageWithDefinition(page.value, currentDefinition.value)
+  }
   const dataToPersist = JSON.parse(JSON.stringify(page.value))
   emit("save", dataToPersist)
 }
@@ -160,6 +173,9 @@ const handlePublish = async () => {
   })
 
   if (confirmed) {
+    if (currentDefinition.value) {
+      syncPageWithDefinition(page.value, currentDefinition.value)
+    }
     const dataToPersist = JSON.parse(JSON.stringify(page.value))
     emit("publish", dataToPersist)
   }

@@ -96,7 +96,7 @@ const {
 } = pagePropertiesRendererStyles()
 
 const { getTypeLabelKey } = usePageRegistry();
-const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(page.value.properties)
+const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(() => page.value.properties)
 
 const { t, locale } = useI18n()
 const { share } = useShare()

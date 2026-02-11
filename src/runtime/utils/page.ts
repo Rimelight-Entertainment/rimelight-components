@@ -77,11 +77,11 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
 
       if (existingField !== undefined) {
         updatedGroupFields[fieldId] = {
-          ...definitionField,
+          ...JSON.parse(JSON.stringify(definitionField)),
           value: existingField.value
         }
       } else {
-        updatedGroupFields[fieldId] = { ...definitionField }
+        updatedGroupFields[fieldId] = JSON.parse(JSON.stringify(definitionField))
         hasChanged = true
       }
     }
@@ -145,7 +145,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
       } else {
         // This templated block is missing from the page.
         // Insert it after the last "seen" ideal block to preserve relative order.
-        filteredCurrent.splice(lastExistingIdealIndex + 1, 0, { ...idealBlock })
+        filteredCurrent.splice(lastExistingIdealIndex + 1, 0, JSON.parse(JSON.stringify(idealBlock)))
         lastExistingIdealIndex++
         hasChanged = true
       }
@@ -178,6 +178,17 @@ export function convertVersionToPage(version: PageVersion): Page {
     type: version.type,
     blocks: JSON.parse(JSON.stringify(blocks)), // Deep copy to avoid reference issues
     properties: properties ? JSON.parse(JSON.stringify(properties)) : {},
-    authorsIds: version.authorsIds || []
+    authorsIds: version.authorsIds || [],
+    createdAt: version.createdAt ? new Date(version.createdAt) : new Date(),
+    updatedAt: version.updatedAt ? new Date(version.updatedAt) : new Date(),
+    postedAt: version.postedAt ? new Date(version.postedAt) : null,
+    banner: version.banner,
+    icon: version.icon,
+    images: version.images || [],
+    title: version.title || { en: "" },
+    slug: version.slug || "",
+    description: version.description || { en: "" },
+    tags: version.tags || [],
+    links: version.links || []
   } as Page
 }

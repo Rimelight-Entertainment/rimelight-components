@@ -68,7 +68,7 @@ const {
 } = pagePropertiesEditorStyles()
 
 const { getTypeLabelKey } = usePageRegistry()
-const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(page.value.properties)
+const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(() => page.value.properties)
 
 const { locale, t } = useI18n()
 

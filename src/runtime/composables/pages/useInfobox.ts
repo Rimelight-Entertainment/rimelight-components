@@ -1,12 +1,12 @@
-// composables/useInfobox.ts
-
 import { useI18n } from "vue-i18n"
+import { type MaybeRefOrGetter, toValue } from "vue"
 import type { Property, PropertyGroup, BasePageProperties } from "../../types"
 
-export const useInfobox = (properties: BasePageProperties) => {
+export const useInfobox = (propertiesRef: MaybeRefOrGetter<BasePageProperties>) => {
   const { locale } = useI18n()
 
   const isFieldVisible = (schema: Property, isReadOnly: boolean) => {
+    const properties = toValue(propertiesRef)
     const passesLogic = !schema.visibleIf || schema.visibleIf(properties)
     if (!passesLogic) return false
 
@@ -28,8 +28,9 @@ export const useInfobox = (properties: BasePageProperties) => {
   }
 
   // Cast Object.entries to help TS understand the [string, PropertyGroup] relationship
-  const getSortedGroups = (props: BasePageProperties) => {
-    return (Object.entries(props) as [string, PropertyGroup][]).sort(
+  const getSortedGroups = (props: MaybeRefOrGetter<BasePageProperties>) => {
+    const p = toValue(props)
+    return (Object.entries(p) as [string, PropertyGroup][]).sort(
       ([, a], [, b]) => (a.order ?? 0) - (b.order ?? 0)
     )
   }

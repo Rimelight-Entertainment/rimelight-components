@@ -67,7 +67,7 @@ const tooltip = computed(() => config.value.tooltip)
 </script>
 
 <template>
-  <component :is="to ? 'NuxtLink' : 'div'" :to="to" :target="target">
+  <NuxtLink :to="to" :target="target">
     <UAlert
       :title="t(title)"
       :color="variant"
@@ -93,7 +93,7 @@ const tooltip = computed(() => config.value.tooltip)
         </UTooltip>
       </template>
     </UAlert>
-  </component>
+  </NuxtLink>
 </template>
 
 <style scoped></style>

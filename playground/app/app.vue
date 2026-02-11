@@ -52,10 +52,6 @@ const { registerAction } = useQuickActions()
 const isCreateModalOpen = ref(false)
 const isCreating = ref(false)
 
-watch(isCreateModalOpen, (val) => {
-  console.log('[App] isCreateModalOpen changed:', val)
-})
-
 const handleCreateConfirm = async (newPageData: Partial<Page>) => {
   try {
     isCreating.value = true
@@ -80,7 +76,6 @@ onMounted(() => {
     label: 'Create Page',
     icon: 'lucide:plus',
     onSelect: () => {
-      console.log('Quick Action triggered: opening modal')
       isCreateModalOpen.value = true
     }
   })
