@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useRoute } from "#imports"
 import { useToast } from "@nuxt/ui/composables/useToast"
-import { computed } from "vue"
+import { computed, inject, provide } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { tv } from "../../internal/tv"
 import { useRC } from "../../composables"
 import { slugify } from "../../utils"
+import { SECTION_LEVEL_KEY } from "../../internal/injectionKeys"
 
 defineOptions({
   name: 'SectionComponent'
@@ -28,13 +29,18 @@ export interface SectionProps {
   }
 }
 
+const props = defineProps<SectionProps>()
 const {
-  level = 1,
   title,
   description,
   isEditing = false,
   rc: rcProp
-} = defineProps<SectionProps>()
+} = props
+
+const parentLevel = inject(SECTION_LEVEL_KEY, computed(() => 1))
+const level = computed(() => Math.min(6, parentLevel.value + 1))
+
+provide(SECTION_LEVEL_KEY, level)
 
 export interface SectionEmits {}
 
@@ -113,14 +119,7 @@ const sectionStyles = tv({
   }
 })
 
-const {
-  section,
-  link,
-  heading,
-  descriptionText,
-  separator,
-  content
-} = sectionStyles({ level })
+const styles = computed(() => sectionStyles({ level: level.value as SectionLevel }))
 
 const { copy } = useClipboard()
 const toast = useToast()
@@ -152,16 +151,16 @@ const fullSectionUrl = computed(() => {
 </script>
 
 <template>
-  <section :id="sectionId" :class="section({ class: rc.section })" v-bind="$attrs">
+  <section :id="sectionId" :class="styles.section({ class: rc.section })" v-bind="$attrs">
     <component
       :id="`${sectionId}-heading`"
       :is="`h${level}`"
-      :class="heading({ class: rc.heading })"
+      :class="styles.heading({ class: rc.heading })"
     >
       <NuxtLink
         v-if="!isEditing"
         :href="`#${sectionId}`"
-        :class="link({ class: rc.link })"
+        :class="styles.link({ class: rc.link })"
         class="group relative lg:-ms-2 lg:ps-2 inline-block w-full"
       >
         <ClientOnly>
@@ -184,12 +183,12 @@ const fullSectionUrl = computed(() => {
       <slot v-else name="title">{{ title }}</slot>
     </component>
     <slot name="description">
-      <p v-if="description" :class="descriptionText({ class: rc.descriptionText })">
+      <p v-if="description" :class="styles.descriptionText({ class: rc.descriptionText })">
         {{ description }}
       </p>
     </slot>
-    <USeparator :class="separator({ class: rc.separator })" />
-    <div :class="content({ class: rc.content })">
+    <USeparator :class="styles.separator({ class: rc.separator })" />
+    <div :class="styles.content({ class: rc.content })">
       <slot />
     </div>
   </section>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { ref, computed, inject } from "vue"
 import { BLOCK_DEFINITIONS, CATEGORY_ORDER, type BlockDefinition } from "../../utils/blocks"
 import { useRC } from "../../composables"
 import { useI18n } from "vue-i18n"
 import { tv } from "../../internal/tv"
+import { SECTION_LEVEL_KEY } from "../../internal/injectionKeys"
 
 export interface AddBlockModalProps {
   open?: boolean
@@ -71,12 +72,20 @@ const {
 
 const { t } = useI18n()
 const searchQuery = ref("")
+const sectionLevel = inject(SECTION_LEVEL_KEY, computed(() => 1))
 
 const filteredBlocks = computed(() => {
-  if (!searchQuery.value) return BLOCK_DEFINITIONS
+  let blocks = BLOCK_DEFINITIONS
+  
+  // Disable SectionBlock if we're already at max depth (H6)
+  if (sectionLevel.value >= 6) {
+    blocks = blocks.filter(b => b.type !== 'SectionBlock')
+  }
+
+  if (!searchQuery.value) return blocks
 
   const query = searchQuery.value.toLowerCase()
-  return BLOCK_DEFINITIONS.filter(block => 
+  return blocks.filter(block => 
     block.label.toLowerCase().includes(query) || 
     block.type.toLowerCase().includes(query) ||
     block.category.toLowerCase().includes(query) ||
@@ -161,18 +170,18 @@ const handleSelect = (block: BlockDefinition) => {
                     :class="blockItem({ class: rc.blockItem })"
                     @click="handleSelect(block)"
                   >
-                    <div :class="blockIcon({ class: rc.blockIcon })">
+                    <span :class="blockIcon({ class: rc.blockIcon })">
                       <UIcon :name="block.icon" size="20" />
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center justify-between gap-2">
+                    </span>
+                    <span class="flex-1 text-left">
+                      <span class="flex items-center justify-between gap-2">
                         <span :class="blockLabel({ class: rc.blockLabel })">{{ block.label }}</span>
-                        <span class="text-[10px] font-mono text-dimmed px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-900 rounded">{{ block.type }}</span>
-                      </div>
-                      <p v-if="block.description" :class="blockDescription({ class: rc.blockDescription })">
+                        <span class="text-[10px] font-mono text-dimmed px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-900 rounded shrink-0">{{ block.type }}</span>
+                      </span>
+                      <span v-if="block.description" :class="blockDescription({ class: rc.blockDescription })" class="block">
                         {{ block.description }}
-                      </p>
-                    </div>
+                      </span>
+                    </span>
                   </button>
                 </div>
               </div>

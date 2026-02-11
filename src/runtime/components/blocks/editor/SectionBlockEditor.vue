@@ -4,6 +4,7 @@ import { type SectionBlockProps, type HeadingLevel, type Block } from "../../../
 import type { SelectItem } from "@nuxt/ui"
 import { tv } from "../../../internal/tv"
 import { useRC } from "../../../composables"
+import { SECTION_LEVEL_KEY } from "../../../internal/injectionKeys"
 
 export interface SectionBlockEditorProps extends SectionBlockProps {
   id: string
@@ -30,7 +31,7 @@ const { rc } = useRC('SectionBlockEditor', rcProp)
 const sectionBlockEditorStyles = tv({
   slots: {
     root: "flex flex-col gap-sm",
-    headerContainer: "flex flex-row gap-xs",
+    headerContainer: "flex flex-row items-center gap-xs",
     titleInput: "w-full"
   }
 })
@@ -39,15 +40,18 @@ const { root, headerContainer, titleInput } = sectionBlockEditorStyles()
 
 const editorApi = inject<any>("block-editor-api")
 
-const localLevel: Ref<HeadingLevel> = ref(props.level as HeadingLevel)
 const localTitle = ref(props.title)
 const localDescription = ref(props.description)
 
-const levelItems: SelectItem[] = [
-  { label: "H1", value: 1 },
-  { label: "H2", value: 2 },
-  { label: "H3", value: 3 }
-]
+const parentLevel = inject(SECTION_LEVEL_KEY, computed(() => 1))
+const currentLevel = computed(() => Math.min(6, parentLevel.value + 1))
+
+watch(currentLevel, (newLevel) => {
+  if (editorApi && props.id && newLevel !== props.level) {
+    editorApi.updateBlockProps(props.id, { level: newLevel })
+  }
+}, { immediate: true })
+
 
 /**
  * Updates the local title buffer on every keystroke for instant feedback.
@@ -75,11 +79,6 @@ const commitDescriptionOnBlur = () => {
   }
 }
 
-watch(localLevel, (newLocalLevel) => {
-  if (editorApi && props.id && newLocalLevel !== props.level) {
-    editorApi.updateBlockProps(props.id, { level: newLocalLevel })
-  }
-})
 
 watch(
   () => props.title,
@@ -90,14 +89,6 @@ watch(
   }
 )
 
-watch(
-  () => props.level,
-  (newVal) => {
-    if (newVal !== localLevel.value) {
-      localLevel.value = newVal
-    }
-  }
-)
 
 watch(
   () => props.description,
@@ -130,19 +121,12 @@ const handleChildrenMutation = () => {
 
 <template>
   <div :class="root({ class: rc.root })">
-    <RCSection :level="localLevel" :title="localTitle" :description="description" is-editing>
+    <RCSection :title="localTitle" :description="description" is-editing>
       <template #title>
         <div :class="headerContainer({ class: rc.headerContainer })">
-          <USelect
-            v-model="localLevel"
-            :items="levelItems"
-            value-key="value"
-            label-key="label"
-            variant="ghost"
-            placeholder="Select Heading Level"
-            size="sm"
-            color="neutral"
-          />
+          <span class="text-xs font-mono text-dimmed shrink-0 leading-none">
+            H{{ currentLevel }}
+          </span>
           <UInput
             :model-value="localTitle"
             variant="ghost"
