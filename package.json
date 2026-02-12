@@ -69,13 +69,20 @@
     "rimelight-components": "workspace:*"
   },
   "dependencies": {
+    "@nuxt/image": "^2.0.0",
     "@nuxt/kit": "^4.3.0",
+    "@nuxt/ui": "^4.4.0",
+    "@nuxtjs/i18n": "^10.2.1",
+    "better-auth": "^1.4.7",
     "chroma-js": "^3.2.0",
+    "date-fns": "^4.1.0",
     "defu": "^6.1.4",
+    "drizzle-orm": "^0.45.1",
     "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^3.2.2",
     "uuid": "^13.0.0",
-    "vuedraggable": "^4.1.0"
+    "vuedraggable": "^4.1.0",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.1",
@@ -83,21 +90,15 @@
     "@iconify-json/lucide": "^1.2.88",
     "@nuxt/a11y": "1.0.0-alpha.1",
     "@nuxt/devtools": "^3.1.1",
-    "@nuxt/image": "^2.0.0",
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.3.0",
     "@nuxt/test-utils": "^3.23.0",
-    "@nuxt/ui": "^4.2.1",
-    "@nuxtjs/i18n": "^10.2.1",
     "@tauri-apps/plugin-http": "^2.5.7",
     "@types/chroma-js": "^3.1.2",
     "@types/node": "^25.2.0",
     "@vueuse/core": "^14.2.0",
     "@vueuse/nuxt": "^14.2.0",
-    "better-auth": "^1.4.7",
     "changelogen": "^0.6.2",
-    "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.45.1",
     "husky": "^9.1.7",
     "nuxt": "4.3.0",
     "oxfmt": "^0.28.0",
@@ -106,8 +107,7 @@
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
     "vue": "^3.5.27",
-    "vue-tsc": "^3.2.4",
-    "zod": "^4.2.1"
+    "vue-tsc": "^3.2.4"
   },
   "peerDependencies": {
     "@nuxt/ui": "^4.4.0",
