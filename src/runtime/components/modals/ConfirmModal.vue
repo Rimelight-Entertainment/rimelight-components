@@ -17,6 +17,7 @@ const isOpen = computed({
     v-model:open="isOpen"
     :title="state.options.title"
     :description="state.options.description"
+    class="z-9999"
   >
     <template #body>
       <div class="flex flex-row justify-between gap-sm">

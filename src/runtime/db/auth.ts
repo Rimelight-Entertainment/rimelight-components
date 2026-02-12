@@ -178,8 +178,12 @@ export const team = pgTable(
 
 export const teamMember = pgTable("team_member", {
     id: id.primaryKey(),
-    teamId: uuid("team_id").notNull(),
-    userId: uuid("user_id").notNull(),
+    teamId: uuid("team_id")
+        .notNull()
+        .references(() => team.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+        .notNull()
+        .references(() => user.id, { onDelete: "cascade" }),
     role: text("role").notNull(),
     ...timestamps
 })
@@ -248,7 +252,8 @@ export const userRelations = relations(user, ({ many }) => ({
     invitations: many(invitation),
     notes: many(note),
     noteLabels: many(noteLabel),
-    todos: many(todo)
+    todos: many(todo),
+    teamMembers: many(teamMember)
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
