@@ -8,7 +8,12 @@ import { defaultOptions } from './scripts/defaults'
 const currentDir = dirname(fileURLToPath(import.meta.url))
 
 export default defineNuxtConfig({
-  compatibilityDate: "2026-02-13",
+    compatibilityDate: "2026-02-13",
+    alias: {
+        "rimelight-components/types": resolve(currentDir, "types"),
+        "rimelight-components/utils": resolve(currentDir, "utils"),
+        "rimelight-components": currentDir
+    },
     devtools: { enabled: true },
     devServer: { host: "127.0.0.1", port: 3000 },
     modules: [
