@@ -1,0 +1,5 @@
+export { default as CalloutBlockRenderer } from './CalloutBlockRenderer.vue'
+
+export { default as ImageBlockRenderer } from './ImageBlockRenderer.vue'
+export { default as ParagraphBlockRenderer } from './ParagraphBlockRenderer.vue'
+export { default as SectionBlockRenderer } from './SectionBlockRenderer.vue'
