@@ -1,7 +1,0 @@
-export { default as Footer } from './Footer.vue'
-export { default as Header } from './Header.vue'
-export { default as HeaderLayer } from './HeaderLayer.vue'
-export { default as Image } from './Image.vue'
-export { default as Logo } from './Logo.vue'
-export { default as NewsletterSignup } from './NewsletterSignup.vue'
-export { default as ScrollToTop } from './ScrollToTop.vue'

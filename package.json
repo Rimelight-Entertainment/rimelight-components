@@ -1,5 +1,6 @@
 {
   "name": "rimelight-components",
+  "type": "module",
   "version": "2.2.8",
   "description": "A component library by Rimelight Entertainment.",
   "keywords": [
@@ -14,48 +15,22 @@
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight-components.git"
   },
   "license": "MIT",
-  "type": "module",
-  "main": "./dist/module.mjs",
-  "imports": {
-    "#build/rimelight-components/*": "./.nuxt/rimelight-components/*.ts",
-    "#build/rimelight-components.css": "./.nuxt/rimelight-components.css"
-  },
+  "main": "./nuxt.config.ts",
   "exports": {
-    ".": "./dist/module.mjs",
-    "./components/*": "./dist/runtime/components/*",
-    "./composables": {
-      "types": "./dist/runtime/composables/index.d.ts",
-      "import": "./dist/runtime/composables/index.mjs",
-      "default": "./dist/runtime/composables/index.mjs"
-    },
-    "./db": {
-      "types": "./dist/runtime/db/index.d.ts",
-      "import": "./dist/runtime/db/index.mjs",
-      "default": "./dist/runtime/db/index.mjs"
-    },
-    "./types": {
-      "types": "./dist/runtime/types/index.d.ts",
-      "import": "./dist/runtime/types/index.mjs",
-      "default": "./dist/runtime/types/index.mjs"
-    },
-    "./utils": {
-      "types": "./dist/runtime/utils/index.d.ts",
-      "import": "./dist/runtime/utils/index.mjs",
-      "default": "./dist/runtime/utils/index.mjs"
-    }
+    ".": "./nuxt.config.ts",
+    "./composables": "./composables/index.ts",
+    "./types": "./types/index.ts",
+    "./utils": "./utils/index.ts",
+    "./auth": "./auth/index.ts",
+    "./db": "./db/index.ts"
   },
-  "style": "./dist/runtime/index.css",
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "prepare": "git submodule update --init --recursive && git -C .rimelight-utilities fetch origin && git -C .rimelight-utilities checkout main && git -C .rimelight-utilities pull origin main && bun ./.rimelight-utilities/scripts/sync.ts && husky",
-    "build": "nuxt-module-build build",
+    "prepare": "git submodule update --init --recursive && git -C .rimelight-utilities fetch origin && git -C .rimelight-utilities checkout main && git -C .rimelight-utilities pull origin main && bun ./.rimelight-utilities/scripts/sync.ts && husky && nuxt prepare",
     "dev": "bun run dev:prepare && nuxt dev playground",
     "dev:build": "nuxt build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-    "prepack": "bun run build",
-    "typecheck": "vue-tsc --noEmit && nuxt typecheck",
+    "dev:prepare": "nuxt prepare playground",
+    "prepack": "nuxt prepare playground",
+    "typecheck": "nuxt prepare && vue-tsc --noEmit && nuxt typecheck",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
     "format": "oxfmt --check",
@@ -65,61 +40,55 @@
     "test": "vitest",
     "release": "release-it --ci"
   },
-  "resolutions": {
-    "rimelight-components": "workspace:*"
-  },
   "dependencies": {
     "@nuxt/image": "^2.0.0",
-    "@nuxt/kit": "^4.3.0",
-    "@nuxt/ui": "^4.4.0",
-    "@nuxtjs/i18n": "^10.2.1",
-    "better-auth": "^1.4.7",
+    "@nuxt/kit": "^4.3.1",
+    "better-auth": "^1.4.18",
     "chroma-js": "^3.2.0",
     "date-fns": "^4.1.0",
     "defu": "^6.1.4",
-    "drizzle-orm": "^0.45.1",
     "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^3.2.2",
     "uuid": "^13.0.0",
-    "vuedraggable": "^4.1.0",
-    "zod": "^4.2.1"
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.1",
     "@commitlint/config-conventional": "^20.4.1",
-    "@iconify-json/lucide": "^1.2.88",
+    "@iconify-json/lucide": "^1.2.90",
     "@nuxt/a11y": "1.0.0-alpha.1",
-    "@nuxt/devtools": "^3.1.1",
-    "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.3.0",
+    "@nuxt/devtools": "^3.2.1",
+    "@nuxt/icon": "^2.2.1",
+    "@nuxt/schema": "^4.3.1",
     "@nuxt/test-utils": "^3.23.0",
+    "@nuxt/ui": "^4.4.0",
+    "@nuxtjs/i18n": "^10.2.3",
     "@tauri-apps/plugin-http": "^2.5.7",
     "@types/chroma-js": "^3.1.2",
-    "@types/node": "^25.2.0",
-    "@vueuse/core": "^14.2.0",
-    "@vueuse/nuxt": "^14.2.0",
+    "@types/node": "^25.2.3",
+    "@vueuse/core": "^14.2.1",
+    "@vueuse/nuxt": "^14.2.1",
     "changelogen": "^0.6.2",
     "husky": "^9.1.7",
     "nuxt": "4.3.0",
     "oxfmt": "^0.28.0",
-    "oxlint": "^1.43.0",
+    "oxlint": "^1.47.0",
     "release-it": "^19.2.4",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "vue": "^3.5.27",
     "vue-tsc": "^3.2.4"
   },
   "peerDependencies": {
-    "@nuxt/ui": "^4.4.0",
     "@nuxt/image": "^2.0.0",
+    "@nuxt/ui": "^4.4.0",
     "@nuxtjs/i18n": "^10.2.1",
     "@tauri-apps/plugin-http": "^2.5.7",
     "@vueuse/core": "^14.2.0",
     "@vueuse/nuxt": "^14.2.0",
-    "nuxt": "4.3.0",
     "drizzle-orm": "^0.45.1",
-    "zod": "^4.3.6",
-    "vue": "^3.5.27"
+    "nuxt": "4.3.0",
+    "vue": "^3.5.27",
+    "zod": "^4.3.6"
   },
   "trustedDependencies": [
     "@parcel/watcher",

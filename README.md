@@ -11,10 +11,10 @@
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-A Nuxt module with components and utilities used internally at Rimelight Entertainment.
+A Nuxt layer with components and utilities used internally at Rimelight Entertainment.
 
 > [!WARNING]
-> This module is in early development and may contain placeholders and not strictly adhere to best practices.
+> This layer is in early development and may contain placeholders and not strictly adhere to best practices.
 
 - [Documentation](https://ui.nuxt.com/docs)
 - [Playground](https://ui3-playground.nuxt.dev)
@@ -32,11 +32,11 @@ Install the package from npm:
 bun add rimelight-components
 ```
 
-Add the module to your `nuxt.config.js`:
+Add the layer to your `nuxt.config.js`:
 
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
-  modules: ['rimelight-components']
+  extends: ['rimelight-components']
 })
 ```
 
