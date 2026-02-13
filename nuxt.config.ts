@@ -23,6 +23,9 @@ export default defineNuxtConfig({
         '@nuxt/icon',
         '@nuxt/image',
         '@nuxtjs/i18n',
+        '@nuxt/a11y',
+        '@vueuse/nuxt',
+        '@nuxtjs/device',
         function (options, nuxt) {
             const resolvePath = (path: string) => resolve(currentDir, path)
 
@@ -78,8 +81,15 @@ export default defineNuxtConfig({
             ignore: ['**/index.*']
         }
     ],
+    experimental: {
+        viteEnvironmentApi: false,
+        typescriptPlugin: true,
+        nitroAutoImports: true
+    },
     ui: {
         prefix: "U",
+        mdc: true,
+        content: true,
         theme: {
             colors: [
                 "neutral",
@@ -94,6 +104,40 @@ export default defineNuxtConfig({
                 "source"
             ]
         }
+    },
+    colorMode: {
+        preference: "dark",
+        fallback: "dark",
+    },
+    fonts: {
+        defaults: {
+            weights: [
+                // Thin
+                100,
+                // ExtraLight
+                200,
+                // Light
+                300,
+                // Regular
+                400,
+                // Medium
+                500,
+                // SemiBold
+                600,
+                // Bold
+                700,
+                // Extra Bold
+                800,
+            ],
+            styles: ["normal", "italic"],
+        },
+        families: [
+            {
+                name: "JetBrains Mono",
+                global: true,
+                provider: "local",
+            },
+        ],
     },
     i18n: {
         defaultLocale: "en"
