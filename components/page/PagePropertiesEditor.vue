@@ -184,10 +184,13 @@ const removeLink = (index: number) => {
             variant="subtle"
             placeholder="page-slug"
             size="xs"
-            prefix="/"
             :ui="{ base: 'text-center text-dimmed font-mono' }"
             class="w-full opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity"
-          />
+          >
+            <template #leading>
+              <span class="text-gray-500 dark:text-gray-400 text-xs text-dimmed">/</span>
+            </template>
+          </UInput>
 
           <span :class="type({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
 

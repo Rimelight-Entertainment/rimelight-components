@@ -63,9 +63,9 @@ const items = computed(() => [
   variants.map(type => {
     const config = getVariantConfig(type)
     return {
-      label: type.charAt(0).toUpperCase() + type.slice(1),
+      label: t(config.title),
       icon: config.icon,
-      description: t(config.description || config.tooltip),
+      description: t(config.tooltip),
       onSelect: () => {
         if (editorApi) {
           editorApi.updateBlockProps(props.id, { variant: type })

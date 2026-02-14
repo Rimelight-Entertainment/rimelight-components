@@ -12,7 +12,6 @@ export type BlockType =
   | "ParagraphBlock"
   | "CalloutBlock"
   | "ImageBlock"
-  | "ImageBlock"
 
 /**
  * Defines the common structure for any content block object.

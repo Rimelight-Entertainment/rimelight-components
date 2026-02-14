@@ -135,75 +135,76 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
         <ClientOnly>
           <RCLogo variant="mark" class="h-6 w-auto" />
         </ClientOnly>
-        <UNavigationMenu
-          :items="items"
-          variant="link"
-          :style="{ '--header-bottom-boundary': `${(bottomOffsets[headerLayerId] || 0) - 64}px` }"
-          :ui="{
-            viewportWrapper:
-              'top-[var(--header-bottom-boundary)] flex fixed w-screen mt-[var(--ui-header-height)]',
-            viewport: 'rounded-none',
-            label: 'text-white',
-            link: 'hover:text-primary-200 active:text-500'
-          }"
-        >
-          <template #megamenu-content="{ item }">
-            <UContainer>
-              <div class="flex h-full flex-row gap-xl">
-                <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
-                <ul v-if="(item as NavigationMenuItem).children" class="grid gap-4 flex-1 p-md grid-cols-2">
-                  <li v-for="parent in (item as NavigationMenuItem).children" :key="parent.label" class="space-y-2">
+        <div :style="{ '--header-bottom-boundary': `${(bottomOffsets[headerLayerId] || 0) - 64}px` }">
+          <UNavigationMenu
+            :items="items"
+            variant="link"
+            :ui="{
+              viewportWrapper:
+                'top-[var(--header-bottom-boundary)] flex fixed w-screen mt-[var(--ui-header-height)]',
+              viewport: 'rounded-none',
+              label: 'text-white',
+              link: 'hover:text-primary-200 active:text-500'
+            }"
+          >
+            <template #megamenu-content="{ item }">
+              <UContainer>
+                <div class="flex h-full flex-row gap-xl">
+                  <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
+                  <ul v-if="(item as NavigationMenuItem).children" class="grid gap-4 flex-1 p-md grid-cols-2">
+                    <li v-for="parent in (item as NavigationMenuItem).children" :key="parent.label" class="space-y-2">
+                      <ULink
+                        :to="parent.to"
+                        class="block w-full rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50 bg-muted/30"
+                      >
+                        <p class="font-bold text-highlighted">
+                          {{ parent.label }}
+                        </p>
+                        <p class="line-clamp-2 text-muted text-xs">
+                          {{ parent.description }}
+                        </p>
+                      </ULink>
+                      
+                      <ul v-if="parent.children" class="pl-4 space-y-1">
+                        <li v-for="child in parent.children" :key="child.label">
+                          <ULink
+                            :to="child.to"
+                            class="block w-full rounded-md px-3 py-1 text-left text-sm transition-colors hover:text-primary"
+                          >
+                            <span class="text-xs text-muted mr-2">/</span>
+                            <span class="font-medium">{{ child.label }}</span>
+                          </ULink>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </UContainer>
+            </template>
+            <template #megamenu2-content="{ item }">
+              <UContainer>
+                <ul class="grid gap-2 p-4 lg:w-125 lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]">
+                  <li class="row-span-3">
+                    <RCPlaceholder class="size-full min-h-48" />
+                  </li>
+
+                  <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
                     <ULink
-                      :to="parent.to"
-                      class="block w-full rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50 bg-muted/30"
+                      class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
                     >
-                      <p class="font-bold text-highlighted">
-                        {{ parent.label }}
+                      <p class="font-medium text-highlighted">
+                        {{ child.label }}
                       </p>
-                      <p class="line-clamp-2 text-muted text-xs">
-                        {{ parent.description }}
+                      <p class="line-clamp-2 text-muted">
+                        {{ child.description }}
                       </p>
                     </ULink>
-                    
-                    <ul v-if="parent.children" class="pl-4 space-y-1">
-                      <li v-for="child in parent.children" :key="child.label">
-                        <ULink
-                          :to="child.to"
-                          class="block w-full rounded-md px-3 py-1 text-left text-sm transition-colors hover:text-primary"
-                        >
-                          <span class="text-xs text-muted mr-2">/</span>
-                          <span class="font-medium">{{ child.label }}</span>
-                        </ULink>
-                      </li>
-                    </ul>
                   </li>
                 </ul>
-              </div>
-            </UContainer>
-          </template>
-          <template #megamenu2-content="{ item }">
-            <UContainer>
-              <ul class="grid gap-2 p-4 lg:w-125 lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]">
-                <li class="row-span-3">
-                  <RCPlaceholder class="size-full min-h-48" />
-                </li>
-
-                <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
-                  <ULink
-                    class="rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50"
-                  >
-                    <p class="font-medium text-highlighted">
-                      {{ child.label }}
-                    </p>
-                    <p class="line-clamp-2 text-muted">
-                      {{ child.description }}
-                    </p>
-                  </ULink>
-                </li>
-              </ul>
-            </UContainer>
-          </template>
-        </UNavigationMenu>
+              </UContainer>
+            </template>
+          </UNavigationMenu>
+        </div>
       </div>
     </template>
 
@@ -291,36 +292,38 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
 
     <template #collapsed-left>
       <ClientOnly>
-        <USlideover
-          v-model:open="slideoverState.left"
-          side="left"
-          :handle="false"
-          :ui="{
-            header: 'flex items-center justify-between',
-            content: 'w-full max-w-4/5 rounded-none'
-          }"
-        >
-          <UButton
-            color="neutral"
-            variant="ghost"
-            icon="lucide:menu"
-            @click="slideoverState.left = true"
-          />
-          <template #header>
-            <RCLogo variant="mark" class="h-6 w-auto" />
+        <div>
+          <USlideover
+            v-model:open="slideoverState.left"
+            side="left"
+            :handle="false"
+            :ui="{
+              header: 'flex items-center justify-between',
+              content: 'w-full max-w-4/5 rounded-none'
+            }"
+          >
             <UButton
               color="neutral"
               variant="ghost"
-              icon="lucide:x"
-              @click="slideoverState.left = false"
+              icon="lucide:menu"
+              @click="slideoverState.left = true"
             />
-          </template>
-          <template #body>
-            <div class="flex size-full flex-col items-start gap-md">
-              <UNavigationMenu :items="items" variant="link" orientation="vertical" />
-            </div>
-          </template>
-        </USlideover>
+            <template #header>
+              <RCLogo variant="mark" class="h-6 w-auto" />
+              <UButton
+                color="neutral"
+                variant="ghost"
+                icon="lucide:x"
+                @click="slideoverState.left = false"
+              />
+            </template>
+            <template #body>
+              <div class="flex size-full flex-col items-start gap-md">
+                <UNavigationMenu :items="items" variant="link" orientation="vertical" />
+              </div>
+            </template>
+          </USlideover>
+        </div>
       </ClientOnly>
     </template>
 
@@ -333,6 +336,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
     <template #collapsed-right>
       <div class="flex flex-row justify-end gap-sm">
         <ClientOnly>
+        <div class="flex flex-row gap-sm items-center">
           <UTooltip text="Notifications">
             <UButton color="neutral" variant="ghost" square @click="slideoverState.notifications = true">
               <UChip color="error" inset>
@@ -385,7 +389,8 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
               </div>
             </template>
           </USlideover>
-        </ClientOnly>
+        </div>
+      </ClientOnly>
       </div>
     </template>
   </RCHeader>

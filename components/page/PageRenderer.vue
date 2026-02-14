@@ -148,10 +148,10 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
           <USeparator />
 
           <div :class="metadata({ class: rc.metadata })">
-            <h6>Metadata</h6>
-            <span>Page ID: {{ page.id }}</span>
+            <h6>{{ t('page_editor.metadata') }}</h6>
+            <span>{{ t('page_editor.page_id') }}: {{ page.id }}</span>
             <span
-              >Created At:
+              >{{ t('page_editor.created_at') }}:
               <NuxtTime
                 :datetime="page.createdAt ?? ''"
                 year="numeric"
@@ -163,7 +163,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
                 time-zone-name="short"
             /></span>
             <span
-              >Posted At:
+              >{{ t('page_editor.posted_at') }}:
               <NuxtTime
                 :datetime="page.createdAt ?? ''"
                 year="numeric"
@@ -175,7 +175,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
                 time-zone-name="short"
             /></span>
             <span
-              >Updated At:
+              >{{ t('page_editor.updated_at') }}:
               <NuxtTime
                 :datetime="page.createdAt ?? ''"
                 year="numeric"

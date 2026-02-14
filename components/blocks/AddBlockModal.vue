@@ -175,11 +175,11 @@ const handleSelect = (block: BlockDefinition) => {
                     </span>
                     <span class="flex-1 text-left">
                       <span class="flex items-center justify-between gap-2">
-                        <span :class="blockLabel({ class: rc.blockLabel })">{{ block.label }}</span>
+                        <span :class="blockLabel({ class: rc.blockLabel })">{{ t(block.label) }}</span>
                         <span class="text-[10px] font-mono text-dimmed px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-900 rounded shrink-0">{{ block.type }}</span>
                       </span>
                       <span v-if="block.description" :class="blockDescription({ class: rc.blockDescription })" class="block">
-                        {{ block.description }}
+                        {{ t(block.description) }}
                       </span>
                     </span>
                   </button>

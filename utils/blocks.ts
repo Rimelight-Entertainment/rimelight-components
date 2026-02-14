@@ -13,31 +13,31 @@ export const CATEGORY_ORDER = ["Layout", "Text", "Media", "Special"]
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     {
         type: "SectionBlock",
-        label: "Section",
+        label: "blocks.SectionBlock.label",
         icon: "i-lucide-heading",
         category: "Layout",
-        description: "A header section to organice your page."
+        description: "blocks.SectionBlock.description"
     },
 
     {
         type: "ParagraphBlock",
-        label: "Paragraph",
+        label: "blocks.ParagraphBlock.label",
         icon: "i-lucide-pilcrow",
         category: "Text",
-        description: "Standard text block for your content."
+        description: "blocks.ParagraphBlock.description"
     },
     {
         type: "ImageBlock",
-        label: "Image",
+        label: "blocks.ImageBlock.label",
         icon: "i-lucide-image",
         category: "Media",
-        description: "Embed an image from a URL."
+        description: "blocks.ImageBlock.description"
     },
     {
         type: "CalloutBlock",
-        label: "Callout",
+        label: "blocks.CalloutBlock.label",
         icon: "i-lucide-info",
         category: "Special",
-        description: "Highlight important information."
+        description: "blocks.CalloutBlock.description"
     }
 ]
