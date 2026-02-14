@@ -12,7 +12,11 @@ type ComponentImporter = () => Promise<{ default: Component }>
  * @param type The BlockType string from the content JSON (e.g., 'ParagraphBlock').
  * @returns A lazily loaded Vue component reference, or undefined if not found.
  */
+const rendererCache = new Map<string, Component>()
+
 export const getBlockRendererComponent = (type: BlockType | string): Component | undefined => {
+  if (rendererCache.has(type)) return rendererCache.get(type)
+
   const componentImporter = BLOCK_RENDERER_COMPONENT_MAP[type] as ComponentImporter | undefined
 
   if (!componentImporter) {
@@ -22,20 +26,20 @@ export const getBlockRendererComponent = (type: BlockType | string): Component |
     return undefined
   }
 
-  return defineAsyncComponent(async () => {
+  const component = defineAsyncComponent(async () => {
     const module = await componentImporter()
     return module.default
   })
+
+  rendererCache.set(type, component)
+  return component
 }
 
-/**
- * Maps the block type string from the database to a dynamically imported Vue component
- * specifically for the editor view.
- *
- * @param type The BlockType string from the content JSON.
- * @returns A lazily loaded Vue component reference, or undefined if not found.
- */
+const editorCache = new Map<string, Component>()
+
 export const getBlockEditorComponent = (type: BlockType | string): Component | undefined => {
+  if (editorCache.has(type)) return editorCache.get(type)
+
   const componentImporter = BLOCK_EDITOR_COMPONENT_MAP[type] as ComponentImporter | undefined
 
   if (!componentImporter) {
@@ -45,9 +49,11 @@ export const getBlockEditorComponent = (type: BlockType | string): Component | u
     return undefined
   }
 
-  // Use defineAsyncComponent for efficient, lazy loading
-  return defineAsyncComponent(async () => {
+  const component = defineAsyncComponent(async () => {
     const module = await componentImporter()
     return module.default
   })
+
+  editorCache.set(type, component)
+  return component
 }

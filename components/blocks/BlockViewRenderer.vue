@@ -59,27 +59,24 @@ const getComponent = (block: Block): Component | null => {
       description="It looks like there isn't any content added to this page yet."
     />
     <template v-else>
-      <template v-for="block in blocks" :key="block.id">
-        <template v-if="getComponent(block)">
-          <component
-            :is="getComponent(block)"
-            :id="block.id"
-            v-bind="block.props"
-            :key="block.id"
-            :type="block.type"
-            class="block-container"
-          />
-        </template>
-        <template v-else>
-          <UAlert
-            color="error"
-            variant="subtle"
-            icon="lucide:octagon-alert"
-            title="Rendering Error"
-            :description="`Block component for type '${block.type || 'UNKNOWN_OR_MISSING'}' was not found. This block will be skipped or the type is invalid/empty.`"
-          />
-        </template>
-      </template>
+      <div v-for="block in blocks" :key="block.id">
+        <component
+          :is="getComponent(block)"
+          v-if="getComponent(block)"
+          :id="block.id"
+          v-bind="block.props"
+          :type="block.type"
+          class="block-container"
+        />
+        <UAlert
+          v-else
+          color="error"
+          variant="subtle"
+          icon="lucide:octagon-alert"
+          title="Rendering Error"
+          :description="`Block component for type '${block.type || 'UNKNOWN_OR_MISSING'}' was not found. This block will be skipped or the type is invalid/empty.`"
+        />
+      </div>
     </template>
   </div>
 </template>

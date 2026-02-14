@@ -1,5 +1,4 @@
 import { useFetch, useRuntimeConfig } from "#imports";
-import { fetch as tauriFetch } from "@tauri-apps/plugin-http";
 import { hash } from "ohash";
 import type { UseFetchOptions, AsyncData } from "#app";
 
@@ -31,10 +30,21 @@ export const $api = async <T>(path: string, opts: any = {}) => {
 
     const baseURL = isExternal ? apiBase : "";
 
+    // Dynamic tauri import to avoid server-side bundling issues
+    let fetchFn = undefined;
+    if (isTauri) {
+        try {
+            const { fetch: tauriFetch } = await import("@tauri-apps/plugin-http");
+            fetchFn = tauriFetch;
+        } catch (e) {
+            console.error("Failed to load Tauri fetch plugin", e);
+        }
+    }
+
     return $fetch<T>(path, {
         baseURL,
         ...opts,
-        fetch: isTauri ? tauriFetch : undefined,
+        fetch: fetchFn,
         headers: {
             Accept: "application/json",
             ...opts.headers,
@@ -65,11 +75,10 @@ export const useApi = <T>(path: string | (() => string), opts: UseFetchOptions<T
         }
     }
 
-    const fetchOptions = {
+    const fetchOptions: any = {
         baseURL: isExternal ? apiBase : "",
         ...opts,
-        fetch: isTauri ? tauriFetch : undefined,
-    } as UseFetchOptions<T>;
+    };
 
     // Use a unique key based on path, method, and query to avoid collisions
     if (!fetchOptions.key) {
@@ -80,6 +89,13 @@ export const useApi = <T>(path: string | (() => string), opts: UseFetchOptions<T
             opts.query,
             opts.params,
         ]);
+    }
+
+    // We can't use async/await here easily inside useApi without making it complicated
+    // but we can pass a custom fetch that lazily imports if needed, 
+    // although for useFetch it's usually better to just let it be null on server.
+    if (isTauri && import.meta.client) {
+        fetchOptions.fetch = (url: string, options: any) => import("@tauri-apps/plugin-http").then(m => m.fetch(url, options));
     }
 
     return useFetch(path, fetchOptions as any) as AsyncData<T, Error | null>;

@@ -199,6 +199,7 @@ const handleChange = (event: any) => {
             <RCBlock :id="block.id" :type="block.type" class="w-full">
               <component
                 :is="getComponent(block)"
+                v-if="getComponent(block)"
                 :id="block.id"
                 v-bind="block.props"
                 :type="block.type"
