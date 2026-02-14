@@ -78,6 +78,7 @@ export default defineNuxtConfig({
             path: 'components',
             pathPrefix: false,
             prefix: 'RC',
+            global: true,
             ignore: ['**/index.*']
         }
     ],
@@ -140,7 +141,18 @@ export default defineNuxtConfig({
         ],
     },
     i18n: {
-        defaultLocale: "en"
+        locales: [
+            {
+                code: 'en',
+                file: resolve(currentDir, 'locales/en.json')
+            }
+        ],
+        defaultLocale: 'en',
+        strategy: 'no_prefix'
+    },
+    a11y: {
+      defaultHighlight: false,
+      logIssues: false,
     },
     css: [
         resolve(currentDir, 'assets/css/index.css')

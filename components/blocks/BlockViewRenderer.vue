@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { type Component } from "vue"
-import { getBlockRendererComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
 import { tv } from "../../internal/tv"
 import { useRC } from "../../composables"
@@ -32,21 +31,6 @@ const blockViewRendererStyles = tv({
 
 const { root } = blockViewRendererStyles()
 
-const getComponent = (block: Block): Component | null => {
-  if (!block || !block.type || block.type.length === 0) {
-    console.error("Block object is missing the critical 'type' field.")
-    return null
-  }
-
-  const resolvedComponent = getBlockRendererComponent(block.type)
-
-  if (!resolvedComponent) {
-    console.error(`Component resolution failed for block type: ${block.type}`)
-    return null
-  }
-
-  return resolvedComponent
-}
 </script>
 
 <template>
@@ -59,22 +43,13 @@ const getComponent = (block: Block): Component | null => {
       description="It looks like there isn't any content added to this page yet."
     />
     <template v-else>
-      <div v-for="block in blocks" :key="block.id">
+      <div v-for="block in (blocks || []).filter(b => !!b)" :key="block.id">
         <component
-          :is="getComponent(block)"
-          v-if="getComponent(block)"
+          :is="block.type ? resolveComponent(`RC${block.type}Renderer`) : 'div'"
           :id="block.id"
           v-bind="block.props"
           :type="block.type"
           class="block-container"
-        />
-        <UAlert
-          v-else
-          color="error"
-          variant="subtle"
-          icon="lucide:octagon-alert"
-          title="Rendering Error"
-          :description="`Block component for type '${block.type || 'UNKNOWN_OR_MISSING'}' was not found. This block will be skipped or the type is invalid/empty.`"
         />
       </div>
     </template>

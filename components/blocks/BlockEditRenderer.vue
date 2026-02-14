@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { type Component, watch, ref, inject } from "vue"
 import draggable from "vuedraggable/src/vuedraggable"
-import { getBlockEditorComponent } from "../../internal/blockMapper"
 import type { Block } from "../../types"
 import { tv } from "../../internal/tv"
 import { useRC } from "../../composables"
@@ -74,30 +73,6 @@ const blockEditRendererStyles = tv({
 
 const { root } = blockEditRendererStyles()
 
-// Watch blocks changes for debugging
-watch(blocks, (newBlocks, oldBlocks) => {
-  console.log(`[BlockEditRenderer ${rendererId}] Blocks changed:`, {
-    oldCount: oldBlocks?.length || 0,
-    newCount: newBlocks?.length || 0,
-    blockIds: newBlocks?.map(b => ({ id: b.id, type: b.type }))
-  })
-}, { deep: true })
-
-const getComponent = (block: Block): Component | null => {
-  if (!block || !block.type || block.type.length === 0) {
-    console.error("Block object is missing the critical 'type' field.")
-    return null
-  }
-
-  const resolvedComponent = getBlockEditorComponent(block.type)
-
-  if (!resolvedComponent) {
-    console.error(`Component resolution failed for block type: ${block.type}`)
-    return null
-  }
-
-  return resolvedComponent
-}
 
 const handleStart = () => {
   console.log(`[BlockEditRenderer ${rendererId}] Drag START - current blocks:`, blocks.value.length)
@@ -195,27 +170,15 @@ const handleChange = (event: any) => {
          [&.ghost-hidden]:hidden
          [&.fallback]:opacity-90 [&.fallback]:shadow-lg [&.fallback]:rounded-lg [&.fallback]:bg-white [&.fallback]:z-[9999] [&.fallback]:cursor-grabbing
         ">
-          <template v-if="getComponent(block)">
-            <RCBlock :id="block.id" :type="block.type" class="w-full">
-              <component
-                :is="getComponent(block)"
-                v-if="getComponent(block)"
-                :id="block.id"
-                v-bind="block.props"
-                :type="block.type"
-                class="w-full"
-              />
-            </RCBlock>
-          </template>
-          <template v-else>
-            <UAlert
-              color="error"
-              variant="subtle"
-              icon="lucide:octagon-alert"
-              title="Rendering Error"
-              :description="`Block component for type '${block.type || 'UNKNOWN_OR_MISSING'}' was not found. This block will be skipped or the type is invalid/empty.`"
+          <RCBlock :id="block.id" :type="block.type" class="w-full">
+            <component
+              :is="block.type ? resolveComponent(`RC${block.type}Editor`) : 'div'"
+              :id="block.id"
+              v-bind="block.props"
+              :type="block.type"
+              class="w-full"
             />
-          </template>
+          </RCBlock>
         </div>
       </template>
     </draggable>
