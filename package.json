@@ -39,8 +39,7 @@
     "format:fix": "oxfmt .",
     "check": "bun run typecheck && bun run lint && bun run format",
     "fix": "bun run lint:fix && bun run format:fix",
-    "test": "vitest",
-    "release": "release-it --ci"
+    "test": "vitest"
   },
   "dependencies": {
     "@nuxt/a11y": "1.0.0-alpha.1",
@@ -72,12 +71,10 @@
     "@types/chroma-js": "^3.1.2",
     "@types/node": "^25.2.3",
     "@vueuse/core": "^14.2.1",
-    "changelogen": "^0.6.2",
     "husky": "^9.1.7",
     "nuxt": "4.3.0",
     "oxfmt": "^0.28.0",
     "oxlint": "^1.47.0",
-    "release-it": "^19.2.4",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
     "vue-tsc": "^3.2.4"
