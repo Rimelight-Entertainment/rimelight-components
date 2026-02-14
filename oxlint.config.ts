@@ -1,5 +1,5 @@
 import { defineConfig } from "oxlint";
-import sharedConfig from './.rimelight-utilities/oxlint-shared-config.ts';
+import sharedConfig from './.rimelight-utilities/oxlint.config';
 
 export default defineConfig({
   ...sharedConfig

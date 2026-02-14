@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue"
+import { ref, watch, onMounted, onUnmounted } from "vue"
 import { MOCK_PAGES_LIST, MOCK_MOVIE_SURROUND } from "../../mocks/pages"
 import { type Page, type PageSurround } from "../../../../types";
 
@@ -32,8 +32,26 @@ const loadPage = () => {
   }
 }
 
-onMounted(loadPage)
+onMounted(() => {
+  loadPage()
+
+  // Register Wiki Quick Actions
+  useQuickActions().registerAction({
+    id: "create-page",
+    label: "Create Page",
+    icon: "lucide:plus",
+    onSelect: () => {
+      if (typeof window !== "undefined") {
+        ;(window as any).triggerCreatePageModal?.()
+      }
+    }
+  })
+})
 watch(slug, loadPage)
+
+onUnmounted(() => {
+  useQuickActions().unregisterAction("create-page")
+})
 
 /**
  * Mock Resolver for the Playground

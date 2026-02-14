@@ -22,21 +22,17 @@ const menuItems = computed<DropdownMenuItem[][]>(() => {
 </script>
 
 <template>
-  <div v-if="menuItems.length > 0" class="fixed bottom-6 right-6 z-[10000]">
-    <ClientOnly>
-      <UDropdownMenu :items="menuItems" :ui="{ content: 'w-48' }">
-        <UButton
-          icon="i-lucide-plus"
-          color="primary"
-          square
-          :ui="{
-            base: 'rounded-full size-14 lg:size-12 justify-center shadow-lg',
-            leadingIcon: 'size-6'
-          }"
-        />
-      </UDropdownMenu>
-    </ClientOnly>
+  <div v-if="menuItems.length > 0">
+    <UDropdownMenu :items="menuItems" :ui="{ content: 'w-48' }">
+      <UButton
+        icon="i-lucide-plus"
+        color="primary"
+        square
+        :ui="{
+          base: 'rounded-full size-14 lg:size-12 justify-center shadow-lg hover:scale-110 transition-transform',
+          leadingIcon: 'size-6'
+        }"
+      />
+    </UDropdownMenu>
   </div>
 </template>
-
-<style scoped></style>

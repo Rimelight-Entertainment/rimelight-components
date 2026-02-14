@@ -3,7 +3,6 @@ import { ref, watch, onMounted } from "vue"
 import { PAGE_MAP } from "./types/page-definitions"
 import type { Page } from "rimelight-components/types"
 import { ULink } from "#components"
-import { useQuickActions } from "rimelight-components/composables"
 
 const toast = useToast()
 
@@ -48,7 +47,6 @@ const cookie = useCookie("cookie-consent", {
   sameSite: "lax"
 })
 
-const { registerAction } = useQuickActions()
 const isCreateModalOpen = ref(false)
 const isCreating = ref(false)
 
@@ -71,14 +69,11 @@ onMounted(() => {
     }
   }
 
-  registerAction({
-    id: 'create-page',
-    label: 'Create Page',
-    icon: 'lucide:plus',
-    onSelect: () => {
+  if (typeof window !== 'undefined') {
+    (window as any).triggerCreatePageModal = () => {
       isCreateModalOpen.value = true
     }
-  })
+  }
 
   if (cookie.value === "accepted") {
     return
@@ -127,7 +122,6 @@ onMounted(() => {
       <NuxtPage />
     </NuxtLayout>
     <ClientOnly>
-      <RCQuickActions />
       <RCCreatePageModal
         v-model:open="isCreateModalOpen"
         :definitions="PAGE_MAP"
@@ -135,6 +129,7 @@ onMounted(() => {
         @confirm="handleCreateConfirm"
       />
       <RCScrollToTop />
+      <RCFloatingActionsOverlay />
     </ClientOnly>
   </UApp>
 </template>
