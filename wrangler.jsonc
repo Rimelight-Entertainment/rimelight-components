@@ -1,8 +1,8 @@
 {
     "$schema": "node_modules/wrangler/config-schema.json",
-    "name": "rimelight-components-playground",
+    "name": "rimelight-components",
     "main": "playground/.output/server/index.mjs",
-    "compatibility_date": "2026-01-01",
+    "compatibility_date": "2026-02-14",
     "compatibility_flags": [
         "nodejs_compat"
     ],
