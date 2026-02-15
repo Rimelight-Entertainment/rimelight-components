@@ -1,5 +1,5 @@
 import { type MaybeRefOrGetter, toValue } from "vue"
-import { type Localized, type Page, type PageDefinition, type PageVersion, type Property } from "../types"
+import { type Localized, type Page, type PageDefinition, type PageVersion, type Property } from "#rimelight-components/types"
 
 export const getLocalizedContent = <T = string>(
   field: Localized<T> | undefined,
@@ -22,29 +22,6 @@ type WidenProperty<T> = T extends string
   ? { [K in keyof T]: WidenProperty<T[K]> }
   : T
 
-/**
- * Helper to define a page with full type safety and literal preservation.
- * This is used by consuming apps to define their custom page types.
- */
-export function definePageDefinition<T extends PageDefinition>(
-  def: T
-): {
-    [K in keyof T]: K extends "properties"
-    ? {
-      [G in keyof T["properties"]]: {
-        label: Localized<string>
-        defaultOpen: boolean
-        fields: {
-          [F in keyof T["properties"][G]["fields"]]: Property<
-            WidenProperty<T["properties"][G]["fields"][F]["value"]>
-          >
-        }
-      }
-    }
-    : T[K]
-  } {
-  return def as any
-}
 
 /**
  * Ensures a page strictly adheres to its PageDefinition.

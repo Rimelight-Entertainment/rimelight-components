@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Todo } from '../../db/auth'
+import type { Todo } from 'rimelight-components/shared/db/auth'
 
 export interface TodoCardProps {
   todo: Todo

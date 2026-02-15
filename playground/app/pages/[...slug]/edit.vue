@@ -2,8 +2,8 @@
 import { ref, computed, watch, onMounted, nextTick } from "vue"
 import { PAGE_MAP } from "../../types/page-definitions"
 import { MOCK_PAGES_LIST, MOCK_MOVIE_SURROUND, MOCK_VERSIONS } from "../../mocks/pages"
-import { type Page, type PageSurround, type PageVersion } from "../../../../types";
-import { convertVersionToPage } from "../../../../utils/page";
+import { type Page, type PageSurround, type PageVersion } from "rimelight-components/types";
+import { convertVersionToPage } from "rimelight-components/utils";
 
 const route = useRoute()
 const slug = computed(() => {

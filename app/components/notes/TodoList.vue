@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useTodos } from '../../composables'
-import type { Todo } from '../../db/auth'
+import type { Todo } from 'rimelight-components/shared/db/auth'
 import { useI18n } from 'vue-i18n'
 import TodoCard from './TodoCard.vue'
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Note } from "../../db/auth"
+import type { Note } from "rimelight-components/shared/db/auth"
 import { ref } from "vue"
 
 const selected = defineModel<boolean>("selected", { default: false })

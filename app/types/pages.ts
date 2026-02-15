@@ -1,4 +1,4 @@
-import { type Block, type Image, type Link } from "../types"
+import { type Block, type Image, type Link } from "#rimelight-components/types"
 
 export type Localized<T = string> = Record<string, T>
 

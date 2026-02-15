@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { SelectMenuItem } from "@nuxt/ui"
 import {computed, reactive, ref, watch, onUnmounted} from "vue"
-import type {Label, Note} from "../../db/auth"
+import type {Label, Note} from "rimelight-components/shared/db/auth"
 import { useApi, $api } from "../../composables"
 
 const open = defineModel<boolean>("open", {default: false})

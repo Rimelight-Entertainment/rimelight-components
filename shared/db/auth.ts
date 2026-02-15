@@ -13,7 +13,7 @@ import {
     uuid
 } from "drizzle-orm/pg-core"
 import { id, timestamps } from "./helpers"
-import type { UserAvailability } from "../types"
+import type { UserAvailability } from "#rimelight-components/types"
 
 // ============================================================================
 // Core Auth Tables

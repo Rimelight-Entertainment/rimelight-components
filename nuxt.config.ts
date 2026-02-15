@@ -14,6 +14,13 @@ export default defineNuxtConfig({
         "#rimelight-components/utils": resolve(currentDir, "app/utils"),
         "rimelight-components/types": resolve(currentDir, "app/types"),
         "rimelight-components/utils": resolve(currentDir, "app/utils"),
+        "#rimelight-components/validators": resolve(currentDir, "shared/validators"),
+        "rimelight-components/validators": resolve(currentDir, "shared/validators"),
+        "#rimelight-components/auth": resolve(currentDir, "shared/auth"),
+        "rimelight-components/auth": resolve(currentDir, "shared/auth"),
+        "#rimelight-components/db": resolve(currentDir, "shared/db"),
+        "rimelight-components/db": resolve(currentDir, "shared/db"),
+        "rimelight-components/composables": resolve(currentDir, "app/composables"),
         "rimelight-components": currentDir
     },
     devtools: { enabled: true },
@@ -75,7 +82,7 @@ export default defineNuxtConfig({
     },
     components: [
         {
-            path: 'app/components',
+            path: resolve(currentDir, 'app/components'),
             pathPrefix: false,
             prefix: 'RC',
             global: true,

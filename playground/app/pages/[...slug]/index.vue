@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from "vue"
 import { MOCK_PAGES_LIST, MOCK_MOVIE_SURROUND } from "../../mocks/pages"
-import { type Page, type PageSurround } from "../../../../types";
+import { type Page, type PageSurround } from "rimelight-components/types";
 
 const route = useRoute()
 const slug = computed(() => {

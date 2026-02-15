@@ -1,6 +1,7 @@
 export * from "./richTextHelpers"
 export * from "./page"
 export * from "./blocks"
+export * from "./cms"
 
 /**
  * Gets a value from an object by path
