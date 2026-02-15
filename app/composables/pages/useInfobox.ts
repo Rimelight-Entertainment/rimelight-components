@@ -11,7 +11,7 @@ export const useInfobox = (propertiesRef: MaybeRefOrGetter<BasePageProperties>) 
     if (!passesLogic) return false
 
     if (isReadOnly) {
-      const val = schema.value
+      const val = schema.defaultValue
       if (schema.type === "text") return !!(val as Record<string, any>)?.[locale.value]
       if (schema.type === "text-array") return Array.isArray(val) && val.length > 0
       return val !== undefined && val !== null && val !== ""

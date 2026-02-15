@@ -8,12 +8,15 @@ export const DOCUMENT_DEFINITION = definePageDefinition({
             defaultOpen: true,
             fields: {
                 category: {
-                    value: "News",
+                    defaultValue: { en: "Policy" },
                     label: { en: "Category" },
                     type: "enum",
-                    options: ["News", "Guide", "Update", "Community"]
+                    options: [
+                        { en: "Policy" },
+                        { en: "Other" }
+                    ]
                 },
-                readingTime: { value: 5, label: { en: "Est. Reading Time" }, type: "number" }
+                readingTime: { defaultValue: 5, label: { en: "Est. Reading Time" }, type: "number" }
             }
         }
     }
@@ -27,12 +30,12 @@ export const BLOG_POST_DEFINITION = definePageDefinition({
             defaultOpen: true,
             fields: {
                 category: {
-                    value: "News",
+                    defaultValue: { en: "News" },
                     label: { en: "Category" },
                     type: "enum",
-                    options: ["News", "Guide", "Update", "Community"]
+                    options: []
                 },
-                readingTime: { value: 5, label: { en: "Est. Reading Time" }, type: "number" }
+                readingTime: { defaultValue: 5, label: { en: "Est. Reading Time" }, type: "number" }
             }
         }
     }

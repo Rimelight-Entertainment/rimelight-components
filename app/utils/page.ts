@@ -55,7 +55,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
       if (existingField !== undefined) {
         updatedGroupFields[fieldId] = {
           ...JSON.parse(JSON.stringify(definitionField)),
-          value: existingField.value
+          defaultValue: existingField.defaultValue
         }
       } else {
         updatedGroupFields[fieldId] = JSON.parse(JSON.stringify(definitionField))

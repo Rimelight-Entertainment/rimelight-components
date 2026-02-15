@@ -90,8 +90,8 @@ const imageTabs = computed<TabsItem[]>(() => {
  * Handles text-array updates specifically for the 'en' locale.
  */
 const updateTextArray = (schema: any, vals: string[]) => {
-  schema.value = vals.map(str => ({
-    ...schema.value.find((i: any) => i.en === str), // Preserve other locales if they exist
+  schema.defaultValue = vals.map(str => ({
+    ...schema.defaultValue.find((i: any) => i.en === str), // Preserve other locales if they exist
     en: str
   }))
 }
@@ -266,7 +266,7 @@ const removeLink = (index: number) => {
                     >
                       <UInput
                         v-if="schema.type === 'text'"
-                        v-model="schema.value.en"
+                        v-model="schema.defaultValue.en"
                         variant="subtle"
                         placeholder="Type here..."
                         :class="field({ class: rc.field })"
@@ -274,23 +274,24 @@ const removeLink = (index: number) => {
 
                       <UInput
                         v-else-if="schema.type === 'number'"
-                        v-model.number="schema.value"
+                        v-model.number="schema.defaultValue"
                         type="number"
                         variant="subtle"
                         :class="field({ class: rc.field })"
                       />
 
                       <USelect
-                        v-else-if="schema.type === 'enum'"
-                        v-model="schema.value"
-                        :items="schema.options || []"
+                        v-else-if="schema.type === 'enum' && schema.options"
+                        v-model="schema.defaultValue"
+                        :items="schema.options.map(opt => typeof opt === 'string' ? opt : { label: getLocalizedContent(opt, locale), value: opt })"
                         variant="subtle"
                         :class="field({ class: rc.field })"
                       />
 
                       <UInputMenu
                         v-else-if="schema.type === 'text-array'"
-                        :model-value="schema.value.map((v: any) => v.en)"
+                        :model-value="schema.defaultValue.map((v: any) => v.en)"
+                        :items="schema.options || []"
                         @update:model-value="(vals: string[]) => updateTextArray(schema, vals)"
                         multiple
                         creatable
@@ -301,7 +302,7 @@ const removeLink = (index: number) => {
 
                       <UInput
                         v-else-if="schema.type === 'page'"
-                        v-model="schema.value"
+                        v-model="schema.defaultValue"
                         icon="lucide:link-2"
                         variant="subtle"
                         :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
@@ -310,7 +311,7 @@ const removeLink = (index: number) => {
 
                       <USelectMenu
                         v-else-if="schema.type === 'page-array'"
-                        v-model="schema.value"
+                        v-model="schema.defaultValue"
                         icon="lucide:link-2"
                         variant="subtle"
                         :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"

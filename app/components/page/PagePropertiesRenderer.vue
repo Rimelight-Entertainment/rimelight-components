@@ -255,29 +255,29 @@ const imageTabs = computed<TabsItem[]>(() => {
 
                     <dd :class="fieldValue({ class: rc.fieldValue })">
                       <span v-if="schema.type === 'text'">
-                        {{ getLocalizedContent(schema.value, locale) }}
+                        {{ getLocalizedContent(schema.defaultValue, locale) }}
                       </span>
                       <ul
                         v-else-if="schema.type === 'text-array'"
                         :class="list({ class: rc.list })"
                       >
-                        <li v-for="(item, index) in schema.value" :key="index">
+                        <li v-for="(item, index) in schema.defaultValue" :key="index">
                           <span :class="listItem({ class: rc.listItem })">
                             {{ getLocalizedContent(item, locale) }}
                           </span>
                         </li>
                       </ul>
                       <RCPageMention
-                        v-else-if="schema.type === 'page' && schema.value"
-                        :page-id="schema.value"
+                        v-else-if="schema.type === 'page' && schema.defaultValue"
+                        :page-id="schema.defaultValue"
                       />
 
                       <ul
-                        v-else-if="schema.type === 'page-array' && Array.isArray(schema.value)"
+                        v-else-if="schema.type === 'page-array' && Array.isArray(schema.defaultValue)"
                         :class="pageArrayList({ class: rc.pageArrayList })"
                       >
                         <li
-                          v-for="id in schema.value"
+                          v-for="id in schema.defaultValue"
                           :key="id"
                           :class="pageArrayItem({ class: rc.pageArrayItem })"
                         >
@@ -291,7 +291,7 @@ const imageTabs = computed<TabsItem[]>(() => {
                       </ul>
 
                       <span v-else>
-                        {{ schema.value }}
+                        {{ schema.defaultValue }}
                       </span>
                     </dd>
                   </div>

@@ -14,14 +14,14 @@ export interface RegisterPageTypes extends RimelightRegisterPageTypes {
 export type PageType = keyof RegisterPageTypes
 
 export interface Property<T = any> {
-  // The data value
-  value: T | string | string[] | number | Localized | Localized[]
+  // The initial/default data value
+  defaultValue: T | string | string[] | number | Localized | Localized[]
   // The human-readable label to display
   label: Localized<string>
   // Type of data/renderer
   type: "number" | "text" | "text-array" | "enum" | "page" | "page-array"
   // Optional: For union type, defines the available options
-  options?: string[]
+  options?: string[] | Localized[]
   // Required for types "page" and "page-array", specifies the PageType to link to
   allowedPageTypes?: PageType[]
   // Optional display order for properties within a category
