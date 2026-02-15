@@ -7,6 +7,7 @@ export const ac = createAccessControl(statement)
 
 export const owner = ac.newRole({
     ...ownerAc.statements,
+    admin: ["access"],
     team: ["create", "update", "delete"],
     project: ["create", "update", "delete"],
     blogPost: ["create", "edit", "publish", "delete"]
