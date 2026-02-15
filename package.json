@@ -18,12 +18,12 @@
   "main": "./nuxt.config.ts",
   "exports": {
     ".": "./nuxt.config.ts",
-    "./composables": "./composables/index.ts",
-    "./types": "./types/index.ts",
-    "./utils": "./utils/index.ts",
-    "./auth": "./auth/index.ts",
-    "./db": "./db/index.ts",
-    "./components/*": "./components/*"
+    "./composables": "./app/composables/index.ts",
+    "./types": "./app/types/index.ts",
+    "./utils": "./app/utils/index.ts",
+    "./auth": "./shared/auth/index.ts",
+    "./db": "./shared/db/index.ts",
+    "./components/*": "./app/components/*"
   },
   "scripts": {
     "sync": "git submodule update --init --recursive && git -C .rimelight-utilities fetch origin && git -C .rimelight-utilities checkout main && git -C .rimelight-utilities pull origin main && bun ./.rimelight-utilities/scripts/sync.ts && husky && nuxt prepare",
@@ -38,7 +38,7 @@
     "lint:fix": "oxlint . --fix",
     "format": "oxfmt --check",
     "format:fix": "oxfmt .",
-    "i18n": "vue-i18n-extract report --vueFiles './{auth,components,composables,db,internal,playground,server,utils}/**/*.?(js|vue|ts)' --languageFiles './locales/*.?(json|yml|yaml|js)'",
+    "i18n": "vue-i18n-extract report --vueFiles './{app,shared,server,playground}/**/*.?(js|vue|ts)' --languageFiles './app/locales/*.?(json|yml|yaml|js)'",
     "check": "bun run typecheck && bun run lint && bun run format",
     "fix": "bun run lint:fix && bun run format:fix",
     "test": "vitest"

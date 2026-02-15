@@ -10,10 +10,10 @@ const currentDir = dirname(fileURLToPath(import.meta.url))
 export default defineNuxtConfig({
     compatibilityDate: "2026-02-13",
     alias: {
-        "#rimelight-components/types": resolve(currentDir, "types"),
-        "#rimelight-components/utils": resolve(currentDir, "utils"),
-        "rimelight-components/types": resolve(currentDir, "types"),
-        "rimelight-components/utils": resolve(currentDir, "utils"),
+        "#rimelight-components/types": resolve(currentDir, "app/types"),
+        "#rimelight-components/utils": resolve(currentDir, "app/utils"),
+        "rimelight-components/types": resolve(currentDir, "app/types"),
+        "rimelight-components/utils": resolve(currentDir, "app/utils"),
         "rimelight-components": currentDir
     },
     devtools: { enabled: true },
@@ -30,7 +30,7 @@ export default defineNuxtConfig({
             const resolvePath = (path: string) => resolve(currentDir, path)
 
             // Scan the directory for all .vue files
-            const blockRendererPath = resolvePath("./components/blocks/renderer")
+            const blockRendererPath = resolvePath("./app/components/blocks/renderer")
             const blockRendererFiles = readdirSync(blockRendererPath).filter(
                 (name) => name.endsWith(".vue")
             )
@@ -47,7 +47,7 @@ export default defineNuxtConfig({
             // Expose the map template to the runtime via an alias
             nuxt.options.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst
 
-            const blockEditorPath = resolvePath("./components/blocks/editor")
+            const blockEditorPath = resolvePath("./app/components/blocks/editor")
             const blockEditorFiles = readdirSync(blockEditorPath).filter(
                 (name) => name.endsWith(".vue")
             )
@@ -66,7 +66,7 @@ export default defineNuxtConfig({
 
             // Register type definitions
             nuxt.hook("prepare:types", ({ references }) => {
-                references.push({ path: resolvePath("./types/app.config.d.ts") })
+                references.push({ path: resolvePath("./app/types/app.config.d.ts") })
             })
         }
     ],
@@ -75,7 +75,7 @@ export default defineNuxtConfig({
     },
     components: [
         {
-            path: 'components',
+            path: 'app/components',
             pathPrefix: false,
             prefix: 'RC',
             global: true,
@@ -144,18 +144,18 @@ export default defineNuxtConfig({
         locales: [
             {
                 code: 'en',
-                file: resolve(currentDir, 'locales/en.json')
+                file: resolve(currentDir, 'app/locales/en.json')
             }
         ],
         defaultLocale: 'en',
         strategy: 'no_prefix'
     },
     a11y: {
-      defaultHighlight: false,
-      logIssues: false,
+        defaultHighlight: false,
+        logIssues: false,
     },
     css: [
-        resolve(currentDir, 'assets/css/index.css')
+        resolve(currentDir, 'app/assets/css/index.css')
     ],
     future: {
         compatibilityVersion: 5

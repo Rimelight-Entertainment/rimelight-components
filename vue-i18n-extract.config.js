@@ -1,6 +1,6 @@
 module.exports = {
-  "vueFiles": "./{auth,components,composables,db,internal,playground,server,utils}/**/*.?(js|vue|ts)",
-  "languageFiles": "./locales/*.?(json|yaml|yml|js)",
+  "vueFiles": "./{app,shared,server,playground}/**/*.?(js|vue|ts)",
+  "languageFiles": "./app/locales/*.?(json|yaml|yml|js)",
   "exclude": [],
   "output": false,
   "add": false,
