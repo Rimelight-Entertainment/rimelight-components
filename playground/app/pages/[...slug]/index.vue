@@ -1,34 +1,45 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from "vue"
 import { MOCK_PAGES_LIST, MOCK_MOVIE_SURROUND } from "../../mocks/pages"
-import { type Page, type PageSurround } from "rimelight-components/types";
+import { type Page, type PageSurround } from "rimelight-components/types"
 
 const route = useRoute()
+const { locale } = useI18n()
+const appConfig = useAppConfig()
+
 const slug = computed(() => {
   const s = route.params.slug
   if (Array.isArray(s)) return s.join('/')
   return s
 })
 
-const moviePage = ref<Page | null>(null)
+const page = ref<Page | null>(null)
+const pageStatus = ref<'pending' | 'success' | 'error'>('pending')
+const pageError = ref<any>(null)
 
 const surround = ref<PageSurround | null>(null)
 const surroundStatus = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
 
-const loadPage = () => {
+const loadPage = async () => {
+  pageStatus.value = 'pending'
+  pageError.value = null
+
+  // Simulate API Delay
+  await new Promise(resolve => setTimeout(resolve, 500))
+
   const found = MOCK_PAGES_LIST.find(p => p.slug === slug.value)
   if (found) {
-    moviePage.value = found
+    page.value = found
+    pageStatus.value = 'success'
 
     // Simulate API Fetch Delay for surround
     surroundStatus.value = 'pending'
     setTimeout(() => {
-      // For simplicity in the mock, we just use the same surround for Matrix movies
       surround.value = MOCK_MOVIE_SURROUND
       surroundStatus.value = 'success'
     }, 1000)
   } else {
-    moviePage.value = null
+    page.value = null
+    pageStatus.value = 'success' // Still success but with null page (handled in template)
   }
 }
 
@@ -47,16 +58,14 @@ onMounted(() => {
     }
   })
 })
+
 watch(slug, loadPage)
 
 onUnmounted(() => {
   useQuickActions().unregisterAction("create-page")
 })
 
-/**
- * Mock Resolver for the Playground
- */
-const pageResolver = async (id: string) => {
+const resolvePage = async (id: string) => {
   await new Promise(resolve => setTimeout(resolve, 500))
   const found = MOCK_PAGES_LIST.find(p => p.id === id)
   if (found) {
@@ -68,24 +77,42 @@ const pageResolver = async (id: string) => {
   }
   throw new Error(`Page with ID ${id} not found`)
 }
+
+useHead({
+  title: () => getLocalizedContent(page.value?.title, locale) ?? appConfig.title
+})
+
+useSeoMeta({
+  title: () => getLocalizedContent(page.value?.title, locale) ?? appConfig.title,
+  ogTitle: () => getLocalizedContent(page.value?.title, locale) ?? appConfig.title,
+  description: () => getLocalizedContent(page.value?.description, locale) ?? appConfig.description,
+  ogDescription: () => getLocalizedContent(page.value?.description, locale) ?? appConfig.description
+})
 </script>
 
 <template>
-  <div v-if="moviePage">
-    <RCPageRenderer
-      v-model="moviePage"
-      :resolve-page="pageResolver"
-      use-surround
-      :surround="surround"
-      :surround-status="surroundStatus"
-      :can-edit="true"
-      :edit-url="`/${slug}/edit`"
-    />
-  </div>
-  <div v-else class="flex items-center justify-center min-h-[50vh]">
-    <UError
-      title="Page Not Found"
-      description="The requested showcase page could not be found in the mock database."
-    />
-  </div>
+  <USkeleton v-if="pageStatus === 'pending'" class="h-full w-full" />
+
+  <LazyUError
+    v-else-if="pageError || !page"
+    :clear="{ label: 'Return Home' }"
+    :error="{
+      status: 404,
+      statusText: 'Page Not Found',
+      message: 'The requested page could not be located.',
+    }"
+    redirect="/"
+  />
+
+  <RCPageRenderer
+    v-else
+    v-model="page"
+    :resolve-page="resolvePage"
+    use-surround
+    :surround="surround"
+    :surround-status="surroundStatus"
+    :can-edit="true"
+    :edit-url="`/${slug}/edit`"
+  />
 </template>
+

@@ -5,7 +5,7 @@ import { computed, inject, provide } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { tv } from "../../internal/tv"
 import { useRC } from "../../composables"
-import { slugify } from "../../utils"
+import { slugify, defaultWindow } from "../../utils"
 import { SECTION_LEVEL_KEY } from "../../internal/injectionKeys"
 
 defineOptions({
@@ -145,8 +145,8 @@ const copyToClipboard = async (text: string) => {
 const sectionId = computed(() => slugify(title))
 const sectionHash = computed(() => `#${sectionId.value}`)
 const fullSectionUrl = computed(() => {
-  if (typeof window === "undefined") return sectionHash.value
-  return `${window.location.origin}${route.path}${sectionHash.value}`
+  if (!defaultWindow) return sectionHash.value
+  return `${defaultWindow.location.origin}${route.path}${sectionHash.value}`
 })
 </script>
 

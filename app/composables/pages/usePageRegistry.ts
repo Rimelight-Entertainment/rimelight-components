@@ -6,6 +6,12 @@ import { type PageType, type PageDefinition } from "../../types"
 const PAGE_DEFINITIONS = reactive<Partial<Record<PageType, PageDefinition>>>({})
 
 export const usePageRegistry = () => {
+  // 1. Initializing (N/A)
+
+  // 2. Refs
+  const definitions = readonly(PAGE_DEFINITIONS)
+
+  // 3. Methods
   /**
    * Registers a definition into the global state
    */
@@ -25,6 +31,7 @@ export const usePageRegistry = () => {
   return {
     registerDefinitions,
     getTypeLabelKey,
-    definitions: readonly(PAGE_DEFINITIONS)
+    definitions
   }
 }
+

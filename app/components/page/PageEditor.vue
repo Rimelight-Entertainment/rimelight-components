@@ -3,7 +3,7 @@ import { ref, computed, useTemplateRef, provide, watch } from "vue"
 import { navigateTo } from "#imports"
 import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types"
 import { usePageEditor, usePageRegistry, useRC, useHeaderStack, useConfirm } from "../../composables"
-import { getLocalizedContent, syncPageWithDefinition } from "../../utils"
+import { getLocalizedContent, syncPageWithDefinition, defaultDocument, defaultWindow } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { tv } from "../../internal/tv"
 
@@ -230,22 +230,29 @@ const cursorClass = computed(() => {
 })
 
 const startResizing = (e: MouseEvent) => {
+  if (!defaultWindow || !defaultDocument) return
+
   isResizing.value = true
-  window.addEventListener('mousemove', handleMouseMove)
-  window.addEventListener('mouseup', stopResizing)
+  defaultWindow.addEventListener('mousemove', handleMouseMove)
+  defaultWindow.addEventListener('mouseup', stopResizing)
 
   // Visual feedback
-  document.body.style.cursor = 'col-resize'
-  document.body.style.userSelect = 'none'
+  defaultDocument.body.style.cursor = 'col-resize'
+  defaultDocument.body.style.userSelect = 'none'
 }
 
 const stopResizing = () => {
   isResizing.value = false
-  window.removeEventListener('mousemove', handleMouseMove)
-  window.removeEventListener('mouseup', stopResizing)
+  
+  if (defaultWindow) {
+    defaultWindow.removeEventListener('mousemove', handleMouseMove)
+    defaultWindow.removeEventListener('mouseup', stopResizing)
+  }
 
-  document.body.style.cursor = ''
-  document.body.style.userSelect = ''
+  if (defaultDocument) {
+    defaultDocument.body.style.cursor = ''
+    defaultDocument.body.style.userSelect = ''
+  }
 }
 
 /* Handlers */

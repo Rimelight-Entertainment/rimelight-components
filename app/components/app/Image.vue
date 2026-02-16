@@ -2,6 +2,7 @@
 import { ref, reactive, onMounted, useTemplateRef, watch, nextTick } from "vue"
 import { tv } from "../../internal/tv"
 import { useRC } from "../../composables"
+import { defaultDocument, defaultWindow } from "../../utils"
 
 export interface ImageProps {
   src: string
@@ -124,14 +125,16 @@ async function downloadImage() {
   try {
     const response = await fetch(src)
     const blob = await response.blob()
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement('a')
+    if (!defaultWindow || !defaultDocument) return
+
+    const url = defaultWindow.URL.createObjectURL(blob)
+    const link = defaultDocument.createElement('a')
     link.href = url
     link.download = `file-${Date.now()}.${metadata.format.toLowerCase()}`
-    document.body.appendChild(link)
+    defaultDocument.body.appendChild(link)
     link.click()
-    document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
+    defaultDocument.body.removeChild(link)
+    defaultWindow.URL.revokeObjectURL(url)
   } catch (error) {
     console.error('Download failed', error)
   }

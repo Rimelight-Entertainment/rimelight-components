@@ -13,6 +13,7 @@ export interface QuickAction {
  * A simple registry for any action in the app
  */
 export const useQuickActions = () => {
+  // 1. Initializing
   const nuxtApp = useNuxtApp()
 
   if (!nuxtApp._quickActionsRegistry) {
@@ -20,8 +21,18 @@ export const useQuickActions = () => {
   }
 
   const registeredActionsMap = nuxtApp._quickActionsRegistry as Ref<Map<string, QuickAction>>
+
+  // 2. Refs
   const activeQuickActionIds = useState<string[]>("quick-action-ids", () => [])
 
+  // 3. Computed
+  const registeredActions = computed(() => {
+    return activeQuickActionIds.value
+      .map(id => registeredActionsMap.value.get(id))
+      .filter((a): a is QuickAction => !!a)
+  })
+
+  // 4. Methods
   function registerAction(action: QuickAction) {
     registeredActionsMap.value.set(action.id, action)
     registeredActionsMap.value = new Map(registeredActionsMap.value)
@@ -36,15 +47,10 @@ export const useQuickActions = () => {
     activeQuickActionIds.value = activeQuickActionIds.value.filter((i) => i !== id)
   }
 
-  const registeredActions = computed(() => {
-    return activeQuickActionIds.value
-      .map(id => registeredActionsMap.value.get(id))
-      .filter((a): a is QuickAction => !!a)
-  })
-
   return {
     registeredActions,
     registerAction,
     unregisterAction
   }
 }
+

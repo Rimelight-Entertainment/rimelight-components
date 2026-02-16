@@ -1,6 +1,7 @@
 import { useFetch, useRuntimeConfig } from "#imports";
 import { hash } from "ohash";
 import type { UseFetchOptions, AsyncData } from "#app";
+import { defaultWindow } from "../../utils"
 
 /**
  * $api: For imperative calls (buttons, save actions, Pinia Colada)
@@ -14,12 +15,12 @@ export const $api = async <T>(path: string, opts: any = {}) => {
     // Logic: If not Tauri, and not Dev, and is Client...
     // check if current hostname matches apiBase hostname.
     let isExternal = isTauri;
-    if (!isExternal && !import.meta.dev && import.meta.client && typeof window !== 'undefined') {
+    if (!isExternal && !import.meta.dev && import.meta.client && defaultWindow) {
         try {
             if (apiBase.startsWith("http")) {
                 const apiHost = new URL(apiBase).hostname;
                 // If current hostname does NOT include the API host, then we are external.
-                if (!window.location.hostname.includes(apiHost)) {
+                if (!defaultWindow.location.hostname.includes(apiHost)) {
                     isExternal = true;
                 }
             }
@@ -62,11 +63,11 @@ export const useApi = <T>(path: string | (() => string), opts: UseFetchOptions<T
     const isTauri = config.public.isTauri as boolean;
 
     let isExternal = isTauri;
-    if (!isExternal && !import.meta.dev && import.meta.client && typeof window !== 'undefined') {
+    if (!isExternal && !import.meta.dev && import.meta.client && defaultWindow) {
         try {
             if (apiBase.startsWith("http")) {
                 const apiHost = new URL(apiBase).hostname;
-                if (!window.location.hostname.includes(apiHost)) {
+                if (!defaultWindow.location.hostname.includes(apiHost)) {
                     isExternal = true;
                 }
             }

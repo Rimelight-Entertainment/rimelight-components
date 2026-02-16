@@ -2,12 +2,21 @@ import { computed, type Ref, shallowRef, watch } from "vue"
 import { type Page } from "../../types"
 
 export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
+  // 1. Initializing (N/A)
+
+  // 2. Refs
   const history = shallowRef<string[]>([]) // Store as JSON strings for clean snapshots
   const future = shallowRef<string[]>([])
-
   // Store the state as it was when it was last "captured" or loaded
   let lastCapturedState = JSON.stringify(page.value)
+  // Watch for changes in properties, title, and blocks
+  let isPaused = false
 
+  // 3. Computed
+  const canUndo = computed(() => history.value.length > 0)
+  const canRedo = computed(() => future.value.length > 0)
+
+  // 4. Methods
   const captureSnapshot = () => {
     const currentSnapshot = JSON.stringify(page.value)
 
@@ -54,15 +63,9 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
     future.value = newFuture
   }
 
-  const canUndo = computed(() => history.value.length > 0)
-  const canRedo = computed(() => future.value.length > 0)
-
   const save = () => {
     return JSON.parse(JSON.stringify(page.value))
   }
-
-  // Watch for changes in properties, title, and blocks
-  let isPaused = false
 
   const pauseHistory = () => {
     console.log('[usePageEditor] History paused')
@@ -74,6 +77,13 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
     isPaused = false
   }
 
+  const resetHistory = () => {
+    history.value = []
+    future.value = []
+    lastCapturedState = JSON.stringify(page.value)
+  }
+
+  // 5. Watch
   watch(
     [() => page.value.properties, () => page.value.title, () => page.value.blocks],
     () => {
@@ -88,12 +98,6 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
     { deep: true }
   )
 
-  const resetHistory = () => {
-    history.value = []
-    future.value = []
-    lastCapturedState = JSON.stringify(page.value)
-  }
-
   return {
     undo,
     redo,
@@ -106,3 +110,4 @@ export function usePageEditor(page: Ref<Page>, maxHistorySize: number = 100) {
     resumeHistory
   }
 }
+

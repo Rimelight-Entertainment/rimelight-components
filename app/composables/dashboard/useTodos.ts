@@ -2,60 +2,75 @@ import { useState } from "#imports"
 import { $api } from "../../composables"
 
 export const useTodos = () => {
-    const todoRefreshTrigger = useState("todos-refresh-trigger", () => 0)
+    // 1. Initializing (N/A)
 
+    // 2. Refs
+    const todoRefreshTrigger = useState("todos-refresh-trigger", () => 0)
+    const status = useState<"idle" | "loading" | "success" | "error">("todos-status", () => "idle")
+    const error = useState<Error | null>("todos-error", () => null)
+
+    // 3. Methods
     const triggerRefresh = () => {
         todoRefreshTrigger.value++
     }
 
+    const wrapApi = async (fn: () => Promise<any>) => {
+        status.value = "loading"
+        error.value = null
+        try {
+            await fn()
+            status.value = "success"
+            triggerRefresh()
+        } catch (e) {
+            status.value = "error"
+            error.value = e instanceof Error ? e : new Error(String(e))
+        }
+    }
+
     const toggleTodo = async (id: string, completed: boolean) => {
-        await $api(`/api/todos/${id}`, {
+        await wrapApi(() => $api(`/api/todos/${id}`, {
             method: "PUT",
             body: { completed, completedAt: completed ? new Date().toISOString() : null }
-        })
-        triggerRefresh()
+        }))
     }
 
     const archiveTodo = async (id: string) => {
-        await $api(`/api/todos/${id}`, {
+        await wrapApi(() => $api(`/api/todos/${id}`, {
             method: "PUT",
             body: { isArchived: true }
-        })
-        triggerRefresh()
+        }))
     }
 
     const restoreTodo = async (id: string) => {
-        await $api(`/api/todos/${id}`, {
+        await wrapApi(() => $api(`/api/todos/${id}`, {
             method: "PUT",
             body: { isArchived: false }
-        })
-        triggerRefresh()
+        }))
     }
 
     const deleteTodo = async (id: string) => {
-        await $api(`/api/todos/${id}`, {
+        await wrapApi(() => $api(`/api/todos/${id}`, {
             method: "DELETE"
-        })
-        triggerRefresh()
+        }))
     }
 
     const createTodo = async (title: string, description?: string) => {
-        await $api("/api/todos", {
+        await wrapApi(() => $api("/api/todos", {
             method: "POST",
             body: { title, description }
-        })
-        triggerRefresh()
+        }))
     }
 
     const clearCompleted = async () => {
-        await $api("/api/todos/clear-completed", {
+        await wrapApi(() => $api("/api/todos/clear-completed", {
             method: "POST"
-        })
-        triggerRefresh()
+        }))
     }
 
     return {
         todoRefreshTrigger,
+        status,
+        error,
         triggerRefresh,
         toggleTodo,
         archiveTodo,
@@ -65,3 +80,4 @@ export const useTodos = () => {
         clearCompleted
     }
 }
+

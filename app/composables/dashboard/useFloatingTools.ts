@@ -11,6 +11,7 @@ export interface FloatingToolDefinition {
 }
 
 export const useFloatingTools = () => {
+  // 1. Initializing
   const nuxtApp = useNuxtApp()
 
   // Use a registry attached to nuxtApp to ensure it's per-request on SSR
@@ -20,10 +21,12 @@ export const useFloatingTools = () => {
   }
   const registeredTools = nuxtApp._floatingToolsRegistry as Ref<Map<string, FloatingToolDefinition>>
 
+  // 2. Refs
   const activeToolIds = useState<string[]>("active-floating-tool-ids", () => [])
   const expandedTools = useState<Record<string, boolean>>("floating-tools-expanded-map", () => ({}))
   const isVisible = useState("floating-tool-visible-global", () => false)
 
+  // 3. Methods
   function registerTool(definition: FloatingToolDefinition) {
     registeredTools.value.set(definition.id, definition)
   }
@@ -63,3 +66,4 @@ export const useFloatingTools = () => {
     isToolExpanded: (id: string) => expandedTools.value[id] ?? true
   }
 }
+

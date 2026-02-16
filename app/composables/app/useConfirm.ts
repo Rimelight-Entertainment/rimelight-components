@@ -19,6 +19,9 @@ interface ConfirmState {
 let resolvePromise: ((value: boolean) => void) | null = null
 
 export const useConfirm = () => {
+  // 1. Initializing (N/A)
+
+  // 2. Refs
   const state = useState<ConfirmState>("use-confirm-global-state", () => ({
     isVisible: false,
     options: {
@@ -30,21 +33,7 @@ export const useConfirm = () => {
     }
   }))
 
-  // Watcher to handle "External" closing (Escape key, Backdrop click)
-  if (import.meta.client) {
-    watch(
-      () => state.value.isVisible,
-      (visible) => {
-        // If it becomes hidden and the promise still exists,
-        // it means the user dismissed it without clicking a button.
-        if (!visible && resolvePromise) {
-          resolvePromise(false)
-          resolvePromise = null
-        }
-      }
-    )
-  }
-
+  // 3. Methods
   const confirm = (opts: Partial<ConfirmOptions>): Promise<boolean> => {
     state.value.options = {
       title: "Confirm Action",
@@ -78,6 +67,21 @@ export const useConfirm = () => {
     state.value.isVisible = false
   }
 
+  // 4. Watchers
+  if (import.meta.client) {
+    watch(
+      () => state.value.isVisible,
+      (visible) => {
+        // If it becomes hidden and the promise still exists,
+        // it means the user dismissed it without clicking a button.
+        if (!visible && resolvePromise) {
+          resolvePromise(false)
+          resolvePromise = null
+        }
+      }
+    )
+  }
+
   return {
     state,
     confirm,
@@ -85,3 +89,4 @@ export const useConfirm = () => {
     handleCancel
   }
 }
+

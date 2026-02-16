@@ -2,10 +2,11 @@ import { useNuxtApp, useState } from "#imports"
 import { useToast } from "@nuxt/ui/composables/useToast"
 import { Time } from "@internationalized/date"
 import { computed } from "vue"
+import { defaultWindow } from "../../utils"
 
 export const useFocusTimer = () => {
+  // 1. Initializing
   const nuxtApp = useNuxtApp()
-
   // State scoped to the app instance to avoid cross-user pollution
   if (!nuxtApp._focusTimerState) {
     nuxtApp._focusTimerState = {
@@ -14,6 +15,7 @@ export const useFocusTimer = () => {
   }
   const appState = nuxtApp._focusTimerState as { timer: any }
 
+  // 2. Refs
   const initialTime = useState("focusTimer-initial-time", () => ({
     hour: 0,
     minute: 25,
@@ -24,17 +26,8 @@ export const useFocusTimer = () => {
   const sessionsCompleted = useState("focusTimer-sessions-completed", () => 0)
   const mode = useState<"work" | "short-break" | "long-break">("focusTimer-mode", () => "work")
   const isModified = useState("focusTimer-is-modified", () => false)
-
-  // Bridge for UInputTime (class instance) while keeping state as POJO
-  const initialTimeValue = computed({
-    get: () => new Time(initialTime.value.hour, initialTime.value.minute, initialTime.value.second),
-    set: (val) => {
-      initialTime.value = { hour: val.hour, minute: val.minute, second: val.second }
-      isModified.value = true
-    }
-  })
-
-  const toast = useToast()
+  const error = useState<Error | null>("focusTimer-error", () => null)
+  const status = useState<"idle" | "running" | "paused" | "completed">("focusTimer-status", () => "idle")
 
   const presets = {
     work: { label: "Work", time: { hour: 0, minute: 25, second: 0 }, theme: "primary" },
@@ -45,6 +38,15 @@ export const useFocusTimer = () => {
     },
     "long-break": { label: "Long Break", time: { hour: 0, minute: 15, second: 0 }, theme: "info" }
   }
+
+  // 3. Computed
+  const initialTimeValue = computed({
+    get: () => new Time(initialTime.value.hour, initialTime.value.minute, initialTime.value.second),
+    set: (val) => {
+      initialTime.value = { hour: val.hour, minute: val.minute, second: val.second }
+      isModified.value = true
+    }
+  })
 
   const formattedTime = computed(() => {
     const h = Math.floor(timeLeft.value / 3600)
@@ -64,6 +66,7 @@ export const useFocusTimer = () => {
     return ((total - timeLeft.value) / total) * 100
   })
 
+  // 4. Methods
   function setMode(newMode: "work" | "short-break" | "long-break") {
     mode.value = newMode
     initialTime.value = presets[newMode].time
@@ -81,11 +84,12 @@ export const useFocusTimer = () => {
       isModified.value = false
     }
 
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission()
+    if (defaultWindow && "Notification" in defaultWindow && (defaultWindow as any).Notification.permission === "default") {
+      (defaultWindow as any).Notification.requestPermission()
     }
 
     isRunning.value = true
+    status.value = "running"
     runInterval()
   }
 
@@ -102,6 +106,7 @@ export const useFocusTimer = () => {
 
   function pauseTimer() {
     isRunning.value = false
+    status.value = "paused"
     if (appState.timer) {
       clearInterval(appState.timer)
       appState.timer = null
@@ -110,6 +115,7 @@ export const useFocusTimer = () => {
 
   function resetTimer() {
     pauseTimer()
+    status.value = "idle"
     timeLeft.value =
       initialTime.value.hour * 3600 + initialTime.value.minute * 60 + initialTime.value.second
     isModified.value = false
@@ -117,27 +123,23 @@ export const useFocusTimer = () => {
 
   function completeSession() {
     pauseTimer()
+    status.value = "completed"
 
     if (mode.value === "work") {
       sessionsCompleted.value++
     }
 
-    const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
-    audio.play().catch(() => { })
+    if (defaultWindow) {
+      const audio = new (defaultWindow as any).Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
+      audio.play().catch(() => { })
+    }
 
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("Focus Timer Done!", {
+    if (defaultWindow && "Notification" in defaultWindow && (defaultWindow as any).Notification.permission === "granted") {
+      new (defaultWindow as any).Notification("Focus Timer Done!", {
         body: mode.value === "work" ? "Time for a break!" : "Break over, back to work!",
         icon: "/logo.png"
       })
     }
-
-    toast.add({
-      title: "Timer Finished!",
-      description:
-        mode.value === "work" ? "Great work! Take a break." : "Break is over! Time to focus.",
-      color: "success"
-    })
 
     if (mode.value === "work") {
       if (sessionsCompleted.value % 4 === 0) {
@@ -150,6 +152,7 @@ export const useFocusTimer = () => {
     }
   }
 
+  // 5. Lifecycle Hooks (Client-side sync)
   if (isRunning.value && !appState.timer && import.meta.client) {
     runInterval()
   }
@@ -161,6 +164,8 @@ export const useFocusTimer = () => {
     sessionsCompleted,
     mode,
     isModified,
+    error,
+    status,
     formattedTime,
     progress,
     presets,
@@ -170,3 +175,4 @@ export const useFocusTimer = () => {
     resetTimer
   }
 }
+

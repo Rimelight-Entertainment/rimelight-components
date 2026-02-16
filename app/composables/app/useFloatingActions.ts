@@ -11,6 +11,7 @@ export interface FloatingAction {
 }
 
 export const useFloatingActions = () => {
+    // 1. Initializing
     const nuxtApp = useNuxtApp()
 
     if (!nuxtApp._floatingActionsRegistry) {
@@ -18,8 +19,19 @@ export const useFloatingActions = () => {
     }
 
     const registeredActionsMap = nuxtApp._floatingActionsRegistry as Ref<Map<string, FloatingAction>>
+
+    // 2. Refs
     const activeActionIds = useState<string[]>("floating-action-ids", () => [])
 
+    // 3. Computed
+    const actions = computed(() => {
+        return activeActionIds.value
+            .map(id => registeredActionsMap.value.get(id))
+            .filter((a): a is FloatingAction => !!a)
+            .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
+    })
+
+    // 4. Methods
     function registerAction(action: FloatingAction) {
         registeredActionsMap.value.set(action.id, action)
         registeredActionsMap.value = new Map(registeredActionsMap.value)
@@ -34,16 +46,10 @@ export const useFloatingActions = () => {
         activeActionIds.value = activeActionIds.value.filter((i) => i !== id)
     }
 
-    const actions = computed(() => {
-        return activeActionIds.value
-            .map(id => registeredActionsMap.value.get(id))
-            .filter((a): a is FloatingAction => !!a)
-            .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
-    })
-
     return {
         actions,
         registerAction,
         unregisterAction
     }
 }
+

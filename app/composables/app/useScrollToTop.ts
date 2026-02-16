@@ -1,19 +1,25 @@
 import { computed, onMounted, onUnmounted, ref } from "vue"
 import { useState } from "#app"
+import { defaultDocument, defaultWindow } from "../../utils"
 
 export const useScrollToTop = () => {
+    // 1. Initializing (N/A)
+
+    // 2. Refs
     const scrollPercentage = useState("scroll-percentage", () => 0)
     const minScrollThreshold = 15
 
+    // 3. Computed
     const isVisible = computed(() => scrollPercentage.value >= minScrollThreshold)
 
+    // 4. Methods
     function updatePageScroll() {
-        if (typeof window === "undefined" || typeof document === "undefined") {
+        if (!defaultWindow || !defaultDocument) {
             return
         }
 
-        const scrollY = window.scrollY
-        const maxScroll = document.body.scrollHeight - window.innerHeight
+        const scrollY = defaultWindow.scrollY
+        const maxScroll = defaultDocument.body.scrollHeight - defaultWindow.innerHeight
 
         if (maxScroll <= 0) {
             scrollPercentage.value = 0
@@ -24,24 +30,27 @@ export const useScrollToTop = () => {
     }
 
     function scrollToTop() {
-        if (typeof window === "undefined") return
+        if (!defaultWindow) return
 
-        window.scrollTo({
+        defaultWindow.scrollTo({
             top: 0,
             behavior: "smooth"
         })
     }
 
-    // Only the "manager" should add the listener, but it's safe to add it multiple times if passive
-    // However, let's just make it a global listener if it's the first time
-    onMounted(() => {
-        if (typeof window === "undefined") return
-        window.addEventListener("scroll", updatePageScroll, { passive: true })
-        updatePageScroll()
-    })
+    // 5. Lifecycle
+    if (import.meta.client) {
+        onMounted(() => {
+            if (!defaultWindow) return
+            defaultWindow.addEventListener("scroll", updatePageScroll, { passive: true })
+            updatePageScroll()
+        })
 
-    // We should be careful about removing it if other components still need it
-    // But for ScrollToTop, usually there's only one.
+        onUnmounted(() => {
+            if (!defaultWindow) return
+            defaultWindow.removeEventListener("scroll", updatePageScroll)
+        })
+    }
 
     return {
         scrollPercentage,
@@ -49,3 +58,4 @@ export const useScrollToTop = () => {
         scrollToTop
     }
 }
+

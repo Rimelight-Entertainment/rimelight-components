@@ -8,24 +8,12 @@ interface HeaderLayer {
 }
 
 export const useHeaderStack = () => {
+  // 1. Initializing (N/A)
+
+  // 2. Refs
   const layers = useState<HeaderLayer[]>("header-layers", () => [])
 
-  const registerHeader = (id: string, height: number, order: number = 10) => {
-    const existingLayer = layers.value.find((l) => l.id === id)
-    if (existingLayer) {
-      if (existingLayer.height !== height) {
-        existingLayer.height = height
-      }
-    } else {
-      layers.value.push({ id, height, order })
-      layers.value.sort((a, b) => (a.order !== b.order ? a.order - b.order : 0))
-    }
-  }
-
-  const unregisterHeader = (id: string) => {
-    layers.value = layers.value.filter((l) => l.id !== id)
-  }
-
+  // 3. Computed
   const totalHeight = computed(() =>
     layers.value.reduce((acc, l) => acc + l.height, 0)
   )
@@ -61,6 +49,23 @@ export const useHeaderStack = () => {
     return map
   })
 
+  // 4. Methods
+  const registerHeader = (id: string, height: number, order: number = 10) => {
+    const existingLayer = layers.value.find((l) => l.id === id)
+    if (existingLayer) {
+      if (existingLayer.height !== height) {
+        existingLayer.height = height
+      }
+    } else {
+      layers.value.push({ id, height, order })
+      layers.value.sort((a, b) => (a.order !== b.order ? a.order - b.order : 0))
+    }
+  }
+
+  const unregisterHeader = (id: string) => {
+    layers.value = layers.value.filter((l) => l.id !== id)
+  }
+
   return {
     registerHeader,
     unregisterHeader,
@@ -70,3 +75,4 @@ export const useHeaderStack = () => {
     layers: computed(() => layers.value)
   }
 }
+

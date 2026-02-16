@@ -7,11 +7,15 @@ export interface DateRange {
 }
 
 export function useDateRange() {
+  // 1. Initializing (N/A)
+
+  // 2. Refs
   const dateRange = useState<DateRange>(`feedback-date-range`, () => ({
     start: subDays(new Date(), 30),
     end: new Date()
   }))
 
+  // 3. Methods
   const setDateRange = (range: DateRange) => {
     dateRange.value = {
       start: startOfDay(range.start),
@@ -72,3 +76,4 @@ export function useDateRange() {
     filterFeedbackByDateRange
   }
 }
+

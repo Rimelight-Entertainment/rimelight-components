@@ -3,8 +3,12 @@ import { type MaybeRefOrGetter, toValue } from "vue"
 import type { Property, PropertyGroup, BasePageProperties } from "../../types"
 
 export const useInfobox = (propertiesRef: MaybeRefOrGetter<BasePageProperties>) => {
+  // 1. Initializing
   const { locale } = useI18n()
 
+  // 2. Refs (N/A)
+
+  // 3. Methods
   const isFieldVisible = (schema: Property, isReadOnly: boolean) => {
     const properties = toValue(propertiesRef)
     const passesLogic = !schema.visibleIf || schema.visibleIf(properties)
@@ -43,3 +47,4 @@ export const useInfobox = (propertiesRef: MaybeRefOrGetter<BasePageProperties>) 
     locale
   }
 }
+

@@ -23,6 +23,17 @@ export default defineNuxtConfig({
         "rimelight-components/composables": resolve(currentDir, "app/composables"),
         "rimelight-components": currentDir
     },
+    $env: {
+      development: {
+        devtools: {enabled: true},
+        devServer: {host: "127.0.0.1", port: 3000},
+        typescript: {typeCheck: false},
+        a11y: {
+          defaultHighlight: false,
+          logIssues: false,
+        },
+      }
+    },
     devtools: { enabled: true },
     devServer: { host: "127.0.0.1", port: 3000 },
     modules: [
@@ -92,7 +103,10 @@ export default defineNuxtConfig({
     experimental: {
         viteEnvironmentApi: false,
         typescriptPlugin: true,
-        nitroAutoImports: true
+        nitroAutoImports: true,
+        componentIslands: {
+            selectiveClient: true
+        }
     },
     ui: {
         prefix: "U",
@@ -156,10 +170,6 @@ export default defineNuxtConfig({
         ],
         defaultLocale: 'en',
         strategy: 'no_prefix'
-    },
-    a11y: {
-        defaultHighlight: false,
-        logIssues: false,
     },
     css: [
         resolve(currentDir, 'app/assets/css/index.css')

@@ -4,7 +4,6 @@ import {
     useAsyncData,
     useNuxtApp,
     useRequestHeaders,
-    useRoute,
     useState,
 } from "#imports";
 import { useToast } from "@nuxt/ui/composables/useToast";
@@ -37,22 +36,21 @@ type PermissionsInput = Partial<{
 type AppRole = "user" | "member" | "admin" | "owner";
 
 export const useAuth = () => {
-    const toast = useToast();
+    // 1. Initializing
     const nuxtApp = useNuxtApp() as unknown as NuxtAppWithAuth;
     const authClient = nuxtApp.$authClient;
-    const getT = () => nuxtApp.$i18n.t;
-    const isLoading = useState("auth-loading", () => false);
-
-    //region Data
-    // Data - Session
-    // Capture headers outside useAsyncData to preserve Nuxt context
     const headers = import.meta.server ? useRequestHeaders(["cookie"]) : ({} as HeadersInit);
 
+    // 2. Refs
+    const isLoading = useState("auth-loading", () => false);
+    const actionError = useState<any>("auth-action-error", () => null);
+
+    // 3. Data/Async (Session)
     const {
         data: session,
         status,
         refresh,
-        error,
+        error: sessionError,
     } = useAsyncData(
         "auth-session",
         async () => {
@@ -94,7 +92,7 @@ export const useAuth = () => {
         },
     );
 
-    // Data - User
+    // 4. Computed
     const user = computed(() => session.value?.user);
 
     const permissions = {
@@ -118,133 +116,78 @@ export const useAuth = () => {
             canDelete: computed(() => checkPermission({ organization: ["delete"] })),
         },
     };
-    //endregion
 
-    //region Actions
-    //region Sign Up
-    const signUp = async (input: SignUpInput) => {
-        const t = getT();
-        const route = useRoute();
+    // 5. Methods
+    const signUp = async (input: SignUpInput, redirectTo?: string) => {
         isLoading.value = true;
+        actionError.value = null;
         try {
-            const { error } = await authClient.signUp.email(input);
+            const { data, error } = await authClient.signUp.email(input);
 
             if (error) {
-                console.error("Signup error:", error);
-                toast.add({
-                    color: "error",
-                    title: t("auth_sign_up_failed_title"),
-                    description: error.message,
-                });
-                return;
+                actionError.value = error;
+                return { data, error };
             }
 
-            toast.add({
-                color: "success",
-                title: t("auth_account_creation_success_title"),
-                description: t("auth_account_creation_success_description"),
-            });
-
             await refresh();
-            const redirect = route.query.redirect as string;
-            await navigateTo(redirect || "/");
+            if (redirectTo !== undefined) {
+                await navigateTo(redirectTo || "/");
+            }
+            return { data, error: null };
         } catch (err) {
-            console.error("Network error during signup:", err);
-            toast.add({
-                color: "error",
-                title: t("auth_connection_error_title"),
-                description: t("auth_connection_error_description"),
-            });
+            actionError.value = err;
+            return { data: null, error: err };
         } finally {
             isLoading.value = false;
         }
     };
-    //endregion
 
-    //region Sign In
-    const signIn = async (credentials: SignInInput) => {
-        const t = getT();
-        const route = useRoute();
+    const signIn = async (credentials: SignInInput, redirectTo?: string) => {
         isLoading.value = true;
-
+        actionError.value = null;
         try {
             const { data, error } = await authClient.signIn.email(credentials);
 
-            // Failure
             if (error) {
-                console.error("[Sign In Error]:", error);
-                toast.add({
-                    color: "error",
-                    title: t("auth_sign_in_failed_title"),
-                    description: error.message,
-                });
-                return;
+                actionError.value = error;
+                return { data, error };
             }
 
-            // Success
-            toast.add({
-                color: "success",
-                title: t("auth_sign_in_success_title"),
-                description: t("auth_sign_in_success_description", { name: data.user.name }),
-            });
-
             await refresh();
-            const redirect = route.query.redirect as string;
-            await navigateTo(redirect || "/");
-        } catch {
-            toast.add({
-                color: "error",
-                title: t("auth_connection_error_title"),
-                description: t("auth_connection_error_description"),
-            });
+            if (redirectTo !== undefined) {
+                await navigateTo(redirectTo || "/");
+            }
+            return { data, error: null };
+        } catch (err) {
+            actionError.value = err;
+            return { data: null, error: err };
         } finally {
             isLoading.value = false;
         }
     };
-    //endregion
 
-    //region Sign Out
     const signOut = async () => {
-        const t = getT();
         isLoading.value = true;
-
+        actionError.value = null;
         try {
             const { error } = await authClient.signOut();
 
-            // Failure
             if (error) {
-                console.error("[Sign Out API Error]:", error);
-                toast.add({
-                    color: "error",
-                    title: t("auth_sign-out_error"),
-                    description: "The server rejected the sign-out request.",
-                });
-                return;
+                actionError.value = error;
+                return { error };
             }
-
-            // Success
-            toast.add({
-                color: "success",
-                title: "Sign Out Successful",
-                description: "You have been signed out.",
-            });
 
             nuxtApp.runWithContext(() => clearNuxtData("auth-session"));
             await navigateTo("/");
+            return { error: null };
         } catch (err) {
-            console.error("Sign Out Error:", err);
-            toast.add({
-                color: "error",
-                title: "Network Error",
-                description: "A connection issue occurred while signing out.",
-            });
+            actionError.value = err;
+            return { error: err };
         } finally {
             isLoading.value = false;
         }
     };
-    //endregion
 
-    //region Check Permissions
     const checkPermission = (permissions: PermissionsInput) => {
         const userRole = session.value?.user?.role as AppRole | undefined;
 
@@ -255,8 +198,6 @@ export const useAuth = () => {
             role: userRole,
         });
     };
-    //endregion
-    //endregion
 
     return {
         // Data
@@ -267,7 +208,8 @@ export const useAuth = () => {
         // State
         status,
         isLoading,
-        error,
+        sessionError,
+        actionError,
 
         // Actions
         signUp,
@@ -277,3 +219,4 @@ export const useAuth = () => {
         checkPermission,
     };
 };
+

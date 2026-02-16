@@ -9,6 +9,7 @@ import { useAuth } from "../../composables/auth/useAuth"
 const { signUp, isLoading } = useAuth()
 const toast = useToast()
 const { t } = useI18n()
+const route = useRoute()
 
 const step1Schema = z.object({
   username: z
@@ -156,14 +157,31 @@ function prevStep() {
 }
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  await signUp({
+  const redirect = route.query.redirect as string | undefined
+  const { data, error } = await signUp({
     name: event.data.username,
     firstName: event.data.firstName,
     lastName: event.data.lastName,
     email: event.data.email,
     password: event.data.password
+  }, redirect)
+
+  if (error) {
+    toast.add({
+      color: "error",
+      title: t("auth_sign_up_failed_title"),
+      description: error.message || t("auth_connection_error_description")
+    })
+    return
+  }
+
+  toast.add({
+    color: "success",
+    title: t("auth_account_creation_success_title"),
+    description: t("auth_account_creation_success_description")
   })
 }
+
 </script>
 
 <template>

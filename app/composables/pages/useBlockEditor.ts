@@ -104,10 +104,21 @@ export function useBlockEditor(
   initialBlocks: Ref<Block[]>,
   { maxHistorySize = 100, onMutation }: { maxHistorySize?: number; onMutation?: () => void } = {}
 ) {
+  // 1. Initializing (N/A)
+
+  // 2. Refs
   const history = shallowRef<Block[][]>([])
   const future = shallowRef<Block[][]>([])
   const committedBlocks = ref<Block[]>(JSON.parse(JSON.stringify(initialBlocks.value)))
 
+  // 3. Computed
+  // ✅ CORRECT: canUndo is true if there is a state *in the history stack* to revert to.
+  const canUndo = computed(() => history.value.length > 0)
+
+  // ✅ CORRECT: canRedo is true if there is a state *in the future stack* to advance to.
+  const canRedo = computed(() => future.value.length > 0)
+
+  // 4. Methods
   /**
    * Captures the current state of initialBlocks, adds it to the history,
    * and clears the future stack.
@@ -192,14 +203,6 @@ export function useBlockEditor(
       future.value = newFuture
     }
   }
-
-  // --- Computed Flags for UI State ---
-
-  // ✅ CORRECT: canUndo is true if there is a state *in the history stack* to revert to.
-  const canUndo = computed(() => history.value.length > 0)
-
-  // ✅ CORRECT: canRedo is true if there is a state *in the future stack* to advance to.
-  const canRedo = computed(() => future.value.length > 0)
 
   // --- Refactored Block Mutation Methods ---
 
@@ -397,3 +400,4 @@ export function useBlockEditor(
     commitChanges: commitChanges
   }
 }
+

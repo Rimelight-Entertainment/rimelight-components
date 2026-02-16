@@ -1,7 +1,22 @@
 <script setup lang="ts">
+import { watch } from "vue"
+import { useToast } from "@nuxt/ui/composables/useToast"
 import { useFocusTimer } from "../../../composables"
 
+
 const focusTimer = useFocusTimer()
+const toast = useToast()
+
+watch(() => focusTimer.status.value, (st) => {
+  if (st === "completed") {
+    toast.add({
+      title: "Timer Finished!",
+      description: focusTimer.mode.value === "work" ? "Great work! Take a break." : "Break is over! Time to focus.",
+      color: "success"
+    })
+  }
+})
+
 </script>
 
 <template>

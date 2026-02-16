@@ -5,7 +5,7 @@ import { useIntersectionObserver } from "@vueuse/core"
 import { tv } from "../../internal/tv"
 import { useRC } from "../../composables"
 import type { Block, SectionBlockProps, HeadingLevel } from "../../types"
-import { slugify } from "../../utils"
+import { slugify, defaultDocument } from "../../utils"
 
 interface TOCItem {
   id: string
@@ -112,7 +112,7 @@ const items = computed(() => {
 onMounted(() => {
   watch(() => items.value, (newItems) => {
     newItems.forEach((item) => {
-      const el = document.getElementById(item.id)
+      const el = defaultDocument?.getElementById(item.id)
       if (!el) return
 
       useIntersectionObserver(

@@ -3,7 +3,7 @@ import { inject, ref, watch, onMounted, nextTick } from "vue"
 import { tv } from "../../../internal/tv"
 import { useRC } from "../../../composables"
 import type { ParagraphBlockProps, RichTextContent } from "../../../types"
-import { richTextToHtml, parseHtmlToRichText } from "../../../utils"
+import { richTextToHtml, parseHtmlToRichText, defaultDocument } from "../../../utils"
 
 // The external dependencies
 export interface ParagraphBlockEditorProps extends ParagraphBlockProps {
@@ -80,7 +80,7 @@ watch(
     () => text,
     (newContent) => {
       // Only sync back if the change is external AND the user is not actively typing
-      if (isContentChanging.value || !editorRef.value || document.activeElement === editorRef.value) {
+      if (isContentChanging.value || !editorRef.value || defaultDocument?.activeElement === editorRef.value) {
         return
       }
 
