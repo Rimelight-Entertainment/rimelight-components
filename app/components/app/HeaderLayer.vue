@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed, nextTick, provide } from "vue"
-import { useHeaderStack, useRC } from "~/composables"
+import { useHeaderStack, useRC } from "../../composables"
 import { useWindowScroll } from "@vueuse/core"
-import { tv } from "~/internal/tv"
+import { tv } from "../../internal/tv"
 
 export interface HeaderLayerProps {
   id: string
