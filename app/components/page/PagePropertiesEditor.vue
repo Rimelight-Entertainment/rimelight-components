@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n"
 import { usePageRegistry, useInfobox, useRC } from "../../composables"
 import { getLocalizedContent } from "../../utils"
 import type { TabsItem } from "@nuxt/ui"
-import { type Page, type Link } from "../../types"
+import { type Page, type Link, type Localized } from "../../types"
 import { tv } from "../../internal/tv"
 
 export interface PagePropertiesEditorProps {
@@ -89,11 +89,22 @@ const imageTabs = computed<TabsItem[]>(() => {
 /**
  * Handles text-array updates specifically for the 'en' locale.
  */
-const updateTextArray = (schema: any, vals: string[]) => {
-  schema.defaultValue = vals.map(str => ({
-    ...schema.defaultValue.find((i: any) => i.en === str), // Preserve other locales if they exist
-    en: str
-  }))
+const updateTextArray = (schema: any, vals: (string | Localized)[]) => {
+  const currentDefault = (schema.defaultValue as Localized[]) || []
+  schema.defaultValue = vals.map(val => {
+    if (typeof val === 'object' && val !== null) {
+      return val
+    }
+
+    const str = val as string
+    // Preserve other locales if they exist
+    const existing = currentDefault.find((i: any) => i.en === str)
+    if (existing) {
+      return { ...existing, en: str }
+    }
+
+    return { en: str }
+  })
 }
 
 // Link editing state
@@ -280,10 +291,11 @@ const removeLink = (index: number) => {
                         :class="field({ class: rc.field })"
                       />
 
-                      <USelect
+                      <USelectMenu
                         v-else-if="schema.type === 'enum' && schema.options"
                         v-model="schema.defaultValue"
-                        :items="schema.options.map(opt => typeof opt === 'string' ? opt : { label: getLocalizedContent(opt, locale), value: opt })"
+                        :items="schema.options.map(opt => typeof opt === 'string' ? { label: opt, value: opt } : { label: getLocalizedContent(opt, locale), value: opt })"
+                        value-attribute="value"
                         variant="subtle"
                         :class="field({ class: rc.field })"
                       />
@@ -292,7 +304,7 @@ const removeLink = (index: number) => {
                         v-else-if="schema.type === 'text-array'"
                         :model-value="schema.defaultValue.map((v: any) => v.en)"
                         :items="schema.options || []"
-                        @update:model-value="(vals: string[]) => updateTextArray(schema, vals)"
+                        @update:model-value="(vals: any) => updateTextArray(schema, vals)"
                         multiple
                         creatable
                         variant="subtle"
