@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed, nextTick, provide } from "vue"
-import { useHeaderStack, useRC } from "../../composables"
+import { useHeaderStack, useRC } from "~/composables"
 import { useWindowScroll } from "@vueuse/core"
-import { tv } from "../../internal/tv"
+import { tv } from "~/internal/tv"
 
 export interface HeaderLayerProps {
   id: string
@@ -16,7 +16,7 @@ export interface HeaderLayerProps {
 
 const { id, order, hideOnScroll = false, rc: rcProp } = defineProps<HeaderLayerProps>()
 
-export interface HeaderLayerEmits {}
+export interface HeaderLayerEmits { }
 
 const emit = defineEmits<HeaderLayerEmits>()
 
@@ -30,7 +30,7 @@ const { rc } = useRC('HeaderLayer', rcProp)
 
 const headerLayerStyles = tv({
   slots: {
-    root: "fixed left-0 right-0 z-50 overflow-hidden transition-[top,height,opacity] duration-200 ease-in-out",
+    root: "fixed left-0 right-0 transition-[top,height,opacity] duration-200 ease-in-out",
     content: "w-full"
   }
 })
@@ -38,7 +38,7 @@ const headerLayerStyles = tv({
 const { root, content } = headerLayerStyles()
 
 
-const { registerHeader, unregisterHeader, offsets } = useHeaderStack()
+const { registerHeader, unregisterHeader, offsets, zIndices } = useHeaderStack()
 
 provide('header_layer_id', id)
 
@@ -52,6 +52,7 @@ const lastScrollY = ref(0)
 const naturalHeight = ref(0)
 
 const topOffset = computed(() => offsets.value[id] ?? 0)
+const zIndex = computed(() => zIndices.value[id] ?? 50)
 
 watch(scrollY, (current) => {
   if (!hideOnScroll) return
@@ -108,15 +109,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    :class="root({ class: rc.root })"
-    :style="{
-      top: `${topOffset}px`,
-      height: isVisible ? `${naturalHeight}px` : '0px',
-      opacity: isVisible ? 1 : 0,
-      pointerEvents: isVisible ? 'auto' : 'none'
-    }"
-  >
+  <div :class="root({ class: rc.root })" :style="{
+    top: `${topOffset}px`,
+    height: isVisible ? `${naturalHeight}px` : '0px',
+    opacity: isVisible ? 1 : 0,
+    pointerEvents: isVisible ? 'auto' : 'none',
+    zIndex
+  }">
     <div ref="contentRef" :class="content({ class: rc.content })">
       <slot />
     </div>

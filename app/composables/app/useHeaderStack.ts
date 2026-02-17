@@ -49,6 +49,18 @@ export const useHeaderStack = () => {
     return map
   })
 
+  /**
+   * Returns a map of ID -> Z-Index
+   * Top layers should have higher z-index than bottom layers
+   */
+  const zIndices = computed(() => {
+    const map: Record<string, number> = {}
+    layers.value.forEach((layer, index) => {
+      map[layer.id] = 100 - index
+    })
+    return map
+  })
+
   // 4. Methods
   const registerHeader = (id: string, height: number, order: number = 10) => {
     const existingLayer = layers.value.find((l) => l.id === id)
@@ -72,6 +84,7 @@ export const useHeaderStack = () => {
     totalHeight,
     offsets,
     bottomOffsets,
+    zIndices,
     layers: computed(() => layers.value)
   }
 }
