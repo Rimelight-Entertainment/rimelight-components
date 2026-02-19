@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, provide } from "vue"
 import { type Page, type PageSurround } from "../../types"
-import { getLocalizedContent } from "../../utils"
+import { getLocalizedContent, syncPageWithDefinition } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { usePageRegistry, useRC } from "../../composables"
 import { tv } from "../../internal/tv"
@@ -80,10 +80,22 @@ const {
   metadata
 } = pageRendererStyles()
 
-const { getTypeLabelKey } = usePageRegistry();
+const { getTypeLabelKey, definitions } = usePageRegistry();
 const { t, locale } = useI18n()
 
 provide('page-resolver', resolvePage)
+
+const currentDefinition = computed(() => {
+  if (!page.value?.type || !definitions) return null
+  return (definitions as any)[page.value.type]
+})
+
+// Sync properties with definition for rendering
+watch([() => page.value?.id, () => page.value?.type, currentDefinition], () => {
+  if (page.value && currentDefinition.value) {
+    syncPageWithDefinition(page.value, currentDefinition.value)
+  }
+}, { immediate: true })
 
 const previousPage = computed(() => surround?.previous)
 const nextPage = computed(() => surround?.next)

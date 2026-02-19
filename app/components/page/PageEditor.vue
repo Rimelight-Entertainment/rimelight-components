@@ -3,7 +3,7 @@ import { ref, computed, useTemplateRef, provide, watch } from "vue"
 import { navigateTo } from "#imports"
 import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types"
 import { usePageEditor, usePageRegistry, useRC, useHeaderStack, useConfirm } from "../../composables"
-import { getLocalizedContent, syncPageWithDefinition, defaultDocument, defaultWindow } from "../../utils"
+import { getLocalizedContent, syncPageWithDefinition, dehydratePageProperties, defaultDocument, defaultWindow } from "../../utils"
 import { useI18n } from "vue-i18n"
 import { tv } from "../../internal/tv"
 
@@ -15,7 +15,7 @@ export interface PageEditorProps {
   resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
   pageDefinitions: Record<string, PageDefinition>
   onDeletePage?: (id: string) => Promise<void>
-  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug'>[]>
+  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug' | 'type'>[]>
   onNavigateToPage?: (slug: string) => void
   onViewPage?: (slug: string) => void
   currentVersionId?: string | null
@@ -66,6 +66,7 @@ export interface PageEditorEmits {
   save: [value: Page]
   'version-navigate': [version: PageVersion]
   'version-approved': [version: PageVersion]
+  'version-rejected': [version: PageVersion]
   'version-reverted': [version: PageVersion]
   publish: [value: Page]
 }
@@ -128,13 +129,20 @@ const { t, locale } = useI18n()
 const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } = usePageEditor(page)
 const { confirm } = useConfirm()
 
-const currentDefinition = computed(() => pageDefinitions[page.value.type])
+const currentDefinition = computed(() => {
+  if (!page.value?.type || !pageDefinitions) return null
+  return pageDefinitions[page.value.type]
+})
 
 // Sync page with definition on load/change
-watch([() => page.value.id, () => versionId.value, () => page.value.type], () => {
+watch([() => page.value?.id, () => versionId.value, () => page.value?.type, currentDefinition], () => {
   if (page.value && currentDefinition.value) {
     console.log('[PageEditor] Syncing page with definition', page.value.id, versionId.value)
     syncPageWithDefinition(page.value, currentDefinition.value)
+
+    if (!page.value.description) {
+      page.value.description = { en: '' }
+    }
   }
 }, { immediate: true })
 
@@ -162,6 +170,7 @@ const handleSave = () => {
     syncPageWithDefinition(page.value, currentDefinition.value)
   }
   const dataToPersist = JSON.parse(JSON.stringify(page.value))
+  dataToPersist.properties = dehydratePageProperties(dataToPersist.properties)
   emit("save", dataToPersist)
 }
 
@@ -178,6 +187,7 @@ const handlePublish = async () => {
       syncPageWithDefinition(page.value, currentDefinition.value)
     }
     const dataToPersist = JSON.parse(JSON.stringify(page.value))
+    dataToPersist.properties = dehydratePageProperties(dataToPersist.properties)
     emit("publish", dataToPersist)
   }
 }
@@ -345,6 +355,7 @@ const handleTreeNavigate = (slug: string) => {
             :is-admin="isAdmin"
             @version-selected="(v: any) => emit('version-navigate', v)"
             @version-approved="(v: any) => emit('version-approved', v)"
+            @version-rejected="(v: any) => emit('version-rejected', v)"
             @version-reverted="(v: any) => emit('version-reverted', v)"
           />
         
@@ -442,7 +453,7 @@ const handleTreeNavigate = (slug: string) => {
           <RCPageTOC :page-blocks="page.blocks" :levels="[2, 3, 4]" :class="toc({ class: rc.toc })">
             <template #bottom> </template>
           </RCPageTOC>
-          <RCPagePropertiesEditor v-model="page" :class="properties({ class: rc.properties })" />
+          <RCPagePropertiesEditor v-model="page" :on-fetch-pages="onFetchPages" :class="properties({ class: rc.properties })" />
           <div :class="contentWrapper({ class: rc.contentWrapper })">
             <RCImage
               v-if="page.banner?.src"
@@ -452,21 +463,38 @@ const handleTreeNavigate = (slug: string) => {
             />
             <UPageHeader
               :headline="t(getTypeLabelKey(page.type))"
-              :description="getLocalizedContent(page.description, 'en') ?? ''"
               :ui="{ root: 'pt-0' }"
             >
               <template #title>
-                <div class="flex flex-row gap-sm">
+                <div class="flex flex-row gap-sm items-center w-full">
                   <RCImage
                     v-if="page.icon?.src"
                     :src="page.icon?.src"
                     :alt="page.icon?.alt"
                     :class="icon({ class: rc.icon })"
                   />
-                  <h1 :class="titleClass({ class: rc.title })">
-                    {{ getLocalizedContent(page.title, locale) }}
-                  </h1>
+                  <UInput
+                    v-model="page.title.en"
+                    variant="ghost"
+                    placeholder="Page Title"
+                    :ui="{ base: 'text-4xl font-bold p-0 focus:ring-0 shadow-none' }"
+                    class="w-full"
+                    :class="titleClass({ class: rc.title })"
+                  />
                 </div>
+              </template>
+
+              <template #description>
+                <UTextarea
+                  v-if="page.description"
+                  v-model="page.description.en"
+                  variant="ghost"
+                  placeholder="Add a description..."
+                  :rows="1"
+                  autoresize
+                  :ui="{ base: 'p-0 text-lg text-dimmed focus:ring-0 shadow-none' }"
+                  class="w-full"
+                />
               </template>
             </UPageHeader>
             <RCBlockEditor 

@@ -10,6 +10,7 @@ export const useInfobox = (propertiesRef: MaybeRefOrGetter<BasePageProperties>) 
 
   // 3. Methods
   const isFieldVisible = (schema: Property, isReadOnly: boolean) => {
+    if (!schema) return false
     const properties = toValue(propertiesRef)
     const passesLogic = !schema.visibleIf || schema.visibleIf(properties)
     if (!passesLogic) return false
@@ -24,16 +25,19 @@ export const useInfobox = (propertiesRef: MaybeRefOrGetter<BasePageProperties>) 
   }
 
   const shouldRenderGroup = (group: PropertyGroup, isReadOnly: boolean) => {
+    if (!group || !group.fields) return false
     return Object.values(group.fields).some((schema) => isFieldVisible(schema, isReadOnly))
   }
 
   const getSortedFields = (fields: Record<string, Property>) => {
+    if (!fields) return []
     return Object.entries(fields).sort(([, a], [, b]) => (a.order ?? 0) - (b.order ?? 0))
   }
 
   // Cast Object.entries to help TS understand the [string, PropertyGroup] relationship
   const getSortedGroups = (props: MaybeRefOrGetter<BasePageProperties>) => {
     const p = toValue(props)
+    if (!p) return []
     return (Object.entries(p) as [string, PropertyGroup][]).sort(
       ([, a], [, b]) => (a.order ?? 0) - (b.order ?? 0)
     )

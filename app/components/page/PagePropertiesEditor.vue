@@ -21,9 +21,10 @@ export interface PagePropertiesEditorProps {
     field?: string
     links?: string
   }
+  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug' | 'type'>[]>
 }
 
-const { rc: rcProp } = defineProps<PagePropertiesEditorProps>()
+const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>()
 
 const page = defineModel<Page>({ required: true })
 
@@ -71,6 +72,31 @@ const { getTypeLabelKey } = usePageRegistry()
 const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(() => page.value.properties)
 
 const { locale, t } = useI18n()
+
+const { data: allPages } = await useAsyncData('page-list', async () => {
+  if (!onFetchPages) return []
+  return await onFetchPages()
+}, {
+  server: false,
+  lazy: true
+})
+
+const pageItems = computed(() => {
+  if (!allPages.value) return []
+  return (allPages.value as any[]).map(p => ({
+    label: getLocalizedContent(p.title as any, locale.value),
+    value: p.slug,
+    type: p.type
+  }))
+})
+
+/**
+ * Returns a subset of pageItems filtered by the provided allowed types.
+ */
+const getFilteredPageItems = (allowedTypes?: string[]) => {
+  if (!allowedTypes || !allowedTypes.length) return pageItems.value
+  return pageItems.value.filter(item => allowedTypes.includes(item.type))
+}
 
 const imageTabs = computed<TabsItem[]>(() => {
   if (!page.value.images?.length) return []
@@ -298,7 +324,13 @@ const removeLink = (index: number) => {
                         value-attribute="value"
                         variant="subtle"
                         :class="field({ class: rc.field })"
-                      />
+                      >
+                        <template #label>
+                          <span v-if="schema.defaultValue">
+                            {{ typeof schema.defaultValue === 'string' ? schema.defaultValue : getLocalizedContent(schema.defaultValue, locale) }}
+                          </span>
+                        </template>
+                      </USelectMenu>
 
                       <UInputMenu
                         v-else-if="schema.type === 'text-array'"
@@ -312,23 +344,42 @@ const removeLink = (index: number) => {
                         :class="field({ class: rc.field })"
                       />
 
-                      <UInput
+                      <USelectMenu
                         v-else-if="schema.type === 'page'"
                         v-model="schema.defaultValue"
+                        :items="getFilteredPageItems(schema.allowedPageTypes)"
+                        value-attribute="value"
+                        searchable
                         icon="lucide:link-2"
                         variant="subtle"
-                        :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
+                        :placeholder="`Select ${schema.allowedPageTypes?.join('/') || 'page'}...`"
                         :class="field({ class: rc.field })"
-                      />
+                      >
+                        <template #label>
+                          <span v-if="schema.defaultValue">
+                            {{ pageItems.find(p => p.value === schema.defaultValue)?.label || schema.defaultValue }}
+                          </span>
+                        </template>
+                      </USelectMenu>
 
                       <USelectMenu
                         v-else-if="schema.type === 'page-array'"
                         v-model="schema.defaultValue"
+                        :items="getFilteredPageItems(schema.allowedPageTypes)"
+                        value-attribute="value"
+                        searchable
+                        multiple
                         icon="lucide:link-2"
                         variant="subtle"
-                        :placeholder="`Select ${schema.allowedPageTypes?.join('/')}`"
+                        :placeholder="`Select ${schema.allowedPageTypes?.join('/') || 'pages'}...`"
                         :class="field({ class: rc.field })"
-                      />
+                      >
+                        <template #label>
+                          <span v-if="Array.isArray(schema.defaultValue) && schema.defaultValue.length">
+                            {{ schema.defaultValue.length }} selected
+                          </span>
+                        </template>
+                      </USelectMenu>
                     </UFormField>
                   </template>
                 </dl>

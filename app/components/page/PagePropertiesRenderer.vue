@@ -290,6 +290,14 @@ const imageTabs = computed<TabsItem[]>(() => {
                         </li>
                       </ul>
 
+                      <span v-else-if="schema.type === 'enum'">
+                        {{ getLocalizedContent(schema.defaultValue, locale) }}
+                      </span>
+
+                      <span v-else-if="schema.type === 'number'">
+                        {{ schema.defaultValue }}
+                      </span>
+
                       <span v-else>
                         {{ schema.defaultValue }}
                       </span>

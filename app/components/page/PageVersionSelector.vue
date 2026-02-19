@@ -30,6 +30,7 @@ const emit = defineEmits<{
   "update:currentVersionId": [value: string | null]
   "version-selected": [version: PageVersion]
   "version-approved": [version: PageVersion]
+  "version-rejected": [version: PageVersion]
   "version-reverted": [version: PageVersion]
 }>()
 
@@ -40,6 +41,7 @@ const toast = useToast()
 const versions = ref<PageVersion[]>([])
 const isLoading = ref(false)
 const isApproving = ref<string | null>(null)
+const isRejecting = ref<string | null>(null)
 const isReverting = ref<string | null>(null)
 const isOpen = ref(false)
 
@@ -123,6 +125,39 @@ const approveVersion = async (version: PageVersion) => {
     } catch(e) {}
   } finally {
     isApproving.value = null
+  }
+}
+
+const rejectVersion = async (version: PageVersion) => {
+  if (!isAdmin) return
+
+  isRejecting.value = version.id
+  try {
+    const result = await $api<{ message?: string }>(`/api/pages/versions/${version.id}/reject`, {
+      method: "POST"
+    })
+
+    try {
+      toast.add({
+        color: "success",
+        title: t('page_version.rejected_successfully', 'Version rejected'),
+        description: result?.message || "the version has been rejected"
+      })
+    } catch(e) {}
+
+    emit("version-rejected", version)
+    await fetchVersions()
+  } catch (error: any) {
+    console.error("Failed to reject version:", error)
+    try {
+      toast.add({
+        color: "error",
+        title: t('page_version.failed_to_reject', 'Failed to reject version'),
+        description: error.message || "An error occurred"
+      })
+    } catch(e) {}
+  } finally {
+    isRejecting.value = null
   }
 }
 
@@ -273,6 +308,16 @@ watch(() => pageId, () => {
                     title="Approve version"
                     variant="ghost"
                     @click.stop="approveVersion(version)"
+                  />
+                  <UButton
+                    v-if="version.status === 'pending'"
+                    :loading="isRejecting === version.id"
+                    color="error"
+                    icon="lucide:x"
+                    size="xs"
+                    title="Reject version"
+                    variant="ghost"
+                    @click.stop="rejectVersion(version)"
                   />
                   <UButton
                     v-if="selectedVersionId === version.id"
