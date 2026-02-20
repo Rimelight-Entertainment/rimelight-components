@@ -123,7 +123,9 @@ export default defineNuxtConfig({
                 "error",
                 "commentary",
                 "ideation",
-                "source"
+                "source",
+                "grandTalePrimary",
+                "grandTaleSecondary"
             ]
         }
     },

@@ -345,7 +345,7 @@ const compareValues = (a: any, b: any) => {
                         variant="subtle"
                         :class="field({ class: rc.field })"
                       >
-                        <template #label>
+                        <template #default>
                           <span v-if="schema.defaultValue">
                             {{ typeof schema.defaultValue === 'string' ? schema.defaultValue : (getLocalizedContent(schema.defaultValue, locale) || 'Selected') }}
                           </span>
@@ -376,7 +376,7 @@ const compareValues = (a: any, b: any) => {
                         :placeholder="`Select ${schema.allowedPageTypes?.join('/') || 'page'}...`"
                         :class="field({ class: rc.field })"
                       >
-                        <template #label>
+                        <template #default>
                           <span v-if="schema.defaultValue">
                             {{ pageItems.find(p => p.value === schema.defaultValue || p.slug === schema.defaultValue)?.label || schema.defaultValue }}
                           </span>
@@ -396,7 +396,7 @@ const compareValues = (a: any, b: any) => {
                         :placeholder="`Select ${schema.allowedPageTypes?.join('/') || 'pages'}...`"
                         :class="field({ class: rc.field })"
                       >
-                        <template #label>
+                        <template #default>
                           <span v-if="Array.isArray(schema.defaultValue) && schema.defaultValue.length">
                             {{ schema.defaultValue.length }} selected
                           </span>
