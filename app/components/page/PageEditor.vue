@@ -15,11 +15,9 @@ export interface PageEditorProps {
   resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
   pageDefinitions: Record<string, PageDefinition>
   onDeletePage?: (id: string) => Promise<void>
-  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug' | 'type'>[]>
+  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug' | 'type' | 'id'>[]>
   onNavigateToPage?: (slug: string) => void
   onViewPage?: (slug: string) => void
-  currentVersionId?: string | null
-  isViewingVersion?: boolean
   isAdmin?: boolean
   rc?: {
     header?: string
@@ -52,8 +50,6 @@ const {
   onFetchPages,
   onNavigateToPage,
   onViewPage,
-  currentVersionId = null,
-  isViewingVersion = false,
   isAdmin = false,
   pageDefinitions,
   rc: rcProp
@@ -201,6 +197,15 @@ defineExpose({
 })
 
 const editorRef = useTemplateRef('editor')
+const versionSelectorRef = useTemplateRef<{ fetchVersions: () => Promise<void> }>('version-selector')
+
+watch(() => isSaving, async (newVal, oldVal) => {
+  if (!newVal && oldVal) {
+    if (versionSelectorRef.value?.fetchVersions) {
+      await versionSelectorRef.value.fetchVersions()
+    }
+  }
+})
 
 const showPreview = ref(false)
 
@@ -311,23 +316,6 @@ const handleTreeNavigate = (slug: string) => {
 </script>
 
 <template>
-  <div
-    v-if="isViewingVersion"
-    class="fixed top-12 left-0 right-0 z-40 bg-warning-500 text-white px-4 py-2 text-sm text-center"
-  >
-    <div class="flex items-center justify-center gap-2">
-      <UIcon name="lucide:eye" />
-      <span>{{ t('page_editor.viewing_version_notice') }}</span>
-      <UButton
-        icon="lucide:x"
-        color="neutral"
-        variant="ghost"
-        size="xs"
-        @click="versionId = null"
-      />
-    </div>
-  </div>
-
   <RCHeaderLayer id="editor-header" :order="3">
     <RCHeader :contain="false" :class="header({ class: rc.header })">
       <template #left>
@@ -350,6 +338,7 @@ const handleTreeNavigate = (slug: string) => {
 
           <RCPageVersionSelector
             v-if="page.id"
+            ref="version-selector"
             v-model:current-version-id="versionId"
             :page-id="page.id"
             :is-admin="isAdmin"
@@ -402,7 +391,6 @@ const handleTreeNavigate = (slug: string) => {
           <slot name="header-actions" />
 
           <UButton
-            v-if="!isViewingVersion"
             icon="lucide:globe"
             :label="t('page_editor.publish', 'Publish')"
             color="neutral"
@@ -499,7 +487,6 @@ const handleTreeNavigate = (slug: string) => {
             </UPageHeader>
             <RCBlockEditor 
               ref="editor"
-              :key="versionId ?? 'live'"
               v-model="page.blocks" 
               @start="pauseHistory"
               @mutation="() => {
@@ -583,7 +570,7 @@ const handleTreeNavigate = (slug: string) => {
       @mousedown="startResizing"
       @dblclick="editorWidth = 50"
     >
-      <USeparator orientation="vertical" />
+      <USeparator orientation="vertical" class="h-full" />
     </div>
 
     <div

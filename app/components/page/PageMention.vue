@@ -17,7 +17,7 @@ export interface PageMentionProps {
   }
 }
 
-const { pageId, rc: rcProp } = defineProps<PageMentionProps>()
+const props = defineProps<PageMentionProps>()
 
 export interface PageMentionEmits {}
 
@@ -27,7 +27,7 @@ export interface PageMentionSlots {}
 
 const slots = defineSlots<PageMentionSlots>()
 
-const { rc } = useRC('PageMention', rcProp)
+const { rc } = useRC('PageMention', props.rc)
 
 const pageMentionStyles = tv({
   slots: {
@@ -42,19 +42,30 @@ const { link, icon, text, skeleton } = pageMentionStyles()
 
 const { locale } = useI18n()
 
+const isServer = import.meta.server
+const isClient = import.meta.client
 
 const resolver = inject<(id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>>('page-resolver')
 
-const { data: linkedPage, status } = await useAsyncData(`page-mention-${pageId}`, async () => {
+const { data: linkedPage, status } = useAsyncData(() => `page-mention-${props.pageId}`, async () => {
   if (!resolver) {
-    console.warn('RCPageMention: No page resolver provided in RCPageRenderer')
+    if (isClient) {
+      console.warn('RCPageMention: No page resolver provided in RCPageRenderer')
+    }
     return null
   }
-  return await resolver(pageId)
+  try {
+      const page = await resolver(props.pageId)
+      return page
+  } catch (e) {
+      if (isClient) {
+        console.warn('RCPageMention: Failed to resolve page', props.pageId, e)
+      }
+      return null
+  }
 }, {
   lazy: true,
-  server: false,
-  watch: [() => pageId]
+  watch: [() => props.pageId]
 })
 </script>
 
@@ -70,7 +81,8 @@ const { data: linkedPage, status } = await useAsyncData(`page-mention-${pageId}`
       {{ getLocalizedContent(linkedPage.title, locale) }}
     </span>
   </NuxtLink>
-  <USkeleton v-else-if="status === 'pending'" :class="skeleton({ class: rc.skeleton })" />
+  <USkeleton v-else-if="status === 'pending' || (isServer && status === 'idle')" :class="skeleton({ class: rc.skeleton })" />
+  <span v-else-if="status !== 'idle' && props.pageId && props.pageId !== 'undefined' && props.pageId !== 'null'" class="text-xs text-dimmed italic">Unresolved Ref ({{ props.pageId }})</span>
 </template>
 
 <style scoped></style>

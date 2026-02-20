@@ -21,7 +21,7 @@ export interface PagePropertiesEditorProps {
     field?: string
     links?: string
   }
-  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug' | 'type'>[]>
+  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug' | 'type' | 'id'>[]>
 }
 
 const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>()
@@ -73,7 +73,7 @@ const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = 
 
 const { locale, t } = useI18n()
 
-const { data: allPages } = await useAsyncData('page-list', async () => {
+const { data: allPages } = useAsyncData('page-registry-editor', async () => {
   if (!onFetchPages) return []
   return await onFetchPages()
 }, {
@@ -85,8 +85,9 @@ const pageItems = computed(() => {
   if (!allPages.value) return []
   return (allPages.value as any[]).map(p => ({
     label: getLocalizedContent(p.title as any, locale.value),
-    value: p.slug,
-    type: p.type
+    value: p.id,
+    type: p.type,
+    slug: p.slug
   }))
 })
 
@@ -124,7 +125,7 @@ const updateTextArray = (schema: any, vals: (string | Localized)[]) => {
 
     const str = val as string
     // Preserve other locales if they exist
-    const existing = currentDefault.find((i: any) => i.en === str)
+    const existing = currentDefault.find((i: any) => i && typeof i === 'object' && i.en === str)
     if (existing) {
       return { ...existing, en: str }
     }
@@ -190,6 +191,24 @@ const removeLink = (index: number) => {
     page.value.links.splice(index, 1)
   }
 }
+
+// Robust object comparison for USelectMenu
+const compareValues = (a: any, b: any) => {
+  if (a === b) return true
+  if (a == null || b == null) return false
+
+  // If both are objects, try stringified comparison first
+  if (typeof a === 'object' && typeof b === 'object') {
+    if (JSON.stringify(a) === JSON.stringify(b)) return true
+  }
+
+  // Fallback to localized string comparison for mixed or complex types
+  const valA = typeof a === 'object' ? getLocalizedContent(a, locale.value) : String(a)
+  const valB = typeof b === 'object' ? getLocalizedContent(b, locale.value) : String(b)
+
+  return valA === valB && valA !== ""
+}
+
 </script>
 
 <template>
@@ -234,12 +253,12 @@ const removeLink = (index: number) => {
           <div v-if="page.tags?.length" :class="tags({ class: rc.tags })">
             <UBadge
               v-for="tag in page.tags"
-              :key="tag[locale]"
+              :key="getLocalizedContent(tag, locale)"
               variant="soft"
               size="xs"
               color="neutral"
             >
-              {{ tag[locale] }}
+              {{ getLocalizedContent(tag, locale) }}
             </UBadge>
           </div>
 
@@ -320,21 +339,23 @@ const removeLink = (index: number) => {
                       <USelectMenu
                         v-else-if="schema.type === 'enum' && schema.options"
                         v-model="schema.defaultValue"
-                        :items="schema.options.map(opt => typeof opt === 'string' ? { label: opt, value: opt } : { label: getLocalizedContent(opt, locale), value: opt })"
+                        :items="schema.options.map((opt: any) => typeof opt === 'string' ? { label: opt, value: opt } : { label: getLocalizedContent(opt, locale), value: opt })"
                         value-attribute="value"
+                        :by="compareValues"
                         variant="subtle"
                         :class="field({ class: rc.field })"
                       >
                         <template #label>
                           <span v-if="schema.defaultValue">
-                            {{ typeof schema.defaultValue === 'string' ? schema.defaultValue : getLocalizedContent(schema.defaultValue, locale) }}
+                            {{ typeof schema.defaultValue === 'string' ? schema.defaultValue : (getLocalizedContent(schema.defaultValue, locale) || 'Selected') }}
                           </span>
+                          <span v-else class="text-dimmed">Select...</span>
                         </template>
                       </USelectMenu>
 
                       <UInputMenu
                         v-else-if="schema.type === 'text-array'"
-                        :model-value="schema.defaultValue.map((v: any) => v.en)"
+                        :model-value="(schema.defaultValue as any[])?.map((v: any) => v?.en ?? v) || []"
                         :items="schema.options || []"
                         @update:model-value="(vals: any) => updateTextArray(schema, vals)"
                         multiple
@@ -357,8 +378,9 @@ const removeLink = (index: number) => {
                       >
                         <template #label>
                           <span v-if="schema.defaultValue">
-                            {{ pageItems.find(p => p.value === schema.defaultValue)?.label || schema.defaultValue }}
+                            {{ pageItems.find(p => p.value === schema.defaultValue || p.slug === schema.defaultValue)?.label || schema.defaultValue }}
                           </span>
+                          <span v-else class="text-dimmed">None</span>
                         </template>
                       </USelectMenu>
 
@@ -378,6 +400,7 @@ const removeLink = (index: number) => {
                           <span v-if="Array.isArray(schema.defaultValue) && schema.defaultValue.length">
                             {{ schema.defaultValue.length }} selected
                           </span>
+                          <span v-else class="text-dimmed">None</span>
                         </template>
                       </USelectMenu>
                     </UFormField>
@@ -391,7 +414,7 @@ const removeLink = (index: number) => {
     </UCard>
     <div :class="links({ class: rc.links })">
       <div class="flex items-center justify-between mb-xs">
-        <h6>{{ t('page_properties.links') }}</h6>
+        <h6 class="text-xs font-semibold uppercase tracking-wider text-dimmed">{{ t('page_properties.links', 'Links') }}</h6>
         <UButton
           icon="lucide:plus"
           size="xs"
@@ -411,8 +434,8 @@ const removeLink = (index: number) => {
             :label="linkItem.label"
             :icon="linkItem.icon"
             :to="linkItem.to"
-            :target="linkItem.to ? '_blank' : undefined"
-            :external="!!linkItem.to"
+            :target="linkItem.to?.startsWith('http') ? '_blank' : undefined"
+            :external="linkItem.to?.startsWith('http')"
             :variant="linkItem.variant || 'link'"
             :color="linkItem.color || 'neutral'"
             size="sm"
@@ -436,31 +459,34 @@ const removeLink = (index: number) => {
           </div>
         </div>
       </div>
-      <p v-else class="text-xs text-dimmed italic">{{ t('page_properties.no_links') }}</p>
+      <p v-else class="text-xs text-dimmed italic">{{ t('page_properties.no_links', 'No links added') }}</p>
 
       <!-- Link management modal -->
-      <UModal v-model:open="isLinkModalOpen" :title="editingLinkIndex !== null ? t('page_properties.edit_link') : t('page_properties.add_link')">
+      <UModal v-model:open="isLinkModalOpen">
         <template #content>
           <UCard>
+            <template #header>
+               <h4 class="font-bold">{{ editingLinkIndex !== null ? t('page_properties.edit_link', 'Edit Link') : t('page_properties.add_link', 'Add Link') }}</h4>
+            </template>
             <div class="flex flex-col gap-sm">
-              <UFormField :label="t('page_properties.label')">
+              <UFormField :label="t('page_properties.label', 'Label')">
                 <UInput v-model="linkDraft.label" placeholder="Check my GitHub" class="w-full" />
               </UFormField>
-              <UFormField :label="t('page_properties.url')">
+              <UFormField :label="t('page_properties.url', 'URL')">
                 <UInput v-model="linkDraft.to" placeholder="https://github.com/..." class="w-full" />
               </UFormField>
-              <UFormField :label="t('page_properties.icon')">
+              <UFormField :label="t('page_properties.icon', 'Icon')">
                 <UInput v-model="linkDraft.icon" placeholder="lucide:github" class="w-full" />
               </UFormField>
               <div class="grid grid-cols-2 gap-sm">
-                <UFormField :label="t('page_properties.color')">
+                <UFormField :label="t('page_properties.color', 'Color')">
                   <USelect
                     v-model="linkDraft.color"
                     :items="['primary', 'secondary', 'neutral', 'error', 'warning', 'success', 'info']"
                     class="w-full"
                   />
                 </UFormField>
-                <UFormField :label="t('page_properties.variant')">
+                <UFormField :label="t('page_properties.variant', 'Variant')">
                   <USelect
                     v-model="linkDraft.variant"
                     :items="['solid', 'outline', 'subtle', 'soft', 'ghost', 'link']"
@@ -472,9 +498,9 @@ const removeLink = (index: number) => {
 
             <template #footer>
               <div class="flex justify-end gap-sm">
-                <UButton :label="t('common.cancel')" variant="ghost" color="neutral" @click="isLinkModalOpen = false" />
+                <UButton :label="t('common.cancel', 'Cancel')" variant="ghost" color="neutral" @click="isLinkModalOpen = false" />
                 <UButton
-                  :label="editingLinkIndex !== null ? t('page_properties.update_link') : t('page_properties.add_link')"
+                  :label="editingLinkIndex !== null ? t('page_properties.update_link', 'Update') : t('page_properties.add_link', 'Add')"
                   color="primary"
                   @click="saveLink"
                 />
@@ -486,3 +512,5 @@ const removeLink = (index: number) => {
     </div>
   </aside>
 </template>
+
+<style scoped></style>

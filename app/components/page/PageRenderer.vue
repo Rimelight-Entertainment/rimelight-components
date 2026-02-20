@@ -87,7 +87,8 @@ provide('page-resolver', resolvePage)
 
 const currentDefinition = computed(() => {
   if (!page.value?.type || !definitions) return null
-  return (definitions as any)[page.value.type]
+  const typeKey = Object.keys(definitions).find(k => k.toLowerCase() === page.value.type.toLowerCase())
+  return typeKey ? (definitions as any)[typeKey] : null
 })
 
 // Sync properties with definition for rendering
@@ -118,7 +119,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
         />
         <UPageHeader
           :headline="t(getTypeLabelKey(page.type))"
-          :description="getLocalizedContent(page.description, 'en') ?? ''"
+          :description="getLocalizedContent(page.description, locale) ?? ''"
           :ui="{ root: 'pt-0' }"
         >
           <template #title>

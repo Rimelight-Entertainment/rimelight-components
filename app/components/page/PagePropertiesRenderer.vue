@@ -186,13 +186,13 @@ const imageTabs = computed<TabsItem[]>(() => {
 
           <div v-if="page.tags?.length" :class="tags({ class: rc.tags })">
             <UBadge
-              v-for="tag in page.tags"
-              :key="tag[locale]"
+              v-for="(tag, index) in page.tags"
+              :key="index"
               variant="soft"
               size="xs"
               color="neutral"
             >
-              {{ tag[locale] }}
+              {{ getLocalizedContent(tag, locale) }}
             </UBadge>
           </div>
 
@@ -258,7 +258,7 @@ const imageTabs = computed<TabsItem[]>(() => {
                         {{ getLocalizedContent(schema.defaultValue, locale) }}
                       </span>
                       <ul
-                        v-else-if="schema.type === 'text-array'"
+                        v-else-if="schema.type === 'text-array' && Array.isArray(schema.defaultValue)"
                         :class="list({ class: rc.list })"
                       >
                         <li v-for="(item, index) in schema.defaultValue" :key="index">
@@ -267,30 +267,28 @@ const imageTabs = computed<TabsItem[]>(() => {
                           </span>
                         </li>
                       </ul>
-                      <RCPageMention
-                        v-else-if="schema.type === 'page' && schema.defaultValue"
-                        :page-id="schema.defaultValue"
-                      />
+                      <template v-if="schema.type === 'page' && schema.defaultValue">
+                        <RCPageMention
+                          v-if="typeof schema.defaultValue === 'string' ? !!schema.defaultValue : !!getLocalizedContent(schema.defaultValue, locale)"
+                          :page-id="String(typeof schema.defaultValue === 'object' ? (schema.defaultValue.id || schema.defaultValue.value || getLocalizedContent(schema.defaultValue, locale)) : schema.defaultValue)"
+                        />
+                      </template>
 
                       <ul
                         v-else-if="schema.type === 'page-array' && Array.isArray(schema.defaultValue)"
                         :class="pageArrayList({ class: rc.pageArrayList })"
                       >
-                        <li
-                          v-for="id in schema.defaultValue"
-                          :key="id"
-                          :class="pageArrayItem({ class: rc.pageArrayItem })"
-                        >
-                          <span
-                            :class="pageArrayBullet({ class: rc.pageArrayBullet })"
-                            aria-hidden="true"
-                          />
-
-                          <RCPageMention :page-id="id" />
-                        </li>
+                        <template v-for="(id, idx) in schema.defaultValue" :key="idx">
+                          <li
+                            v-if="typeof id === 'string' ? !!id : !!getLocalizedContent(id, locale)"
+                            :class="pageArrayItem({ class: rc.pageArrayItem })"
+                          >
+                            <RCPageMention :page-id="String(typeof id === 'object' ? (id.id || id.value || getLocalizedContent(id, locale)) : id)" />
+                          </li>
+                        </template>
                       </ul>
 
-                      <span v-else-if="schema.type === 'enum'">
+                      <span v-else-if="schema.type === 'enum' && schema.defaultValue">
                         {{ getLocalizedContent(schema.defaultValue, locale) }}
                       </span>
 
@@ -298,8 +296,8 @@ const imageTabs = computed<TabsItem[]>(() => {
                         {{ schema.defaultValue }}
                       </span>
 
-                      <span v-else>
-                        {{ schema.defaultValue }}
+                      <span v-else-if="schema.defaultValue">
+                        {{ getLocalizedContent(schema.defaultValue, locale) }}
                       </span>
                     </dd>
                   </div>

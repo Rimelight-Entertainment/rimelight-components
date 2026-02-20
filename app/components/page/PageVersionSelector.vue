@@ -213,6 +213,20 @@ const getStatusColor = (status: string) => {
 watch(() => pageId, () => {
   if (pageId) fetchVersions()
 }, { immediate: true })
+const currentVersionStatus = computed(() => {
+  if (!selectedVersionId.value) return 'approved'
+  const v = versions.value.find(v => v.id === selectedVersionId.value)
+  return v?.status || 'pending'
+})
+
+defineExpose({
+  approveVersion,
+  rejectVersion,
+  revertVersion,
+  fetchVersions,
+  currentVersionStatus,
+  currentVersion: computed(() => versions.value.find(v => v.id === selectedVersionId.value))
+})
 </script>
 
 <template>
@@ -298,29 +312,8 @@ watch(() => pageId, () => {
                   </p>
                 </div>
 
-                <div v-if="isAdmin" class="shrink-0 flex items-center gap-1">
+                <div v-if="selectedVersionId === version.id && isAdmin" class="shrink-0 flex items-center gap-1">
                   <UButton
-                    v-if="version.status === 'pending'"
-                    :loading="isApproving === version.id"
-                    color="success"
-                    icon="lucide:check"
-                    size="xs"
-                    title="Approve version"
-                    variant="ghost"
-                    @click.stop="approveVersion(version)"
-                  />
-                  <UButton
-                    v-if="version.status === 'pending'"
-                    :loading="isRejecting === version.id"
-                    color="error"
-                    icon="lucide:x"
-                    size="xs"
-                    title="Reject version"
-                    variant="ghost"
-                    @click.stop="rejectVersion(version)"
-                  />
-                  <UButton
-                    v-if="selectedVersionId === version.id"
                     :loading="isReverting === version.id"
                     color="warning"
                     icon="lucide:rotate-ccw"

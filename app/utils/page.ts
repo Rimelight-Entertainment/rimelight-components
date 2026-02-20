@@ -1,48 +1,73 @@
 import { type MaybeRefOrGetter, toValue } from "vue"
-import { type Localized, type Page, type PageDefinition, type PageVersion, type Property } from "#rimelight-components/types"
+import { type Localized, type Page, type PageDefinition, type PageVersion, type Property, type BasePageProperties } from "#rimelight-components/types"
 
 export const getLocalizedContent = <T = string>(
-  field: Localized<T> | undefined,
+  field: Localized<T> | T | any | undefined,
   currentLocale: MaybeRefOrGetter<string>
 ): T | string => {
-  if (!field || typeof field !== "object") return ""
+  if (field === undefined || field === null) return ""
+
+  // If it's already a string or not an object, return it as is
+  if (typeof field !== "object") return String(field)
 
   const locale = toValue(currentLocale)
 
-  return field[locale] ?? field["en"] ?? ""
+  if (typeof field === "object" && field !== null) {
+    if (Object.keys(field).length === 0) return ""
+    
+    // 1. Try standard localization lookup
+    const val = (field as any)[locale] ?? (field as any)["en"]
+    if (val !== undefined && val !== null) {
+      // If we found a string, return it
+      if (typeof val === 'string') return val
+      
+      // If we found another object (nested localization or specialized object)
+      // try to resolve it recursively or return its first string property
+      if (typeof val === 'object') {
+        const innerVal = (val as any)[locale] ?? (val as any)["en"]
+        if (typeof innerVal === 'string') return innerVal
+        
+        const firstString = Object.values(val as object).find(v => typeof v === 'string')
+        if (firstString !== undefined) return String(firstString)
+      }
+    }
+    
+    // 2. Fallback: use first available value that is a string from the top-level object
+    const firstVal = Object.values(field as object).find(v => typeof v === 'string' && v.trim() !== '')
+    if (firstVal !== undefined) return String(firstVal)
+
+    return ""
+  }
+
+  const strVal = String(field)
+  return strVal === '[object Object]' ? "" : strVal
 }
-
-type WidenProperty<T> = T extends string
-  ? string
-  : T extends number
-  ? number
-  : T extends never[]
-  ? Localized[]
-  : T extends object
-  ? { [K in keyof T]: WidenProperty<T[K]> }
-  : T
-
 
 /**
  * Ensures a page strictly adheres to its PageDefinition.
- * - Adds missing properties and groups in the correct order.
- * - Removes properties and groups no longer in the definition.
- * - Handles mapping of flat values from the DB into the hydrated schema.
  */
 export function syncPageWithDefinition(page: Page, definition?: PageDefinition): Page {
   if (!definition) return page
 
-  let hasChanged = false
-
   // 1. Sync Properties
-  const updatedProperties: any = {}
+  const updatedProperties: BasePageProperties = {}
   const definitionGroups = definition.properties
 
   const existingProperties = (page.properties || {}) as any
 
   for (const [groupId, definitionGroup] of Object.entries(definitionGroups)) {
-    const existingGroup = existingProperties[groupId]
-    const updatedGroupFields: any = {}
+    let existingGroup = existingProperties[groupId]
+
+    // Case-insensitive group lookup fallback
+    if (!existingGroup) {
+      const lowerGroupId = groupId.toLowerCase()
+      const foundGroupKey = Object.keys(existingProperties).find(k => k.toLowerCase() === lowerGroupId)
+      if (foundGroupKey) {
+        existingGroup = existingProperties[foundGroupKey]
+      }
+    }
+
+    const updatedGroupFields: Record<string, Property> = {}
 
     const definitionFields = definitionGroup.fields || {}
 
@@ -58,8 +83,14 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
         else if (existingGroup[fieldId] !== undefined) {
           value = existingGroup[fieldId]
         }
-        // 3. Fallback: check if it's totally flat (no group nesting in DB) - optional based on preference
-        // else if (existingProperties[fieldId] !== undefined) { value = existingProperties[fieldId] }
+        // 2.5 Case-insensitive fallback for flat props
+        else {
+          const lowerFieldId = fieldId.toLowerCase()
+          const foundKey = Object.keys(existingGroup).find(k => k.toLowerCase() === lowerFieldId)
+          if (foundKey && existingGroup[foundKey] !== undefined) {
+            value = existingGroup[foundKey]
+          }
+        }
       }
 
       updatedGroupFields[fieldId] = {
@@ -72,92 +103,34 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
       ...definitionGroup,
       fields: updatedGroupFields
     }
-
-    if (!existingGroup) {
-      hasChanged = true
-    }
   }
 
-  page.properties = updatedProperties
-
-  // 2. Sync Blocks (Remaining code unchanged...)
-  if (definition.initialBlocks) {
-    const idealBlocks = definition.initialBlocks()
-    const currentBlocks = [...page.blocks]
-    const idealBlocksMap = new Map(idealBlocks.map((b) => [b.id, b]))
-
-    const filteredCurrent = currentBlocks.filter((b) => {
-      if (!b.isTemplated) return true
-      return idealBlocksMap.has(b.id)
-    })
-
-    if (filteredCurrent.length !== currentBlocks.length) {
-      hasChanged = true
-    }
-
-    let lastExistingIdealIndex = -1
-    for (const idealBlock of idealBlocks) {
-      const existingIndex = filteredCurrent.findIndex((b) => b.id === idealBlock.id)
-      if (existingIndex !== -1) {
-        lastExistingIdealIndex = existingIndex
-      } else {
-        filteredCurrent.splice(lastExistingIdealIndex + 1, 0, JSON.parse(JSON.stringify(idealBlock)))
-        lastExistingIdealIndex++
-        hasChanged = true
-      }
-    }
-    page.blocks = filteredCurrent
-  }
-
-  if (hasChanged) {
-    page.updatedAt = new Date()
-  }
+  page.properties = updatedProperties as any
 
   return page
 }
 
-/**
- * Strips away the schema (labels, types, etc.) from properties, returning only the values.
- * Useful for saving to the database.
- */
-export function dehydratePageProperties(properties: any): Record<string, any> {
-  const dehydrated: Record<string, any> = {}
-
-  for (const [groupId, group] of Object.entries(properties)) {
-    // If it's a hydrated group with a 'fields' object
-    if (group && typeof group === 'object' && 'fields' in (group as any)) {
-      const groupValues: Record<string, any> = {}
-      const fields = (group as any).fields
-
-      for (const [fieldId, field] of Object.entries(fields)) {
-        groupValues[fieldId] = (field as any).defaultValue
-      }
-      dehydrated[groupId] = groupValues
-    } else {
-      // It's already flat or unknown, keep as is
-      dehydrated[groupId] = group
+export function dehydratePageProperties(properties: BasePageProperties): any {
+  const dehydrated: any = {}
+  for (const [groupKey, group] of Object.entries(properties)) {
+    if (!group?.fields) continue
+    dehydrated[groupKey] = {}
+    for (const [fieldKey, field] of Object.entries(group.fields)) {
+      dehydrated[groupKey][fieldKey] = field.defaultValue
     }
   }
-
   return dehydrated
 }
 
-/**
- * Converts a PageVersion to a Page structure for display in the editor.
- */
 export function convertVersionToPage(version: PageVersion): Page {
-  // Ensure we fallback to empty arrays/objects if missing
   const blocks = version.content?.blocks || version.blocks || []
   const properties = version.content?.properties || (version as any).properties
 
   return {
     ...version,
-    // Use the pageId if available as this is a version OF a page, 
-    // but fall back to id if pageId is missing (e.g. if type is just BasePage)
-    // However, version.id is the version's ID. version.pageId is the page's ID.
     id: version.pageId || version.id,
     type: version.type,
-    blocks: JSON.parse(JSON.stringify(blocks)), // Deep copy to avoid reference issues
+    blocks: JSON.parse(JSON.stringify(blocks)),
     properties: properties ? JSON.parse(JSON.stringify(properties)) : {},
     authorsIds: (version as any).authorsIds || (version as any).authorIds || [],
     createdAt: version.createdAt ? new Date(version.createdAt) : new Date(),
@@ -172,4 +145,19 @@ export function convertVersionToPage(version: PageVersion): Page {
     tags: version.tags || [],
     links: version.links || []
   } as Page
+}
+
+/**
+ * Robustly converts an ID, Slug, or full API path into a valid /api/pages resolution path.
+ * Handles cases where the input might be a full URL or already contain the API prefix.
+ */
+export function getPageResolutionPath(idOrSlug: string): string {
+  if (!idOrSlug || idOrSlug === 'undefined' || idOrSlug === 'null' || idOrSlug === '[object Object]') return ""
+  
+  // Remove possible API prefix or full URL prefix if already present
+  // Matches: /api/pages/id/, /api/pages/find/, http://.../api/pages/id/, etc.
+  const clean = String(idOrSlug).replace(/^(?:.*\/)?api\/pages\/(?:id|find)\//, '')
+  
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean)
+  return isUuid ? `/api/pages/id/${clean}` : `/api/pages/find/${clean}`
 }
