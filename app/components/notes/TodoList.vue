@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useTodos } from '../../composables'
 import type { Todo } from 'rimelight-components/shared/db/auth'
 import { useI18n } from 'vue-i18n'
-import TodoCard from './TodoCard.vue'
+import { RCTodoCard } from '#components'
 
 export interface TodoListProps {
   todos: Todo[]
@@ -90,7 +90,7 @@ const showArchived = ref(false)
 
         <!-- Active Todos -->
         <div class="flex flex-col gap-xs">
-          <TodoCard
+          <RCTodoCard
             v-for="todo in todos"
             :key="todo.id"
             :todo="todo"
@@ -107,7 +107,7 @@ const showArchived = ref(false)
         <template v-if="showArchived">
           <USeparator :label="t('common.archive')" />
           <div class="flex flex-col gap-xs">
-            <TodoCard
+            <RCTodoCard
               v-for="todo in archivedTodos"
               :key="todo.id"
               :todo="todo"
@@ -120,3 +120,5 @@ const showArchived = ref(false)
     </UCard>
   </div>
 </template>
+
+<style scoped></style>

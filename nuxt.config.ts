@@ -96,7 +96,7 @@ export default defineNuxtConfig({
             path: resolve(currentDir, 'app/components'),
             pathPrefix: false,
             prefix: 'RC',
-            global: true,
+            global: false,
             ignore: ['**/index.*']
         }
     ],

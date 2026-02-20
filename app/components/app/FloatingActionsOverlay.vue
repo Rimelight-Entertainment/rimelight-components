@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onMounted, markRaw } from "vue"
 import { useFloatingActions } from "../../composables/app/useFloatingActions"
-import ScrollToTop from "./ScrollToTop.vue"
-import QuickActions from "../dashboard/QuickActions.vue"
+import { RCScrollToTop, RCQuickActions } from "#components"
 
 const { registerAction } = useFloatingActions()
 const { actions } = useFloatingActions()
@@ -12,13 +11,13 @@ onMounted(() => {
   registerAction({
     id: "quick-actions",
     priority: 10,
-    component: markRaw(QuickActions)
+    component: markRaw(RCQuickActions)
   })
 
   registerAction({
     id: "scroll-to-top",
     priority: 0,
-    component: markRaw(ScrollToTop)
+    component: markRaw(RCScrollToTop)
   })
 })
 </script>

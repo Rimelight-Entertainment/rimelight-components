@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import chroma from "chroma-js"
-import ColorSwatch from "./ColorSwatch.vue"
+import { RCColorSwatch } from "#components"
 import { tv } from "../../internal/tv"
 import { useRC, useHeaderStack } from "../../composables"
 
@@ -212,7 +212,7 @@ function getSwatchProps(swatch: SwatchData) {
         >
           <template #body="{ item: subSection }">
             <div :class="grid({ class: rc.grid })">
-              <ColorSwatch
+              <RCColorSwatch
                 v-for="swatch in (subSection as PaletteSubSection).swatches"
                 :key="swatch.name"
                 v-bind="getSwatchProps(swatch)"
@@ -225,3 +225,5 @@ function getSwatchProps(swatch: SwatchData) {
     </UTabs>
   </div>
 </template>
+
+<style scoped></style>

@@ -6,9 +6,7 @@ import {
   type InlineLink,
   type InlineMention
 } from "../../types"
-import TextNode from "../nodes/TextNode.vue"
-import LinkNode from "../nodes/LinkNode.vue"
-import PageMention from "../page/PageMention.vue"
+import { RCTextNode, RCLinkNode, RCPageMention } from "#components"
 import { tv } from "../../internal/tv"
 import { useRC } from "../../composables"
 
@@ -57,13 +55,13 @@ type ComponentIs = string | object
 const getTag = (item: InlineContent): ComponentIs => {
   switch (item.type) {
     case "text":
-      return TextNode
+      return RCTextNode
     case "link":
-      return LinkNode
+      return RCLinkNode
     case "mention":
-      return PageMention
+      return RCPageMention
     default:
-      return TextNode
+      return RCTextNode
   }
 }
 
