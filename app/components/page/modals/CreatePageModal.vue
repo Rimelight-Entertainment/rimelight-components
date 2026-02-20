@@ -1,40 +1,40 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue"
-import { type PageDefinition, type PageType, type Page } from "../../../types"
-import { tv } from "../../../internal/tv"
-import { useRC } from "../../../composables/components/useRC"
-import { useI18n } from "vue-i18n"
+import { ref, computed, watch } from "vue";
+import { type PageDefinition, type PageType, type Page } from "../../../types";
+import { tv } from "../../../internal/tv";
+import { useRC } from "../../../composables/components/useRC";
+import { useI18n } from "vue-i18n";
 
 export interface CreatePageModalProps {
-  definitions: Record<string, PageDefinition>
-  loading?: boolean
+  definitions: Record<string, PageDefinition>;
+  loading?: boolean;
   rc?: {
-    header?: string
-    headerTitle?: string
-    closeButton?: string
-    body?: string
-    field?: string
-    footer?: string
-  }
+    header?: string;
+    headerTitle?: string;
+    closeButton?: string;
+    body?: string;
+    field?: string;
+    footer?: string;
+  };
 }
 
-const open = defineModel<boolean>("open", { default: false })
-const { loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>()
+const open = defineModel<boolean>("open", { default: false });
+const { loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>();
 
 export interface CreatePageModalEmits {
-  close: []
-  confirm: [page: Partial<Page>]
+  close: [];
+  confirm: [page: Partial<Page>];
 }
 
-const emit = defineEmits<CreatePageModalEmits>()
+const emit = defineEmits<CreatePageModalEmits>();
 
 export interface CreatePageModalSlots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<CreatePageModalSlots>()
+const slots = defineSlots<CreatePageModalSlots>();
 
-const { rc } = useRC('CreatePageModal', rcProp)
+const { rc } = useRC("CreatePageModal", rcProp);
 
 const createPageModalStyles = tv({
   slots: {
@@ -43,9 +43,9 @@ const createPageModalStyles = tv({
     closeButton: "-my-1",
     body: "space-y-4 py-4",
     field: "w-full",
-    footer: "flex justify-end gap-2"
-  }
-})
+    footer: "flex justify-end gap-2",
+  },
+});
 
 const {
   header: headerClass,
@@ -53,50 +53,53 @@ const {
   closeButton,
   body,
   field,
-  footer
-} = createPageModalStyles()
+  footer,
+} = createPageModalStyles();
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const selectedType = ref<PageType | ''>('')
+const selectedType = ref<PageType | "">("");
 
-const title = ref('')
-const slug = ref('')
+const title = ref("");
+const slug = ref("");
 
 const typeOptions = computed(() => {
   return Object.entries(definitions).map(([key, def]) => ({
     label: t(def.typeLabelKey) === def.typeLabelKey ? key : t(def.typeLabelKey),
-    value: key
-  }))
-})
+    value: key,
+  }));
+});
 
 // Basic slug auto-generation
 watch(title, (newTitle) => {
-  slug.value = newTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-})
+  slug.value = newTitle
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+});
 
 const handleConfirm = () => {
-  if (!selectedType.value) return
+  if (!selectedType.value) return;
 
-  const definition = definitions[selectedType.value]
+  const definition = definitions[selectedType.value];
 
   // 2. Explicitly check if definition exists to satisfy TS
   if (!definition) {
-    console.error(`Definition for type "${selectedType.value}" not found.`)
-    return
+    console.error(`Definition for type "${selectedType.value}" not found.`);
+    return;
   }
 
   // Initialize properties from definition defaults using the correct structure
-  const properties: Record<string, any> = {}
+  const properties: Record<string, any> = {};
   Object.entries(definition.properties).forEach(([groupKey, group]) => {
     properties[groupKey] = {
       ...group,
-      fields: {}
-    }
+      fields: {},
+    };
     Object.entries(group.fields).forEach(([fieldKey, field]) => {
-      properties[groupKey].fields[fieldKey] = { ...field }
-    })
-  })
+      properties[groupKey].fields[fieldKey] = { ...field };
+    });
+  });
 
   const newPage: Partial<Page> = {
     type: selectedType.value as any,
@@ -105,17 +108,17 @@ const handleConfirm = () => {
     properties: properties as any,
     blocks: definition.initialBlocks ? definition.initialBlocks() : [],
     createdAt: new Date(),
-    updatedAt: new Date()
-  }
+    updatedAt: new Date(),
+  };
 
-  emit('confirm', newPage)
-}
+  emit("confirm", newPage);
+};
 
 watch(open, (isOpen) => {
   if (!isOpen) {
-    emit("close")
+    emit("close");
   }
-})
+});
 </script>
 
 <template>
@@ -157,7 +160,12 @@ watch(open, (isOpen) => {
 
         <template #footer>
           <div :class="footer({ class: rc.footer })">
-            <UButton color="neutral" variant="ghost" :label="t('common.cancel')" @click="open = false" />
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :label="t('common.cancel')"
+              @click="open = false"
+            />
             <UButton
               color="primary"
               :label="t('page_properties.create_and_edit')"

@@ -1,17 +1,11 @@
 <script lang="ts" setup>
-import { useFloatingTools } from "../composables"
+import { useFloatingTools } from "../composables";
 
-const {
-  activeToolIds,
-  registeredTools,
-  isVisible,
-  removeTool,
-  toggleExpanded,
-  isToolExpanded
-} = useFloatingTools()
+const { activeToolIds, registeredTools, isVisible, removeTool, toggleExpanded, isToolExpanded } =
+  useFloatingTools();
 
 function getTool(id: string) {
-  return registeredTools.value.get(id)
+  return registeredTools.value.get(id);
 }
 </script>
 

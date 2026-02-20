@@ -1,121 +1,123 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed, nextTick, provide } from "vue"
-import { useHeaderStack, useRC } from "../../composables"
-import { useWindowScroll } from "@vueuse/core"
-import { tv } from "../../internal/tv"
+import { ref, onMounted, onUnmounted, watch, computed, nextTick, provide } from "vue";
+import { useHeaderStack, useRC } from "../../composables";
+import { useWindowScroll } from "@vueuse/core";
+import { tv } from "../../internal/tv";
 
 export interface HeaderLayerProps {
-  id: string
-  order?: number
-  hideOnScroll?: boolean
+  id: string;
+  order?: number;
+  hideOnScroll?: boolean;
   rc?: {
-    root?: string
-    content?: string
-  }
+    root?: string;
+    content?: string;
+  };
 }
 
-const { id, order, hideOnScroll = false, rc: rcProp } = defineProps<HeaderLayerProps>()
+const { id, order, hideOnScroll = false, rc: rcProp } = defineProps<HeaderLayerProps>();
 
-export interface HeaderLayerEmits { }
+export interface HeaderLayerEmits {}
 
-const emit = defineEmits<HeaderLayerEmits>()
+const emit = defineEmits<HeaderLayerEmits>();
 
 export interface HeaderLayerSlots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<HeaderLayerSlots>()
+const slots = defineSlots<HeaderLayerSlots>();
 
-const { rc } = useRC('HeaderLayer', rcProp)
+const { rc } = useRC("HeaderLayer", rcProp);
 
 const headerLayerStyles = tv({
   slots: {
     root: "fixed left-0 right-0 transition-[top,height,opacity] duration-200 ease-in-out",
-    content: "w-full"
-  }
-})
+    content: "w-full",
+  },
+});
 
-const { root, content } = headerLayerStyles()
+const { root, content } = headerLayerStyles();
 
+const { registerHeader, unregisterHeader, offsets, zIndices } = useHeaderStack();
 
-const { registerHeader, unregisterHeader, offsets, zIndices } = useHeaderStack()
+provide("header_layer_id", id);
 
-provide('header_layer_id', id)
+const { y: scrollY } = useWindowScroll();
 
-const { y: scrollY } = useWindowScroll()
-
-const contentRef = ref<HTMLElement | null>(null)
-const isVisible = ref(true)
-const lastScrollY = ref(0)
+const contentRef = ref<HTMLElement | null>(null);
+const isVisible = ref(true);
+const lastScrollY = ref(0);
 
 // This tracks the "measured" height of the children
-const naturalHeight = ref(0)
+const naturalHeight = ref(0);
 
-const topOffset = computed(() => offsets.value[id] ?? 0)
-const zIndex = computed(() => zIndices.value[id] ?? 50)
+const topOffset = computed(() => offsets.value[id] ?? 0);
+const zIndex = computed(() => zIndices.value[id] ?? 50);
 
 watch(scrollY, (current) => {
-  if (!hideOnScroll) return
+  if (!hideOnScroll) return;
 
-  const diff = current - lastScrollY.value
+  const diff = current - lastScrollY.value;
   // Don't hide if we are within the top 50px or if the scroll was tiny
-  if (Math.abs(diff) < 10) return
+  if (Math.abs(diff) < 10) return;
 
   if (current <= 50) {
-    isVisible.value = true
+    isVisible.value = true;
   } else isVisible.value = diff <= 0;
 
-  lastScrollY.value = current
-})
+  lastScrollY.value = current;
+});
 
 const updateStack = () => {
   // We register either the full height or 0.
   // Because the stack is reactive, changing this triggers the transition
   // on UMain and other HeaderLayers simultaneously.
-  const heightToRegister = isVisible.value ? naturalHeight.value : 0
-  registerHeader(id, heightToRegister, order)
-}
+  const heightToRegister = isVisible.value ? naturalHeight.value : 0;
+  registerHeader(id, heightToRegister, order);
+};
 
 // When visibility changes, update the stack immediately
-watch(isVisible, updateStack)
+watch(isVisible, updateStack);
 
-let observer: ResizeObserver | null = null
+let observer: ResizeObserver | null = null;
 
 onMounted(() => {
   nextTick(() => {
     if (contentRef.value) {
-      naturalHeight.value = contentRef.value.getBoundingClientRect().height
-      updateStack()
+      naturalHeight.value = contentRef.value.getBoundingClientRect().height;
+      updateStack();
 
       observer = new ResizeObserver((entries) => {
-        const entry = entries[0]
+        const entry = entries[0];
         if (entry) {
-          const height = entry.contentRect.height
+          const height = entry.contentRect.height;
           if (height > 0) {
-            naturalHeight.value = height
-            updateStack()
+            naturalHeight.value = height;
+            updateStack();
           }
         }
-      })
-      observer.observe(contentRef.value)
+      });
+      observer.observe(contentRef.value);
     }
-  })
-})
+  });
+});
 
 onUnmounted(() => {
-  unregisterHeader(id)
-  observer?.disconnect()
-})
+  unregisterHeader(id);
+  observer?.disconnect();
+});
 </script>
 
 <template>
-  <div :class="root({ class: rc.root })" :style="{
-    top: `${topOffset}px`,
-    height: isVisible ? `${naturalHeight}px` : '0px',
-    opacity: isVisible ? 1 : 0,
-    pointerEvents: isVisible ? 'auto' : 'none',
-    zIndex
-  }">
+  <div
+    :class="root({ class: rc.root })"
+    :style="{
+      top: `${topOffset}px`,
+      height: isVisible ? `${naturalHeight}px` : '0px',
+      opacity: isVisible ? 1 : 0,
+      pointerEvents: isVisible ? 'auto' : 'none',
+      zIndex,
+    }"
+  >
     <div ref="contentRef" :class="content({ class: rc.content })">
       <slot />
     </div>

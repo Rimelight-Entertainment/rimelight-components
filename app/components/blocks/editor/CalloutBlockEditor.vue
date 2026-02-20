@@ -1,40 +1,40 @@
 <script setup lang="ts">
-import { inject, computed, ref, watch, nextTick, type Ref, shallowRef } from "vue"
-import { useI18n } from "vue-i18n"
-import type { CalloutBlockProps, CalloutVariant, Block } from "../../../types"
-import { useAppConfig } from "#imports"
-import { tv } from "../../../internal/tv"
-import { useRC } from "../../../composables"
+import { inject, computed, ref, watch, nextTick, type Ref, shallowRef } from "vue";
+import { useI18n } from "vue-i18n";
+import type { CalloutBlockProps, CalloutVariant, Block } from "../../../types";
+import { useAppConfig } from "#imports";
+import { tv } from "../../../internal/tv";
+import { useRC } from "../../../composables";
 
 export interface CalloutBlockEditorProps extends CalloutBlockProps {
-  id: string
+  id: string;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const props = defineProps<CalloutBlockEditorProps>()
-const { rc: rcProp } = props
+const props = defineProps<CalloutBlockEditorProps>();
+const { rc: rcProp } = props;
 
 export interface CalloutBlockEditorEmits {}
 
-const emit = defineEmits<CalloutBlockEditorEmits>()
+const emit = defineEmits<CalloutBlockEditorEmits>();
 
 export interface CalloutBlockEditorSlots {}
 
-const slots = defineSlots<CalloutBlockEditorSlots>()
+const slots = defineSlots<CalloutBlockEditorSlots>();
 
-const { rc } = useRC('CalloutBlockEditor', rcProp)
+const { rc } = useRC("CalloutBlockEditor", rcProp);
 
 const calloutBlockEditorStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = calloutBlockEditorStyles()
+const { root } = calloutBlockEditorStyles();
 
-const editorApi = inject<any>("block-editor-api")
+const editorApi = inject<any>("block-editor-api");
 
 const variants: CalloutVariant[] = [
   "info",
@@ -43,53 +43,53 @@ const variants: CalloutVariant[] = [
   "error",
   "commentary",
   "ideation",
-  "source"
-]
+  "source",
+];
 
-const appConfig = useAppConfig()
-const { t } = useI18n()
+const appConfig = useAppConfig();
+const { t } = useI18n();
 
 const getVariantConfig = (variant: CalloutVariant) => {
   return (
     (appConfig.rimelightComponents as any)?.callouts?.[variant] ?? {
       icon: "lucide:alert-circle",
       title: "Callout",
-      tooltip: "Callout"
+      tooltip: "Callout",
     }
-  )
-}
+  );
+};
 
 const items = computed(() => [
-  variants.map(type => {
-    const config = getVariantConfig(type)
+  variants.map((type) => {
+    const config = getVariantConfig(type);
     return {
       label: t(config.title),
       icon: config.icon,
       description: t(config.tooltip),
       onSelect: () => {
         if (editorApi) {
-          editorApi.updateBlockProps(props.id, { variant: type })
+          editorApi.updateBlockProps(props.id, { variant: type });
         }
-      }
-    }
-  })
-])
+      },
+    };
+  }),
+]);
 
 // Use a computed property to bridge vuedraggable and the central store directly
 const localChildren = computed({
   get: () => props.children ?? [],
   set: (newChildren) => {
-    console.log('[CalloutBlockEditor] localChildren setter called:', newChildren.length)
+    console.log("[CalloutBlockEditor] localChildren setter called:", newChildren.length);
     if (editorApi && props.id) {
-       const childrenCopy = JSON.parse(JSON.stringify(newChildren))
-       editorApi.updateBlockProps(props.id, { children: childrenCopy })
+      const childrenCopy = JSON.parse(JSON.stringify(newChildren));
+      editorApi.updateBlockProps(props.id, { children: childrenCopy });
     }
-  }
-})
+  },
+});
 
 const handleChildrenMutation = () => {
-    console.log('[CalloutBlockEditor] Mutation event received (handled by setter)')
-}
+  console.log("[CalloutBlockEditor] Mutation event received (handled by setter)");
+};
 </script>
 
 <template>
@@ -102,21 +102,23 @@ const handleChildrenMutation = () => {
               <UIcon :name="item.icon" class="size-4 text-dimmed mt-0.5 shrink-0" />
               <div class="flex flex-col gap-0.5 min-w-0">
                 <span class="font-medium text-sm truncate">{{ item.label }}</span>
-                <span class="text-xs text-dimmed font-normal leading-snug whitespace-normal">{{ item.description }}</span>
+                <span class="text-xs text-dimmed font-normal leading-snug whitespace-normal">{{
+                  item.description
+                }}</span>
               </div>
             </div>
           </template>
 
-          <UIcon 
-            :name="icon" 
-            :class="[iconClass, 'cursor-pointer hover:opacity-75 transition-opacity']" 
+          <UIcon
+            :name="icon"
+            :class="[iconClass, 'cursor-pointer hover:opacity-75 transition-opacity']"
             class="outline-none"
           />
         </UDropdownMenu>
       </template>
       <template #default>
         <div class="w-full mt-2">
-          <RCBlockEditor 
+          <RCBlockEditor
             v-model="localChildren"
             :container-id="props.id"
             @mutation="handleChildrenMutation"

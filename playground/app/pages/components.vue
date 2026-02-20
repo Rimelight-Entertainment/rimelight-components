@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useHead({
-  title: "Components"
-})
+  title: "Components",
+});
 </script>
 
 <template>

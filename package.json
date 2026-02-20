@@ -1,6 +1,5 @@
 {
   "name": "rimelight-components",
-  "type": "module",
   "version": "2.2.8",
   "description": "A component library by Rimelight Entertainment.",
   "keywords": [
@@ -10,11 +9,12 @@
     "vue"
   ],
   "homepage": "https://rimelight.com/tools/rimelight-components",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight-components.git"
   },
-  "license": "MIT",
+  "type": "module",
   "main": "./nuxt.config.ts",
   "exports": {
     ".": "./nuxt.config.ts",

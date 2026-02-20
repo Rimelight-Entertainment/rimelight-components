@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { Todo } from 'rimelight-components/shared/db/auth'
+import type { Todo } from "rimelight-components/shared/db/auth";
 
 export interface TodoCardProps {
-  todo: Todo
+  todo: Todo;
 }
 
-const { todo } = defineProps<TodoCardProps>()
+const { todo } = defineProps<TodoCardProps>();
 
 export interface TodoCardEmits {
-  (e: 'toggle', completed: boolean): void
-  (e: 'archive'): void
-  (e: 'restore'): void
-  (e: 'delete'): void
+  (e: "toggle", completed: boolean): void;
+  (e: "archive"): void;
+  (e: "restore"): void;
+  (e: "delete"): void;
 }
 
-const emit = defineEmits<TodoCardEmits>()
+const emit = defineEmits<TodoCardEmits>();
 </script>
 
 <template>
@@ -53,8 +53,8 @@ const emit = defineEmits<TodoCardEmits>()
         </span>
       </div>
     </div>
-    
-    <div 
+
+    <div
       class="flex items-center gap-xs transition-opacity"
       :class="{ 'opacity-0 group-hover:opacity-100': !todo.isArchived }"
     >

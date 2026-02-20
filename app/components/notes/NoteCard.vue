@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import type { Note } from "rimelight-components/shared/db/auth"
-import { ref } from "vue"
+import type { Note } from "rimelight-components/shared/db/auth";
+import { ref } from "vue";
 
-const selected = defineModel<boolean>("selected", { default: false })
-const isHovered = ref(false)
+const selected = defineModel<boolean>("selected", { default: false });
+const isHovered = ref(false);
 
 export interface NoteCardProps {
-  note: Note
+  note: Note;
 }
 
-const { note } = defineProps<NoteCardProps>()
+const { note } = defineProps<NoteCardProps>();
 
 export interface NoteCardEmits {
-  (e: "click"): void
-  (e: "togglePin"): void
-  (e: "archive"): void
-  (e: "delete"): void
+  (e: "click"): void;
+  (e: "togglePin"): void;
+  (e: "archive"): void;
+  (e: "delete"): void;
 }
 
-const emit = defineEmits<NoteCardEmits>()
+const emit = defineEmits<NoteCardEmits>();
 </script>
 
 <template>
@@ -57,7 +57,7 @@ const emit = defineEmits<NoteCardEmits>()
             size="sm"
             class="shrink-0 truncate"
           >
-            {{ labelEntry.label?.name || 'Unknown' }}
+            {{ labelEntry.label?.name || "Unknown" }}
           </UBadge>
         </div>
       </template>
@@ -74,9 +74,7 @@ const emit = defineEmits<NoteCardEmits>()
         :icon="note.isPinned ? 'lucide:pin-off' : 'lucide:pin'"
         variant="ghost"
         size="xs"
-        :class="
-          note.isPinned ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-        "
+        :class="note.isPinned ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"
         @click.stop="emit('togglePin')"
       />
       <UButton

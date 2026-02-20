@@ -1,44 +1,46 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useTodos } from '../../composables'
-import type { Todo } from 'rimelight-components/shared/db/auth'
-import { useI18n } from 'vue-i18n'
-import { RCTodoCard } from '#components'
+import { ref } from "vue";
+import { useTodos } from "../../composables";
+import type { Todo } from "rimelight-components/shared/db/auth";
+import { useI18n } from "vue-i18n";
+import { RCTodoCard } from "#components";
 
 export interface TodoListProps {
-  todos: Todo[]
-  archivedTodos?: Todo[]
-  loading?: boolean
+  todos: Todo[];
+  archivedTodos?: Todo[];
+  loading?: boolean;
 }
 
-const { todos, archivedTodos = [], loading = false } = defineProps<TodoListProps>()
+const { todos, archivedTodos = [], loading = false } = defineProps<TodoListProps>();
 
-const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos()
-const { t } = useI18n()
+const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos();
+const { t } = useI18n();
 
-const newTodoTitle = ref('')
-const newTodoDescription = ref('')
-const isAdding = ref(false)
+const newTodoTitle = ref("");
+const newTodoDescription = ref("");
+const isAdding = ref(false);
 
 const handleAddTodo = async () => {
-  if (!newTodoTitle.value.trim()) return
-  isAdding.value = true
+  if (!newTodoTitle.value.trim()) return;
+  isAdding.value = true;
   try {
-    await createTodo(newTodoTitle.value.trim(), newTodoDescription.value.trim() || undefined)
-    newTodoTitle.value = ''
-    newTodoDescription.value = ''
+    await createTodo(newTodoTitle.value.trim(), newTodoDescription.value.trim() || undefined);
+    newTodoTitle.value = "";
+    newTodoDescription.value = "";
   } finally {
-    isAdding.value = false
+    isAdding.value = false;
   }
-}
+};
 
-const showArchived = ref(false)
+const showArchived = ref(false);
 </script>
 
 <template>
   <div class="flex flex-col gap-md">
     <div class="flex items-center justify-between">
-      <h3 class="text-sm font-semibold tracking-wider text-gray-500 uppercase">{{ t('todo.title') }}</h3>
+      <h3 class="text-sm font-semibold tracking-wider text-gray-500 uppercase">
+        {{ t("todo.title") }}
+      </h3>
       <UButton
         :icon="showArchived ? 'lucide:archive-x' : 'lucide:archive'"
         color="neutral"
@@ -60,12 +62,7 @@ const showArchived = ref(false)
               class="flex-1"
               @keydown.enter="handleAddTodo"
             />
-            <UButton
-              icon="lucide:plus"
-              size="sm"
-              :loading="isAdding"
-              @click="handleAddTodo"
-            />
+            <UButton icon="lucide:plus" size="sm" :loading="isAdding" @click="handleAddTodo" />
           </div>
           <transition
             enter-active-class="transition duration-200 ease-out"
@@ -76,14 +73,14 @@ const showArchived = ref(false)
             leave-to-class="transform -translate-y-2 opacity-0"
           >
             <div v-if="newTodoTitle.length > 0" class="pl-0">
-               <UInput
-                 v-model="newTodoDescription"
-                 :placeholder="t('todo.description_placeholder')"
-                 size="xs"
-                 variant="outline"
-                 color="neutral"
-                 @keydown.enter="handleAddTodo"
-               />
+              <UInput
+                v-model="newTodoDescription"
+                :placeholder="t('todo.description_placeholder')"
+                size="xs"
+                variant="outline"
+                color="neutral"
+                @keydown.enter="handleAddTodo"
+              />
             </div>
           </transition>
         </div>
@@ -99,7 +96,7 @@ const showArchived = ref(false)
           />
 
           <p v-if="todos.length === 0" class="text-xs text-dimmed text-center py-sm">
-            {{ t('todo.no_active') }}
+            {{ t("todo.no_active") }}
           </p>
         </div>
 

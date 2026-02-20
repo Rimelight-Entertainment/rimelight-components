@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { formatTimeAgo } from "@vueuse/core"
-import type { Notification } from "../../types"
-import { useApi, useDashboard } from "../../composables"
+import { formatTimeAgo } from "@vueuse/core";
+import type { Notification } from "../../types";
+import { useApi, useDashboard } from "../../composables";
 
-const { isNotificationsSlideoverOpen } = useDashboard()
+const { isNotificationsSlideoverOpen } = useDashboard();
 
-const { data: notifications } =
-  await useApi<Notification[]>("/api/notifications")
+const { data: notifications } = await useApi<Notification[]>("/api/notifications");
 </script>
 
 <template>
@@ -16,7 +15,7 @@ const { data: notifications } =
     title="Notifications"
     :ui="{
       header: 'flex items-center justify-between',
-      content: 'w-full max-w-4/5 lg:w-96 rounded-none'
+      content: 'w-full max-w-4/5 lg:w-96 rounded-none',
     }"
   >
     <template #body>
@@ -32,9 +31,7 @@ const { data: notifications } =
 
         <div class="flex-1 text-sm">
           <p class="flex items-center justify-between">
-            <span class="font-medium text-highlighted">{{
-              notification.sender.name
-            }}</span>
+            <span class="font-medium text-highlighted">{{ notification.sender.name }}</span>
 
             <time
               :datetime="notification.date"

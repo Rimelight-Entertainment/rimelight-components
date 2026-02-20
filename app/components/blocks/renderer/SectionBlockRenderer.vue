@@ -1,38 +1,44 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import type { SectionBlockProps } from "../../../types"
-import { slugify } from "../../../utils"
-import { tv } from "../../../internal/tv"
-import { useRC } from "../../../composables"
+import { computed } from "vue";
+import type { SectionBlockProps } from "../../../types";
+import { slugify } from "../../../utils";
+import { tv } from "../../../internal/tv";
+import { useRC } from "../../../composables";
 
 export interface SectionBlockRendererProps extends SectionBlockProps {
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { level, title, description, children, rc: rcProp } = defineProps<SectionBlockRendererProps>()
+const {
+  level,
+  title,
+  description,
+  children,
+  rc: rcProp,
+} = defineProps<SectionBlockRendererProps>();
 
 export interface SectionBlockRendererEmits {}
 
-const emit = defineEmits<SectionBlockRendererEmits>()
+const emit = defineEmits<SectionBlockRendererEmits>();
 
 export interface SectionBlockRendererSlots {}
 
-const slots = defineSlots<SectionBlockRendererSlots>()
+const slots = defineSlots<SectionBlockRendererSlots>();
 
-const { rc } = useRC('SectionBlockRenderer', rcProp)
+const { rc } = useRC("SectionBlockRenderer", rcProp);
 
 const sectionBlockRendererStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = sectionBlockRendererStyles()
+const { root } = sectionBlockRendererStyles();
 
-const headingId = computed(() => (title ? slugify(title) : undefined))
-const hasChildren = computed(() => children && children.length > 0)
+const headingId = computed(() => (title ? slugify(title) : undefined));
+const hasChildren = computed(() => children && children.length > 0);
 </script>
 
 <template>

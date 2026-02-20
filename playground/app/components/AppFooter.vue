@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { FooterColumn } from "@nuxt/ui"
-import { ar, en, es, fr, ja, ko, pt, ro, zh_cn } from "@nuxt/ui/locale"
+import type { FooterColumn } from "@nuxt/ui";
+import { ar, en, es, fr, ja, ko, pt, ro, zh_cn } from "@nuxt/ui/locale";
 
-const appConfig = useAppConfig()
-const { locale, setLocale } = useI18n()
+const appConfig = useAppConfig();
+const { locale, setLocale } = useI18n();
 
-type Locale = "en"
+type Locale = "en";
 
 function onLocaleUpdate(newLocale: string | undefined) {
   if (typeof newLocale === "string") {
-    setLocale(newLocale as Locale)
+    setLocale(newLocale as Locale);
   }
 }
 
@@ -19,34 +19,34 @@ const columns: FooterColumn[] = [
     children: [
       {
         label: "Branding",
-        to: "/branding"
+        to: "/branding",
       },
       {
-        label: "API"
-      }
-    ]
+        label: "API",
+      },
+    ],
   },
   {
     label: "Documents",
     children: [
       {
-        label: "Privacy Policy"
+        label: "Privacy Policy",
       },
       {
-        label: "Cookie Policy"
+        label: "Cookie Policy",
       },
       {
-        label: "Terms of Service"
+        label: "Terms of Service",
       },
       {
-        label: "Code of Conduct"
+        label: "Code of Conduct",
       },
       {
-        label: "Other Documents"
-      }
-    ]
-  }
-]
+        label: "Other Documents",
+      },
+    ],
+  },
+];
 </script>
 
 <template>
@@ -68,13 +68,13 @@ const columns: FooterColumn[] = [
       <div class="flex flex-col gap-sm lg:items-end">
         <UColorModeSelect nuxt-client class="rounded-none" />
         <ULocaleSelect
-            v-model="locale"
-            nuxt-client
-            :locales="[ar, en, es, fr, ja, ko, pt, ro, zh_cn]"
-            class="w-48 rounded-none"
-            color="secondary"
-            @update:model-value="onLocaleUpdate($event)"
-          />
+          v-model="locale"
+          nuxt-client
+          :locales="[ar, en, es, fr, ja, ko, pt, ro, zh_cn]"
+          class="w-48 rounded-none"
+          color="secondary"
+          @update:model-value="onLocaleUpdate($event)"
+        />
       </div>
       <div class="flex flex-row gap-sm lg:items-end">
         <UButton size="xl" variant="ghost" color="neutral" icon="mdi:instagram" />

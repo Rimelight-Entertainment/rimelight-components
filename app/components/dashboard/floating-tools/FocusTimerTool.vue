@@ -1,22 +1,26 @@
 <script setup lang="ts">
-import { watch } from "vue"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { useFocusTimer } from "../../../composables"
+import { watch } from "vue";
+import { useToast } from "@nuxt/ui/composables/useToast";
+import { useFocusTimer } from "../../../composables";
 
+const focusTimer = useFocusTimer();
+const toast = useToast();
 
-const focusTimer = useFocusTimer()
-const toast = useToast()
-
-watch(() => focusTimer.status.value, (st) => {
-  if (st === "completed") {
-    toast.add({
-      title: "Timer Finished!",
-      description: focusTimer.mode.value === "work" ? "Great work! Take a break." : "Break is over! Time to focus.",
-      color: "success"
-    })
-  }
-})
-
+watch(
+  () => focusTimer.status.value,
+  (st) => {
+    if (st === "completed") {
+      toast.add({
+        title: "Timer Finished!",
+        description:
+          focusTimer.mode.value === "work"
+            ? "Great work! Take a break."
+            : "Break is over! Time to focus.",
+        color: "success",
+      });
+    }
+  },
+);
 </script>
 
 <template>
@@ -28,7 +32,7 @@ watch(() => focusTimer.status.value, (st) => {
         {{ focusTimer.formattedTime.value }}
       </div>
       <div class="text-md text-muted uppercase">
-        {{ focusTimer.mode.value.replace('-', ' ') }}
+        {{ focusTimer.mode.value.replace("-", " ") }}
       </div>
     </div>
 

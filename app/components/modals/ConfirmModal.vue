@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useConfirm } from "../../composables"
-import { computed } from "vue"
+import { useConfirm } from "../../composables";
+import { computed } from "vue";
 
-const { state, handleConfirm, handleCancel } = useConfirm()
+const { state, handleConfirm, handleCancel } = useConfirm();
 
 const isOpen = computed({
   get: () => state.value.isVisible,
   set: (value) => {
-    state.value.isVisible = value
-  }
-})
+    state.value.isVisible = value;
+  },
+});
 </script>
 
 <template>

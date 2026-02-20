@@ -1,223 +1,228 @@
 <script lang="ts" setup>
-import { formatDistanceToNow } from "date-fns"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { computed, ref, watch } from "vue"
-import { useRC, $api } from "../../composables"
-import { useI18n } from "vue-i18n"
-import { tv } from "../../internal/tv"
-import type { PageVersion } from "../../types"
+import { formatDistanceToNow } from "date-fns";
+import { useToast } from "@nuxt/ui/composables/useToast";
+import { computed, ref, watch } from "vue";
+import { useRC, $api } from "../../composables";
+import { useI18n } from "vue-i18n";
+import { tv } from "../../internal/tv";
+import type { PageVersion } from "../../types";
 
 export interface PageVersionSelectorProps {
-  pageId: string
-  currentVersionId?: string | null
-  isAdmin?: boolean
+  pageId: string;
+  currentVersionId?: string | null;
+  isAdmin?: boolean;
   rc?: {
-    root?: string
-    button?: string
-    popover?: string
-    versionItem?: string
-  }
+    root?: string;
+    button?: string;
+    popover?: string;
+    versionItem?: string;
+  };
 }
 
-const { 
-  pageId, 
-  currentVersionId, 
+const {
+  pageId,
+  currentVersionId,
   isAdmin = false,
-  rc: rcProp 
-} = defineProps<PageVersionSelectorProps>()
+  rc: rcProp,
+} = defineProps<PageVersionSelectorProps>();
 
 const emit = defineEmits<{
-  "update:currentVersionId": [value: string | null]
-  "version-selected": [version: PageVersion]
-  "version-approved": [version: PageVersion]
-  "version-rejected": [version: PageVersion]
-  "version-reverted": [version: PageVersion]
-}>()
+  "update:currentVersionId": [value: string | null];
+  "version-selected": [version: PageVersion];
+  "version-approved": [version: PageVersion];
+  "version-rejected": [version: PageVersion];
+  "version-reverted": [version: PageVersion];
+}>();
 
-const { rc } = useRC('PageVersionSelector', rcProp)
-const { t } = useI18n()
-const toast = useToast()
+const { rc } = useRC("PageVersionSelector", rcProp);
+const { t } = useI18n();
+const toast = useToast();
 
-const versions = ref<PageVersion[]>([])
-const isLoading = ref(false)
-const isApproving = ref<string | null>(null)
-const isRejecting = ref<string | null>(null)
-const isReverting = ref<string | null>(null)
-const isOpen = ref(false)
+const versions = ref<PageVersion[]>([]);
+const isLoading = ref(false);
+const isApproving = ref<string | null>(null);
+const isRejecting = ref<string | null>(null);
+const isReverting = ref<string | null>(null);
+const isOpen = ref(false);
 
 const pageVersionSelectorStyles = tv({
   slots: {
     root: "",
     button: "",
     popover: "w-80 p-2",
-    versionItem: "px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded"
-  }
-})
+    versionItem: "px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer rounded",
+  },
+});
 
-const {
-  root,
-  button: buttonClass,
-  popover,
-  versionItem
-} = pageVersionSelectorStyles()
+const { root, button: buttonClass, popover, versionItem } = pageVersionSelectorStyles();
 
 const pendingVersions = computed(() => {
-  return versions.value.filter(v => v.status === "pending")
-})
+  return versions.value.filter((v) => v.status === "pending");
+});
 
 const selectedVersionId = computed({
   get: () => currentVersionId,
-  set: (value) => emit("update:currentVersionId", value || null)
-})
+  set: (value) => emit("update:currentVersionId", value || null),
+});
 
 const fetchVersions = async () => {
-  if (!pageId) return
+  if (!pageId) return;
 
-  isLoading.value = true
+  isLoading.value = true;
   try {
-    versions.value = await $api<PageVersion[]>(`/api/pages/id/${pageId}/versions`)
+    versions.value = await $api<PageVersion[]>(`/api/pages/id/${pageId}/versions`);
   } catch (error) {
-    console.error("Failed to fetch versions:", error)
+    console.error("Failed to fetch versions:", error);
     // Avoid toast if not available, but usually it is in this project
-    try { toast.add({ color: "error", title: t('page_version.failed_to_load') }) } catch(e) {}
+    try {
+      toast.add({ color: "error", title: t("page_version.failed_to_load") });
+    } catch (e) {}
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const selectVersion = (version: PageVersion) => {
-  selectedVersionId.value = version.id
-  emit("version-selected", version)
-  isOpen.value = false
-}
+  selectedVersionId.value = version.id;
+  emit("version-selected", version);
+  isOpen.value = false;
+};
 
 const approveVersion = async (version: PageVersion) => {
-  if (!isAdmin) return
+  if (!isAdmin) return;
 
-  isApproving.value = version.id
+  isApproving.value = version.id;
   try {
     const result = await $api<{ message?: string }>(`/api/pages/versions/${version.id}/approve`, {
-      method: "POST"
-    })
+      method: "POST",
+    });
 
     try {
       toast.add({
         color: "success",
-        title: t('page_version.approved_successfully'),
-        description: result?.message || "The page has been updated with the approved version"
-      })
-    } catch(e) {}
+        title: t("page_version.approved_successfully"),
+        description: result?.message || "The page has been updated with the approved version",
+      });
+    } catch (e) {}
 
-    emit("version-approved", version)
-    await fetchVersions()
+    emit("version-approved", version);
+    await fetchVersions();
 
     if (selectedVersionId.value === version.id) {
-      selectedVersionId.value = null
+      selectedVersionId.value = null;
     }
   } catch (error: any) {
-    console.error("Failed to approve version:", error)
+    console.error("Failed to approve version:", error);
     try {
       toast.add({
         color: "error",
-        title: t('page_version.failed_to_approve'),
-        description: error.message || "An error occurred"
-      })
-    } catch(e) {}
+        title: t("page_version.failed_to_approve"),
+        description: error.message || "An error occurred",
+      });
+    } catch (e) {}
   } finally {
-    isApproving.value = null
+    isApproving.value = null;
   }
-}
+};
 
 const rejectVersion = async (version: PageVersion) => {
-  if (!isAdmin) return
+  if (!isAdmin) return;
 
-  isRejecting.value = version.id
+  isRejecting.value = version.id;
   try {
     const result = await $api<{ message?: string }>(`/api/pages/versions/${version.id}/reject`, {
-      method: "POST"
-    })
+      method: "POST",
+    });
 
     try {
       toast.add({
         color: "success",
-        title: t('page_version.rejected_successfully', 'Version rejected'),
-        description: result?.message || "the version has been rejected"
-      })
-    } catch(e) {}
+        title: t("page_version.rejected_successfully", "Version rejected"),
+        description: result?.message || "the version has been rejected",
+      });
+    } catch (e) {}
 
-    emit("version-rejected", version)
-    await fetchVersions()
+    emit("version-rejected", version);
+    await fetchVersions();
   } catch (error: any) {
-    console.error("Failed to reject version:", error)
+    console.error("Failed to reject version:", error);
     try {
       toast.add({
         color: "error",
-        title: t('page_version.failed_to_reject', 'Failed to reject version'),
-        description: error.message || "An error occurred"
-      })
-    } catch(e) {}
+        title: t("page_version.failed_to_reject", "Failed to reject version"),
+        description: error.message || "An error occurred",
+      });
+    } catch (e) {}
   } finally {
-    isRejecting.value = null
+    isRejecting.value = null;
   }
-}
+};
 
 const revertVersion = async (version: PageVersion) => {
-  if (!isAdmin) return
+  if (!isAdmin) return;
 
-  isReverting.value = version.id
+  isReverting.value = version.id;
   try {
     const result = await $api<{ message?: string }>(`/api/pages/versions/${version.id}/revert`, {
-      method: "POST"
-    })
+      method: "POST",
+    });
 
     try {
       toast.add({
         color: "success",
-        title: t('page_version.reverted_successfully'),
-        description: result?.message || "The page has been reverted to this version."
-      })
-    } catch(e) {}
+        title: t("page_version.reverted_successfully"),
+        description: result?.message || "The page has been reverted to this version.",
+      });
+    } catch (e) {}
 
-    emit("version-reverted", version)
-    await fetchVersions()
-    selectedVersionId.value = null
+    emit("version-reverted", version);
+    await fetchVersions();
+    selectedVersionId.value = null;
   } catch (error: any) {
-    console.error("Failed to revert version:", error)
+    console.error("Failed to revert version:", error);
     try {
       toast.add({
         color: "error",
-        title: t('page_version.failed_to_revert'),
-        description: error.message || "An error occurred"
-      })
-    } catch(e) {}
+        title: t("page_version.failed_to_revert"),
+        description: error.message || "An error occurred",
+      });
+    } catch (e) {}
   } finally {
-    isReverting.value = null
+    isReverting.value = null;
   }
-}
+};
 
 const formatDate = (date: Date | string | null | undefined) => {
-  if (!date) return ""
-  const d = typeof date === "string" ? new Date(date) : date
-  return formatDistanceToNow(d, { addSuffix: true })
-}
+  if (!date) return "";
+  const d = typeof date === "string" ? new Date(date) : date;
+  return formatDistanceToNow(d, { addSuffix: true });
+};
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "approved": return "success"
-    case "pending": return "warning"
-    case "rejected": return "error"
-    default: return "neutral"
+    case "approved":
+      return "success";
+    case "pending":
+      return "warning";
+    case "rejected":
+      return "error";
+    default:
+      return "neutral";
   }
-}
+};
 
-watch(() => pageId, () => {
-  if (pageId) fetchVersions()
-}, { immediate: true })
+watch(
+  () => pageId,
+  () => {
+    if (pageId) fetchVersions();
+  },
+  { immediate: true },
+);
 const currentVersionStatus = computed(() => {
-  if (!selectedVersionId.value) return 'approved'
-  const v = versions.value.find(v => v.id === selectedVersionId.value)
-  return v?.status || 'pending'
-})
+  if (!selectedVersionId.value) return "approved";
+  const v = versions.value.find((v) => v.id === selectedVersionId.value);
+  return v?.status || "pending";
+});
 
 defineExpose({
   approveVersion,
@@ -225,12 +230,16 @@ defineExpose({
   revertVersion,
   fetchVersions,
   currentVersionStatus,
-  currentVersion: computed(() => versions.value.find(v => v.id === selectedVersionId.value))
-})
+  currentVersion: computed(() => versions.value.find((v) => v.id === selectedVersionId.value)),
+});
 </script>
 
 <template>
-  <UPopover v-model:open="isOpen" :popper="{ placement: 'bottom-start' }" :class="root({ class: rc.root })">
+  <UPopover
+    v-model:open="isOpen"
+    :popper="{ placement: 'bottom-start' }"
+    :class="root({ class: rc.root })"
+  >
     <UButton
       :loading="isLoading"
       color="neutral"
@@ -252,9 +261,12 @@ defineExpose({
           <div
             :class="[
               versionItem({ class: rc.versionItem }),
-              { 'bg-primary-50 dark:bg-primary-900/20': !selectedVersionId }
+              { 'bg-primary-50 dark:bg-primary-900/20': !selectedVersionId },
             ]"
-            @click="selectedVersionId = null; isOpen = false"
+            @click="
+              selectedVersionId = null;
+              isOpen = false;
+            "
           >
             <div class="flex items-center justify-between">
               <div class="flex-1">
@@ -287,7 +299,7 @@ defineExpose({
               :key="version.id"
               :class="[
                 versionItem({ class: rc.versionItem }),
-                { 'bg-primary-50 dark:bg-primary-900/20': selectedVersionId === version.id }
+                { 'bg-primary-50 dark:bg-primary-900/20': selectedVersionId === version.id },
               ]"
               @click="selectVersion(version)"
             >
@@ -312,7 +324,10 @@ defineExpose({
                   </p>
                 </div>
 
-                <div v-if="selectedVersionId === version.id && isAdmin" class="shrink-0 flex items-center gap-1">
+                <div
+                  v-if="selectedVersionId === version.id && isAdmin"
+                  class="shrink-0 flex items-center gap-1"
+                >
                   <UButton
                     :loading="isReverting === version.id"
                     color="warning"
@@ -333,7 +348,10 @@ defineExpose({
           class="px-3 py-2 border-t border-gray-200 dark:border-gray-800 mt-2"
         >
           <p class="text-xs text-gray-500 dark:text-gray-400">
-            {{ pendingVersions.length }} pending version{{ pendingVersions.length !== 1 ? 's' : '' }} awaiting approval
+            {{ pendingVersions.length }} pending version{{
+              pendingVersions.length !== 1 ? "s" : ""
+            }}
+            awaiting approval
           </p>
         </div>
       </div>

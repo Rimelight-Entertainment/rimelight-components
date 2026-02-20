@@ -1,1 +1,1 @@
-export * from "./useRC"
+export * from "./useRC";

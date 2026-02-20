@@ -1,60 +1,58 @@
 <script setup lang="ts">
-import { useRoute } from "#imports"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { computed, inject, provide } from "vue"
-import { useClipboard } from "@vueuse/core"
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
-import { slugify, defaultWindow } from "../../utils"
-import { SECTION_LEVEL_KEY } from "../../internal/injectionKeys"
+import { useRoute } from "#imports";
+import { useToast } from "@nuxt/ui/composables/useToast";
+import { computed, inject, provide } from "vue";
+import { useClipboard } from "@vueuse/core";
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
+import { slugify, defaultWindow } from "../../utils";
+import { SECTION_LEVEL_KEY } from "../../internal/injectionKeys";
 
 defineOptions({
-  name: 'SectionComponent'
-})
+  name: "SectionComponent",
+});
 
-export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6
+export type SectionLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 export interface SectionProps {
-  level?: SectionLevel
-  title: string
-  description?: string
-  isEditing?: boolean
+  level?: SectionLevel;
+  title: string;
+  description?: string;
+  isEditing?: boolean;
   rc?: {
-    section?: string
-    link?: string
-    heading?: string
-    descriptionText?: string
-    separator?: string
-    content?: string
-  }
+    section?: string;
+    link?: string;
+    heading?: string;
+    descriptionText?: string;
+    separator?: string;
+    content?: string;
+  };
 }
 
-const props = defineProps<SectionProps>()
-const {
-  title,
-  description,
-  isEditing = false,
-  rc: rcProp
-} = props
+const props = defineProps<SectionProps>();
+const { title, description, isEditing = false, rc: rcProp } = props;
 
-const parentLevel = inject(SECTION_LEVEL_KEY, computed(() => 1))
-const level = computed(() => Math.min(6, parentLevel.value + 1))
+const parentLevel = inject(
+  SECTION_LEVEL_KEY,
+  computed(() => 1),
+);
+const level = computed(() => Math.min(6, parentLevel.value + 1));
 
-provide(SECTION_LEVEL_KEY, level)
+provide(SECTION_LEVEL_KEY, level);
 
 export interface SectionEmits {}
 
-const emit = defineEmits<SectionEmits>()
+const emit = defineEmits<SectionEmits>();
 
 export interface SectionSlots {
-  default: (props: {}) => any
-  title: (props: {}) => any
-  description: (props: {}) => any
+  default: (props: {}) => any;
+  title: (props: {}) => any;
+  description: (props: {}) => any;
 }
 
-const slots = defineSlots<SectionSlots>()
+const slots = defineSlots<SectionSlots>();
 
-const { rc } = useRC('Section', rcProp)
+const { rc } = useRC("Section", rcProp);
 
 const sectionStyles = tv({
   slots: {
@@ -63,7 +61,7 @@ const sectionStyles = tv({
     heading: "font-bold w-full",
     descriptionText: "text-muted",
     separator: "py-2",
-    content: "flex flex-col gap-md mt-2"
+    content: "flex flex-col gap-md mt-2",
   },
   variants: {
     level: {
@@ -73,7 +71,7 @@ const sectionStyles = tv({
         heading: "",
         descriptionText: "text-2xl",
         separator: "",
-        content: ""
+        content: "",
       },
       2: {
         section: "gap-1.5",
@@ -81,7 +79,7 @@ const sectionStyles = tv({
         heading: "",
         descriptionText: "text-xl",
         separator: "",
-        content: ""
+        content: "",
       },
       3: {
         section: "gap-1",
@@ -89,7 +87,7 @@ const sectionStyles = tv({
         heading: "",
         descriptionText: "text-lg",
         separator: "",
-        content: ""
+        content: "",
       },
       4: {
         section: "gap-0.5",
@@ -97,7 +95,7 @@ const sectionStyles = tv({
         heading: "",
         descriptionText: "text-md",
         separator: "",
-        content: ""
+        content: "",
       },
       5: {
         section: "gap-0.25",
@@ -105,7 +103,7 @@ const sectionStyles = tv({
         heading: "",
         descriptionText: "text-sm",
         separator: "",
-        content: ""
+        content: "",
       },
       6: {
         section: "gap-0.125",
@@ -113,41 +111,41 @@ const sectionStyles = tv({
         heading: "",
         descriptionText: "text-xs",
         separator: "",
-        content: ""
-      }
-    }
-  }
-})
+        content: "",
+      },
+    },
+  },
+});
 
-const styles = computed(() => sectionStyles({ level: level.value as SectionLevel }))
+const styles = computed(() => sectionStyles({ level: level.value as SectionLevel }));
 
-const { copy } = useClipboard()
-const toast = useToast()
-const route = useRoute()
+const { copy } = useClipboard();
+const toast = useToast();
+const route = useRoute();
 
 const copyToClipboard = async (text: string) => {
   try {
-    await copy(`${text}`)
+    await copy(`${text}`);
     toast.add({
       title: "Heading copied to clipboard!",
       description: text,
-      color: "success"
-    })
+      color: "success",
+    });
   } catch {
     toast.add({
       title: "Failed to copy heading to clipboard.",
       description: "An unexpected error occurred. Please try again.",
-      color: "error"
-    })
+      color: "error",
+    });
   }
-}
+};
 
-const sectionId = computed(() => slugify(title))
-const sectionHash = computed(() => `#${sectionId.value}`)
+const sectionId = computed(() => slugify(title));
+const sectionHash = computed(() => `#${sectionId.value}`);
 const fullSectionUrl = computed(() => {
-  if (!defaultWindow) return sectionHash.value
-  return `${defaultWindow.location.origin}${route.path}${sectionHash.value}`
-})
+  if (!defaultWindow) return sectionHash.value;
+  return `${defaultWindow.location.origin}${route.path}${sectionHash.value}`;
+});
 </script>
 
 <template>

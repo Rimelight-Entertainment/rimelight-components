@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { TabsItem } from '@nuxt/ui'
+import { computed } from "vue";
+import type { TabsItem } from "@nuxt/ui";
 
 export interface AuthLayoutProps {
-  tabs: TabsItem[]
-  backgroundMobile?: string
-  backgroundDesktop?: string
+  tabs: TabsItem[];
+  backgroundMobile?: string;
+  backgroundDesktop?: string;
 }
 
-const { tabs = [], backgroundMobile = '', backgroundDesktop = '' } = defineProps<AuthLayoutProps>()
+const { tabs = [], backgroundMobile = "", backgroundDesktop = "" } = defineProps<AuthLayoutProps>();
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
 const activeTab = computed({
   get() {
-    return tabs.find(i => i.value === route.path)?.value || tabs[0]?.value
+    return tabs.find((i) => i.value === route.path)?.value || tabs[0]?.value;
   },
   set(path) {
-    if (path) router.push(path as string)
-  }
-})
+    if (path) router.push(path as string);
+  },
+});
 </script>
 
 <template>

@@ -1,28 +1,27 @@
 <script setup lang="ts">
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
-import { useI18n } from "vue-i18n"
-
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
+import { useI18n } from "vue-i18n";
 
 export interface PageSurroundProps {
-  pageType: string
-  previousTitle?: string
-  previousDescription?: string
-  previousTo?: string
-  nextTitle?: string
-  nextDescription?: string
-  nextTo?: string
+  pageType: string;
+  previousTitle?: string;
+  previousDescription?: string;
+  previousTo?: string;
+  nextTitle?: string;
+  nextDescription?: string;
+  nextTo?: string;
   rc?: {
-    grid?: string
-    card?: string
-    cardContent?: string
-    headingGroup?: string
-    button?: string
-    typeLabel?: string
-    infoGroup?: string
-    title?: string
-    description?: string
-  }
+    grid?: string;
+    card?: string;
+    cardContent?: string;
+    headingGroup?: string;
+    button?: string;
+    typeLabel?: string;
+    infoGroup?: string;
+    title?: string;
+    description?: string;
+  };
 }
 
 const {
@@ -33,18 +32,18 @@ const {
   nextTitle,
   nextDescription,
   nextTo,
-  rc: rcProp
-} = defineProps<PageSurroundProps>()
+  rc: rcProp,
+} = defineProps<PageSurroundProps>();
 
 export interface PageSurroundEmits {}
 
-const emit = defineEmits<PageSurroundEmits>()
+const emit = defineEmits<PageSurroundEmits>();
 
 export interface PageSurroundSlots {}
 
-const slots = defineSlots<PageSurroundSlots>()
+const slots = defineSlots<PageSurroundSlots>();
 
-const { rc } = useRC('PageSurround', rcProp)
+const { rc } = useRC("PageSurround", rcProp);
 
 const pageSurroundStyles = tv({
   slots: {
@@ -61,9 +60,9 @@ const pageSurroundStyles = tv({
     title: "text-primary text-sm group-hover:text-highlighted",
     titleEnd: "text-right",
     description: "text-toned text-xs",
-    descriptionEnd: "text-right"
-  }
-})
+    descriptionEnd: "text-right",
+  },
+});
 
 const {
   grid,
@@ -79,10 +78,10 @@ const {
   title: titleClass,
   titleEnd,
   description: descriptionClass,
-  descriptionEnd
-} = pageSurroundStyles()
+  descriptionEnd,
+} = pageSurroundStyles();
 
-const { t } = useI18n()
+const { t } = useI18n();
 </script>
 
 <template>

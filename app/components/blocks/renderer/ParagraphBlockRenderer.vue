@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import type { ParagraphBlockProps } from "../../../types"
-import { tv } from "../../../internal/tv"
-import { useRC } from "../../../composables"
+import type { ParagraphBlockProps } from "../../../types";
+import { tv } from "../../../internal/tv";
+import { useRC } from "../../../composables";
 
 export interface ParagraphBlockRendererProps extends ParagraphBlockProps {
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>()
+const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>();
 
 export interface ParagraphBlockRendererEmits {}
 
-const emit = defineEmits<ParagraphBlockRendererEmits>()
+const emit = defineEmits<ParagraphBlockRendererEmits>();
 
 export interface ParagraphBlockRendererSlots {}
 
-const slots = defineSlots<ParagraphBlockRendererSlots>()
+const slots = defineSlots<ParagraphBlockRendererSlots>();
 
-const { rc } = useRC('ParagraphBlockRenderer', rcProp)
+const { rc } = useRC("ParagraphBlockRenderer", rcProp);
 
 const paragraphBlockRendererStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = paragraphBlockRendererStyles()
+const { root } = paragraphBlockRendererStyles();
 </script>
 
 <template>

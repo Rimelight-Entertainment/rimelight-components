@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
-import { useI18n } from "vue-i18n"
+import { computed } from "vue";
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
+import { useI18n } from "vue-i18n";
 
 export interface ImageSwatchProps {
-  name?: string
-  jpg?: string
-  png?: string
-  webp?: string
-  svg?: string
+  name?: string;
+  jpg?: string;
+  png?: string;
+  webp?: string;
+  svg?: string;
   rc?: {
-    card?: string
-    title?: string
-    content?: string
-    image?: string
-    buttonGroup?: string
-    button?: string
-  }
+    card?: string;
+    title?: string;
+    content?: string;
+    image?: string;
+    buttonGroup?: string;
+    button?: string;
+  };
 }
 
-const { name, jpg, png, webp, svg, rc: rcProp } = defineProps<ImageSwatchProps>()
+const { name, jpg, png, webp, svg, rc: rcProp } = defineProps<ImageSwatchProps>();
 
 export interface ImageSwatchEmits {}
 
-const emit = defineEmits<ImageSwatchEmits>()
+const emit = defineEmits<ImageSwatchEmits>();
 
 export interface ImageSwatchSlots {}
 
-const slots = defineSlots<ImageSwatchSlots>()
+const slots = defineSlots<ImageSwatchSlots>();
 
-const { rc } = useRC('ImageSwatch', rcProp)
-const { t } = useI18n()
+const { rc } = useRC("ImageSwatch", rcProp);
+const { t } = useI18n();
 
 const imageSwatchStyles = tv({
   slots: {
@@ -40,20 +40,27 @@ const imageSwatchStyles = tv({
     content: "flex flex-col items-center gap-sm xl:flex-row xl:items-start",
     image: "size-48",
     buttonGroup: "flex w-full flex-col justify-center gap-sm",
-    button: "w-full xl:w-36"
-  }
-})
+    button: "w-full xl:w-36",
+  },
+});
 
-const { card, title: titleStyle, content, image: imageStyle, buttonGroup, button } = imageSwatchStyles()
+const {
+  card,
+  title: titleStyle,
+  content,
+  image: imageStyle,
+  buttonGroup,
+  button,
+} = imageSwatchStyles();
 
 const image = computed(() => {
-  if (webp) return webp
-  if (png) return png
-  if (jpg) return jpg
-  if (svg) return svg
+  if (webp) return webp;
+  if (png) return png;
+  if (jpg) return jpg;
+  if (svg) return svg;
 
-  return undefined
-})
+  return undefined;
+});
 </script>
 
 <template>

@@ -1,49 +1,49 @@
 <script setup lang="ts">
-import { inject, ref, watch, onMounted, nextTick } from "vue"
-import { tv } from "../../../internal/tv"
-import { useRC } from "../../../composables"
-import type { ParagraphBlockProps, RichTextContent } from "../../../types"
-import { richTextToHtml, parseHtmlToRichText, defaultDocument } from "../../../utils"
+import { inject, ref, watch, onMounted, nextTick } from "vue";
+import { tv } from "../../../internal/tv";
+import { useRC } from "../../../composables";
+import type { ParagraphBlockProps, RichTextContent } from "../../../types";
+import { richTextToHtml, parseHtmlToRichText, defaultDocument } from "../../../utils";
 
 // The external dependencies
 export interface ParagraphBlockEditorProps extends ParagraphBlockProps {
-  id: string
+  id: string;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { id, text, rc: rcProp } = defineProps<ParagraphBlockEditorProps>()
+const { id, text, rc: rcProp } = defineProps<ParagraphBlockEditorProps>();
 
 export interface ParagraphBlockEditorEmits {}
 
-const emit = defineEmits<ParagraphBlockEditorEmits>()
+const emit = defineEmits<ParagraphBlockEditorEmits>();
 
 export interface ParagraphBlockEditorSlots {}
 
-const slots = defineSlots<ParagraphBlockEditorSlots>()
+const slots = defineSlots<ParagraphBlockEditorSlots>();
 
-const { rc } = useRC('ParagraphBlockEditor', rcProp)
+const { rc } = useRC("ParagraphBlockEditor", rcProp);
 
 const paragraphBlockEditorStyles = tv({
   slots: {
-    root: "p-2 outline-none min-h-6 focus:ring-2 focus:ring-blue-500 rounded-md transition duration-150 text-base"
-  }
-})
+    root: "p-2 outline-none min-h-6 focus:ring-2 focus:ring-blue-500 rounded-md transition duration-150 text-base",
+  },
+});
 
-const { root } = paragraphBlockEditorStyles()
+const { root } = paragraphBlockEditorStyles();
 
 // The external dependencies
-const editorApi = inject<any>("block-editor-api")
+const editorApi = inject<any>("block-editor-api");
 
 // 2. Local State for the Contenteditable Element
 // We use a reference to the DOM element to read/write its content.
-const editorRef = ref<HTMLElement | null>(null)
+const editorRef = ref<HTMLElement | null>(null);
 
 // Local buffer that holds the HTML representation of the content for initial render/sync
-const localHtml = ref(richTextToHtml(text))
+const localHtml = ref(richTextToHtml(text));
 
-const isContentChanging = ref(false)
+const isContentChanging = ref(false);
 
 // --- Commit & Update Logic ---
 
@@ -51,57 +51,61 @@ const isContentChanging = ref(false)
  * Commits the content of the editor to the global store on blur.
  */
 const commitContentOnBlur = () => {
-  if (!editorRef.value || !editorApi) return
+  if (!editorRef.value || !editorApi) return;
 
   // 1. Get the content (using innerText to simulate plain text editing)
-  const rawHtml = editorRef.value.innerText.trim()
+  const rawHtml = editorRef.value.innerText.trim();
 
   // 2. Only commit if the content has actually changed from the last known state
-  const currentPropText = richTextToHtml(text)
+  const currentPropText = richTextToHtml(text);
   if (rawHtml === currentPropText) {
-    return
+    return;
   }
 
   // 3. Set a flag to ignore watcher updates briefly (defensive measure)
-  isContentChanging.value = true
+  isContentChanging.value = true;
 
   // 4. Commit the structural update
-  const newRichContent: RichTextContent = parseHtmlToRichText(rawHtml)
-  editorApi.updateBlockProps(id, { text: newRichContent })
+  const newRichContent: RichTextContent = parseHtmlToRichText(rawHtml);
+  editorApi.updateBlockProps(id, { text: newRichContent });
 
   // 5. Reset flag after commit
   nextTick(() => {
-    isContentChanging.value = false
-  })
-}
+    isContentChanging.value = false;
+  });
+};
 
 // 3. Sync-In: Watch for external changes (undo/redo) and sync back to the editor
 watch(
-    () => text,
-    (newContent) => {
-      // Only sync back if the change is external AND the user is not actively typing
-      if (isContentChanging.value || !editorRef.value || defaultDocument?.activeElement === editorRef.value) {
-        return
-      }
+  () => text,
+  (newContent) => {
+    // Only sync back if the change is external AND the user is not actively typing
+    if (
+      isContentChanging.value ||
+      !editorRef.value ||
+      defaultDocument?.activeElement === editorRef.value
+    ) {
+      return;
+    }
 
-      const newHtml = richTextToHtml(newContent)
+    const newHtml = richTextToHtml(newContent);
 
-      // 💡 FIX: Manually update the DOM content, bypassing v-html
-      if (editorRef.value.innerText !== newHtml) {
-        editorRef.value.innerHTML = newHtml
-        localHtml.value = newHtml // Update local state for future use
-      }
-    },
-    { deep: true, immediate: true }
-)
+    // 💡 FIX: Manually update the DOM content, bypassing v-html
+    if (editorRef.value.innerText !== newHtml) {
+      editorRef.value.innerHTML = newHtml;
+      localHtml.value = newHtml; // Update local state for future use
+    }
+  },
+  { deep: true, immediate: true },
+);
 
 // Set the initial content when mounted (optional, handled by v-html but safer)
 onMounted(() => {
   if (editorRef.value) {
     // 💡 FIX: Manually set content on mount. NO v-html in template.
-    editorRef.value.innerHTML = localHtml.value
+    editorRef.value.innerHTML = localHtml.value;
   }
-})
+});
 </script>
 
 <template>

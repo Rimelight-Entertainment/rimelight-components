@@ -1,56 +1,57 @@
 <script setup lang="ts">
-import { z } from "zod"
-import { reactive, ref } from "vue"
-import type { FormSubmitEvent } from "#ui/types"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { useAuth } from "../../composables/auth/useAuth"
+import { z } from "zod";
+import { reactive, ref } from "vue";
+import type { FormSubmitEvent } from "#ui/types";
+import { useToast } from "@nuxt/ui/composables/useToast";
+import { useAuth } from "../../composables/auth/useAuth";
 
-
-const { signIn, isLoading } = useAuth()
-const { t } = useI18n()
-const toast = useToast()
-const route = useRoute()
+const { signIn, isLoading } = useAuth();
+const { t } = useI18n();
+const toast = useToast();
+const route = useRoute();
 
 const schema = z.object({
   email: z.string().email(t("auth_email_invalid")),
   password: z.string().min(8, t("auth_password_min_length")),
-  rememberMe: z.boolean()
-})
+  rememberMe: z.boolean(),
+});
 
-type Schema = z.output<typeof schema>
+type Schema = z.output<typeof schema>;
 
 const state = reactive<Partial<Schema>>({
   email: "",
   password: "",
-  rememberMe: true
-})
+  rememberMe: true,
+});
 
-const showPassword = ref(false)
+const showPassword = ref(false);
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  const redirect = route.query.redirect as string | undefined
-  const { data, error } = await signIn({
-    email: event.data.email as string,
-    password: event.data.password as string,
-    rememberMe: event.data.rememberMe
-  }, redirect)
+  const redirect = route.query.redirect as string | undefined;
+  const { data, error } = await signIn(
+    {
+      email: event.data.email as string,
+      password: event.data.password as string,
+      rememberMe: event.data.rememberMe,
+    },
+    redirect,
+  );
 
   if (error) {
     toast.add({
       color: "error",
       title: t("auth_sign_in_failed_title"),
-      description: error.message || t("auth_connection_error_description")
-    })
-    return
+      description: error.message || t("auth_connection_error_description"),
+    });
+    return;
   }
 
   toast.add({
     color: "success",
     title: t("auth_sign_in_success_title"),
-    description: t("auth_sign_in_success_description", { name: data?.user?.name || "User" })
-  })
+    description: t("auth_sign_in_success_description", { name: data?.user?.name || "User" }),
+  });
 }
-
 </script>
 
 <template>
@@ -82,7 +83,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </UInput>
         <template #help>
           <slot name="email-help">
-            <ULink to="/auth/recovery">{{ t('auth_sign-in_email_help') }}</ULink>
+            <ULink to="/auth/recovery">{{ t("auth_sign-in_email_help") }}</ULink>
           </slot>
         </template>
       </UFormField>
@@ -105,9 +106,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 variant="link"
                 size="sm"
                 :icon="showPassword ? 'lucide:eye-off' : 'lucide:eye'"
-                :aria-label="
-                  showPassword ? 'Hide password' : 'Show password'
-                "
+                :aria-label="showPassword ? 'Hide password' : 'Show password'"
                 :aria-pressed="showPassword"
                 aria-controls="password"
                 @click="showPassword = !showPassword"
@@ -117,10 +116,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </div>
         <template #help>
           <slot name="password-help">
-            <ULink
-              to="/auth/recovery"
-              >{{ t('auth_sign-in_password_help') }}</ULink
-            >
+            <ULink to="/auth/recovery">{{ t("auth_sign-in_password_help") }}</ULink>
           </slot>
         </template>
       </UFormField>

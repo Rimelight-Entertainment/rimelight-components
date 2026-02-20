@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import type { NavigationMenuItem } from "#ui/types"
+import { computed } from "vue";
+import type { NavigationMenuItem } from "#ui/types";
 
 export interface BaseDashboardLayoutProps {
-  id?: string
-  sidebarOpen?: boolean
-  links: NavigationMenuItem[] | NavigationMenuItem[][]
-  footerLinks?: NavigationMenuItem[] | NavigationMenuItem[][]
-  searchGroups?: any[]
-  headerLayerId?: string
-  headerOrder?: number
+  id?: string;
+  sidebarOpen?: boolean;
+  links: NavigationMenuItem[] | NavigationMenuItem[][];
+  footerLinks?: NavigationMenuItem[] | NavigationMenuItem[][];
+  searchGroups?: any[];
+  headerLayerId?: string;
+  headerOrder?: number;
 }
 
 const {
@@ -19,23 +19,26 @@ const {
   footerLinks = [],
   searchGroups = [],
   headerLayerId = "global-header",
-  headerOrder = 2
-} = defineProps<BaseDashboardLayoutProps>()
+  headerOrder = 2,
+} = defineProps<BaseDashboardLayoutProps>();
 
 const emit = defineEmits<{
-  'update:sidebarOpen': [value: boolean]
-}>()
+  "update:sidebarOpen": [value: boolean];
+}>();
 
 const sidebarOpenModel = computed({
   get: () => sidebarOpen,
-  set: (val) => emit('update:sidebarOpen', val)
-})
+  set: (val) => emit("update:sidebarOpen", val),
+});
 
-const { totalHeight } = useHeaderStack()
+const { totalHeight } = useHeaderStack();
 </script>
 
 <template>
-  <div :style="{ '--total-header-offset': `${totalHeight}px` }" class="flex h-svh w-full flex-col overflow-hidden">
+  <div
+    :style="{ '--total-header-offset': `${totalHeight}px` }"
+    class="flex h-svh w-full flex-col overflow-hidden"
+  >
     <ClientOnly>
       <RCHeaderLayer :id="headerLayerId" :order="headerOrder">
         <slot name="header" />

@@ -4,48 +4,48 @@ import {
   type InlineContent,
   type InlineText,
   type InlineLink,
-  type InlineMention
-} from "../../types"
-import { RCTextNode, RCLinkNode, RCPageMention } from "#components"
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
+  type InlineMention,
+} from "../../types";
+import { RCTextNode, RCLinkNode, RCPageMention } from "#components";
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
 
 defineOptions({
-  name: "TextRenderer"
-})
+  name: "TextRenderer",
+});
 
 export interface TextRendererProps {
-  content: RichTextContent
+  content: RichTextContent;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { content, rc: rcProp } = defineProps<TextRendererProps>()
+const { content, rc: rcProp } = defineProps<TextRendererProps>();
 
 export interface TextRendererEmits {}
 
-const emit = defineEmits<TextRendererEmits>()
+const emit = defineEmits<TextRendererEmits>();
 
 export interface TextRendererSlots {}
 
-const slots = defineSlots<TextRendererSlots>()
+const slots = defineSlots<TextRendererSlots>();
 
-const { rc } = useRC('TextRenderer', rcProp)
+const { rc } = useRC("TextRenderer", rcProp);
 
 const textRendererStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = textRendererStyles()
+const { root } = textRendererStyles();
 
 /**
  * Type representing the possible values for the `is` attribute on <component>.
  * This can be a string for a native tag or the Vue component object itself.
  */
-type ComponentIs = string | object
+type ComponentIs = string | object;
 
 /**
  * Determines the component or HTML tag for a given inline content element.
@@ -55,15 +55,15 @@ type ComponentIs = string | object
 const getTag = (item: InlineContent): ComponentIs => {
   switch (item.type) {
     case "text":
-      return RCTextNode
+      return RCTextNode;
     case "link":
-      return RCLinkNode
+      return RCLinkNode;
     case "mention":
-      return RCPageMention
+      return RCPageMention;
     default:
-      return RCTextNode
+      return RCTextNode;
   }
-}
+};
 
 /**
  * Calculates the attributes (props) for the rendered component/tag.
@@ -73,29 +73,29 @@ const getTag = (item: InlineContent): ComponentIs => {
 const getProps = (item: InlineContent): Record<string, any> => {
   switch (item.type) {
     case "text": {
-      const textProps = item.props as InlineText["props"]
+      const textProps = item.props as InlineText["props"];
       return {
-        content: textProps.content
-      }
+        content: textProps.content,
+      };
     }
     case "link": {
-      const linkProps = item.props as InlineLink["props"]
+      const linkProps = item.props as InlineLink["props"];
       return {
         href: linkProps.href,
         target: linkProps.target || undefined,
-        content: linkProps.content
-      }
+        content: linkProps.content,
+      };
     }
     case "mention": {
-      const mentionProps = item.props as InlineMention["props"]
+      const mentionProps = item.props as InlineMention["props"];
       return {
-        pageId: mentionProps.pageId
-      }
+        pageId: mentionProps.pageId,
+      };
     }
     default:
-      return {}
+      return {};
   }
-}
+};
 </script>
 
 <template>

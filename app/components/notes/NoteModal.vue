@@ -1,227 +1,221 @@
 <script lang="ts" setup>
-import type { SelectMenuItem } from "@nuxt/ui"
-import {computed, reactive, ref, watch, onUnmounted} from "vue"
-import type {Label, Note} from "rimelight-components/shared/db/auth"
-import { useApi, $api } from "../../composables"
+import type { SelectMenuItem } from "@nuxt/ui";
+import { computed, reactive, ref, watch, onUnmounted } from "vue";
+import type { Label, Note } from "rimelight-components/shared/db/auth";
+import { useApi, $api } from "../../composables";
 
-const open = defineModel<boolean>("open", {default: false})
+const open = defineModel<boolean>("open", { default: false });
 
 export interface NoteModalProps {
-  note?: Note | null
+  note?: Note | null;
 }
 
-const {note} = defineProps<NoteModalProps>()
+const { note } = defineProps<NoteModalProps>();
 
 export interface NoteModalEmits {
-  (e: "saved", note: Note): void
+  (e: "saved", note: Note): void;
 
-  (e: "close"): void
+  (e: "close"): void;
 }
 
-const emit = defineEmits<NoteModalEmits>()
+const emit = defineEmits<NoteModalEmits>();
 
 const state = reactive<{
-  id: string | undefined
-  title: string
-  content: string
-  isPinned: boolean
-  isArchived: boolean
-  labels: string[]
+  id: string | undefined;
+  title: string;
+  content: string;
+  isPinned: boolean;
+  isArchived: boolean;
+  labels: string[];
 }>({
   id: note?.id,
   title: note?.title ?? "",
   content: note?.content ?? "",
   isPinned: note?.isPinned || false,
   isArchived: note?.isArchived || false,
-  labels: note?.labels?.map((l: any) => l.label.id) || []
-})
+  labels: note?.labels?.map((l: any) => l.label.id) || [],
+});
 
 const { data: fetchedLabels } = useApi<Label[]>("/api/notes/labels", {
-  default: () => [] as any
-})
+  default: () => [] as any,
+});
 
-const allLabels = ref<Label[]>([])
+const allLabels = ref<Label[]>([]);
 
 watch(
-    () => fetchedLabels.value,
-    (newLabels) => {
-      if (newLabels) {
-        allLabels.value = [...newLabels]
-      }
-    },
-    {immediate: true}
-)
+  () => fetchedLabels.value,
+  (newLabels) => {
+    if (newLabels) {
+      allLabels.value = [...newLabels];
+    }
+  },
+  { immediate: true },
+);
 
 const labelMap = computed(() => {
-  const map = new Map<string, string>()
-  allLabels.value.forEach((l) => map.set(l.id, l.name))
-  return map
-})
+  const map = new Map<string, string>();
+  allLabels.value.forEach((l) => map.set(l.id, l.name));
+  return map;
+});
 
 const labelItems = computed<SelectMenuItem[]>(() =>
-    allLabels.value.map((l) => ({
-      label: l.name,
-      id: l.id
-    }))
-)
+  allLabels.value.map((l) => ({
+    label: l.name,
+    id: l.id,
+  })),
+);
 
 const syncState = () => {
   if (note) {
-    state.id = note.id
-    state.title = note.title ?? ""
-    state.content = note.content ?? ""
-    state.isPinned = note.isPinned
-    state.isArchived = note.isArchived
-    state.labels = note.labels?.map((l: any) => l.label.id) || []
+    state.id = note.id;
+    state.title = note.title ?? "";
+    state.content = note.content ?? "";
+    state.isPinned = note.isPinned;
+    state.isArchived = note.isArchived;
+    state.labels = note.labels?.map((l: any) => l.label.id) || [];
   } else {
-    state.id = undefined
-    state.title = ""
-    state.content = ""
-    state.isPinned = false
-    state.isArchived = false
-    state.labels = []
+    state.id = undefined;
+    state.title = "";
+    state.content = "";
+    state.isPinned = false;
+    state.isArchived = false;
+    state.labels = [];
   }
-}
+};
 
-watch(() => note, syncState)
+watch(() => note, syncState);
 
-const saveTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
-const isSaving = ref(false)
-const hasPendingSave = ref(false)
+const saveTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
+const isSaving = ref(false);
+const hasPendingSave = ref(false);
 
 const saveNote = async () => {
   // If the note is empty, don't save
-  if (!state.title.trim() && !state.content.trim()) return
+  if (!state.title.trim() && !state.content.trim()) return;
 
   // If already saving, mark that we have a pending save (so we save again with latest data after current save finishes)
   if (isSaving.value) {
-    hasPendingSave.value = true
-    return
+    hasPendingSave.value = true;
+    return;
   }
 
-  isSaving.value = true
+  isSaving.value = true;
 
   try {
-    let savedNote: Note
+    let savedNote: Note;
 
     const payload = {
       title: state.title.trim() || "",
       content: state.content.trim() || "",
       isPinned: state.isPinned,
       isArchived: state.isArchived,
-      labels: state.labels
-    }
+      labels: state.labels,
+    };
 
     if (state.id) {
       savedNote = await $api<Note>(`/api/notes/${state.id}`, {
         method: "PUT",
-        body: payload
-      })
+        body: payload,
+      });
     } else {
       const createPayload = {
         title: payload.title,
         content: payload.content,
         isPinned: payload.isPinned,
-        isArchived: payload.isArchived
-      }
+        isArchived: payload.isArchived,
+      };
 
       savedNote = await $api<Note>("/api/notes", {
         method: "POST",
-        body: createPayload
-      })
+        body: createPayload,
+      });
 
-      state.id = savedNote.id
+      state.id = savedNote.id;
 
       if (state.labels.length > 0) {
         savedNote = await $api<Note>(`/api/notes/${state.id}`, {
           method: "PUT",
-          body: {labels: state.labels}
-        })
+          body: { labels: state.labels },
+        });
       }
     }
-    emit("saved", savedNote!)
+    emit("saved", savedNote!);
   } catch (e) {
-    console.error("Failed to save note", e)
+    console.error("Failed to save note", e);
   } finally {
-    isSaving.value = false
+    isSaving.value = false;
     // If a save was requested while we were saving, execute it now to ensure latest state is persisted
     if (hasPendingSave.value) {
-      hasPendingSave.value = false
-      saveNote()
+      hasPendingSave.value = false;
+      saveNote();
     }
   }
-}
+};
 
 const createLabel = async (newLabelName: string) => {
   try {
     const createdLabel = await $api<Label>("/api/notes/labels", {
       method: "POST",
-      body: {name: newLabelName}
-    })
+      body: { name: newLabelName },
+    });
 
-    allLabels.value.push(createdLabel)
+    allLabels.value.push(createdLabel);
 
     if (!state.labels.includes(createdLabel.id)) {
-      state.labels.push(createdLabel.id)
+      state.labels.push(createdLabel.id);
     }
   } catch (e) {
-    console.error("Failed to create new label", e)
+    console.error("Failed to create new label", e);
   }
-}
+};
 
 const debouncedSave = () => {
   if (saveTimeout.value) {
-    clearTimeout(saveTimeout.value)
+    clearTimeout(saveTimeout.value);
   }
   saveTimeout.value = setTimeout(() => {
-    saveNote()
-  }, 1000)
-}
+    saveNote();
+  }, 1000);
+};
 
 watch(
-    () => [
-      state.title,
-      state.content,
-      state.isPinned,
-      state.isArchived,
-      state.labels
-    ],
-    () => {
-      debouncedSave()
-    }
-)
+  () => [state.title, state.content, state.isPinned, state.isArchived, state.labels],
+  () => {
+    debouncedSave();
+  },
+);
 
 watch(open, (isOpen) => {
   if (isOpen) {
-    syncState()
+    syncState();
   } else {
     if (saveTimeout.value) {
-      clearTimeout(saveTimeout.value)
+      clearTimeout(saveTimeout.value);
     }
-    saveNote()
-    emit("close")
+    saveNote();
+    emit("close");
   }
-})
+});
 
 const deleteNote = async () => {
-  if (!state.id) return
-  
+  if (!state.id) return;
+
   try {
     await $api(`/api/notes/${state.id}`, {
-      method: "DELETE"
-    })
-    open.value = false
-    emit("saved", null as any) // Trigger refresh
+      method: "DELETE",
+    });
+    open.value = false;
+    emit("saved", null as any); // Trigger refresh
   } catch (e) {
-    console.error("Failed to delete note", e)
+    console.error("Failed to delete note", e);
   }
-}
+};
 
 onUnmounted(() => {
   if (saveTimeout.value) {
-    clearTimeout(saveTimeout.value)
+    clearTimeout(saveTimeout.value);
   }
-})
+});
 </script>
 
 <template>
@@ -270,14 +264,18 @@ onUnmounted(() => {
           />
           <UButton
             :color="state.isArchived ? 'primary' : 'neutral'"
-            :icon="
-              state.isArchived ? 'lucide:archive-x' : 'lucide:archive-restore'
-            "
+            :icon="state.isArchived ? 'lucide:archive-x' : 'lucide:archive-restore'"
             size="sm"
             variant="ghost"
             @click="state.isArchived = !state.isArchived"
           />
-          <UButton color="error" icon="lucide:trash-2" size="sm" variant="ghost" @click="deleteNote" />
+          <UButton
+            color="error"
+            icon="lucide:trash-2"
+            size="sm"
+            variant="ghost"
+            @click="deleteNote"
+          />
         </div>
       </div>
       <div class="flex items-center justify-between">

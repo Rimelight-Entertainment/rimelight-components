@@ -1,38 +1,38 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
-import { useI18n } from "vue-i18n"
-import { tv } from "../../../internal/tv"
-import { useRC } from "../../../composables"
+import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { tv } from "../../../internal/tv";
+import { useRC } from "../../../composables";
 
 export interface DeletePageModalProps {
-  loading?: boolean
-  pageTitle: string
+  loading?: boolean;
+  pageTitle: string;
   rc?: {
-    header?: string
-    headerTitle?: string
-    closeButton?: string
-    body?: string
-    footer?: string
-  }
+    header?: string;
+    headerTitle?: string;
+    closeButton?: string;
+    body?: string;
+    footer?: string;
+  };
 }
 
-const open = defineModel<boolean>("open", { default: false })
-const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>()
+const open = defineModel<boolean>("open", { default: false });
+const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>();
 
 export interface DeletePageModalEmits {
-  close: []
-  confirm: []
+  close: [];
+  confirm: [];
 }
 
-const emits = defineEmits<DeletePageModalEmits>()
+const emits = defineEmits<DeletePageModalEmits>();
 
 export interface DeletePageModalSlots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<DeletePageModalSlots>()
+const slots = defineSlots<DeletePageModalSlots>();
 
-const { rc } = useRC('DeletePageModal', rcProp)
+const { rc } = useRC("DeletePageModal", rcProp);
 
 const deletePageModalStyles = tv({
   slots: {
@@ -40,36 +40,30 @@ const deletePageModalStyles = tv({
     headerTitle: "text-base font-semibold leading-6 text-error-600",
     closeButton: "-my-1",
     body: "text-sm text-neutral-600 dark:text-neutral-400",
-    footer: "flex justify-end gap-2"
-  }
-})
+    footer: "flex justify-end gap-2",
+  },
+});
 
-const {
-  header: headerClass,
-  headerTitle,
-  closeButton,
-  body,
-  footer
-} = deletePageModalStyles()
+const { header: headerClass, headerTitle, closeButton, body, footer } = deletePageModalStyles();
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const confirmationInput = ref('')
-const CONFIRMATION_TEXT = "DELETE"
+const confirmationInput = ref("");
+const CONFIRMATION_TEXT = "DELETE";
 
 // Reset input when modal closes
 watch(open, (val) => {
   if (!val) {
-    confirmationInput.value = ''
-    emits('close')
+    confirmationInput.value = "";
+    emits("close");
   }
-})
+});
 
 const handleConfirm = () => {
   if (confirmationInput.value === CONFIRMATION_TEXT) {
-    emits('confirm')
+    emits("confirm");
   }
-}
+};
 </script>
 
 <template>
@@ -80,7 +74,7 @@ const handleConfirm = () => {
         <template #header>
           <div :class="headerClass({ class: rc.header })">
             <h3 :class="headerTitle({ class: rc.headerTitle })">
-              {{ t('editor.delete_page_title', 'Delete Page') }}
+              {{ t("editor.delete_page_title", "Delete Page") }}
             </h3>
             <UButton
               color="neutral"
@@ -100,7 +94,7 @@ const handleConfirm = () => {
         </div>
 
         <UFormField
-          :label="t('editor.delete_confirm_label', `Please type ${CONFIRMATION_TEXT} to confirm` )"
+          :label="t('editor.delete_confirm_label', `Please type ${CONFIRMATION_TEXT} to confirm`)"
           required
         >
           <UInput

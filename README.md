@@ -36,8 +36,8 @@ Add the layer to your `nuxt.config.js`:
 
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
-  extends: ['rimelight-components']
-})
+  extends: ["rimelight-components"],
+});
 ```
 
 Learn more in the [installation guide](https://ui.nuxt.com/docs/getting-started/installation/nuxt).

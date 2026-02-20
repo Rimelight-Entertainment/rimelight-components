@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import type { CalloutBlockProps } from "../../../types"
-import { tv } from "../../../internal/tv"
-import { useRC } from "../../../composables"
+import type { CalloutBlockProps } from "../../../types";
+import { tv } from "../../../internal/tv";
+import { useRC } from "../../../composables";
 
 export interface CalloutBlockRendererProps extends CalloutBlockProps {
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { variant, children, to, target, rc: rcProp } = defineProps<CalloutBlockRendererProps>()
+const { variant, children, to, target, rc: rcProp } = defineProps<CalloutBlockRendererProps>();
 
 export interface CalloutBlockRendererEmits {}
 
-const emit = defineEmits<CalloutBlockRendererEmits>()
+const emit = defineEmits<CalloutBlockRendererEmits>();
 
 export interface CalloutBlockRendererSlots {}
 
-const slots = defineSlots<CalloutBlockRendererSlots>()
+const slots = defineSlots<CalloutBlockRendererSlots>();
 
-const { rc } = useRC('CalloutBlockRenderer', rcProp)
+const { rc } = useRC("CalloutBlockRenderer", rcProp);
 
 const calloutBlockRendererStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = calloutBlockRendererStyles()
+const { root } = calloutBlockRendererStyles();
 </script>
 
 <template>

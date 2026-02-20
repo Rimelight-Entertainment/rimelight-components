@@ -1,40 +1,38 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
+import { computed } from "vue";
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
 
 export interface LinkNodeProps {
-  href: string
-  target?: string
-  content: string
+  href: string;
+  target?: string;
+  content: string;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { href, target, content, rc: rcProp } = defineProps<LinkNodeProps>()
+const { href, target, content, rc: rcProp } = defineProps<LinkNodeProps>();
 
 export interface LinkNodeEmits {}
 
-const emit = defineEmits<LinkNodeEmits>()
+const emit = defineEmits<LinkNodeEmits>();
 
 export interface LinkNodeSlots {}
 
-const slots = defineSlots<LinkNodeSlots>()
+const slots = defineSlots<LinkNodeSlots>();
 
-const { rc } = useRC('LinkNode', rcProp)
+const { rc } = useRC("LinkNode", rcProp);
 
 const linkNodeStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = linkNodeStyles()
+const { root } = linkNodeStyles();
 
-const rel = computed(() =>
-  target === "_blank" ? "noopener noreferrer" : undefined
-)
+const rel = computed(() => (target === "_blank" ? "noopener noreferrer" : undefined));
 </script>
 
 <template>

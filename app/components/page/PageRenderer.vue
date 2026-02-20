@@ -1,54 +1,54 @@
 <script setup lang="ts">
-import { computed, provide } from "vue"
-import { type Page, type PageSurround } from "../../types"
-import { getLocalizedContent, syncPageWithDefinition } from "../../utils"
-import { useI18n } from "vue-i18n"
-import { usePageRegistry, useRC } from "../../composables"
-import { tv } from "../../internal/tv"
+import { computed, provide } from "vue";
+import { type Page, type PageSurround } from "../../types";
+import { getLocalizedContent, syncPageWithDefinition } from "../../utils";
+import { useI18n } from "vue-i18n";
+import { usePageRegistry, useRC } from "../../composables";
+import { tv } from "../../internal/tv";
 
 export interface PageRendererProps {
-  useSurround?: boolean
-  surround?: PageSurround | null
-  surroundStatus?: 'idle' | 'pending' | 'success' | 'error'
-  resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
-  canEdit?: boolean
-  editUrl?: string
+  useSurround?: boolean;
+  surround?: PageSurround | null;
+  surroundStatus?: "idle" | "pending" | "success" | "error";
+  resolvePage: (id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>;
+  canEdit?: boolean;
+  editUrl?: string;
   rc?: {
-    container?: string
-    grid?: string
-    toc?: string
-    properties?: string
-    contentWrapper?: string
-    banner?: string
-    icon?: string
-    title?: string
-    surroundSkeleton?: string
-    skeleton?: string
-    metadata?: string
-  }
+    container?: string;
+    grid?: string;
+    toc?: string;
+    properties?: string;
+    contentWrapper?: string;
+    banner?: string;
+    icon?: string;
+    title?: string;
+    surroundSkeleton?: string;
+    skeleton?: string;
+    metadata?: string;
+  };
 }
 
 const {
   useSurround = false,
-  surroundStatus = 'idle',
+  surroundStatus = "idle",
   surround = null,
   resolvePage,
   canEdit = false,
   editUrl,
-  rc: rcProp
-} = defineProps<PageRendererProps>()
+  rc: rcProp,
+} = defineProps<PageRendererProps>();
 
-const page = defineModel<Page>({ required: true })
+const page = defineModel<Page>({ required: true });
 
 export interface PageRendererEmits {}
 
-const emit = defineEmits<PageRendererEmits>()
+const emit = defineEmits<PageRendererEmits>();
 
 export interface PageRendererSlots {}
 
-const slots = defineSlots<PageRendererSlots>()
+const slots = defineSlots<PageRendererSlots>();
 
-const { rc } = useRC('PageRenderer', rcProp)
+const { rc } = useRC("PageRenderer", rcProp);
 
 const pageRendererStyles = tv({
   slots: {
@@ -62,9 +62,9 @@ const pageRendererStyles = tv({
     title: "",
     surroundSkeleton: "grid grid-cols-1 gap-md sm:grid-cols-2",
     skeleton: "h-48 w-full rounded-xl",
-    metadata: "flex flex-col gap-xs text-xs text-dimmed p-lg"
-  }
-})
+    metadata: "flex flex-col gap-xs text-xs text-dimmed p-lg",
+  },
+});
 
 const {
   container,
@@ -77,30 +77,36 @@ const {
   title: titleClass,
   surroundSkeleton,
   skeleton,
-  metadata
-} = pageRendererStyles()
+  metadata,
+} = pageRendererStyles();
 
 const { getTypeLabelKey, definitions } = usePageRegistry();
-const { t, locale } = useI18n()
+const { t, locale } = useI18n();
 
-provide('page-resolver', resolvePage)
+provide("page-resolver", resolvePage);
 
 const currentDefinition = computed(() => {
-  if (!page.value?.type || !definitions) return null
-  const typeKey = Object.keys(definitions).find(k => k.toLowerCase() === page.value.type.toLowerCase())
-  return typeKey ? (definitions as any)[typeKey] : null
-})
+  if (!page.value?.type || !definitions) return null;
+  const typeKey = Object.keys(definitions).find(
+    (k) => k.toLowerCase() === page.value.type.toLowerCase(),
+  );
+  return typeKey ? (definitions as any)[typeKey] : null;
+});
 
 // Sync properties with definition for rendering
-watch([() => page.value?.id, () => page.value?.type, currentDefinition], () => {
-  if (page.value && currentDefinition.value) {
-    syncPageWithDefinition(page.value, currentDefinition.value)
-  }
-}, { immediate: true })
+watch(
+  [() => page.value?.id, () => page.value?.type, currentDefinition],
+  () => {
+    if (page.value && currentDefinition.value) {
+      syncPageWithDefinition(page.value, currentDefinition.value);
+    }
+  },
+  { immediate: true },
+);
 
-const previousPage = computed(() => surround?.previous)
-const nextPage = computed(() => surround?.next)
-const hasSurround = computed(() => !!(surround?.previous || surround?.next))
+const previousPage = computed(() => surround?.previous);
+const nextPage = computed(() => surround?.next);
+const hasSurround = computed(() => !!(surround?.previous || surround?.next));
 </script>
 
 <template>
@@ -109,7 +115,12 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
       <RCPageTOC :page-blocks="page.blocks" :levels="[2, 3, 4]" :class="toc({ class: rc.toc })">
         <template #bottom> </template>
       </RCPageTOC>
-      <RCPagePropertiesRenderer v-model="page" :can-edit="canEdit" :edit-url="editUrl" :class="properties({ class: rc.properties })" />
+      <RCPagePropertiesRenderer
+        v-model="page"
+        :can-edit="canEdit"
+        :edit-url="editUrl"
+        :class="properties({ class: rc.properties })"
+      />
       <div :class="contentWrapper({ class: rc.contentWrapper })">
         <RCImage
           v-if="page.banner?.src"
@@ -161,10 +172,10 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
           <USeparator />
 
           <div :class="metadata({ class: rc.metadata })">
-            <h6>{{ t('page_editor.metadata') }}</h6>
-            <span>{{ t('page_editor.page_id') }}: {{ page.id }}</span>
+            <h6>{{ t("page_editor.metadata") }}</h6>
+            <span>{{ t("page_editor.page_id") }}: {{ page.id }}</span>
             <span
-              >{{ t('page_editor.created_at') }}:
+              >{{ t("page_editor.created_at") }}:
               <NuxtTime
                 :datetime="page.createdAt ?? ''"
                 year="numeric"
@@ -176,7 +187,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
                 time-zone-name="short"
             /></span>
             <span
-              >{{ t('page_editor.posted_at') }}:
+              >{{ t("page_editor.posted_at") }}:
               <NuxtTime
                 :datetime="page.createdAt ?? ''"
                 year="numeric"
@@ -188,7 +199,7 @@ const hasSurround = computed(() => !!(surround?.previous || surround?.next))
                 time-zone-name="short"
             /></span>
             <span
-              >{{ t('page_editor.updated_at') }}:
+              >{{ t("page_editor.updated_at") }}:
               <NuxtTime
                 :datetime="page.createdAt ?? ''"
                 year="numeric"

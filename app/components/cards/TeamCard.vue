@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
 
 export interface TeamCardProps {
-  src: string
-  alt: string
-  name: string
-  role: string
-  description: string
+  src: string;
+  alt: string;
+  name: string;
+  role: string;
+  description: string;
   rc?: {
-    details?: string
-    name?: string
-    role?: string
-    description?: string
-    links?: string
-  }
+    details?: string;
+    name?: string;
+    role?: string;
+    description?: string;
+    links?: string;
+  };
 }
 
-const { src, alt, name, role, description, rc: rcProp } = defineProps<TeamCardProps>()
+const { src, alt, name, role, description, rc: rcProp } = defineProps<TeamCardProps>();
 
 export interface TeamCardEmits {}
 
-const emit = defineEmits<TeamCardEmits>()
+const emit = defineEmits<TeamCardEmits>();
 
 export interface TeamCardSlots {
-  links: (props: {}) => any
+  links: (props: {}) => any;
 }
 
-const slots = defineSlots<TeamCardSlots>()
+const slots = defineSlots<TeamCardSlots>();
 
-const { rc } = useRC('TeamCard', rcProp)
+const { rc } = useRC("TeamCard", rcProp);
 
 const teamCardStyles = tv({
   slots: {
@@ -37,17 +37,17 @@ const teamCardStyles = tv({
     name: "text-xl font-bold",
     role: "text-sm",
     description: "text-md",
-    links: "flex flex-row gap-md"
-  }
-})
+    links: "flex flex-row gap-md",
+  },
+});
 
 const {
   details,
   name: nameClass,
   role: roleClass,
   description: descriptionClass,
-  links
-} = teamCardStyles()
+  links,
+} = teamCardStyles();
 </script>
 
 <template>

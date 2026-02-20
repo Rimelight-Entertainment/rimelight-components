@@ -1,12 +1,12 @@
-import { useNuxtApp, useState } from "#app"
-import { type Ref, shallowRef, computed } from "vue"
+import { useNuxtApp, useState } from "#app";
+import { type Ref, shallowRef, computed } from "vue";
 
 export interface QuickAction {
-  id: string
-  label: string
-  icon: string
-  group?: number
-  onSelect: () => void
+  id: string;
+  label: string;
+  icon: string;
+  group?: number;
+  onSelect: () => void;
 }
 
 /**
@@ -14,43 +14,42 @@ export interface QuickAction {
  */
 export const useQuickActions = () => {
   // 1. Initializing
-  const nuxtApp = useNuxtApp()
+  const nuxtApp = useNuxtApp();
 
   if (!nuxtApp._quickActionsRegistry) {
-    nuxtApp._quickActionsRegistry = shallowRef(new Map<string, QuickAction>())
+    nuxtApp._quickActionsRegistry = shallowRef(new Map<string, QuickAction>());
   }
 
-  const registeredActionsMap = nuxtApp._quickActionsRegistry as Ref<Map<string, QuickAction>>
+  const registeredActionsMap = nuxtApp._quickActionsRegistry as Ref<Map<string, QuickAction>>;
 
   // 2. Refs
-  const activeQuickActionIds = useState<string[]>("quick-action-ids", () => [])
+  const activeQuickActionIds = useState<string[]>("quick-action-ids", () => []);
 
   // 3. Computed
   const registeredActions = computed(() => {
     return activeQuickActionIds.value
-      .map(id => registeredActionsMap.value.get(id))
-      .filter((a): a is QuickAction => !!a)
-  })
+      .map((id) => registeredActionsMap.value.get(id))
+      .filter((a): a is QuickAction => !!a);
+  });
 
   // 4. Methods
   function registerAction(action: QuickAction) {
-    registeredActionsMap.value.set(action.id, action)
-    registeredActionsMap.value = new Map(registeredActionsMap.value)
+    registeredActionsMap.value.set(action.id, action);
+    registeredActionsMap.value = new Map(registeredActionsMap.value);
     if (!activeQuickActionIds.value.includes(action.id)) {
-      activeQuickActionIds.value = [...activeQuickActionIds.value, action.id]
+      activeQuickActionIds.value = [...activeQuickActionIds.value, action.id];
     }
   }
 
   function unregisterAction(id: string) {
-    registeredActionsMap.value.delete(id)
-    registeredActionsMap.value = new Map(registeredActionsMap.value)
-    activeQuickActionIds.value = activeQuickActionIds.value.filter((i) => i !== id)
+    registeredActionsMap.value.delete(id);
+    registeredActionsMap.value = new Map(registeredActionsMap.value);
+    activeQuickActionIds.value = activeQuickActionIds.value.filter((i) => i !== id);
   }
 
   return {
     registeredActions,
     registerAction,
-    unregisterAction
-  }
-}
-
+    unregisterAction,
+  };
+};

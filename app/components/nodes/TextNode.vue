@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
 
 export interface TextNodeProps {
-  content: string
+  content: string;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { content, rc: rcProp } = defineProps<TextNodeProps>()
+const { content, rc: rcProp } = defineProps<TextNodeProps>();
 
 export interface TextNodeEmits {}
 
-const emit = defineEmits<TextNodeEmits>()
+const emit = defineEmits<TextNodeEmits>();
 
 export interface TextNodeSlots {}
 
-const slots = defineSlots<TextNodeSlots>()
+const slots = defineSlots<TextNodeSlots>();
 
-const { rc } = useRC('TextNode', rcProp)
+const { rc } = useRC("TextNode", rcProp);
 
 const textNodeStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = textNodeStyles()
+const { root } = textNodeStyles();
 </script>
 
 <template>

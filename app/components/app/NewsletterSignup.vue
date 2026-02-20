@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
 
 export interface NewsletterSignupProps {
-  fieldLabel?: string
-  description?: string
-  placeholder?: string
-  buttonLabel?: string
+  fieldLabel?: string;
+  description?: string;
+  placeholder?: string;
+  buttonLabel?: string;
   rc?: {
-    group?: string
-  }
+    group?: string;
+  };
 }
 
 const {
@@ -17,26 +17,26 @@ const {
   description = "Stay updated on new posts and updates. Unsubscribe at any time.",
   placeholder = "email@domain.com",
   buttonLabel = "Subscribe",
-  rc: rcProp
-} = defineProps<NewsletterSignupProps>()
+  rc: rcProp,
+} = defineProps<NewsletterSignupProps>();
 
 export interface NewsletterSignupEmits {}
 
-const emit = defineEmits<NewsletterSignupEmits>()
+const emit = defineEmits<NewsletterSignupEmits>();
 
 export interface NewsletterSignupSlots {}
 
-const slots = defineSlots<NewsletterSignupSlots>()
+const slots = defineSlots<NewsletterSignupSlots>();
 
-const { rc } = useRC('NewsletterSignup', rcProp)
+const { rc } = useRC("NewsletterSignup", rcProp);
 
 const newsletterSignupStyles = tv({
   slots: {
-    group: "pt-2"
-  }
-})
+    group: "pt-2",
+  },
+});
 
-const { group } = newsletterSignupStyles()
+const { group } = newsletterSignupStyles();
 </script>
 
 <template>

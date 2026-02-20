@@ -1,8 +1,8 @@
-export * from "./richTextHelpers"
-export * from "./page"
-export * from "./blocks"
-export * from "./cms"
-export * from "./ssr"
+export * from "./richTextHelpers";
+export * from "./page";
+export * from "./blocks";
+export * from "./cms";
+export * from "./ssr";
 
 /**
  * Gets a value from an object by path
@@ -12,17 +12,17 @@ export * from "./ssr"
  * @returns The value at the path or the default value
  */
 export function get<T = any>(obj: any, path: string, defaultValue?: T): T {
-  const keys = path.split('.')
-  let result = obj
+  const keys = path.split(".");
+  let result = obj;
 
   for (const key of keys) {
     if (result == null) {
-      return defaultValue as T
+      return defaultValue as T;
     }
-    result = result[key]
+    result = result[key];
   }
 
-  return result ?? defaultValue as T
+  return result ?? (defaultValue as T);
 }
 
 /**
@@ -37,7 +37,7 @@ export function get<T = any>(obj: any, path: string, defaultValue?: T): T {
  */
 export function slugify(text: string): string {
   if (!text) {
-    return ""
+    return "";
   }
 
   return text
@@ -50,5 +50,5 @@ export function slugify(text: string): string {
     .replace(/[^\w-]+/g, "") // Remove all non-word characters (except hyphens)
     .replace(/--+/g, "-") // Replace multiple hyphens with a single hyphen
     .replace(/^-+/, "") // Remove leading hyphens
-    .replace(/-+$/, "") // Remove trailing hyphens
+    .replace(/-+$/, ""); // Remove trailing hyphens
 }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useAppConfig } from "#imports"
-import { computed } from "#imports"
-import { useI18n } from "vue-i18n"
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
+import { useAppConfig } from "#imports";
+import { computed } from "#imports";
+import { useI18n } from "vue-i18n";
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
 
 export type CalloutVariant =
   | "info"
@@ -12,58 +12,58 @@ export type CalloutVariant =
   | "error"
   | "commentary"
   | "ideation"
-  | "source"
+  | "source";
 
 export interface CalloutProps {
-  variant: CalloutVariant
-  to?: string
-  target?: string
+  variant: CalloutVariant;
+  to?: string;
+  target?: string;
   rc?: {
-    icon?: string
-    tooltipIcon?: string
-  }
+    icon?: string;
+    tooltipIcon?: string;
+  };
 }
 
-const { variant, to, target, rc: rcProp } = defineProps<CalloutProps>()
+const { variant, to, target, rc: rcProp } = defineProps<CalloutProps>();
 
 export interface CalloutEmits {}
 
-const emit = defineEmits<CalloutEmits>()
+const emit = defineEmits<CalloutEmits>();
 
 export interface CalloutSlots {
-  default: (props: {}) => any
-  leading: (props: { icon: string, iconClass: string }) => any
+  default: (props: {}) => any;
+  leading: (props: { icon: string; iconClass: string }) => any;
 }
 
-const slots = defineSlots<CalloutSlots>()
+const slots = defineSlots<CalloutSlots>();
 
-const { rc } = useRC('Callout', rcProp)
+const { rc } = useRC("Callout", rcProp);
 
 const calloutStyles = tv({
   slots: {
     icon: "size-6",
-    tooltipIcon: "pointer-events-auto size-5"
-  }
-})
+    tooltipIcon: "pointer-events-auto size-5",
+  },
+});
 
-const { icon: iconClass, tooltipIcon } = calloutStyles()
+const { icon: iconClass, tooltipIcon } = calloutStyles();
 
-const { t } = useI18n()
-const appConfig = useAppConfig()
+const { t } = useI18n();
+const appConfig = useAppConfig();
 
 const config = computed(() => {
   return (
     (appConfig.rimelightComponents as any)?.callouts?.[variant] ?? {
       icon: "lucide:alert-circle",
       title: "Callout",
-      tooltip: "Callout"
+      tooltip: "Callout",
     }
-  )
-})
+  );
+});
 
-const icon = computed(() => config.value.icon)
-const title = computed(() => config.value.title)
-const tooltip = computed(() => config.value.tooltip)
+const icon = computed(() => config.value.icon);
+const title = computed(() => config.value.title);
+const tooltip = computed(() => config.value.tooltip);
 </script>
 
 <template>
@@ -73,7 +73,7 @@ const tooltip = computed(() => config.value.tooltip)
       :color="variant"
       variant="subtle"
       :close="{
-        class: 'pointer-events-none focus-visible:outline-none'
+        class: 'pointer-events-none focus-visible:outline-none',
       }"
     >
       <template #leading>

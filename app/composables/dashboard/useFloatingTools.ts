@@ -1,58 +1,63 @@
-import { useNuxtApp, useState } from "#app"
-import { type Component, type Ref, shallowRef } from "vue"
+import { useNuxtApp, useState } from "#app";
+import { type Component, type Ref, shallowRef } from "vue";
 
 export interface FloatingToolDefinition {
-  id: string
-  title: string
-  icon: string
-  component: Component
-  tooltip?: () => string
-  onClose?: () => void
+  id: string;
+  title: string;
+  icon: string;
+  component: Component;
+  tooltip?: () => string;
+  onClose?: () => void;
 }
 
 export const useFloatingTools = () => {
   // 1. Initializing
-  const nuxtApp = useNuxtApp()
+  const nuxtApp = useNuxtApp();
 
   // Use a registry attached to nuxtApp to ensure it's per-request on SSR
   // but not serialized by useState (which would fail for functions/components)
   if (!nuxtApp._floatingToolsRegistry) {
-    nuxtApp._floatingToolsRegistry = shallowRef(new Map<string, FloatingToolDefinition>())
+    nuxtApp._floatingToolsRegistry = shallowRef(new Map<string, FloatingToolDefinition>());
   }
-  const registeredTools = nuxtApp._floatingToolsRegistry as Ref<Map<string, FloatingToolDefinition>>
+  const registeredTools = nuxtApp._floatingToolsRegistry as Ref<
+    Map<string, FloatingToolDefinition>
+  >;
 
   // 2. Refs
-  const activeToolIds = useState<string[]>("active-floating-tool-ids", () => [])
-  const expandedTools = useState<Record<string, boolean>>("floating-tools-expanded-map", () => ({}))
-  const isVisible = useState("floating-tool-visible-global", () => false)
+  const activeToolIds = useState<string[]>("active-floating-tool-ids", () => []);
+  const expandedTools = useState<Record<string, boolean>>(
+    "floating-tools-expanded-map",
+    () => ({}),
+  );
+  const isVisible = useState("floating-tool-visible-global", () => false);
 
   // 3. Methods
   function registerTool(definition: FloatingToolDefinition) {
-    registeredTools.value.set(definition.id, definition)
+    registeredTools.value.set(definition.id, definition);
   }
 
   function openTool(id: string) {
-    if (!registeredTools.value.has(id)) return
+    if (!registeredTools.value.has(id)) return;
 
     if (!activeToolIds.value.includes(id)) {
-      activeToolIds.value.push(id)
+      activeToolIds.value.push(id);
     }
-    expandedTools.value[id] = true
-    isVisible.value = true
+    expandedTools.value[id] = true;
+    isVisible.value = true;
   }
 
   function removeTool(id: string) {
-    const tool = registeredTools.value.get(id)
-    if (tool?.onClose) tool.onClose()
+    const tool = registeredTools.value.get(id);
+    if (tool?.onClose) tool.onClose();
 
-    activeToolIds.value = activeToolIds.value.filter((t) => t !== id)
+    activeToolIds.value = activeToolIds.value.filter((t) => t !== id);
     if (activeToolIds.value.length === 0) {
-      isVisible.value = false
+      isVisible.value = false;
     }
   }
 
   function toggleExpanded(id: string) {
-    expandedTools.value[id] = !expandedTools.value[id]
+    expandedTools.value[id] = !expandedTools.value[id];
   }
 
   return {
@@ -63,7 +68,6 @@ export const useFloatingTools = () => {
     openTool,
     removeTool,
     toggleExpanded,
-    isToolExpanded: (id: string) => expandedTools.value[id] ?? true
-  }
-}
-
+    isToolExpanded: (id: string) => expandedTools.value[id] ?? true,
+  };
+};

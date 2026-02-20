@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import { tv } from "../../internal/tv"
-import { useRC } from "../../composables"
+import { tv } from "../../internal/tv";
+import { useRC } from "../../composables";
 
 export interface HeaderProps {
-  contain?: boolean
+  contain?: boolean;
   rc?: {
-    root?: string
-    container?: string
-    left?: string
-    center?: string
-    right?: string
-    collapsedLeft?: string
-    collapsedCenter?: string
-    collapsedRight?: string
-  }
+    root?: string;
+    container?: string;
+    left?: string;
+    center?: string;
+    right?: string;
+    collapsedLeft?: string;
+    collapsedCenter?: string;
+    collapsedRight?: string;
+  };
 }
 
-const { contain = true, rc: rcProp } = defineProps<HeaderProps>()
+const { contain = true, rc: rcProp } = defineProps<HeaderProps>();
 
 export interface HeaderEmits {}
 
-const emit = defineEmits<HeaderEmits>()
+const emit = defineEmits<HeaderEmits>();
 
 export interface HeaderSlots {
-  left: (props: {}) => any
-  center: (props: {}) => any
-  right: (props: {}) => any
-  "collapsed-left": (props: {}) => any
-  "collapsed-center": (props: {}) => any
-  "collapsed-right": (props: {}) => any
+  left: (props: {}) => any;
+  center: (props: {}) => any;
+  right: (props: {}) => any;
+  "collapsed-left": (props: {}) => any;
+  "collapsed-center": (props: {}) => any;
+  "collapsed-right": (props: {}) => any;
 }
 
-const slots = defineSlots<HeaderSlots>()
+const slots = defineSlots<HeaderSlots>();
 
-const { rc } = useRC('Header', rcProp)
+const { rc } = useRC("Header", rcProp);
 
 const headerStyles = tv({
   slots: {
@@ -44,27 +44,19 @@ const headerStyles = tv({
     right: "hidden lg:flex flex-none items-center justify-end",
     collapsedLeft: "flex lg:hidden flex-1 items-center justify-start",
     collapsedCenter: "flex lg:hidden flex-none items-center justify-center",
-    collapsedRight: "flex lg:hidden flex-1 items-center justify-end"
+    collapsedRight: "flex lg:hidden flex-1 items-center justify-end",
   },
   variants: {
     contain: {
       false: {
-        container: "max-w-none"
-      }
-    }
-  }
-})
+        container: "max-w-none",
+      },
+    },
+  },
+});
 
-const {
-  root,
-  container,
-  left,
-  center,
-  right,
-  collapsedLeft,
-  collapsedCenter,
-  collapsedRight
-} = headerStyles({ contain })
+const { root, container, left, center, right, collapsedLeft, collapsedCenter, collapsedRight } =
+  headerStyles({ contain });
 </script>
 
 <template>

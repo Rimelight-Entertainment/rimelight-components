@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { NavigationMenuItem, DropdownMenuItem } from "@nuxt/ui"
-import { useHeaderStack } from "rimelight-components/composables"
-import { MOCK_PAGES_LIST } from "../mocks/pages"
+import type { NavigationMenuItem, DropdownMenuItem } from "@nuxt/ui";
+import { useHeaderStack } from "rimelight-components/composables";
+import { MOCK_PAGES_LIST } from "../mocks/pages";
 
-const { bottomOffsets } = useHeaderStack()
-const headerLayerId = inject<string>("header_layer_id", "global-header")
+const { bottomOffsets } = useHeaderStack();
+const headerLayerId = inject<string>("header_layer_id", "global-header");
 
-const route = useRoute()
+const route = useRoute();
 
 const slideoverState = reactive({
   left: false,
   right: false,
-  notifications: false
-})
+  notifications: false,
+});
 
 // Mock Session Data
 const session = ref({
@@ -21,41 +21,45 @@ const session = ref({
     tag: "0000",
     image: "https://github.com/idantitydotme.png",
     status: "Accessing me.",
-    availability: "available"
-  }
-})
+    availability: "available",
+  },
+});
 
 const availabilityChip = computed(() => ({
   color: "success" as const,
-  position: "bottom-right" as const
-}))
+  position: "bottom-right" as const,
+}));
 
 const items = computed<NavigationMenuItem[]>(() => [
   {
     label: "Wiki",
-    active: route.path.startsWith("/wiki") || MOCK_PAGES_LIST.some(page => route.path.startsWith(`/${page.slug}`)),
+    active:
+      route.path.startsWith("/wiki") ||
+      MOCK_PAGES_LIST.some((page) => route.path.startsWith(`/${page.slug}`)),
     slot: "megamenu" as const,
-    children: MOCK_PAGES_LIST.filter(p => !p.slug.includes('/')).map(parent => ({
+    children: MOCK_PAGES_LIST.filter((p) => !p.slug.includes("/")).map((parent) => ({
       label: parent.title.en,
       description: parent.description?.en,
       to: `/${parent.slug}`,
-      children: MOCK_PAGES_LIST.filter(p => p.slug.startsWith(`${parent.slug}/`)).map(child => ({
-        label: child.title.en,
-        description: child.description?.en,
-        to: `/${child.slug}`
-      }))
-    }))
+      children: MOCK_PAGES_LIST.filter((p) => p.slug.startsWith(`${parent.slug}/`)).map(
+        (child) => ({
+          label: child.title.en,
+          description: child.description?.en,
+          to: `/${child.slug}`,
+        }),
+      ),
+    })),
   },
   {
     label: "Components",
     to: "/components",
-    active: route.path === "/components"
+    active: route.path === "/components",
   },
 
   {
     label: "Branding",
     to: "/branding",
-    active: route.path === "/branding"
+    active: route.path === "/branding",
   },
   {
     label: "Megamenu 2",
@@ -65,67 +69,67 @@ const items = computed<NavigationMenuItem[]>(() => [
       {
         label: "History",
         icon: "lucide:book",
-        description: "Learn about our beginnings and our mission."
+        description: "Learn about our beginnings and our mission.",
       },
       {
         label: "Jobs",
         icon: "lucide:briefcase",
-        description: "Check out our currently open positions and their requirements.!"
+        description: "Check out our currently open positions and their requirements.!",
       },
       {
         label: "Studios",
         icon: "lucide:building-2",
-        description: "Take a tour of our facilities."
+        description: "Take a tour of our facilities.",
       },
       {
         label: "Benefits",
         icon: "lucide:hand-heart",
-        description: "Discover what benefits and compensations are available to our employees."
-      }
-    ]
-  }
-])
+        description: "Discover what benefits and compensations are available to our employees.",
+      },
+    ],
+  },
+]);
 
 const accountMenuItems = computed<DropdownMenuItem[][]>(() => [
   [
     {
-      slot: "user" as const
+      slot: "user" as const,
     },
     {
       label: "Dashboard",
       icon: "lucide:layout-dashboard",
-      to: "/components"
-    }
+      to: "/components",
+    },
   ],
   [
     {
       label: "Profile",
-      icon: "lucide:user"
+      icon: "lucide:user",
     },
     {
       label: "Billing",
-      icon: "lucide:credit-card"
-    }
+      icon: "lucide:credit-card",
+    },
   ],
   [
     {
       label: "Team",
-      icon: "lucide:users"
+      icon: "lucide:users",
     },
     {
       label: "Settings",
       icon: "lucide:cog",
-      kbds: [","]
+      kbds: [","],
     },
     {
       label: "Logout",
       icon: "lucide:log-out",
-      kbds: ["shift", "meta", "q"]
-    }
-  ]
-])
+      kbds: ["shift", "meta", "q"],
+    },
+  ],
+]);
 
-defineShortcuts(extractShortcuts(accountMenuItems.value))
+defineShortcuts(extractShortcuts(accountMenuItems.value));
 </script>
 
 <template>
@@ -135,7 +139,9 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
         <ClientOnly>
           <RCLogo variant="mark" class="h-6 w-auto" />
         </ClientOnly>
-        <div :style="{ '--header-bottom-boundary': `${(bottomOffsets[headerLayerId] || 0) - 64}px` }">
+        <div
+          :style="{ '--header-bottom-boundary': `${(bottomOffsets[headerLayerId] || 0) - 64}px` }"
+        >
           <UNavigationMenu
             :items="items"
             variant="link"
@@ -144,15 +150,22 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                 'top-[var(--header-bottom-boundary)] flex fixed w-screen mt-[var(--ui-header-height)]',
               viewport: 'rounded-none',
               label: 'text-white',
-              link: 'hover:text-primary-200 active:text-500'
+              link: 'hover:text-primary-200 active:text-500',
             }"
           >
             <template #megamenu-content="{ item }">
               <UContainer>
                 <div class="flex h-full flex-row gap-xl">
                   <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
-                  <ul v-if="(item as NavigationMenuItem).children" class="grid gap-4 flex-1 p-md grid-cols-2">
-                    <li v-for="parent in (item as NavigationMenuItem).children" :key="parent.label" class="space-y-2">
+                  <ul
+                    v-if="(item as NavigationMenuItem).children"
+                    class="grid gap-4 flex-1 p-md grid-cols-2"
+                  >
+                    <li
+                      v-for="parent in (item as NavigationMenuItem).children"
+                      :key="parent.label"
+                      class="space-y-2"
+                    >
                       <ULink
                         :to="parent.to"
                         class="block w-full rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50 bg-muted/30"
@@ -164,7 +177,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                           {{ parent.description }}
                         </p>
                       </ULink>
-                      
+
                       <ul v-if="parent.children" class="pl-4 space-y-1">
                         <li v-for="child in parent.children" :key="child.label">
                           <ULink
@@ -232,7 +245,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                     size="md"
                     :avatar="{
                       src: session.user.image,
-                      alt: session.user.name
+                      alt: session.user.name,
                     }"
                     :name="session.user.name"
                     :description="session.user.status"
@@ -248,7 +261,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                       size="md"
                       :avatar="{
                         src: session.user.image,
-                        alt: session.user.name
+                        alt: session.user.name,
                       }"
                       :description="session.user.status"
                       :ui="{ name: 'text-left', description: 'text-left' }"
@@ -260,7 +273,12 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                         >
                       </template>
                     </UUser>
-                    <UButton variant="ghost" color="neutral" leading-icon="lucide:user" label="Profile" />
+                    <UButton
+                      variant="ghost"
+                      color="neutral"
+                      leading-icon="lucide:user"
+                      label="Profile"
+                    />
                   </div>
                   <div class="flex flex-col gap-xs bg-muted p-sm">
                     <UButton
@@ -299,7 +317,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
             :handle="false"
             :ui="{
               header: 'flex items-center justify-between',
-              content: 'w-full max-w-4/5 rounded-none'
+              content: 'w-full max-w-4/5 rounded-none',
             }"
           >
             <UButton
@@ -336,61 +354,66 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
     <template #collapsed-right>
       <div class="flex flex-row justify-end gap-sm">
         <ClientOnly>
-        <div class="flex flex-row gap-sm items-center">
-          <UTooltip text="Notifications">
-            <UButton color="neutral" variant="ghost" square @click="slideoverState.notifications = true">
-              <UChip color="error" inset>
-                <UIcon name="lucide:bell" class="size-5 shrink-0" />
-              </UChip>
-            </UButton>
-          </UTooltip>
-          <USlideover
-            v-model:open="slideoverState.right"
-            side="right"
-            :handle="false"
-            :ui="{
-              header: 'flex items-center justify-between',
-              content: 'w-full max-w-4/5 rounded-none'
-            }"
-          >
-            <UButton
-              color="neutral"
-              variant="ghost"
-              icon="lucide:user"
-              @click="slideoverState.right = true"
-            />
-            <template #header>
-              <UUser
-                size="md"
-                :avatar="{
-                  src: session.user.image,
-                  alt: session.user.name
-                }"
-                :description="session.user.status"
-                :ui="{ description: 'text-left' }"
-              >
-                <template #name>
-                  <span
-                    >{{ session.user.name }}
-                    <span class="text-dimmed">#{{ session.user.tag }}</span></span
-                  >
-                </template>
-              </UUser>
+          <div class="flex flex-row gap-sm items-center">
+            <UTooltip text="Notifications">
               <UButton
                 color="neutral"
                 variant="ghost"
-                icon="lucide:x"
-                @click="slideoverState.right = false"
+                square
+                @click="slideoverState.notifications = true"
+              >
+                <UChip color="error" inset>
+                  <UIcon name="lucide:bell" class="size-5 shrink-0" />
+                </UChip>
+              </UButton>
+            </UTooltip>
+            <USlideover
+              v-model:open="slideoverState.right"
+              side="right"
+              :handle="false"
+              :ui="{
+                header: 'flex items-center justify-between',
+                content: 'w-full max-w-4/5 rounded-none',
+              }"
+            >
+              <UButton
+                color="neutral"
+                variant="ghost"
+                icon="lucide:user"
+                @click="slideoverState.right = true"
               />
-            </template>
-            <template #body>
-              <div class="flex flex-col gap-md">
-                <UNavigationMenu orientation="vertical" :items="accountMenuItems" />
-              </div>
-            </template>
-          </USlideover>
-        </div>
-      </ClientOnly>
+              <template #header>
+                <UUser
+                  size="md"
+                  :avatar="{
+                    src: session.user.image,
+                    alt: session.user.name,
+                  }"
+                  :description="session.user.status"
+                  :ui="{ description: 'text-left' }"
+                >
+                  <template #name>
+                    <span
+                      >{{ session.user.name }}
+                      <span class="text-dimmed">#{{ session.user.tag }}</span></span
+                    >
+                  </template>
+                </UUser>
+                <UButton
+                  color="neutral"
+                  variant="ghost"
+                  icon="lucide:x"
+                  @click="slideoverState.right = false"
+                />
+              </template>
+              <template #body>
+                <div class="flex flex-col gap-md">
+                  <UNavigationMenu orientation="vertical" :items="accountMenuItems" />
+                </div>
+              </template>
+            </USlideover>
+          </div>
+        </ClientOnly>
       </div>
     </template>
   </RCHeader>

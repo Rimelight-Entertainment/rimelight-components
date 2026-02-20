@@ -2,18 +2,18 @@
 const mainCss = import.meta.glob("../assets/css/main.css", {
   query: "?raw",
   import: "default",
-  eager: true
-})["../assets/css/main.css"] as string
+  eager: true,
+})["../assets/css/main.css"] as string;
 
 useHead({
-  title: "Branding"
-})
+  title: "Branding",
+});
 
 useSeoMeta({
   title: "Branding",
   ogTitle: "Branding",
-  description: "Branding guidelines and assets for Rimelight Components."
-})
+  description: "Branding guidelines and assets for Rimelight Components.",
+});
 </script>
 
 <template>

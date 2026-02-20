@@ -3,7 +3,9 @@
 > Guidelines for creating robust, maintainable, and testable Vue composables in Rimelight projects.
 
 ## 1. Argument Passing
+
 ### Rule: Use Object Arguments for Four or More Parameters
+
 To improve readability and maintainability, use an object for configuration when a composable (or its methods) requires four or more parameters.
 
 ```typescript
@@ -18,14 +20,16 @@ useUserData(1, true, "abc", "en");
 ```
 
 ## 2. Error Handling
+
 ### Rule: Expose Error State
+
 Composables should manage their own error state and expose it to the caller. Avoid silent failures or just logging to the console.
 
 ```typescript
 // Good
 export function useFeature() {
   const error = ref<Error | null>(null);
-  
+
   const execute = async () => {
     try {
       // ... logic
@@ -33,13 +37,15 @@ export function useFeature() {
       error.value = err instanceof Error ? err : new Error(String(err));
     }
   };
-  
+
   return { error, execute };
 }
 ```
 
 ## 3. UI Decoupling
+
 ### Rule: Decouple UI from Business Logic
+
 Composables should focus on state and logic. Avoid UI-specific side effects like toasts, alerts, or direct window manipulations (unless that's the sole purpose of the composable).
 
 ```typescript
@@ -54,7 +60,9 @@ watch(error, (err) => {
 // Composable is coupled to a specific UI framework/component
 export function useUserData(userId) {
   const fetchUser = async () => {
-    try { /*...*/ } catch (e) {
+    try {
+      /*...*/
+    } catch (e) {
       showToast("An error occurred."); // couples logic to UI
     }
   };
@@ -62,7 +70,9 @@ export function useUserData(userId) {
 ```
 
 ## 4. Anatomy of a Composable
+
 ### Rule: Consistent Internal Structure
+
 Structure your composables for predictability:
 
 1.  **Primary State**: The main reactive data.
@@ -79,14 +89,18 @@ export function useFeature() {
   const error = ref(null);
 
   // Methods
-  const fetch = async () => { /*...*/ };
+  const fetch = async () => {
+    /*...*/
+  };
 
   return { data, status, error, fetch };
 }
 ```
 
 ## 5. Functional Core, Imperative Shell (Optional)
+
 ### Rule: Separate Pure Logic from Vue Reactivity
+
 Keep complex logic in pure functions (Functional Core) and use the composable as the reactive wrapper (Imperative Shell).
 
 ```typescript
@@ -102,7 +116,9 @@ export function useCart() {
 ```
 
 ## 6. Single Responsibility Principle (SRP)
+
 ### Rule: One Composable, One Responsibility
+
 Each composable should handle one specific task or domain. If a composable is doing too much, split it.
 
 ```typescript
@@ -115,7 +131,9 @@ export function useCounter() { ... }
 ```
 
 ## 7. Consistent Feature Ordering
+
 ### Rule: Standardize the Order of Composition API Features
+
 Maintain a consistent order within the `setup` or composable function:
 
 1.  **Initializing**: External dependencies (inject, useRoute, etc.)
@@ -140,10 +158,10 @@ export function useFeature() {
   const increment = () => count.value++;
 
   // 5. Lifecycle
-  onMounted(() => console.log('Mounted'));
+  onMounted(() => console.log("Mounted"));
 
   // 6. Watch
-  watch(count, () => console.log('Changed'));
+  watch(count, () => console.log("Changed"));
 
   return { count, double, increment };
 }

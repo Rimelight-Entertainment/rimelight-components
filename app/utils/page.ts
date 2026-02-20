@@ -1,130 +1,145 @@
-import { type MaybeRefOrGetter, toValue } from "vue"
-import { type Localized, type Page, type PageDefinition, type PageVersion, type Property, type BasePageProperties } from "#rimelight-components/types"
+import { type MaybeRefOrGetter, toValue } from "vue";
+import {
+  type Localized,
+  type Page,
+  type PageDefinition,
+  type PageVersion,
+  type Property,
+  type BasePageProperties,
+} from "#rimelight-components/types";
 
 export const getLocalizedContent = <T = string>(
   field: Localized<T> | T | any | undefined,
-  currentLocale: MaybeRefOrGetter<string>
+  currentLocale: MaybeRefOrGetter<string>,
 ): T | string => {
-  if (field === undefined || field === null) return ""
+  if (field === undefined || field === null) return "";
 
   // If it's already a string or not an object, return it as is
-  if (typeof field !== "object") return String(field)
+  if (typeof field !== "object") return String(field);
 
-  const locale = toValue(currentLocale)
+  const locale = toValue(currentLocale);
 
   if (typeof field === "object" && field !== null) {
-    if (Object.keys(field).length === 0) return ""
-    
+    if (Object.keys(field).length === 0) return "";
+
     // 1. Try standard localization lookup
-    const val = (field as any)[locale] ?? (field as any)["en"]
+    const val = (field as any)[locale] ?? (field as any)["en"];
     if (val !== undefined && val !== null) {
       // If we found a string, return it
-      if (typeof val === 'string') return val
-      
+      if (typeof val === "string") return val;
+
       // If we found another object (nested localization or specialized object)
       // try to resolve it recursively or return its first string property
-      if (typeof val === 'object') {
-        const innerVal = (val as any)[locale] ?? (val as any)["en"]
-        if (typeof innerVal === 'string') return innerVal
-        
-        const firstString = Object.values(val as object).find(v => typeof v === 'string')
-        if (firstString !== undefined) return String(firstString)
+      if (typeof val === "object") {
+        const innerVal = (val as any)[locale] ?? (val as any)["en"];
+        if (typeof innerVal === "string") return innerVal;
+
+        const firstString = Object.values(val as object).find((v) => typeof v === "string");
+        if (firstString !== undefined) return String(firstString);
       }
     }
-    
-    // 2. Fallback: use first available value that is a string from the top-level object
-    const firstVal = Object.values(field as object).find(v => typeof v === 'string' && v.trim() !== '')
-    if (firstVal !== undefined) return String(firstVal)
 
-    return ""
+    // 2. Fallback: use first available value that is a string from the top-level object
+    const firstVal = Object.values(field as object).find(
+      (v) => typeof v === "string" && v.trim() !== "",
+    );
+    if (firstVal !== undefined) return String(firstVal);
+
+    return "";
   }
 
-  const strVal = String(field)
-  return strVal === '[object Object]' ? "" : strVal
-}
+  const strVal = String(field);
+  return strVal === "[object Object]" ? "" : strVal;
+};
 
 /**
  * Ensures a page strictly adheres to its PageDefinition.
  */
 export function syncPageWithDefinition(page: Page, definition?: PageDefinition): Page {
-  if (!definition) return page
+  if (!definition) return page;
 
   // 1. Sync Properties
-  const updatedProperties: BasePageProperties = {}
-  const definitionGroups = definition.properties
+  const updatedProperties: BasePageProperties = {};
+  const definitionGroups = definition.properties;
 
-  const existingProperties = (page.properties || {}) as any
+  const existingProperties = (page.properties || {}) as any;
 
   for (const [groupId, definitionGroup] of Object.entries(definitionGroups)) {
-    let existingGroup = existingProperties[groupId]
+    let existingGroup = existingProperties[groupId];
 
     // Case-insensitive group lookup fallback
     if (!existingGroup) {
-      const lowerGroupId = groupId.toLowerCase()
-      const foundGroupKey = Object.keys(existingProperties).find(k => k.toLowerCase() === lowerGroupId)
+      const lowerGroupId = groupId.toLowerCase();
+      const foundGroupKey = Object.keys(existingProperties).find(
+        (k) => k.toLowerCase() === lowerGroupId,
+      );
       if (foundGroupKey) {
-        existingGroup = existingProperties[foundGroupKey]
+        existingGroup = existingProperties[foundGroupKey];
       }
     }
 
-    const updatedGroupFields: Record<string, Property> = {}
+    const updatedGroupFields: Record<string, Property> = {};
 
-    const definitionFields = definitionGroup.fields || {}
+    const definitionFields = definitionGroup.fields || {};
 
     for (const [fieldId, definitionField] of Object.entries(definitionFields)) {
-      let value = definitionField.defaultValue
+      let value = definitionField.defaultValue;
 
       if (existingGroup) {
         // 1. Check if it's already hydrated: group.fields[fieldId].defaultValue
-        if (existingGroup.fields && existingGroup.fields[fieldId] && existingGroup.fields[fieldId].defaultValue !== undefined) {
-          value = existingGroup.fields[fieldId].defaultValue
+        if (
+          existingGroup.fields &&
+          existingGroup.fields[fieldId] &&
+          existingGroup.fields[fieldId].defaultValue !== undefined
+        ) {
+          value = existingGroup.fields[fieldId].defaultValue;
         }
         // 2. Check if it's flat in a group: group[fieldId]
         else if (existingGroup[fieldId] !== undefined) {
-          value = existingGroup[fieldId]
+          value = existingGroup[fieldId];
         }
         // 2.5 Case-insensitive fallback for flat props
         else {
-          const lowerFieldId = fieldId.toLowerCase()
-          const foundKey = Object.keys(existingGroup).find(k => k.toLowerCase() === lowerFieldId)
+          const lowerFieldId = fieldId.toLowerCase();
+          const foundKey = Object.keys(existingGroup).find((k) => k.toLowerCase() === lowerFieldId);
           if (foundKey && existingGroup[foundKey] !== undefined) {
-            value = existingGroup[foundKey]
+            value = existingGroup[foundKey];
           }
         }
       }
 
       updatedGroupFields[fieldId] = {
         ...JSON.parse(JSON.stringify(definitionField)),
-        defaultValue: value
-      }
+        defaultValue: value,
+      };
     }
 
     updatedProperties[groupId] = {
       ...definitionGroup,
-      fields: updatedGroupFields
-    }
+      fields: updatedGroupFields,
+    };
   }
 
-  page.properties = updatedProperties as any
+  page.properties = updatedProperties as any;
 
-  return page
+  return page;
 }
 
 export function dehydratePageProperties(properties: BasePageProperties): any {
-  const dehydrated: any = {}
+  const dehydrated: any = {};
   for (const [groupKey, group] of Object.entries(properties)) {
-    if (!group?.fields) continue
-    dehydrated[groupKey] = {}
+    if (!group?.fields) continue;
+    dehydrated[groupKey] = {};
     for (const [fieldKey, field] of Object.entries(group.fields)) {
-      dehydrated[groupKey][fieldKey] = field.defaultValue
+      dehydrated[groupKey][fieldKey] = field.defaultValue;
     }
   }
-  return dehydrated
+  return dehydrated;
 }
 
 export function convertVersionToPage(version: PageVersion): Page {
-  const blocks = version.content?.blocks || version.blocks || []
-  const properties = version.content?.properties || (version as any).properties
+  const blocks = version.content?.blocks || version.blocks || [];
+  const properties = version.content?.properties || (version as any).properties;
 
   return {
     ...version,
@@ -143,8 +158,8 @@ export function convertVersionToPage(version: PageVersion): Page {
     slug: version.slug || "",
     description: version.description || { en: "" },
     tags: version.tags || [],
-    links: version.links || []
-  } as Page
+    links: version.links || [],
+  } as Page;
 }
 
 /**
@@ -152,12 +167,18 @@ export function convertVersionToPage(version: PageVersion): Page {
  * Handles cases where the input might be a full URL or already contain the API prefix.
  */
 export function getPageResolutionPath(idOrSlug: string): string {
-  if (!idOrSlug || idOrSlug === 'undefined' || idOrSlug === 'null' || idOrSlug === '[object Object]') return ""
-  
+  if (
+    !idOrSlug ||
+    idOrSlug === "undefined" ||
+    idOrSlug === "null" ||
+    idOrSlug === "[object Object]"
+  )
+    return "";
+
   // Remove possible API prefix or full URL prefix if already present
   // Matches: /api/pages/id/, /api/pages/find/, http://.../api/pages/id/, etc.
-  const clean = String(idOrSlug).replace(/^(?:.*\/)?api\/pages\/(?:id|find)\//, '')
-  
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean)
-  return isUuid ? `/api/pages/id/${clean}` : `/api/pages/find/${clean}`
+  const clean = String(idOrSlug).replace(/^(?:.*\/)?api\/pages\/(?:id|find)\//, "");
+
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean);
+  return isUuid ? `/api/pages/id/${clean}` : `/api/pages/find/${clean}`;
 }

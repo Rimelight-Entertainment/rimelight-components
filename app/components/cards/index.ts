@@ -1,1 +1,1 @@
-export { default as TeamCard } from './TeamCard.vue'
+export { default as TeamCard } from "./TeamCard.vue";

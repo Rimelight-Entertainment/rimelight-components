@@ -1,53 +1,53 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { getLocalizedContent } from "../../utils"
-import { usePageRegistry, useInfobox, useRC } from "../../composables"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import type { TabsItem } from "@nuxt/ui"
-import { useI18n } from "vue-i18n"
-import { useShare, useClipboard } from "@vueuse/core"
-import { type Page } from '../../types'
-import { tv } from '../../internal/tv'
+import { computed } from "vue";
+import { getLocalizedContent } from "../../utils";
+import { usePageRegistry, useInfobox, useRC } from "../../composables";
+import { useToast } from "@nuxt/ui/composables/useToast";
+import type { TabsItem } from "@nuxt/ui";
+import { useI18n } from "vue-i18n";
+import { useShare, useClipboard } from "@vueuse/core";
+import { type Page } from "../../types";
+import { tv } from "../../internal/tv";
 
 export interface PagePropertiesRendererProps {
-  canEdit?: boolean
-  editUrl?: string
+  canEdit?: boolean;
+  editUrl?: string;
   rc?: {
-    aside?: string
-    actions?: string
-    icon?: string
-    title?: string
-    type?: string
-    tags?: string
-    tabs?: string
-    image?: string
-    groupButton?: string
-    details?: string
-    field?: string
-    fieldLabel?: string
-    fieldValue?: string
-    list?: string
-    listItem?: string
-    pageArrayList?: string
-    pageArrayItem?: string
-    pageArrayBullet?: string
-    links?: string
-  }
+    aside?: string;
+    actions?: string;
+    icon?: string;
+    title?: string;
+    type?: string;
+    tags?: string;
+    tabs?: string;
+    image?: string;
+    groupButton?: string;
+    details?: string;
+    field?: string;
+    fieldLabel?: string;
+    fieldValue?: string;
+    list?: string;
+    listItem?: string;
+    pageArrayList?: string;
+    pageArrayItem?: string;
+    pageArrayBullet?: string;
+    links?: string;
+  };
 }
 
-const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>()
+const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>();
 
-const page = defineModel<Page>({ required: true })
+const page = defineModel<Page>({ required: true });
 
 export interface PagePropertiesRendererEmits {}
 
-const emit = defineEmits<PagePropertiesRendererEmits>()
+const emit = defineEmits<PagePropertiesRendererEmits>();
 
 export interface PagePropertiesRendererSlots {}
 
-const slots = defineSlots<PagePropertiesRendererSlots>()
+const slots = defineSlots<PagePropertiesRendererSlots>();
 
-const { rc } = useRC('PagePropertiesRenderer', rcProp)
+const { rc } = useRC("PagePropertiesRenderer", rcProp);
 
 const pagePropertiesRendererStyles = tv({
   slots: {
@@ -69,9 +69,9 @@ const pagePropertiesRendererStyles = tv({
     pageArrayList: "flex flex-col gap-y-1",
     pageArrayItem: "flex items-center gap-x-2",
     pageArrayBullet: "w-1 h-1 rounded-full bg-inverted shrink-0",
-    links: "flex flex-col gap-xs"
-  }
-})
+    links: "flex flex-col gap-xs",
+  },
+});
 
 const {
   aside,
@@ -92,73 +92,81 @@ const {
   pageArrayList,
   pageArrayItem,
   pageArrayBullet,
-  links
-} = pagePropertiesRendererStyles()
+  links,
+} = pagePropertiesRendererStyles();
 
 const { getTypeLabelKey } = usePageRegistry();
-const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(() => page.value.properties)
+const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(
+  () => page.value.properties,
+);
 
-const { t, locale } = useI18n()
-const { share } = useShare()
-const { copy } = useClipboard()
-const toast = useToast()
+const { t, locale } = useI18n();
+const { share } = useShare();
+const { copy } = useClipboard();
+const toast = useToast();
 
 const sharePage = async () => {
   if (!page.value) {
-    return
+    return;
   }
 
   try {
     await share({
       title: getLocalizedContent(page.value.title, locale),
       text: getLocalizedContent(page.value.description, locale),
-      url: typeof location !== "undefined" ? location.href : ""
-    })
+      url: typeof location !== "undefined" ? location.href : "",
+    });
   } catch {
     toast.add({
       color: "error",
       title: "toast_share-page_error_title",
-      description: "toast_share-page_error_description"
-    })
+      description: "toast_share-page_error_description",
+    });
   }
-}
+};
 
 const copyLink = async () => {
   try {
-    await copy(typeof location !== "undefined" ? location.href : "")
+    await copy(typeof location !== "undefined" ? location.href : "");
     toast.add({
       color: "success",
       title: "toast_copy-page-link_success_title",
-      description: typeof location !== "undefined" ? location.href : ""
-    })
+      description: typeof location !== "undefined" ? location.href : "",
+    });
   } catch {
     toast.add({
       color: "error",
       title: "toast_copy-page-link_error_title",
-      description: "toast_copy-page-link_error_description"
-    })
+      description: "toast_copy-page-link_error_description",
+    });
   }
-}
+};
 
 const imageTabs = computed<TabsItem[]>(() => {
-  if (!page.value.images?.length) return []
+  if (!page.value.images?.length) return [];
 
   return page.value.images.map((img, index) => {
-    const localizedName = getLocalizedContent(img.name, locale.value)
+    const localizedName = getLocalizedContent(img.name, locale.value);
 
     return {
-      label: localizedName || `${t('label_image')} ${index + 1}`,
+      label: localizedName || `${t("label_image")} ${index + 1}`,
       value: `image-${index}`,
-      img
-    }
-  })
-})
+      img,
+    };
+  });
+});
 </script>
 <template>
   <aside :class="aside({ class: rc.aside })">
     <div :class="actions({ class: rc.actions })">
       <div class="flex flex-row gap-sm">
-        <UButton variant="soft" color="neutral" icon="lucide:share" size="sm" @click="sharePage()" />
+        <UButton
+          variant="soft"
+          color="neutral"
+          icon="lucide:share"
+          size="sm"
+          @click="sharePage()"
+        />
         <UButton variant="soft" color="neutral" icon="lucide:link" size="sm" @click="copyLink()" />
       </div>
       <div v-if="canEdit && editUrl" class="flex flex-row gap-sm">
@@ -235,8 +243,9 @@ const imageTabs = computed<TabsItem[]>(() => {
                 variant="soft"
                 trailing-icon="lucide:chevron-down"
                 :ui="{
-            trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
-          }"
+                  trailingIcon:
+                    'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                }"
                 block
                 :class="groupButton({ class: rc.groupButton })"
               />
@@ -258,7 +267,9 @@ const imageTabs = computed<TabsItem[]>(() => {
                         {{ getLocalizedContent(schema.defaultValue, locale) }}
                       </span>
                       <ul
-                        v-else-if="schema.type === 'text-array' && Array.isArray(schema.defaultValue)"
+                        v-else-if="
+                          schema.type === 'text-array' && Array.isArray(schema.defaultValue)
+                        "
                         :class="list({ class: rc.list })"
                       >
                         <li v-for="(item, index) in schema.defaultValue" :key="index">
@@ -269,13 +280,27 @@ const imageTabs = computed<TabsItem[]>(() => {
                       </ul>
                       <template v-if="schema.type === 'page' && schema.defaultValue">
                         <RCPageMention
-                          v-if="typeof schema.defaultValue === 'string' ? !!schema.defaultValue : !!getLocalizedContent(schema.defaultValue, locale)"
-                          :page-id="String(typeof schema.defaultValue === 'object' ? (schema.defaultValue.id || schema.defaultValue.value || getLocalizedContent(schema.defaultValue, locale)) : schema.defaultValue)"
+                          v-if="
+                            typeof schema.defaultValue === 'string'
+                              ? !!schema.defaultValue
+                              : !!getLocalizedContent(schema.defaultValue, locale)
+                          "
+                          :page-id="
+                            String(
+                              typeof schema.defaultValue === 'object'
+                                ? schema.defaultValue.id ||
+                                    schema.defaultValue.value ||
+                                    getLocalizedContent(schema.defaultValue, locale)
+                                : schema.defaultValue,
+                            )
+                          "
                         />
                       </template>
 
                       <ul
-                        v-else-if="schema.type === 'page-array' && Array.isArray(schema.defaultValue)"
+                        v-else-if="
+                          schema.type === 'page-array' && Array.isArray(schema.defaultValue)
+                        "
                         :class="pageArrayList({ class: rc.pageArrayList })"
                       >
                         <template v-for="(id, idx) in schema.defaultValue" :key="idx">
@@ -283,7 +308,15 @@ const imageTabs = computed<TabsItem[]>(() => {
                             v-if="typeof id === 'string' ? !!id : !!getLocalizedContent(id, locale)"
                             :class="pageArrayItem({ class: rc.pageArrayItem })"
                           >
-                            <RCPageMention :page-id="String(typeof id === 'object' ? (id.id || id.value || getLocalizedContent(id, locale)) : id)" />
+                            <RCPageMention
+                              :page-id="
+                                String(
+                                  typeof id === 'object'
+                                    ? id.id || id.value || getLocalizedContent(id, locale)
+                                    : id,
+                                )
+                              "
+                            />
                           </li>
                         </template>
                       </ul>

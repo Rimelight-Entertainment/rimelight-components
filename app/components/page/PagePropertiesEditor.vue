@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import { computed, ref, reactive } from "vue"
-import { useI18n } from "vue-i18n"
-import { usePageRegistry, useInfobox, useRC } from "../../composables"
-import { getLocalizedContent } from "../../utils"
-import type { TabsItem } from "@nuxt/ui"
-import { type Page, type Link, type Localized } from "../../types"
-import { tv } from "../../internal/tv"
+import { computed, ref, reactive } from "vue";
+import { useI18n } from "vue-i18n";
+import { usePageRegistry, useInfobox, useRC } from "../../composables";
+import { getLocalizedContent } from "../../utils";
+import type { TabsItem } from "@nuxt/ui";
+import { type Page, type Link, type Localized } from "../../types";
+import { tv } from "../../internal/tv";
 
 export interface PagePropertiesEditorProps {
   rc?: {
-    aside?: string
-    icon?: string
-    titleInput?: string
-    type?: string
-    tags?: string
-    tabs?: string
-    image?: string
-    groupButton?: string
-    details?: string
-    field?: string
-    links?: string
-  }
-  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug' | 'type' | 'id'>[]>
+    aside?: string;
+    icon?: string;
+    titleInput?: string;
+    type?: string;
+    tags?: string;
+    tabs?: string;
+    image?: string;
+    groupButton?: string;
+    details?: string;
+    field?: string;
+    links?: string;
+  };
+  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>;
 }
 
-const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>()
+const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>();
 
-const page = defineModel<Page>({ required: true })
+const page = defineModel<Page>({ required: true });
 
 export interface PagePropertiesEditorEmits {}
 
-const emit = defineEmits<PagePropertiesEditorEmits>()
+const emit = defineEmits<PagePropertiesEditorEmits>();
 
 export interface PagePropertiesEditorSlots {}
 
-const slots = defineSlots<PagePropertiesEditorSlots>()
+const slots = defineSlots<PagePropertiesEditorSlots>();
 
-const { rc } = useRC('PagePropertiesEditor', rcProp)
+const { rc } = useRC("PagePropertiesEditor", rcProp);
 
 const pagePropertiesEditorStyles = tv({
   slots: {
@@ -50,165 +50,159 @@ const pagePropertiesEditorStyles = tv({
     groupButton: "group rounded-none bg-elevated text-default",
     details: "p-sm flex flex-col gap-xs",
     field: "w-full",
-    links: "flex flex-col gap-xs"
-  }
-})
+    links: "flex flex-col gap-xs",
+  },
+});
 
-const {
-  aside,
-  icon,
-  titleInput,
-  type,
-  tags,
-  tabs,
-  image,
-  groupButton,
-  details,
-  field,
-  links
-} = pagePropertiesEditorStyles()
+const { aside, icon, titleInput, type, tags, tabs, image, groupButton, details, field, links } =
+  pagePropertiesEditorStyles();
 
-const { getTypeLabelKey } = usePageRegistry()
-const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(() => page.value.properties)
+const { getTypeLabelKey } = usePageRegistry();
+const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(
+  () => page.value.properties,
+);
 
-const { locale, t } = useI18n()
+const { locale, t } = useI18n();
 
-const { data: allPages } = useAsyncData('page-registry-editor', async () => {
-  if (!onFetchPages) return []
-  return await onFetchPages()
-}, {
-  server: false,
-  lazy: true
-})
+const { data: allPages } = useAsyncData(
+  "page-registry-editor",
+  async () => {
+    if (!onFetchPages) return [];
+    return await onFetchPages();
+  },
+  {
+    server: false,
+    lazy: true,
+  },
+);
 
 const pageItems = computed(() => {
-  if (!allPages.value) return []
-  return (allPages.value as any[]).map(p => ({
+  if (!allPages.value) return [];
+  return (allPages.value as any[]).map((p) => ({
     label: getLocalizedContent(p.title as any, locale.value),
     value: p.id,
     type: p.type,
-    slug: p.slug
-  }))
-})
+    slug: p.slug,
+  }));
+});
 
 /**
  * Returns a subset of pageItems filtered by the provided allowed types.
  */
 const getFilteredPageItems = (allowedTypes?: string[]) => {
-  if (!allowedTypes || !allowedTypes.length) return pageItems.value
-  return pageItems.value.filter(item => allowedTypes.includes(item.type))
-}
+  if (!allowedTypes || !allowedTypes.length) return pageItems.value;
+  return pageItems.value.filter((item) => allowedTypes.includes(item.type));
+};
 
 const imageTabs = computed<TabsItem[]>(() => {
-  if (!page.value.images?.length) return []
+  if (!page.value.images?.length) return [];
 
   return page.value.images.map((img, index) => {
-    const localizedName = getLocalizedContent(img.name, locale.value)
+    const localizedName = getLocalizedContent(img.name, locale.value);
 
     return {
-      label: localizedName || `${t('label_image')} ${index + 1}`,
+      label: localizedName || `${t("label_image")} ${index + 1}`,
       value: `image-${index}`,
-      img
-    }
-  })
-})
+      img,
+    };
+  });
+});
 
 /**
  * Handles text-array updates specifically for the 'en' locale.
  */
 const updateTextArray = (schema: any, vals: (string | Localized)[]) => {
-  const currentDefault = (schema.defaultValue as Localized[]) || []
-  schema.defaultValue = vals.map(val => {
-    if (typeof val === 'object' && val !== null) {
-      return val
+  const currentDefault = (schema.defaultValue as Localized[]) || [];
+  schema.defaultValue = vals.map((val) => {
+    if (typeof val === "object" && val !== null) {
+      return val;
     }
 
-    const str = val as string
+    const str = val as string;
     // Preserve other locales if they exist
-    const existing = currentDefault.find((i: any) => i && typeof i === 'object' && i.en === str)
+    const existing = currentDefault.find((i: any) => i && typeof i === "object" && i.en === str);
     if (existing) {
-      return { ...existing, en: str }
+      return { ...existing, en: str };
     }
 
-    return { en: str }
-  })
-}
+    return { en: str };
+  });
+};
 
 // Link editing state
-const isLinkModalOpen = ref(false)
-const editingLinkIndex = ref<number | null>(null)
+const isLinkModalOpen = ref(false);
+const editingLinkIndex = ref<number | null>(null);
 const linkDraft = reactive<Partial<Link>>({
-  label: '',
-  to: '',
-  icon: '',
-  color: 'neutral',
-  variant: 'link'
-})
+  label: "",
+  to: "",
+  icon: "",
+  color: "neutral",
+  variant: "link",
+});
 
 const openLinkModal = (index: number | null = null) => {
-  editingLinkIndex.value = index
+  editingLinkIndex.value = index;
   if (index !== null && page.value.links?.[index]) {
-    const link = page.value.links[index]
-    linkDraft.label = link.label
-    linkDraft.to = link.to
-    linkDraft.icon = link.icon
-    linkDraft.color = link.color || 'neutral'
-    linkDraft.variant = link.variant || 'link'
+    const link = page.value.links[index];
+    linkDraft.label = link.label;
+    linkDraft.to = link.to;
+    linkDraft.icon = link.icon;
+    linkDraft.color = link.color || "neutral";
+    linkDraft.variant = link.variant || "link";
   } else {
-    linkDraft.label = ''
-    linkDraft.to = ''
-    linkDraft.icon = ''
-    linkDraft.color = 'neutral'
-    linkDraft.variant = 'link'
+    linkDraft.label = "";
+    linkDraft.to = "";
+    linkDraft.icon = "";
+    linkDraft.color = "neutral";
+    linkDraft.variant = "link";
   }
-  isLinkModalOpen.value = true
-}
+  isLinkModalOpen.value = true;
+};
 
 const saveLink = () => {
-  if (!linkDraft.label || !linkDraft.to) return
+  if (!linkDraft.label || !linkDraft.to) return;
 
-  if (!page.value.links) page.value.links = []
+  if (!page.value.links) page.value.links = [];
 
   const newLink: Link = {
     label: linkDraft.label,
     to: linkDraft.to,
     icon: linkDraft.icon,
     color: linkDraft.color as any,
-    variant: linkDraft.variant as any
-  }
+    variant: linkDraft.variant as any,
+  };
 
   if (editingLinkIndex.value !== null) {
-    page.value.links[editingLinkIndex.value] = newLink
+    page.value.links[editingLinkIndex.value] = newLink;
   } else {
-    page.value.links.push(newLink)
+    page.value.links.push(newLink);
   }
 
-  isLinkModalOpen.value = false
-}
+  isLinkModalOpen.value = false;
+};
 
 const removeLink = (index: number) => {
   if (page.value.links) {
-    page.value.links.splice(index, 1)
+    page.value.links.splice(index, 1);
   }
-}
+};
 
 // Robust object comparison for USelectMenu
 const compareValues = (a: any, b: any) => {
-  if (a === b) return true
-  if (a == null || b == null) return false
+  if (a === b) return true;
+  if (a == null || b == null) return false;
 
   // If both are objects, try stringified comparison first
-  if (typeof a === 'object' && typeof b === 'object') {
-    if (JSON.stringify(a) === JSON.stringify(b)) return true
+  if (typeof a === "object" && typeof b === "object") {
+    if (JSON.stringify(a) === JSON.stringify(b)) return true;
   }
 
   // Fallback to localized string comparison for mixed or complex types
-  const valA = typeof a === 'object' ? getLocalizedContent(a, locale.value) : String(a)
-  const valB = typeof b === 'object' ? getLocalizedContent(b, locale.value) : String(b)
+  const valA = typeof a === "object" ? getLocalizedContent(a, locale.value) : String(a);
+  const valB = typeof b === "object" ? getLocalizedContent(b, locale.value) : String(b);
 
-  return valA === valB && valA !== ""
-}
-
+  return valA === valB && valA !== "";
+};
 </script>
 
 <template>
@@ -301,8 +295,9 @@ const compareValues = (a: any, b: any) => {
                 variant="soft"
                 trailing-icon="lucide:chevron-down"
                 :ui="{
-            trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
-          }"
+                  trailingIcon:
+                    'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                }"
                 block
                 :class="groupButton({ class: rc.groupButton })"
               />
@@ -339,7 +334,13 @@ const compareValues = (a: any, b: any) => {
                       <USelectMenu
                         v-else-if="schema.type === 'enum' && schema.options"
                         v-model="schema.defaultValue"
-                        :items="schema.options.map((opt: any) => typeof opt === 'string' ? { label: opt, value: opt } : { label: getLocalizedContent(opt, locale), value: opt })"
+                        :items="
+                          schema.options.map((opt: any) =>
+                            typeof opt === 'string'
+                              ? { label: opt, value: opt }
+                              : { label: getLocalizedContent(opt, locale), value: opt },
+                          )
+                        "
                         value-attribute="value"
                         :by="compareValues"
                         variant="subtle"
@@ -347,7 +348,11 @@ const compareValues = (a: any, b: any) => {
                       >
                         <template #default>
                           <span v-if="schema.defaultValue">
-                            {{ typeof schema.defaultValue === 'string' ? schema.defaultValue : (getLocalizedContent(schema.defaultValue, locale) || 'Selected') }}
+                            {{
+                              typeof schema.defaultValue === "string"
+                                ? schema.defaultValue
+                                : getLocalizedContent(schema.defaultValue, locale) || "Selected"
+                            }}
                           </span>
                           <span v-else class="text-dimmed">Select...</span>
                         </template>
@@ -355,7 +360,9 @@ const compareValues = (a: any, b: any) => {
 
                       <UInputMenu
                         v-else-if="schema.type === 'text-array'"
-                        :model-value="(schema.defaultValue as any[])?.map((v: any) => v?.en ?? v) || []"
+                        :model-value="
+                          (schema.defaultValue as any[])?.map((v: any) => v?.en ?? v) || []
+                        "
                         :items="schema.options || []"
                         @update:model-value="(vals: any) => updateTextArray(schema, vals)"
                         multiple
@@ -378,7 +385,12 @@ const compareValues = (a: any, b: any) => {
                       >
                         <template #default>
                           <span v-if="schema.defaultValue">
-                            {{ pageItems.find(p => p.value === schema.defaultValue || p.slug === schema.defaultValue)?.label || schema.defaultValue }}
+                            {{
+                              pageItems.find(
+                                (p) =>
+                                  p.value === schema.defaultValue || p.slug === schema.defaultValue,
+                              )?.label || schema.defaultValue
+                            }}
                           </span>
                           <span v-else class="text-dimmed">None</span>
                         </template>
@@ -397,7 +409,9 @@ const compareValues = (a: any, b: any) => {
                         :class="field({ class: rc.field })"
                       >
                         <template #default>
-                          <span v-if="Array.isArray(schema.defaultValue) && schema.defaultValue.length">
+                          <span
+                            v-if="Array.isArray(schema.defaultValue) && schema.defaultValue.length"
+                          >
                             {{ schema.defaultValue.length }} selected
                           </span>
                           <span v-else class="text-dimmed">None</span>
@@ -414,7 +428,9 @@ const compareValues = (a: any, b: any) => {
     </UCard>
     <div :class="links({ class: rc.links })">
       <div class="flex items-center justify-between mb-xs">
-        <h6 class="text-xs font-semibold uppercase tracking-wider text-dimmed">{{ t('page_properties.links', 'Links') }}</h6>
+        <h6 class="text-xs font-semibold uppercase tracking-wider text-dimmed">
+          {{ t("page_properties.links", "Links") }}
+        </h6>
         <UButton
           icon="lucide:plus"
           size="xs"
@@ -459,21 +475,33 @@ const compareValues = (a: any, b: any) => {
           </div>
         </div>
       </div>
-      <p v-else class="text-xs text-dimmed italic">{{ t('page_properties.no_links', 'No links added') }}</p>
+      <p v-else class="text-xs text-dimmed italic">
+        {{ t("page_properties.no_links", "No links added") }}
+      </p>
 
       <!-- Link management modal -->
       <UModal v-model:open="isLinkModalOpen">
         <template #content>
           <UCard>
             <template #header>
-               <h4 class="font-bold">{{ editingLinkIndex !== null ? t('page_properties.edit_link', 'Edit Link') : t('page_properties.add_link', 'Add Link') }}</h4>
+              <h4 class="font-bold">
+                {{
+                  editingLinkIndex !== null
+                    ? t("page_properties.edit_link", "Edit Link")
+                    : t("page_properties.add_link", "Add Link")
+                }}
+              </h4>
             </template>
             <div class="flex flex-col gap-sm">
               <UFormField :label="t('page_properties.label', 'Label')">
                 <UInput v-model="linkDraft.label" placeholder="Check my GitHub" class="w-full" />
               </UFormField>
               <UFormField :label="t('page_properties.url', 'URL')">
-                <UInput v-model="linkDraft.to" placeholder="https://github.com/..." class="w-full" />
+                <UInput
+                  v-model="linkDraft.to"
+                  placeholder="https://github.com/..."
+                  class="w-full"
+                />
               </UFormField>
               <UFormField :label="t('page_properties.icon', 'Icon')">
                 <UInput v-model="linkDraft.icon" placeholder="lucide:github" class="w-full" />
@@ -482,7 +510,15 @@ const compareValues = (a: any, b: any) => {
                 <UFormField :label="t('page_properties.color', 'Color')">
                   <USelect
                     v-model="linkDraft.color"
-                    :items="['primary', 'secondary', 'neutral', 'error', 'warning', 'success', 'info']"
+                    :items="[
+                      'primary',
+                      'secondary',
+                      'neutral',
+                      'error',
+                      'warning',
+                      'success',
+                      'info',
+                    ]"
                     class="w-full"
                   />
                 </UFormField>
@@ -498,9 +534,18 @@ const compareValues = (a: any, b: any) => {
 
             <template #footer>
               <div class="flex justify-end gap-sm">
-                <UButton :label="t('common.cancel', 'Cancel')" variant="ghost" color="neutral" @click="isLinkModalOpen = false" />
                 <UButton
-                  :label="editingLinkIndex !== null ? t('page_properties.update_link', 'Update') : t('page_properties.add_link', 'Add')"
+                  :label="t('common.cancel', 'Cancel')"
+                  variant="ghost"
+                  color="neutral"
+                  @click="isLinkModalOpen = false"
+                />
+                <UButton
+                  :label="
+                    editingLinkIndex !== null
+                      ? t('page_properties.update_link', 'Update')
+                      : t('page_properties.add_link', 'Add')
+                  "
                   color="primary"
                   @click="saveLink"
                 />

@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import { ref, watch, computed } from "vue"
-import { tv } from "../../../internal/tv"
-import { useRC } from "../../../composables"
-import { type ImageBlockProps } from "../../../types"
-import { useObjectUrl } from "@vueuse/core"
+import { ref, watch, computed } from "vue";
+import { tv } from "../../../internal/tv";
+import { useRC } from "../../../composables";
+import { type ImageBlockProps } from "../../../types";
+import { useObjectUrl } from "@vueuse/core";
 
 export interface ImageBlockEditorProps extends ImageBlockProps {
   rc?: {
-    root?: string
-    upload?: string
-    previewContainer?: string
-    previewImage?: string
-    emptyPreview?: string
-  }
+    root?: string;
+    upload?: string;
+    previewContainer?: string;
+    previewImage?: string;
+    emptyPreview?: string;
+  };
 }
 
-const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockEditorProps>()
+const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockEditorProps>();
 
 export interface ImageBlockEditorEmits {
-  "update:src": [value: string | null]
-  "update:alt": [value: string]
-  "update:caption": [value: string | null]
-  "update:file": [value: File | null]
+  "update:src": [value: string | null];
+  "update:alt": [value: string];
+  "update:caption": [value: string | null];
+  "update:file": [value: File | null];
 }
 
-const emit = defineEmits<ImageBlockEditorEmits>()
+const emit = defineEmits<ImageBlockEditorEmits>();
 
 export interface ImageBlockEditorSlots {}
 
-const slots = defineSlots<ImageBlockEditorSlots>()
+const slots = defineSlots<ImageBlockEditorSlots>();
 
-const { rc } = useRC('ImageBlockEditor', rcProp)
+const { rc } = useRC("ImageBlockEditor", rcProp);
 
 const imageBlockEditorStyles = tv({
   slots: {
@@ -38,39 +38,39 @@ const imageBlockEditorStyles = tv({
     upload: "min-h-48 w-full",
     previewContainer: "w-full relative rounded-lg border border-default overflow-hidden",
     previewImage: "w-full h-auto object-contain transition-opacity duration-300",
-    emptyPreview: "w-full h-48 flex items-center justify-center bg-elevated/25"
-  }
-})
+    emptyPreview: "w-full h-48 flex items-center justify-center bg-elevated/25",
+  },
+});
 
-const { root, upload, previewContainer, previewImage, emptyPreview } = imageBlockEditorStyles()
+const { root, upload, previewContainer, previewImage, emptyPreview } = imageBlockEditorStyles();
 
-const fileToUpload = ref<File | null>(null)
-const localAlt = ref(alt || "")
-const localCaption = ref(caption || "")
+const fileToUpload = ref<File | null>(null);
+const localAlt = ref(alt || "");
+const localCaption = ref(caption || "");
 
-const filePreviewUrl = useObjectUrl(fileToUpload)
+const filePreviewUrl = useObjectUrl(fileToUpload);
 
 const previewSrc = computed(() => {
-  return fileToUpload.value ? filePreviewUrl.value : src
-})
+  return fileToUpload.value ? filePreviewUrl.value : src;
+});
 
 const removeFile = () => {
-  fileToUpload.value = null
-  emit("update:file", null)
-  emit("update:src", null)
-}
+  fileToUpload.value = null;
+  emit("update:file", null);
+  emit("update:src", null);
+};
 
 watch(localAlt, (newVal) => {
-  emit("update:alt", newVal)
-})
+  emit("update:alt", newVal);
+});
 
 watch(localCaption, (newVal) => {
-  emit("update:caption", newVal.trim() || null)
-})
+  emit("update:caption", newVal.trim() || null);
+});
 
 watch(fileToUpload, (newFile) => {
-  emit("update:file", newFile)
-})
+  emit("update:file", newFile);
+});
 </script>
 
 <template>

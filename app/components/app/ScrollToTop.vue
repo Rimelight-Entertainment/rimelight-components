@@ -1,29 +1,25 @@
 <script lang="ts" setup>
-import { computed } from "vue"
-import { useRC } from "../../composables/components/useRC"
-import { useScrollToTop } from "../../composables/app/useScrollToTop"
-import { tv } from "../../internal/tv"
+import { computed } from "vue";
+import { useRC } from "../../composables/components/useRC";
+import { useScrollToTop } from "../../composables/app/useScrollToTop";
+import { tv } from "../../internal/tv";
 
 export interface ScrollToTopProps {
-  circleStrokeWidth?: number
-  duration?: number
+  circleStrokeWidth?: number;
+  duration?: number;
   rc?: {
-    button?: string
-    progressBase?: string
-    svg?: string
-    iconContainer?: string
-    icon?: string
-  }
+    button?: string;
+    progressBase?: string;
+    svg?: string;
+    iconContainer?: string;
+    icon?: string;
+  };
 }
 
-const {
-  circleStrokeWidth = 4,
-  duration = 0.1,
-  rc: rcProp
-} = defineProps<ScrollToTopProps>()
+const { circleStrokeWidth = 4, duration = 0.1, rc: rcProp } = defineProps<ScrollToTopProps>();
 
-const { rc } = useRC('ScrollToTop', rcProp)
-const { isVisible, scrollToTop, scrollPercentage } = useScrollToTop()
+const { rc } = useRC("ScrollToTop", rcProp);
+const { isVisible, scrollToTop, scrollPercentage } = useScrollToTop();
 
 const scrollToTopStyles = tv({
   slots: {
@@ -31,21 +27,19 @@ const scrollToTopStyles = tv({
     progressBase: "progress-circle-base size-full",
     svg: "size-full",
     iconContainer: "absolute inset-0 flex items-center justify-center text-center",
-    icon: "size-6 text-white"
-  }
-})
+    icon: "size-6 text-white",
+  },
+});
 
-const { button, progressBase, svg, iconContainer, icon } = scrollToTopStyles()
+const { button, progressBase, svg, iconContainer, icon } = scrollToTopStyles();
 
-const circumference = 2 * Math.PI * 45
-const percentPx = circumference / 100
+const circumference = 2 * Math.PI * 45;
+const percentPx = circumference / 100;
 
-const currentPercent = computed(
-  () => ((scrollPercentage.value - 0) / 100) * 100
-)
+const currentPercent = computed(() => ((scrollPercentage.value - 0) / 100) * 100);
 
-const percentageInPx = computed(() => `${percentPx}px`)
-const durationInSeconds = computed(() => `${duration}s`)
+const percentageInPx = computed(() => `${percentPx}px`);
+const durationInSeconds = computed(() => `${duration}s`);
 </script>
 
 <template>
@@ -57,7 +51,11 @@ const durationInSeconds = computed(() => `${duration}s`)
     leave-to-class="opacity-0"
   >
     <div v-if="isVisible">
-      <UButton variant="ghost" :class="button({ class: [rc.button, 'hover:scale-110 transition-transform'] })" @click="scrollToTop">
+      <UButton
+        variant="ghost"
+        :class="button({ class: [rc.button, 'hover:scale-110 transition-transform'] })"
+        @click="scrollToTop"
+      >
         <div :class="progressBase({ class: rc.progressBase })">
           <svg :class="svg({ class: rc.svg })" viewBox="0 0 100 100">
             <circle
@@ -101,8 +99,7 @@ const durationInSeconds = computed(() => `${duration}s`)
 .gauge-primary-stroke {
   stroke: var(--color-primary-500);
   --stroke-percent: v-bind(currentPercent);
-  stroke-dasharray: calc(var(--stroke-percent) * var(--percent-to-px))
-    var(--circumference);
+  stroke-dasharray: calc(var(--stroke-percent) * var(--percent-to-px)) var(--circumference);
   transition:
     stroke-dasharray v-bind(durationInSeconds) ease,
     stroke v-bind(durationInSeconds) ease;

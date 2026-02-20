@@ -1,58 +1,58 @@
 <script lang="ts" setup>
-import type { DropdownMenuItem } from "@nuxt/ui"
-import { ref, computed } from "vue"
+import type { DropdownMenuItem } from "@nuxt/ui";
+import { ref, computed } from "vue";
 
 export interface TeamsMenuProps {
-  collapsed?: boolean
+  collapsed?: boolean;
 }
 
-const { collapsed } = defineProps<TeamsMenuProps>()
+const { collapsed } = defineProps<TeamsMenuProps>();
 
 const teams = ref([
   {
     label: `Nuxt`,
     avatar: {
       src: `https://github.com/nuxt.png`,
-      alt: `Nuxt`
-    }
+      alt: `Nuxt`,
+    },
   },
   {
     label: `NuxtHub`,
     avatar: {
       src: `https://github.com/nuxt-hub.png`,
-      alt: `NuxtHub`
-    }
+      alt: `NuxtHub`,
+    },
   },
   {
     label: `NuxtLabs`,
     avatar: {
       src: `https://github.com/nuxtlabs.png`,
-      alt: `NuxtLabs`
-    }
-  }
-])
-const selectedTeam = ref(teams.value[0])
+      alt: `NuxtLabs`,
+    },
+  },
+]);
+const selectedTeam = ref(teams.value[0]);
 
 const items = computed<DropdownMenuItem[][]>(() => {
   return [
     teams.value.map((team) => ({
       ...team,
       onSelect() {
-        selectedTeam.value = team
-      }
+        selectedTeam.value = team;
+      },
     })),
     [
       {
         label: `Create team`,
-        icon: `i-lucide-circle-plus`
+        icon: `i-lucide-circle-plus`,
       },
       {
         label: `Manage teams`,
-        icon: `i-lucide-cog`
-      }
-    ]
-  ]
-})
+        icon: `i-lucide-cog`,
+      },
+    ],
+  ];
+});
 </script>
 
 <template>
@@ -60,14 +60,14 @@ const items = computed<DropdownMenuItem[][]>(() => {
     :content="{ align: 'center', collisionPadding: 12 }"
     :items="items"
     :ui="{
-      content: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)'
+      content: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)',
     }"
   >
     <UButton
       :class="[!collapsed && 'py-2']"
       :square="collapsed"
       :ui="{
-        trailingIcon: 'text-dimmed'
+        trailingIcon: 'text-dimmed',
       }"
       block
       class="data-[state=open]:bg-elevated"
@@ -75,7 +75,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
       v-bind="{
         ...selectedTeam,
         label: collapsed ? undefined : selectedTeam?.label,
-        trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down'
+        trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
       }"
       variant="ghost"
     />

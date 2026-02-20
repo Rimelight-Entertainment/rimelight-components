@@ -1,84 +1,86 @@
-import { useState } from "#imports"
-import { $api } from "../../composables"
+import { useState } from "#imports";
+import { $api } from "../../composables";
 
 export const useNotes = () => {
   // 1. Initializing (N/A)
 
   // 2. Refs
-  const noteRefreshTrigger = useState("notes-refresh-trigger", () => 0)
-  const selectedIds = useState<string[]>("notes-selected-ids", () => [])
-  const status = useState<"idle" | "loading" | "success" | "error">("notes-status", () => "idle")
-  const error = useState<Error | null>("notes-error", () => null)
+  const noteRefreshTrigger = useState("notes-refresh-trigger", () => 0);
+  const selectedIds = useState<string[]>("notes-selected-ids", () => []);
+  const status = useState<"idle" | "loading" | "success" | "error">("notes-status", () => "idle");
+  const error = useState<Error | null>("notes-error", () => null);
 
   // 3. Methods
   const triggerRefresh = () => {
-    noteRefreshTrigger.value++
-  }
+    noteRefreshTrigger.value++;
+  };
 
   const toggleSelection = (id: string) => {
     if (selectedIds.value.includes(id)) {
-      selectedIds.value = selectedIds.value.filter((i: string) => i !== id)
+      selectedIds.value = selectedIds.value.filter((i: string) => i !== id);
     } else {
-      selectedIds.value.push(id)
+      selectedIds.value.push(id);
     }
-  }
+  };
 
   const clearSelection = () => {
-    selectedIds.value = []
-  }
+    selectedIds.value = [];
+  };
 
   const wrapApi = async (fn: () => Promise<any>) => {
-    status.value = "loading"
-    error.value = null
+    status.value = "loading";
+    error.value = null;
     try {
-      await fn()
-      status.value = "success"
-      triggerRefresh()
+      await fn();
+      status.value = "success";
+      triggerRefresh();
     } catch (e) {
-      status.value = "error"
-      error.value = e instanceof Error ? e : new Error(String(e))
+      status.value = "error";
+      error.value = e instanceof Error ? e : new Error(String(e));
     }
-  }
+  };
 
   const executeBatchAction = async (action: "delete" | "archive" | "restore" | "hard-delete") => {
-    if (selectedIds.value.length === 0) return
-    await wrapApi(() => $api("/api/notes/batch", {
-      method: "POST",
-      body: { ids: selectedIds.value, action }
-    }))
-    clearSelection()
-  }
+    if (selectedIds.value.length === 0) return;
+    await wrapApi(() =>
+      $api("/api/notes/batch", {
+        method: "POST",
+        body: { ids: selectedIds.value, action },
+      }),
+    );
+    clearSelection();
+  };
 
   const executeSingleAction = async (
     id: string,
-    action: "togglePin" | "archive" | "restore" | "delete" | "hard-delete"
+    action: "togglePin" | "archive" | "restore" | "delete" | "hard-delete",
   ) => {
     await wrapApi(async () => {
       if (action === "togglePin") {
         await $api(`/api/notes/${id}`, {
           method: "PUT",
-          body: { togglePin: true }
-        })
+          body: { togglePin: true },
+        });
       } else if (action === "archive") {
         await $api(`/api/notes/${id}`, {
           method: "PUT",
-          body: { isArchived: true, isPinned: false }
-        })
+          body: { isArchived: true, isPinned: false },
+        });
       } else if (action === "restore") {
         await $api(`/api/notes/${id}`, {
           method: "PUT",
-          body: { isArchived: false }
-        })
+          body: { isArchived: false },
+        });
       } else if (action === "delete") {
-        await $api(`/api/notes/${id}`, { method: "DELETE" })
+        await $api(`/api/notes/${id}`, { method: "DELETE" });
       } else if (action === "hard-delete") {
         await $api(`/api/notes/${id}?permanent=true`, {
           method: "DELETE",
-          query: { permanent: true }
-        })
+          query: { permanent: true },
+        });
       }
-    })
-  }
+    });
+  };
 
   return {
     noteRefreshTrigger,
@@ -89,7 +91,6 @@ export const useNotes = () => {
     toggleSelection,
     clearSelection,
     executeBatchAction,
-    executeSingleAction
-  }
-}
-
+    executeSingleAction,
+  };
+};

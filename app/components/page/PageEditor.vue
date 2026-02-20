@@ -1,49 +1,61 @@
 <script setup lang="ts">
-import { ref, computed, useTemplateRef, provide, watch } from "vue"
-import { navigateTo } from "#imports"
-import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types"
-import { usePageEditor, usePageRegistry, useRC, useHeaderStack, useConfirm } from "../../composables"
-import { getLocalizedContent, syncPageWithDefinition, dehydratePageProperties, defaultDocument, defaultWindow } from "../../utils"
-import { useI18n } from "vue-i18n"
-import { tv } from "../../internal/tv"
+import { ref, computed, useTemplateRef, provide, watch } from "vue";
+import { navigateTo } from "#imports";
+import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types";
+import {
+  usePageEditor,
+  usePageRegistry,
+  useRC,
+  useHeaderStack,
+  useConfirm,
+} from "../../composables";
+import {
+  getLocalizedContent,
+  syncPageWithDefinition,
+  dehydratePageProperties,
+  defaultDocument,
+  defaultWindow,
+} from "../../utils";
+import { useI18n } from "vue-i18n";
+import { tv } from "../../internal/tv";
 
 export interface PageEditorProps {
-  isSaving: boolean
-  useSurround?: boolean
-  surround?: PageSurround | null
-  surroundStatus?: 'idle' | 'pending' | 'success' | 'error'
-  resolvePage: (id: string) => Promise<Pick<Page, 'title' | 'icon' | 'slug'>>
-  pageDefinitions: Record<string, PageDefinition>
-  onDeletePage?: (id: string) => Promise<void>
-  onFetchPages?: () => Promise<Pick<Page, 'title' | 'slug' | 'type' | 'id'>[]>
-  onNavigateToPage?: (slug: string) => void
-  onViewPage?: (slug: string) => void
-  isAdmin?: boolean
+  isSaving: boolean;
+  useSurround?: boolean;
+  surround?: PageSurround | null;
+  surroundStatus?: "idle" | "pending" | "success" | "error";
+  resolvePage: (id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>;
+  pageDefinitions: Record<string, PageDefinition>;
+  onDeletePage?: (id: string) => Promise<void>;
+  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>;
+  onNavigateToPage?: (slug: string) => void;
+  onViewPage?: (slug: string) => void;
+  isAdmin?: boolean;
   rc?: {
-    header?: string
-    headerGroup?: string
-    splitContainer?: string
-    editorColumn?: string
-    container?: string
-    grid?: string
-    toc?: string
-    properties?: string
-    contentWrapper?: string
-    banner?: string
-    icon?: string
-    title?: string
-    surroundSkeleton?: string
-    skeleton?: string
-    metadata?: string
-    resizer?: string
-    previewColumn?: string
-  }
+    header?: string;
+    headerGroup?: string;
+    splitContainer?: string;
+    editorColumn?: string;
+    container?: string;
+    grid?: string;
+    toc?: string;
+    properties?: string;
+    contentWrapper?: string;
+    banner?: string;
+    icon?: string;
+    title?: string;
+    surroundSkeleton?: string;
+    skeleton?: string;
+    metadata?: string;
+    resizer?: string;
+    previewColumn?: string;
+  };
 }
 
 const {
   isSaving,
   useSurround = false,
-  surroundStatus = 'idle',
+  surroundStatus = "idle",
   surround = null,
   resolvePage,
   onDeletePage,
@@ -52,30 +64,30 @@ const {
   onViewPage,
   isAdmin = false,
   pageDefinitions,
-  rc: rcProp
-} = defineProps<PageEditorProps>()
+  rc: rcProp,
+} = defineProps<PageEditorProps>();
 
-const page = defineModel<Page>({ required: true })
-const versionId = defineModel<string | null>("currentVersionId", { default: null })
+const page = defineModel<Page>({ required: true });
+const versionId = defineModel<string | null>("currentVersionId", { default: null });
 
 export interface PageEditorEmits {
-  save: [value: Page]
-  'version-navigate': [version: PageVersion]
-  'version-approved': [version: PageVersion]
-  'version-rejected': [version: PageVersion]
-  'version-reverted': [version: PageVersion]
-  publish: [value: Page]
+  save: [value: Page];
+  "version-navigate": [version: PageVersion];
+  "version-approved": [version: PageVersion];
+  "version-rejected": [version: PageVersion];
+  "version-reverted": [version: PageVersion];
+  publish: [value: Page];
 }
 
-const emit = defineEmits<PageEditorEmits>()
+const emit = defineEmits<PageEditorEmits>();
 
 export interface PageEditorSlots {
-  'header-actions'?: (props: {}) => any
+  "header-actions"?: (props: {}) => any;
 }
 
-const slots = defineSlots<PageEditorSlots>()
+const slots = defineSlots<PageEditorSlots>();
 
-const { rc } = useRC('PageEditor', rcProp)
+const { rc } = useRC("PageEditor", rcProp);
 
 const pageEditorStyles = tv({
   slots: {
@@ -94,10 +106,11 @@ const pageEditorStyles = tv({
     surroundSkeleton: "grid grid-cols-1 gap-md sm:grid-cols-2",
     skeleton: "h-48 w-full rounded-xl",
     metadata: "flex flex-col gap-xs text-xs text-dimmed p-lg",
-    resizer: "sticky flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16 self-start",
-    previewColumn: "sticky self-start overflow-y-auto min-h-0"
-  }
-})
+    resizer:
+      "sticky flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16 self-start",
+    previewColumn: "sticky self-start overflow-y-auto min-h-0",
+  },
+});
 
 const {
   header,
@@ -116,31 +129,36 @@ const {
   skeleton,
   metadata,
   resizer,
-  previewColumn
-} = pageEditorStyles()
+  previewColumn,
+} = pageEditorStyles();
 
 const { getTypeLabelKey } = usePageRegistry();
-const { t, locale } = useI18n()
+const { t, locale } = useI18n();
 
-const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } = usePageEditor(page)
-const { confirm } = useConfirm()
+const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } =
+  usePageEditor(page);
+const { confirm } = useConfirm();
 
 const currentDefinition = computed(() => {
-  if (!page.value?.type || !pageDefinitions) return null
-  return pageDefinitions[page.value.type]
-})
+  if (!page.value?.type || !pageDefinitions) return null;
+  return pageDefinitions[page.value.type];
+});
 
 // Sync page with definition on load/change
-watch([() => page.value?.id, () => versionId.value, () => page.value?.type, currentDefinition], () => {
-  if (page.value && currentDefinition.value) {
-    console.log('[PageEditor] Syncing page with definition', page.value.id, versionId.value)
-    syncPageWithDefinition(page.value, currentDefinition.value)
+watch(
+  [() => page.value?.id, () => versionId.value, () => page.value?.type, currentDefinition],
+  () => {
+    if (page.value && currentDefinition.value) {
+      console.log("[PageEditor] Syncing page with definition", page.value.id, versionId.value);
+      syncPageWithDefinition(page.value, currentDefinition.value);
 
-    if (!page.value.description) {
-      page.value.description = { en: '' }
+      if (!page.value.description) {
+        page.value.description = { en: "" };
+      }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true },
+);
 
 const handleViewPage = async () => {
   if (canUndo.value) {
@@ -150,43 +168,46 @@ const handleViewPage = async () => {
       confirmLabel: t("page_editor.leave_anyway"),
       cancelLabel: t("common.cancel"),
       danger: true,
-    })
-    if (!confirmed) return
+    });
+    if (!confirmed) return;
   }
 
   if (onViewPage) {
-    onViewPage(page.value.slug)
+    onViewPage(page.value.slug);
   } else {
-    navigateTo(`/${page.value.slug}`)
+    navigateTo(`/${page.value.slug}`);
   }
-}
+};
 
 const handleSave = () => {
   if (currentDefinition.value) {
-    syncPageWithDefinition(page.value, currentDefinition.value)
+    syncPageWithDefinition(page.value, currentDefinition.value);
   }
-  const dataToPersist = JSON.parse(JSON.stringify(page.value))
-  dataToPersist.properties = dehydratePageProperties(dataToPersist.properties)
-  emit("save", dataToPersist)
-}
+  const dataToPersist = JSON.parse(JSON.stringify(page.value));
+  dataToPersist.properties = dehydratePageProperties(dataToPersist.properties);
+  emit("save", dataToPersist);
+};
 
 const handlePublish = async () => {
   const confirmed = await confirm({
     title: t("page_editor.publish_page", "Publish Page"),
-    description: t("page_editor.publish_confirmation", "Are you sure you want to publish this page? This will make it visible to the public."),
+    description: t(
+      "page_editor.publish_confirmation",
+      "Are you sure you want to publish this page? This will make it visible to the public.",
+    ),
     confirmLabel: t("page_editor.publish", "Publish"),
-    cancelLabel: t("common.cancel", "Cancel")
-  })
+    cancelLabel: t("common.cancel", "Cancel"),
+  });
 
   if (confirmed) {
     if (currentDefinition.value) {
-      syncPageWithDefinition(page.value, currentDefinition.value)
+      syncPageWithDefinition(page.value, currentDefinition.value);
     }
-    const dataToPersist = JSON.parse(JSON.stringify(page.value))
-    dataToPersist.properties = dehydratePageProperties(dataToPersist.properties)
-    emit("publish", dataToPersist)
+    const dataToPersist = JSON.parse(JSON.stringify(page.value));
+    dataToPersist.properties = dehydratePageProperties(dataToPersist.properties);
+    emit("publish", dataToPersist);
   }
-}
+};
 
 defineExpose({
   undo,
@@ -194,125 +215,129 @@ defineExpose({
   canUndo,
   canRedo,
   resetHistory,
-})
+});
 
-const editorRef = useTemplateRef('editor')
-const versionSelectorRef = useTemplateRef<{ fetchVersions: () => Promise<void> }>('version-selector')
+const editorRef = useTemplateRef("editor");
+const versionSelectorRef = useTemplateRef<{ fetchVersions: () => Promise<void> }>(
+  "version-selector",
+);
 
-watch(() => isSaving, async (newVal, oldVal) => {
-  if (!newVal && oldVal) {
-    if (versionSelectorRef.value?.fetchVersions) {
-      await versionSelectorRef.value.fetchVersions()
+watch(
+  () => isSaving,
+  async (newVal, oldVal) => {
+    if (!newVal && oldVal) {
+      if (versionSelectorRef.value?.fetchVersions) {
+        await versionSelectorRef.value.fetchVersions();
+      }
     }
-  }
-})
+  },
+);
 
-const showPreview = ref(false)
+const showPreview = ref(false);
 
-provide('page-resolver', resolvePage)
+provide("page-resolver", resolvePage);
 
-const previousPage = computed(() => surround?.previous)
-const nextPage = computed(() => surround?.next)
-const hasSurround = computed(() => !!(surround?.previous || surround?.next))
+const previousPage = computed(() => surround?.previous);
+const nextPage = computed(() => surround?.next);
+const hasSurround = computed(() => !!(surround?.previous || surround?.next));
 
-const { totalHeight } = useHeaderStack()
+const { totalHeight } = useHeaderStack();
 
-const containerRef = useTemplateRef<HTMLElement>('split-container')
-const editorWidth = ref(50)
-const isResizing = ref(false)
-const SNAP_THRESHOLD = 1.5 // Snap if within 1.5% of the center
+const containerRef = useTemplateRef<HTMLElement>("split-container");
+const editorWidth = ref(50);
+const isResizing = ref(false);
+const SNAP_THRESHOLD = 1.5; // Snap if within 1.5% of the center
 
 const handleMouseMove = (e: MouseEvent) => {
-  if (!isResizing.value || !containerRef.value) return
+  if (!isResizing.value || !containerRef.value) return;
 
-  const containerRect = containerRef.value.getBoundingClientRect()
-  let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100
+  const containerRect = containerRef.value.getBoundingClientRect();
+  let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
 
   // Constrain bounds
-  newWidth = Math.min(Math.max(newWidth, 20), 80)
+  newWidth = Math.min(Math.max(newWidth, 20), 80);
 
   // Snap logic: if near 50%, lock it to 50%
   if (Math.abs(newWidth - 50) < SNAP_THRESHOLD) {
-    editorWidth.value = 50
+    editorWidth.value = 50;
   } else {
-    editorWidth.value = newWidth
+    editorWidth.value = newWidth;
   }
-}
+};
 
 const cursorClass = computed(() => {
-  if (isResizing.value) return 'cursor-grabbing'
-  return 'cursor-grab'
-})
+  if (isResizing.value) return "cursor-grabbing";
+  return "cursor-grab";
+});
 
 const startResizing = (e: MouseEvent) => {
-  if (!defaultWindow || !defaultDocument) return
+  if (!defaultWindow || !defaultDocument) return;
 
-  isResizing.value = true
-  defaultWindow.addEventListener('mousemove', handleMouseMove)
-  defaultWindow.addEventListener('mouseup', stopResizing)
+  isResizing.value = true;
+  defaultWindow.addEventListener("mousemove", handleMouseMove);
+  defaultWindow.addEventListener("mouseup", stopResizing);
 
   // Visual feedback
-  defaultDocument.body.style.cursor = 'col-resize'
-  defaultDocument.body.style.userSelect = 'none'
-}
+  defaultDocument.body.style.cursor = "col-resize";
+  defaultDocument.body.style.userSelect = "none";
+};
 
 const stopResizing = () => {
-  isResizing.value = false
-  
+  isResizing.value = false;
+
   if (defaultWindow) {
-    defaultWindow.removeEventListener('mousemove', handleMouseMove)
-    defaultWindow.removeEventListener('mouseup', stopResizing)
+    defaultWindow.removeEventListener("mousemove", handleMouseMove);
+    defaultWindow.removeEventListener("mouseup", stopResizing);
   }
 
   if (defaultDocument) {
-    defaultDocument.body.style.cursor = ''
-    defaultDocument.body.style.userSelect = ''
+    defaultDocument.body.style.cursor = "";
+    defaultDocument.body.style.userSelect = "";
   }
-}
+};
 
 /* Handlers */
 
-
 // Delete Page
-const isDeleteModalOpen = ref(false)
-const isDeleting = ref(false)
+const isDeleteModalOpen = ref(false);
+const isDeleting = ref(false);
 
 const handleDeleteConfirm = async () => {
-  if (!onDeletePage || !page.value.id) return
+  if (!onDeletePage || !page.value.id) return;
 
   try {
-    isDeleting.value = true
-    await onDeletePage(page.value.id)
-    isDeleteModalOpen.value = false
+    isDeleting.value = true;
+    await onDeletePage(page.value.id);
+    isDeleteModalOpen.value = false;
   } catch (err) {
-    console.error("Failed to delete page:", err)
+    console.error("Failed to delete page:", err);
   } finally {
-    isDeleting.value = false
+    isDeleting.value = false;
   }
-}
+};
 
-const isPageTreeModalOpen = ref(false)
-const isFetchingTree = ref(false)
-const treePages = ref<Pick<Page, 'title' | 'slug'>[]>([])
+const isPageTreeModalOpen = ref(false);
+const isFetchingTree = ref(false);
+const treePages = ref<Pick<Page, "title" | "slug">[]>([]);
 
 const handleOpenTree = async () => {
-  if (!onFetchPages) return
-  isFetchingTree.value = true
+  if (!onFetchPages) return;
+  isFetchingTree.value = true;
   try {
-    treePages.value = await onFetchPages()
-    isPageTreeModalOpen.value = true
+    treePages.value = await onFetchPages();
+    isPageTreeModalOpen.value = true;
   } catch (e) {
-    console.error("Failed to fetch pages for tree", e)
+    console.error("Failed to fetch pages for tree", e);
   } finally {
-    isFetchingTree.value = false
+    isFetchingTree.value = false;
   }
-}
+};
 
 const handleTreeNavigate = (slug: string) => {
   if (onNavigateToPage) {
-    onNavigateToPage(slug)
+    onNavigateToPage(slug);
   }
-}
+};
 </script>
 
 <template>
@@ -330,8 +355,13 @@ const handleTreeNavigate = (slug: string) => {
             @click="handleOpenTree"
           />
 
-          <span class="text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap">
-            {{ t('common.editing', 'Editing') }}: <span class="text-neutral-900 dark:text-white">{{ getLocalizedContent(page.title, locale) }}</span>
+          <span
+            class="text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap"
+          >
+            {{ t("common.editing", "Editing") }}:
+            <span class="text-neutral-900 dark:text-white">{{
+              getLocalizedContent(page.title, locale)
+            }}</span>
           </span>
 
           <USeparator orientation="vertical" class="h-4 mx-1" />
@@ -347,7 +377,7 @@ const handleTreeNavigate = (slug: string) => {
             @version-rejected="(v: any) => emit('version-rejected', v)"
             @version-reverted="(v: any) => emit('version-reverted', v)"
           />
-        
+
           <UButton
             icon="lucide:rotate-ccw"
             variant="ghost"
@@ -416,9 +446,9 @@ const handleTreeNavigate = (slug: string) => {
                   label: t('page_editor.delete_page'),
                   icon: 'lucide:trash-2',
                   color: 'error' as const,
-                  onSelect: () => (isDeleteModalOpen = true)
-                }
-              ]
+                  onSelect: () => (isDeleteModalOpen = true),
+                },
+              ],
             ]"
           >
             <UButton icon="lucide:ellipsis-vertical" variant="ghost" color="neutral" size="xs" />
@@ -428,10 +458,7 @@ const handleTreeNavigate = (slug: string) => {
     </RCHeader>
   </RCHeaderLayer>
 
-  <div
-    ref="split-container"
-    :class="splitContainer({ class: rc.splitContainer })"
-  >
+  <div ref="split-container" :class="splitContainer({ class: rc.splitContainer })">
     <div
       :class="editorColumn({ class: rc.editorColumn })"
       :style="{ width: showPreview ? `${editorWidth}%` : '100%' }"
@@ -441,7 +468,11 @@ const handleTreeNavigate = (slug: string) => {
           <RCPageTOC :page-blocks="page.blocks" :levels="[2, 3, 4]" :class="toc({ class: rc.toc })">
             <template #bottom> </template>
           </RCPageTOC>
-          <RCPagePropertiesEditor v-model="page" :on-fetch-pages="onFetchPages" :class="properties({ class: rc.properties })" />
+          <RCPagePropertiesEditor
+            v-model="page"
+            :on-fetch-pages="onFetchPages"
+            :class="properties({ class: rc.properties })"
+          />
           <div :class="contentWrapper({ class: rc.contentWrapper })">
             <RCImage
               v-if="page.banner?.src"
@@ -449,10 +480,7 @@ const handleTreeNavigate = (slug: string) => {
               :alt="page.banner?.alt"
               :class="banner({ class: rc.banner })"
             />
-            <UPageHeader
-              :headline="t(getTypeLabelKey(page.type))"
-              :ui="{ root: 'pt-0' }"
-            >
+            <UPageHeader :headline="t(getTypeLabelKey(page.type))" :ui="{ root: 'pt-0' }">
               <template #title>
                 <div class="flex flex-row gap-sm items-center w-full">
                   <RCImage
@@ -485,14 +513,16 @@ const handleTreeNavigate = (slug: string) => {
                 />
               </template>
             </UPageHeader>
-            <RCBlockEditor 
+            <RCBlockEditor
               ref="editor"
-              v-model="page.blocks" 
+              v-model="page.blocks"
               @start="pauseHistory"
-              @mutation="() => {
-                resumeHistory()
-                captureSnapshot()
-              }" 
+              @mutation="
+                () => {
+                  resumeHistory();
+                  captureSnapshot();
+                }
+              "
             />
             <template v-if="useSurround">
               <div
@@ -518,10 +548,10 @@ const handleTreeNavigate = (slug: string) => {
               <USeparator />
 
               <div :class="metadata({ class: rc.metadata })">
-                <h6>{{ t('page_editor.metadata') }}</h6>
-                <span>{{ t('page_editor.page_id') }}: {{ page.id }}</span>
+                <h6>{{ t("page_editor.metadata") }}</h6>
+                <span>{{ t("page_editor.page_id") }}: {{ page.id }}</span>
                 <span
-                  >{{ t('page_editor.created_at') }}:
+                  >{{ t("page_editor.created_at") }}:
                   <NuxtTime
                     :datetime="page.createdAt ?? ''"
                     year="numeric"
@@ -533,7 +563,7 @@ const handleTreeNavigate = (slug: string) => {
                     time-zone-name="short"
                 /></span>
                 <span
-                  >{{ t('page_editor.posted_at') }}:
+                  >{{ t("page_editor.posted_at") }}:
                   <NuxtTime
                     :datetime="page.createdAt ?? ''"
                     year="numeric"
@@ -545,7 +575,7 @@ const handleTreeNavigate = (slug: string) => {
                     time-zone-name="short"
                 /></span>
                 <span
-                  >{{ t('page_editor.updated_at') }}:
+                  >{{ t("page_editor.updated_at") }}:
                   <NuxtTime
                     :datetime="page.createdAt ?? ''"
                     year="numeric"
@@ -576,14 +606,14 @@ const handleTreeNavigate = (slug: string) => {
     <div
       v-if="showPreview"
       :class="previewColumn({ class: rc.previewColumn })"
-      :style="{ 
-        width: `${100 - editorWidth}%`, 
-        top: `${totalHeight}px`, 
-        height: `calc(100vh - ${totalHeight}px)` 
+      :style="{
+        width: `${100 - editorWidth}%`,
+        top: `${totalHeight}px`,
+        height: `calc(100vh - ${totalHeight}px)`,
       }"
     >
-      <RCPageRenderer 
-        v-model="page" 
+      <RCPageRenderer
+        v-model="page"
         :resolve-page="resolvePage"
         :use-surround="useSurround"
         :surround="surround"
