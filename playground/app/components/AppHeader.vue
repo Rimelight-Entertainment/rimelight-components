@@ -151,7 +151,7 @@ const items = computed<NavigationMenuItem[]>(() => [
     label: "Branding",
     to: "/branding",
     active: route.path === "/branding",
-  }
+  },
 ]);
 
 const accountMenuItems = computed<DropdownMenuItem[][]>(() => [

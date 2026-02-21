@@ -503,11 +503,7 @@ defineExpose({
     >
       <UContainer :class="container({ class: rc.container })">
         <div :class="grid({ class: rc.grid })">
-          <RCPageTOC
-            :page-blocks="page.blocks"
-            :levels="[2, 3, 4]"
-            :class="toc({ class: rc.toc })"
-          >
+          <RCPageTOC :page-blocks="page.blocks" :levels="[2, 3, 4]" :class="toc({ class: rc.toc })">
             <template #bottom> </template>
           </RCPageTOC>
           <RCPagePropertiesEditor

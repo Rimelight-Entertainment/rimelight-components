@@ -139,17 +139,14 @@ function getLabel(key: string) {
 <template>
   <UContainer v-if="page" :class="container({ class: rc.container })">
     <div :class="grid({ class: rc.grid })">
-      <RCPageTOC
-        :page-blocks="page.blocks"
-        :levels="[2, 3, 4]"
-        :class="toc({ class: rc.toc })"
-      >
+      <RCPageTOC :page-blocks="page.blocks" :levels="[2, 3, 4]" :class="toc({ class: rc.toc })">
         <template #bottom> </template>
       </RCPageTOC>
 
       <RCPagePropertiesRenderer
         v-model="page"
-        :can-edit="canEdit" :edit-url="editUrl"
+        :can-edit="canEdit"
+        :edit-url="editUrl"
         :class="properties({ class: rc.properties })"
       />
 
@@ -161,7 +158,12 @@ function getLabel(key: string) {
           :class="banner({ class: rc.banner })"
         />
 
-        <UPageHeader :headline="t(getTypeLabelKey(page.type))" :title="getLocalizedContent(page.title, locale)" :description="getLocalizedContent(page.description, locale)" :ui="{ root: 'pt-0' }"/>
+        <UPageHeader
+          :headline="t(getTypeLabelKey(page.type))"
+          :title="getLocalizedContent(page.title, locale)"
+          :description="getLocalizedContent(page.description, locale)"
+          :ui="{ root: 'pt-0' }"
+        />
 
         <RCBlockViewRenderer :blocks="page.blocks!" />
 
@@ -192,41 +194,41 @@ function getLabel(key: string) {
             <h6>{{ t("page_editor.metadata") }}</h6>
             <span>{{ t("page_editor.page_id") }}: {{ page.id }}</span>
             <span
-            >{{ t("page_editor.created_at") }}:
-                  <NuxtTime
-                    :datetime="page.createdAt ?? ''"
-                    year="numeric"
-                    month="numeric"
-                    day="numeric"
-                    hour="numeric"
-                    minute="numeric"
-                    second="numeric"
-                    time-zone-name="short"
-                  /></span>
+              >{{ t("page_editor.created_at") }}:
+              <NuxtTime
+                :datetime="page.createdAt ?? ''"
+                year="numeric"
+                month="numeric"
+                day="numeric"
+                hour="numeric"
+                minute="numeric"
+                second="numeric"
+                time-zone-name="short"
+            /></span>
             <span
-            >{{ t("page_editor.posted_at") }}:
-                  <NuxtTime
-                    :datetime="page.createdAt ?? ''"
-                    year="numeric"
-                    month="numeric"
-                    day="numeric"
-                    hour="numeric"
-                    minute="numeric"
-                    second="numeric"
-                    time-zone-name="short"
-                  /></span>
+              >{{ t("page_editor.posted_at") }}:
+              <NuxtTime
+                :datetime="page.createdAt ?? ''"
+                year="numeric"
+                month="numeric"
+                day="numeric"
+                hour="numeric"
+                minute="numeric"
+                second="numeric"
+                time-zone-name="short"
+            /></span>
             <span
-            >{{ t("page_editor.updated_at") }}:
-                  <NuxtTime
-                    :datetime="page.createdAt ?? ''"
-                    year="numeric"
-                    month="numeric"
-                    day="numeric"
-                    hour="numeric"
-                    minute="numeric"
-                    second="numeric"
-                    time-zone-name="short"
-                  /></span>
+              >{{ t("page_editor.updated_at") }}:
+              <NuxtTime
+                :datetime="page.createdAt ?? ''"
+                year="numeric"
+                month="numeric"
+                day="numeric"
+                hour="numeric"
+                minute="numeric"
+                second="numeric"
+                time-zone-name="short"
+            /></span>
           </div>
         </template>
       </div>
