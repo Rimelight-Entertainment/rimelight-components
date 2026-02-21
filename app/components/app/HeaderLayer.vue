@@ -3,7 +3,9 @@ import { ref, onMounted, onUnmounted, watch, computed, nextTick, provide } from 
 import { useHeaderStack, useRC } from "../../composables";
 import { useWindowScroll } from "@vueuse/core";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
 export interface HeaderLayerProps {
   id: string;
   order?: number;
@@ -16,18 +18,24 @@ export interface HeaderLayerProps {
 
 const { id, order, hideOnScroll = false, rc: rcProp } = defineProps<HeaderLayerProps>();
 
+const { rc } = useRC("HeaderLayer", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface HeaderLayerEmits {}
 
 const emit = defineEmits<HeaderLayerEmits>();
+/* endregion */
 
+/* region Slots */
 export interface HeaderLayerSlots {
   default: (props: {}) => any;
 }
 
 const slots = defineSlots<HeaderLayerSlots>();
+/* endregion */
 
-const { rc } = useRC("HeaderLayer", rcProp);
-
+/* region Styles */
 const headerLayerStyles = tv({
   slots: {
     root: "fixed left-0 right-0 transition-[top,height,opacity] duration-200 ease-in-out",
@@ -36,50 +44,34 @@ const headerLayerStyles = tv({
 });
 
 const { root, content } = headerLayerStyles();
+type HeaderLayerVariants = VariantProps<typeof headerLayerStyles>;
+/* endregion */
 
-const { registerHeader, unregisterHeader, offsets, zIndices } = useHeaderStack();
+/* region Meta */
+defineOptions({
+  name: "HeaderLayer",
+});
+/* endregion */
 
+/* region State */
 provide("header_layer_id", id);
-
-const { y: scrollY } = useWindowScroll();
 
 const contentRef = ref<HTMLElement | null>(null);
 const isVisible = ref(true);
 const lastScrollY = ref(0);
+let observer: ResizeObserver | null = null;
 
 // This tracks the "measured" height of the children
 const naturalHeight = ref(0);
 
+const { y: scrollY } = useWindowScroll();
+const { registerHeader, unregisterHeader, offsets, zIndices } = useHeaderStack();
+
 const topOffset = computed(() => offsets.value[id] ?? 0);
 const zIndex = computed(() => zIndices.value[id] ?? 50);
+/* endregion */
 
-watch(scrollY, (current) => {
-  if (!hideOnScroll) return;
-
-  const diff = current - lastScrollY.value;
-  // Don't hide if we are within the top 50px or if the scroll was tiny
-  if (Math.abs(diff) < 10) return;
-
-  if (current <= 50) {
-    isVisible.value = true;
-  } else isVisible.value = diff <= 0;
-
-  lastScrollY.value = current;
-});
-
-const updateStack = () => {
-  // We register either the full height or 0.
-  // Because the stack is reactive, changing this triggers the transition
-  // on UMain and other HeaderLayers simultaneously.
-  const heightToRegister = isVisible.value ? naturalHeight.value : 0;
-  registerHeader(id, heightToRegister, order);
-};
-
-// When visibility changes, update the stack immediately
-watch(isVisible, updateStack);
-
-let observer: ResizeObserver | null = null;
-
+/* region Lifecycle */
 onMounted(() => {
   nextTick(() => {
     if (contentRef.value) {
@@ -101,10 +93,38 @@ onMounted(() => {
   });
 });
 
+watch(scrollY, (current) => {
+  if (!hideOnScroll) return;
+
+  const diff = current - lastScrollY.value;
+  // Don't hide if we are within the top 50px or if the scroll was tiny
+  if (Math.abs(diff) < 10) return;
+
+  if (current <= 50) {
+    isVisible.value = true;
+  } else isVisible.value = diff <= 0;
+
+  lastScrollY.value = current;
+});
+
+// When visibility changes, update the stack immediately
+watch(isVisible, updateStack);
+
 onUnmounted(() => {
   unregisterHeader(id);
   observer?.disconnect();
 });
+/* endregion */
+
+/* region Logic */
+function updateStack() {
+  // We register either the full height or 0.
+  // Because the stack is reactive, changing this triggers the transition
+  // on UMain and other HeaderLayers simultaneously.
+  const heightToRegister = isVisible.value ? naturalHeight.value : 0;
+  registerHeader(id, heightToRegister, order);
+}
+/* endregion */
 </script>
 
 <template>
@@ -123,3 +143,5 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped></style>

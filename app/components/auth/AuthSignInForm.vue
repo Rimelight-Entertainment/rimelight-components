@@ -4,7 +4,61 @@ import { reactive, ref } from "vue";
 import type { FormSubmitEvent } from "#ui/types";
 import { useToast } from "@nuxt/ui/composables/useToast";
 import { useAuth } from "../../composables/auth/useAuth";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
+export interface AuthSignInFormProps {
+  rc?: {
+    root?: string;
+    content?: string;
+  };
+}
+
+const { rc } = defineProps<AuthSignInFormProps>();
+/*endregion */
+
+/* region Emits */
+export interface AuthSignInFormEmits {}
+
+const emit = defineEmits<AuthSignInFormEmits>();
+/* endregion */
+
+/* region Slots */
+export interface AuthSignInFormSlots {
+  "email-help": (props: {}) => any;
+  "password-help": (props: {}) => any;
+  footer: (props: {}) => any;
+}
+
+const slots = defineSlots<AuthSignInFormSlots>();
+/* endregion */
+
+/* region Styles */
+const authSignInFormStyles = tv({
+  slots: {
+    root: "w-full flex flex-col gap-lg max-w-md",
+    form: "flex flex-col gap-md",
+    input: "w-full",
+    emailField: "text-black",
+    passwordWrapper: "flex flex-col gap-sm",
+    footerWrapper: "text-center text-sm text-black",
+    termsLink: "font-medium text-primary hover:text-dimmed",
+  },
+});
+
+const { root, form, input, emailField, passwordWrapper, footerWrapper, termsLink } =
+  authSignInFormStyles();
+type AuthSignInFormVariants = VariantProps<typeof authSignInFormStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "AuthSignInForm",
+});
+/* endregion */
+
+/* region State */
 const { signIn, isLoading } = useAuth();
 const { t } = useI18n();
 const toast = useToast();
@@ -25,7 +79,23 @@ const state = reactive<Partial<Schema>>({
 });
 
 const showPassword = ref(false);
+/* endregion */
 
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   const redirect = route.query.redirect as string | undefined;
   const { data, error } = await signIn(
@@ -52,23 +122,24 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     description: t("auth_sign_in_success_description", { name: data?.user?.name || "User" }),
   });
 }
+/* endregion */
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-lg max-w-md">
-    <UForm :schema="schema" :state="state" @submit="onSubmit" class="flex flex-col gap-md">
+  <div :class="root()">
+    <UForm :schema="schema" :state="state" :class="form()" @submit="onSubmit">
       <UFormField
         :label="t('auth_email_label')"
         name="email"
         :description="t('auth_email_description')"
         required
-        class="text-black"
+        :class="emailField()"
       >
         <UInput
           v-model="state.email"
           type="email"
           :placeholder="t('auth_email_placeholder')"
-          class="w-full"
+          :class="input()"
         >
           <template v-if="state.email?.length" #trailing>
             <UButton
@@ -93,12 +164,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         :description="t('auth_password_description')"
         required
       >
-        <div class="flex flex-col gap-sm">
+        <div :class="passwordWrapper()">
           <UInput
             v-model="state.password"
             :type="showPassword ? 'text' : 'password'"
             placeholder="••••••••••••••••"
-            class="w-full"
+            :class="input()"
           >
             <template #trailing>
               <UButton
@@ -132,14 +203,14 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       />
     </UForm>
     <slot name="footer">
-      <span class="text-center text-sm text-black"
-        >{{ t("auth_terms_agreement") }}
-        <ULink
-          to="/documents/terms-of-service"
-          class="font-medium text-primary hover:text-dimmed"
-          >{{ t("auth_terms_link") }}</ULink
-        >.</span
-      >
+      <span :class="footerWrapper()">
+        {{ t("auth_terms_agreement") }}
+        <ULink to="/documents/terms-of-service" :class="termsLink()">
+          {{ t("auth_terms_link") }} </ULink
+        >.
+      </span>
     </slot>
   </div>
 </template>
+
+<style scoped></style>

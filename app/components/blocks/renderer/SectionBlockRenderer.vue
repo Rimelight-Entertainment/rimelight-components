@@ -3,8 +3,10 @@ import { computed } from "vue";
 import type { SectionBlockProps } from "../../../types";
 import { slugify } from "../../../utils";
 import { tv } from "../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../../composables";
 
+/* region Props */
 export interface SectionBlockRendererProps extends SectionBlockProps {
   rc?: {
     root?: string;
@@ -19,16 +21,22 @@ const {
   rc: rcProp,
 } = defineProps<SectionBlockRendererProps>();
 
+const { rc } = useRC("SectionBlockRenderer", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface SectionBlockRendererEmits {}
 
 const emit = defineEmits<SectionBlockRendererEmits>();
+/* endregion */
 
+/* region Slots */
 export interface SectionBlockRendererSlots {}
 
 const slots = defineSlots<SectionBlockRendererSlots>();
+/* endregion */
 
-const { rc } = useRC("SectionBlockRenderer", rcProp);
-
+/* region Styles */
 const sectionBlockRendererStyles = tv({
   slots: {
     root: "",
@@ -36,9 +44,37 @@ const sectionBlockRendererStyles = tv({
 });
 
 const { root } = sectionBlockRendererStyles();
+type SectionBlockRendererVariants = VariantProps<typeof sectionBlockRendererStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "SectionBlockRenderer",
+});
+/* endregion */
+
+/* region State */
 const headingId = computed(() => (title ? slugify(title) : undefined));
 const hasChildren = computed(() => children && children.length > 0);
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>
@@ -48,3 +84,5 @@ const hasChildren = computed(() => children && children.length > 0);
     </RCSection>
   </div>
 </template>
+
+<style scoped></style>

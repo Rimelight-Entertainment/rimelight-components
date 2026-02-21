@@ -4,7 +4,9 @@ import { type PageDefinition, type PageType, type Page } from "../../../types";
 import { tv } from "../../../internal/tv";
 import { useRC } from "../../../composables/components/useRC";
 import { useI18n } from "vue-i18n";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
 export interface CreatePageModalProps {
   definitions: Record<string, PageDefinition>;
   loading?: boolean;
@@ -18,24 +20,29 @@ export interface CreatePageModalProps {
   };
 }
 
-const open = defineModel<boolean>("open", { default: false });
 const { loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>();
 
+const { rc } = useRC("CreatePageModal", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface CreatePageModalEmits {
   close: [];
   confirm: [page: Partial<Page>];
 }
 
 const emit = defineEmits<CreatePageModalEmits>();
+/* endregion */
 
+/* region Slots */
 export interface CreatePageModalSlots {
   default: (props: {}) => any;
 }
 
 const slots = defineSlots<CreatePageModalSlots>();
+/* endregion */
 
-const { rc } = useRC("CreatePageModal", rcProp);
-
+/* region Styles */
 const createPageModalStyles = tv({
   slots: {
     header: "flex items-center justify-between",
@@ -55,11 +62,21 @@ const {
   field,
   footer,
 } = createPageModalStyles();
+type CreatePageModalVariants = VariantProps<typeof createPageModalStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "CreatePageModal",
+});
+/* endregion */
+
+/* region State */
+const open = defineModel<boolean>("open", { default: false });
 
 const { t } = useI18n();
 
 const selectedType = ref<PageType | "">("");
-
 const title = ref("");
 const slug = ref("");
 
@@ -69,7 +86,9 @@ const typeOptions = computed(() => {
     value: key,
   }));
 });
+/* endregion */
 
+/* region Lifecycle */
 // Basic slug auto-generation
 watch(title, (newTitle) => {
   slug.value = newTitle
@@ -78,6 +97,18 @@ watch(title, (newTitle) => {
     .replace(/(^-|-$)/g, "");
 });
 
+watch(open, (isOpen) => {
+  if (!isOpen) {
+    emit("close");
+  }
+});
+
+// onMounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 const handleConfirm = () => {
   if (!selectedType.value) return;
 
@@ -113,12 +144,7 @@ const handleConfirm = () => {
 
   emit("confirm", newPage);
 };
-
-watch(open, (isOpen) => {
-  if (!isOpen) {
-    emit("close");
-  }
-});
+/* endregion */
 </script>
 
 <template>

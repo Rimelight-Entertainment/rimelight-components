@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 import { useI18n } from "vue-i18n";
 
+/* region Props */
 export interface PageSurroundProps {
   pageType: string;
   previousTitle?: string;
@@ -35,25 +37,32 @@ const {
   rc: rcProp,
 } = defineProps<PageSurroundProps>();
 
+const { rc } = useRC("PageSurround", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface PageSurroundEmits {}
 
 const emit = defineEmits<PageSurroundEmits>();
+/* endregion */
 
+/* region Slots */
 export interface PageSurroundSlots {}
 
 const slots = defineSlots<PageSurroundSlots>();
+/* endregion */
 
-const { rc } = useRC("PageSurround", rcProp);
-
+/* region Styles */
 const pageSurroundStyles = tv({
   slots: {
     grid: "grid grid-cols-1 gap-8 sm:grid-cols-2",
-    card: "group block h-full bg-transparent hover:bg-elevated/50 focus-visible:outline-primary",
+    cardClass:
+      "group block h-full bg-transparent hover:bg-elevated/50 focus-visible:outline-primary",
     cardContent: "flex flex-col gap-md",
     cardContentEnd: "items-end",
     headingGroup: "flex flex-col gap-xs",
     headingGroupEnd: "items-end",
-    button: "w-fit text-md rounded-full text-primary group-hover:text-highlighted",
+    buttonClass: "w-fit text-md rounded-full text-primary group-hover:text-highlighted",
     typeLabel: "text-muted",
     infoGroup: "flex flex-col gap-sm",
     infoGroupEnd: "items-end gap-xs",
@@ -66,35 +75,55 @@ const pageSurroundStyles = tv({
 
 const {
   grid,
-  card,
+  cardClass,
   cardContent,
   cardContentEnd,
   headingGroup,
   headingGroupEnd,
-  button,
+  buttonClass,
   typeLabel,
   infoGroup,
   infoGroupEnd,
-  title: titleClass,
+  title,
   titleEnd,
-  description: descriptionClass,
+  description,
   descriptionEnd,
 } = pageSurroundStyles();
+type PageSurroundVariants = VariantProps<typeof pageSurroundStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "PageSurround",
+});
+/* endregion */
+
+/* region State */
 const { t } = useI18n();
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>
   <div :class="grid({ class: rc.grid })">
     <div>
       <ULink v-if="previousTitle" :to="previousTo" class="h-full">
-        <UCard variant="soft" :class="card({ class: rc.card })">
+        <UCard variant="soft" :class="cardClass({ class: rc.card })">
           <div :class="cardContent({ class: rc.cardContent })">
             <div :class="headingGroup({ class: rc.headingGroup })">
               <UButton
                 variant="outline"
                 icon="lucide:arrow-left"
-                :class="button({ class: rc.button })"
+                :class="buttonClass({ class: rc.button })"
               />
               <span :class="typeLabel({ class: rc.typeLabel })">
                 {{ t("navigation_previous") }}
@@ -102,10 +131,10 @@ const { t } = useI18n();
               </span>
             </div>
             <div :class="infoGroup({ class: rc.infoGroup })">
-              <p :class="titleClass({ class: rc.title })">
+              <p :class="title({ class: rc.title })">
                 {{ previousTitle }}
               </p>
-              <p :class="descriptionClass({ class: rc.description })">
+              <p :class="description({ class: rc.description })">
                 {{ previousDescription }}
               </p>
             </div>
@@ -115,24 +144,24 @@ const { t } = useI18n();
     </div>
     <div>
       <ULink v-if="nextTitle" :to="nextTo" class="h-full">
-        <UCard variant="soft" :class="card({ class: rc.card })">
+        <UCard variant="soft" :class="cardClass({ class: rc.card })">
           <div :class="[cardContent({ class: rc.cardContent }), cardContentEnd()]">
             <div :class="[headingGroup({ class: rc.headingGroup }), headingGroupEnd()]">
               <UButton
                 variant="outline"
                 icon="lucide:arrow-right"
-                :class="button({ class: rc.button })"
+                :class="buttonClass({ class: rc.button })"
               />
               <span :class="typeLabel({ class: rc.typeLabel })">
                 {{ t("navigation_next") }}
-                {{ t(pageType) }}</span
-              >
+                {{ t(pageType) }}
+              </span>
             </div>
             <div :class="[infoGroup({ class: rc.infoGroup }), infoGroupEnd()]">
-              <p :class="[titleClass({ class: rc.title }), titleEnd()]">
+              <p :class="[title({ class: rc.title }), titleEnd()]">
                 {{ nextTitle }}
               </p>
-              <p :class="[descriptionClass({ class: rc.description }), descriptionEnd()]">
+              <p :class="[description({ class: rc.description }), descriptionEnd()]">
                 {{ nextDescription }}
               </p>
             </div>
@@ -142,3 +171,5 @@ const { t } = useI18n();
     </div>
   </div>
 </template>
+
+<style scoped></style>

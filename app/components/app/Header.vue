@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export interface HeaderProps {
   contain?: boolean;
   rc?: {
@@ -18,10 +20,16 @@ export interface HeaderProps {
 
 const { contain = true, rc: rcProp } = defineProps<HeaderProps>();
 
+const { rc } = useRC("Header", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface HeaderEmits {}
 
 const emit = defineEmits<HeaderEmits>();
+/* endregion */
 
+/* region Slots */
 export interface HeaderSlots {
   left: (props: {}) => any;
   center: (props: {}) => any;
@@ -32,9 +40,9 @@ export interface HeaderSlots {
 }
 
 const slots = defineSlots<HeaderSlots>();
+/* endregion */
 
-const { rc } = useRC("Header", rcProp);
-
+/* region Styles */
 const headerStyles = tv({
   slots: {
     root: "h-(--ui-header-height)",
@@ -57,15 +65,57 @@ const headerStyles = tv({
 
 const { root, container, left, center, right, collapsedLeft, collapsedCenter, collapsedRight } =
   headerStyles({ contain });
+type HeaderVariants = VariantProps<typeof headerStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "Header",
+});
+/* endregion */
+
+/* region State */
+// const ref1 = ref(0)
+//
+// const computed1 = computed(() => {
+//
+// })
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>
   <header :class="root({ class: rc.root })">
     <UContainer :class="container({ class: rc.container })">
-      <div :class="left({ class: rc.left })"><slot name="left" /></div>
-      <div :class="center({ class: rc.center })"><slot name="center" /></div>
-      <div :class="right({ class: rc.right })"><slot name="right" /></div>
-      <div :class="collapsedLeft({ class: rc.collapsedLeft })"><slot name="collapsed-left" /></div>
+      <div :class="left({ class: rc.left })">
+        <slot name="left" />
+      </div>
+      <div :class="center({ class: rc.center })">
+        <slot name="center" />
+      </div>
+      <div :class="right({ class: rc.right })">
+        <slot name="right" />
+      </div>
+      <div :class="collapsedLeft({ class: rc.collapsedLeft })">
+        <slot name="collapsed-left" />
+      </div>
       <div :class="collapsedCenter({ class: rc.collapsedCenter })">
         <slot name="collapsed-center" />
       </div>

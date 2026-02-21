@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { ParagraphBlockProps } from "../../../types";
 import { tv } from "../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../../composables";
 
+/* region Props */
 export interface ParagraphBlockRendererProps extends ParagraphBlockProps {
   rc?: {
     root?: string;
@@ -11,16 +13,22 @@ export interface ParagraphBlockRendererProps extends ParagraphBlockProps {
 
 const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>();
 
+const { rc } = useRC("ParagraphBlockRenderer", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface ParagraphBlockRendererEmits {}
 
 const emit = defineEmits<ParagraphBlockRendererEmits>();
+/* endregion */
 
+/* region Slots */
 export interface ParagraphBlockRendererSlots {}
 
 const slots = defineSlots<ParagraphBlockRendererSlots>();
+/* endregion */
 
-const { rc } = useRC("ParagraphBlockRenderer", rcProp);
-
+/* region Styles */
 const paragraphBlockRendererStyles = tv({
   slots: {
     root: "",
@@ -28,6 +36,40 @@ const paragraphBlockRendererStyles = tv({
 });
 
 const { root } = paragraphBlockRendererStyles();
+type ParagraphBlockRendererVariants = VariantProps<typeof paragraphBlockRendererStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ParagraphBlockRenderer",
+});
+/* endregion */
+
+/* region State */
+// const ref1 = ref(0)
+//
+// const computed1 = computed(() => {
+//
+// })
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>
@@ -35,3 +77,5 @@ const { root } = paragraphBlockRendererStyles();
     <RCTextRenderer :content="text" />
   </div>
 </template>
+
+<style scoped></style>

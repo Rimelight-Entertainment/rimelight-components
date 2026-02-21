@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { type Component } from "vue";
-import type { Block } from "../../types";
+import { defineAsyncComponent } from "vue";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import type { Block } from "../../types";
 import { useRC } from "../../composables";
+import { BLOCK_RENDERER_COMPONENT_MAP } from "#build/rimelight-block-renderer-map";
 
+/* region Props */
 export interface BlockViewRendererProps {
   blocks: Block[];
   rc?: {
@@ -13,16 +16,22 @@ export interface BlockViewRendererProps {
 
 const { blocks, rc: rcProp } = defineProps<BlockViewRendererProps>();
 
+const { rc } = useRC("BlockViewRenderer", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface BlockViewRendererEmits {}
 
 const emit = defineEmits<BlockViewRendererEmits>();
+/* endregion */
 
+/* region Slots */
 export interface BlockViewRendererSlots {}
 
 const slots = defineSlots<BlockViewRendererSlots>();
+/* endregion */
 
-const { rc } = useRC("BlockViewRenderer", rcProp);
-
+/* region Styles */
 const blockViewRendererStyles = tv({
   slots: {
     root: "flex flex-col gap-lg",
@@ -30,6 +39,50 @@ const blockViewRendererStyles = tv({
 });
 
 const { root } = blockViewRendererStyles();
+type BlockViewRendererVariants = VariantProps<typeof blockViewRendererStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "BlockViewRenderer",
+});
+/* endregion */
+
+/* region State */
+// const ref1 = ref(0)
+//
+// const computed1 = computed(() => {
+//
+// })
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+const asyncRendererMap = Object.fromEntries(
+  Object.entries(BLOCK_RENDERER_COMPONENT_MAP).map(([key, importFn]) => [
+    key,
+    defineAsyncComponent(importFn as any),
+  ]),
+);
+
+const resolveBlockComponent = (type?: string) => {
+  if (!type) return "div";
+  return asyncRendererMap[type] || "div";
+};
+/* endregion */
 </script>
 
 <template>
@@ -44,7 +97,7 @@ const { root } = blockViewRendererStyles();
     <template v-else>
       <div v-for="block in (blocks || []).filter((b) => !!b)" :key="block.id">
         <component
-          :is="block.type ? resolveComponent(`RC${block.type}Renderer`) : 'div'"
+          :is="resolveBlockComponent(block.type)"
           :id="block.id"
           v-bind="block.props"
           :type="block.type"

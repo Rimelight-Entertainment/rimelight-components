@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export interface FooterProps {
   contain?: boolean;
   rc?: {
@@ -15,10 +17,16 @@ export interface FooterProps {
 
 const { contain = true, rc: rcProp } = defineProps<FooterProps>();
 
+const { rc } = useRC("Footer", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface FooterEmits {}
 
 const emit = defineEmits<FooterEmits>();
+/* endregion */
 
+/* region Slots */
 export interface FooterSlots {
   left: (props: {}) => any;
   center: (props: {}) => any;
@@ -26,9 +34,9 @@ export interface FooterSlots {
 }
 
 const slots = defineSlots<FooterSlots>();
+/* endregion */
 
-const { rc } = useRC("Footer", rcProp);
-
+/* region Styles */
 const footerStyles = tv({
   slots: {
     root: "py-8 lg:py-12",
@@ -48,6 +56,40 @@ const footerStyles = tv({
 });
 
 const { root, container, left, center, right } = footerStyles({ contain });
+type FooterVariants = VariantProps<typeof footerStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "Footer",
+});
+/* endregion */
+
+/* region State */
+// const ref1 = ref(0)
+//
+// const computed1 = computed(() => {
+//
+// })
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>

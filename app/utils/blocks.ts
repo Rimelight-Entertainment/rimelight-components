@@ -14,7 +14,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   {
     type: "SectionBlock",
     label: "blocks.SectionBlock.label",
-    icon: "i-lucide-heading",
+    icon: "lucide:heading",
     category: "Layout",
     description: "blocks.SectionBlock.description",
   },
@@ -22,21 +22,21 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   {
     type: "ParagraphBlock",
     label: "blocks.ParagraphBlock.label",
-    icon: "i-lucide-pilcrow",
+    icon: "lucide:pilcrow",
     category: "Text",
     description: "blocks.ParagraphBlock.description",
   },
   {
     type: "ImageBlock",
     label: "blocks.ImageBlock.label",
-    icon: "i-lucide-image",
+    icon: "lucide:image",
     category: "Media",
     description: "blocks.ImageBlock.description",
   },
   {
     type: "CalloutBlock",
     label: "blocks.CalloutBlock.label",
-    icon: "i-lucide-info",
+    icon: "lucide:info",
     category: "Special",
     description: "blocks.CalloutBlock.description",
   },

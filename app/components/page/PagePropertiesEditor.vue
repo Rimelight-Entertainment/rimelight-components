@@ -6,7 +6,9 @@ import { getLocalizedContent } from "../../utils";
 import type { TabsItem } from "@nuxt/ui";
 import { type Page, type Link, type Localized } from "../../types";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
 export interface PagePropertiesEditorProps {
   rc?: {
     aside?: string;
@@ -26,36 +28,84 @@ export interface PagePropertiesEditorProps {
 
 const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>();
 
-const page = defineModel<Page>({ required: true });
+const { rc } = useRC("PagePropertiesEditor", rcProp);
+/*endregion */
 
+/* region Emits */
 export interface PagePropertiesEditorEmits {}
 
 const emit = defineEmits<PagePropertiesEditorEmits>();
+/* endregion */
 
+/* region Slots */
 export interface PagePropertiesEditorSlots {}
 
 const slots = defineSlots<PagePropertiesEditorSlots>();
+/* endregion */
 
-const { rc } = useRC("PagePropertiesEditor", rcProp);
-
+/* region Styles */
 const pagePropertiesEditorStyles = tv({
   slots: {
-    aside: "flex flex-col gap-md",
-    icon: "rounded-full w-12 h-12 object-cover",
-    titleInput: "w-full",
-    type: "text-sm",
-    tags: "flex flex-row flex-wrap gap-xs",
-    tabs: "w-full",
-    image: "w-full object-cover",
-    groupButton: "group rounded-none bg-elevated text-default",
-    details: "p-sm flex flex-col gap-xs",
-    field: "w-full",
-    links: "flex flex-col gap-xs",
+    asideClass: "flex flex-col gap-md",
+    iconClass: "rounded-full w-12 h-12 object-cover",
+    titleInputClass: "w-full",
+    typeClass: "text-sm",
+    tagsClass: "flex flex-row flex-wrap gap-xs",
+    tabsClass: "w-full",
+    imageClass: "w-full object-cover",
+    groupButtonClass: "group rounded-none bg-elevated text-default",
+    detailsClass: "p-sm flex flex-col gap-xs",
+    fieldClass: "w-full",
+    linksClass: "flex flex-col gap-xs",
+    headerContent: "flex flex-col gap-xs items-center",
+    slugInput: "w-full opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity",
+    linksHeader: "flex items-center justify-between mb-xs",
+    linksTitle: "text-xs font-semibold uppercase tracking-wider text-dimmed",
+    linksWrapper: "flex flex-col gap-xs",
+    linkItem: "flex items-center justify-between group/link",
+    linkActions: "flex items-center opacity-0 group-hover/link:opacity-100 transition-opacity",
+    emptyLinks: "text-xs text-dimmed italic",
+    modalBody: "flex flex-col gap-sm",
+    modalGrid: "grid grid-cols-2 gap-sm",
+    modalFooter: "flex justify-end gap-sm",
   },
 });
 
-const { aside, icon, titleInput, type, tags, tabs, image, groupButton, details, field, links } =
-  pagePropertiesEditorStyles();
+const {
+  asideClass,
+  iconClass,
+  titleInputClass,
+  typeClass,
+  tagsClass,
+  tabsClass,
+  imageClass,
+  groupButtonClass,
+  detailsClass,
+  fieldClass,
+  linksClass,
+  headerContent,
+  slugInput,
+  linksHeader,
+  linksTitle,
+  linksWrapper,
+  linkItem,
+  linkActions,
+  emptyLinks,
+  modalBody,
+  modalGrid,
+  modalFooter,
+} = pagePropertiesEditorStyles();
+type PagePropertiesEditorVariants = VariantProps<typeof pagePropertiesEditorStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PagePropertiesEditor",
+});
+/* endregion */
+
+/* region State */
+const page = defineModel<Page>({ required: true });
 
 const { getTypeLabelKey } = usePageRegistry();
 const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(
@@ -86,14 +136,6 @@ const pageItems = computed(() => {
   }));
 });
 
-/**
- * Returns a subset of pageItems filtered by the provided allowed types.
- */
-const getFilteredPageItems = (allowedTypes?: string[]) => {
-  if (!allowedTypes || !allowedTypes.length) return pageItems.value;
-  return pageItems.value.filter((item) => allowedTypes.includes(item.type));
-};
-
 const imageTabs = computed<TabsItem[]>(() => {
   if (!page.value.images?.length) return [];
 
@@ -108,10 +150,37 @@ const imageTabs = computed<TabsItem[]>(() => {
   });
 });
 
+// Link editing state
+const isLinkModalOpen = ref(false);
+const editingLinkIndex = ref<number | null>(null);
+const linkDraft = reactive<Partial<Link>>({
+  label: "",
+  to: "",
+  icon: "",
+  color: "neutral",
+  variant: "link",
+});
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+/**
+ * Returns a subset of pageItems filtered by the provided allowed types.
+ */
+function getFilteredPageItems(allowedTypes?: string[]) {
+  if (!allowedTypes || !allowedTypes.length) return pageItems.value;
+  return pageItems.value.filter((item) => allowedTypes.includes(item.type));
+}
+
 /**
  * Handles text-array updates specifically for the 'en' locale.
  */
-const updateTextArray = (schema: any, vals: (string | Localized)[]) => {
+function updateTextArray(schema: any, vals: (string | Localized)[]) {
   const currentDefault = (schema.defaultValue as Localized[]) || [];
   schema.defaultValue = vals.map((val) => {
     if (typeof val === "object" && val !== null) {
@@ -127,20 +196,9 @@ const updateTextArray = (schema: any, vals: (string | Localized)[]) => {
 
     return { en: str };
   });
-};
+}
 
-// Link editing state
-const isLinkModalOpen = ref(false);
-const editingLinkIndex = ref<number | null>(null);
-const linkDraft = reactive<Partial<Link>>({
-  label: "",
-  to: "",
-  icon: "",
-  color: "neutral",
-  variant: "link",
-});
-
-const openLinkModal = (index: number | null = null) => {
+function openLinkModal(index: number | null = null) {
   editingLinkIndex.value = index;
   if (index !== null && page.value.links?.[index]) {
     const link = page.value.links[index];
@@ -157,19 +215,19 @@ const openLinkModal = (index: number | null = null) => {
     linkDraft.variant = "link";
   }
   isLinkModalOpen.value = true;
-};
+}
 
-const saveLink = () => {
+function saveLink() {
   if (!linkDraft.label || !linkDraft.to) return;
 
   if (!page.value.links) page.value.links = [];
 
   const newLink: Link = {
     label: linkDraft.label,
-    to: linkDraft.to,
+    to: linkDraft.to!,
     icon: linkDraft.icon,
-    color: linkDraft.color as any,
-    variant: linkDraft.variant as any,
+    color: (linkDraft.color as any) || "neutral",
+    variant: (linkDraft.variant as any) || "link",
   };
 
   if (editingLinkIndex.value !== null) {
@@ -179,16 +237,18 @@ const saveLink = () => {
   }
 
   isLinkModalOpen.value = false;
-};
+}
 
-const removeLink = (index: number) => {
+function removeLink(index: number) {
   if (page.value.links) {
     page.value.links.splice(index, 1);
   }
-};
+}
 
-// Robust object comparison for USelectMenu
-const compareValues = (a: any, b: any) => {
+/**
+ * Robust object comparison for USelectMenu
+ */
+function compareValues(a: any, b: any) {
   if (a === b) return true;
   if (a == null || b == null) return false;
 
@@ -202,22 +262,27 @@ const compareValues = (a: any, b: any) => {
   const valB = typeof b === "object" ? getLocalizedContent(b, locale.value) : String(b);
 
   return valA === valB && valA !== "";
-};
+}
+/* endregion */
 </script>
 
 <template>
-  <aside :class="aside({ class: rc.aside })">
+  <aside :class="asideClass({ class: rc.aside })">
     <UCard
       variant="soft"
-      :ui="{ root: 'divide-none', header: 'bg-accented text-center', body: 'p-0 sm:p-0 bg-muted' }"
+      :ui="{
+        root: 'divide-none',
+        header: 'bg-accented text-center',
+        body: 'p-0 sm:p-0 bg-muted',
+      }"
     >
       <template #header>
-        <div class="flex flex-col gap-xs items-center">
+        <div :class="headerContent()">
           <RCImage
             v-if="page.icon?.src"
             :src="page.icon?.src"
             :alt="page.icon?.alt"
-            :class="icon({ class: rc.icon })"
+            :class="iconClass({ class: rc.icon })"
           />
 
           <UInput
@@ -226,7 +291,7 @@ const compareValues = (a: any, b: any) => {
             placeholder="Enter page title..."
             size="xl"
             :ui="{ base: 'text-center font-bold text-lg' }"
-            :class="titleInput({ class: rc.titleInput })"
+            :class="titleInputClass({ class: rc.titleInput })"
           />
 
           <UInput
@@ -235,16 +300,16 @@ const compareValues = (a: any, b: any) => {
             placeholder="page-slug"
             size="xs"
             :ui="{ base: 'text-center text-dimmed font-mono' }"
-            class="w-full opacity-60 hover:opacity-100 focus-within:opacity-100 transition-opacity"
+            :class="slugInput()"
           >
             <template #leading>
               <span class="text-gray-500 dark:text-gray-400 text-xs text-dimmed">/</span>
             </template>
           </UInput>
 
-          <span :class="type({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
+          <span :class="typeClass({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
 
-          <div v-if="page.tags?.length" :class="tags({ class: rc.tags })">
+          <div v-if="page.tags?.length" :class="tagsClass({ class: rc.tags })">
             <UBadge
               v-for="tag in page.tags"
               :key="getLocalizedContent(tag, locale)"
@@ -264,13 +329,13 @@ const compareValues = (a: any, b: any) => {
               variant="link"
               size="xs"
               color="neutral"
-              :class="tabs({ class: rc.tabs })"
+              :class="tabsClass({ class: rc.tabs })"
             >
               <template #content="{ item }">
                 <RCImage
                   :src="item.img.src"
                   :alt="item.img.alt"
-                  :class="image({ class: rc.image })"
+                  :class="imageClass({ class: rc.image })"
                 />
               </template>
             </UTabs>
@@ -279,7 +344,7 @@ const compareValues = (a: any, b: any) => {
               <RCImage
                 :src="page.images[0].src"
                 :alt="page.images[0].alt"
-                :class="image({ class: rc.image })"
+                :class="imageClass({ class: rc.image })"
               />
             </div>
           </div>
@@ -299,13 +364,13 @@ const compareValues = (a: any, b: any) => {
                     'group-data-[state=open]:rotate-180 transition-transform duration-200',
                 }"
                 block
-                :class="groupButton({ class: rc.groupButton })"
+                :class="groupButtonClass({ class: rc.groupButton })"
               />
             </template>
 
             <template #content>
               <ClientOnly>
-                <dl :class="details({ class: rc.details })">
+                <dl :class="detailsClass({ class: rc.details })">
                   <template
                     v-for="[fieldKey, schema] in getSortedFields(group.fields)"
                     :key="fieldKey"
@@ -320,7 +385,7 @@ const compareValues = (a: any, b: any) => {
                         v-model="schema.defaultValue.en"
                         variant="subtle"
                         placeholder="Type here..."
-                        :class="field({ class: rc.field })"
+                        :class="fieldClass({ class: rc.field })"
                       />
 
                       <UInput
@@ -328,7 +393,7 @@ const compareValues = (a: any, b: any) => {
                         v-model.number="schema.defaultValue"
                         type="number"
                         variant="subtle"
-                        :class="field({ class: rc.field })"
+                        :class="fieldClass({ class: rc.field })"
                       />
 
                       <USelectMenu
@@ -344,7 +409,7 @@ const compareValues = (a: any, b: any) => {
                         value-attribute="value"
                         :by="compareValues"
                         variant="subtle"
-                        :class="field({ class: rc.field })"
+                        :class="fieldClass({ class: rc.field })"
                       >
                         <template #default>
                           <span v-if="schema.defaultValue">
@@ -354,7 +419,7 @@ const compareValues = (a: any, b: any) => {
                                 : getLocalizedContent(schema.defaultValue, locale) || "Selected"
                             }}
                           </span>
-                          <span v-else class="text-dimmed">Select...</span>
+                          <span v-else class="text-dimmed"> Select... </span>
                         </template>
                       </USelectMenu>
 
@@ -364,12 +429,12 @@ const compareValues = (a: any, b: any) => {
                           (schema.defaultValue as any[])?.map((v: any) => v?.en ?? v) || []
                         "
                         :items="schema.options || []"
-                        @update:model-value="(vals: any) => updateTextArray(schema, vals)"
                         multiple
                         creatable
                         variant="subtle"
                         placeholder="Add item..."
-                        :class="field({ class: rc.field })"
+                        :class="fieldClass({ class: rc.field })"
+                        @update:model-value="(vals: any) => updateTextArray(schema, vals)"
                       />
 
                       <USelectMenu
@@ -381,7 +446,7 @@ const compareValues = (a: any, b: any) => {
                         icon="lucide:link-2"
                         variant="subtle"
                         :placeholder="`Select ${schema.allowedPageTypes?.join('/') || 'page'}...`"
-                        :class="field({ class: rc.field })"
+                        :class="fieldClass({ class: rc.field })"
                       >
                         <template #default>
                           <span v-if="schema.defaultValue">
@@ -392,7 +457,7 @@ const compareValues = (a: any, b: any) => {
                               )?.label || schema.defaultValue
                             }}
                           </span>
-                          <span v-else class="text-dimmed">None</span>
+                          <span v-else class="text-dimmed"> None </span>
                         </template>
                       </USelectMenu>
 
@@ -406,7 +471,7 @@ const compareValues = (a: any, b: any) => {
                         icon="lucide:link-2"
                         variant="subtle"
                         :placeholder="`Select ${schema.allowedPageTypes?.join('/') || 'pages'}...`"
-                        :class="field({ class: rc.field })"
+                        :class="fieldClass({ class: rc.field })"
                       >
                         <template #default>
                           <span
@@ -414,7 +479,7 @@ const compareValues = (a: any, b: any) => {
                           >
                             {{ schema.defaultValue.length }} selected
                           </span>
-                          <span v-else class="text-dimmed">None</span>
+                          <span v-else class="text-dimmed"> None </span>
                         </template>
                       </USelectMenu>
                     </UFormField>
@@ -426,9 +491,9 @@ const compareValues = (a: any, b: any) => {
         </template>
       </template>
     </UCard>
-    <div :class="links({ class: rc.links })">
-      <div class="flex items-center justify-between mb-xs">
-        <h6 class="text-xs font-semibold uppercase tracking-wider text-dimmed">
+    <div :class="linksClass({ class: rc.links })">
+      <div :class="linksHeader()">
+        <h6 :class="linksTitle()">
           {{ t("page_properties.links", "Links") }}
         </h6>
         <UButton
@@ -440,24 +505,20 @@ const compareValues = (a: any, b: any) => {
         />
       </div>
 
-      <div v-if="page.links?.length" class="flex flex-col gap-xs">
-        <div
-          v-for="(linkItem, index) in page.links"
-          :key="index"
-          class="flex items-center justify-between group/link"
-        >
+      <div v-if="page.links?.length" :class="linksWrapper()">
+        <div v-for="(item, index) in page.links" :key="index" :class="linkItem()">
           <UButton
-            :label="linkItem.label"
-            :icon="linkItem.icon"
-            :to="linkItem.to"
-            :target="linkItem.to?.startsWith('http') ? '_blank' : undefined"
-            :external="linkItem.to?.startsWith('http')"
-            :variant="linkItem.variant || 'link'"
-            :color="linkItem.color || 'neutral'"
+            :label="item.label"
+            :icon="item.icon"
+            :to="item.to"
+            :target="item.to?.startsWith('http') ? '_blank' : undefined"
+            :external="item.to?.startsWith('http')"
+            :variant="item.variant || 'link'"
+            :color="item.color || 'neutral'"
             size="sm"
             :ui="{ base: 'pl-0' }"
           />
-          <div class="flex items-center opacity-0 group-hover/link:opacity-100 transition-opacity">
+          <div :class="linkActions()">
             <UButton
               icon="lucide:pencil"
               size="xs"
@@ -475,7 +536,7 @@ const compareValues = (a: any, b: any) => {
           </div>
         </div>
       </div>
-      <p v-else class="text-xs text-dimmed italic">
+      <p v-else :class="emptyLinks()">
         {{ t("page_properties.no_links", "No links added") }}
       </p>
 
@@ -492,7 +553,7 @@ const compareValues = (a: any, b: any) => {
                 }}
               </h4>
             </template>
-            <div class="flex flex-col gap-sm">
+            <div :class="modalBody()">
               <UFormField :label="t('page_properties.label', 'Label')">
                 <UInput v-model="linkDraft.label" placeholder="Check my GitHub" class="w-full" />
               </UFormField>
@@ -506,7 +567,7 @@ const compareValues = (a: any, b: any) => {
               <UFormField :label="t('page_properties.icon', 'Icon')">
                 <UInput v-model="linkDraft.icon" placeholder="lucide:github" class="w-full" />
               </UFormField>
-              <div class="grid grid-cols-2 gap-sm">
+              <div :class="modalGrid()">
                 <UFormField :label="t('page_properties.color', 'Color')">
                   <USelect
                     v-model="linkDraft.color"
@@ -533,7 +594,7 @@ const compareValues = (a: any, b: any) => {
             </div>
 
             <template #footer>
-              <div class="flex justify-end gap-sm">
+              <div :class="modalFooter()">
                 <UButton
                   :label="t('common.cancel', 'Cancel')"
                   variant="ghost"

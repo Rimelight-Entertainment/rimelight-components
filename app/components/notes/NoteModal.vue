@@ -2,23 +2,81 @@
 import type { SelectMenuItem } from "@nuxt/ui";
 import { computed, reactive, ref, watch, onUnmounted } from "vue";
 import type { Label, Note } from "rimelight-components/shared/db/auth";
-import { useApi, $api } from "../../composables";
+import { useApi, $api, useRC } from "../../composables";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
-const open = defineModel<boolean>("open", { default: false });
-
+/* region Props */
 export interface NoteModalProps {
   note?: Note | null;
+  rc?: {
+    root?: string;
+  };
 }
 
-const { note } = defineProps<NoteModalProps>();
+const { note, rc: rcProp } = defineProps<NoteModalProps>();
 
+const { rc } = useRC("NoteModal", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface NoteModalEmits {
-  (e: "saved", note: Note): void;
-
-  (e: "close"): void;
+  saved: [note: Note];
+  close: [];
 }
 
 const emit = defineEmits<NoteModalEmits>();
+/* endregion */
+
+/* region Slots */
+export interface NoteModalSlots {
+  default: (props: {}) => any;
+}
+
+const slots = defineSlots<NoteModalSlots>();
+/* endregion */
+
+/* region Styles */
+const noteModalStyles = tv({
+  slots: {
+    root: "p-md flex flex-col",
+    contentWrapper: "flex flex-row justify-between gap-sm",
+    mainContent: "flex w-full flex-col",
+    titleInput: "flex-1 font-bold",
+    labelBadgeList: "flex flex-wrap gap-sm px-sm",
+    contentText: "w-full",
+    sideActions: "flex flex-col gap-xs",
+    footerWrapper: "flex items-center justify-between",
+    labelActionWrapper: "flex flex-row gap-xs",
+    statusWrapper: "flex flex-col gap-xs",
+    statusText: "text-xs text-dimmed",
+  },
+});
+
+const {
+  root,
+  contentWrapper,
+  mainContent,
+  titleInput,
+  labelBadgeList,
+  contentText,
+  sideActions,
+  footerWrapper,
+  labelActionWrapper,
+  statusWrapper,
+  statusText,
+} = noteModalStyles();
+type NoteModalVariants = VariantProps<typeof noteModalStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "NoteModal",
+});
+/* endregion */
+
+/* region State */
+const open = defineModel<boolean>("open", { default: false });
 
 const state = reactive<{
   id: string | undefined;
@@ -41,16 +99,9 @@ const { data: fetchedLabels } = useApi<Label[]>("/api/notes/labels", {
 });
 
 const allLabels = ref<Label[]>([]);
-
-watch(
-  () => fetchedLabels.value,
-  (newLabels) => {
-    if (newLabels) {
-      allLabels.value = [...newLabels];
-    }
-  },
-  { immediate: true },
-);
+const saveTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
+const isSaving = ref(false);
+const hasPendingSave = ref(false);
 
 const labelMap = computed(() => {
   const map = new Map<string, string>();
@@ -64,248 +115,255 @@ const labelItems = computed<SelectMenuItem[]>(() =>
     id: l.id,
   })),
 );
+/* endregion */
 
-const syncState = () => {
-  if (note) {
-    state.id = note.id;
-    state.title = note.title ?? "";
-    state.content = note.content ?? "";
-    state.isPinned = note.isPinned;
-    state.isArchived = note.isArchived;
-    state.labels = note.labels?.map((l: any) => l.label.id) || [];
-  } else {
-    state.id = undefined;
-    state.title = "";
-    state.content = "";
-    state.isPinned = false;
-    state.isArchived = false;
-    state.labels = [];
-  }
-};
-
-watch(() => note, syncState);
-
-const saveTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
-const isSaving = ref(false);
-const hasPendingSave = ref(false);
-
-const saveNote = async () => {
-  // If the note is empty, don't save
-  if (!state.title.trim() && !state.content.trim()) return;
-
-  // If already saving, mark that we have a pending save (so we save again with latest data after current save finishes)
-  if (isSaving.value) {
-    hasPendingSave.value = true;
-    return;
-  }
-
-  isSaving.value = true;
-
-  try {
-    let savedNote: Note;
-
-    const payload = {
-      title: state.title.trim() || "",
-      content: state.content.trim() || "",
-      isPinned: state.isPinned,
-      isArchived: state.isArchived,
-      labels: state.labels,
-    };
-
-    if (state.id) {
-      savedNote = await $api<Note>(`/api/notes/${state.id}`, {
-        method: "PUT",
-        body: payload,
-      });
-    } else {
-      const createPayload = {
-        title: payload.title,
-        content: payload.content,
-        isPinned: payload.isPinned,
-        isArchived: payload.isArchived,
-      };
-
-      savedNote = await $api<Note>("/api/notes", {
-        method: "POST",
-        body: createPayload,
-      });
-
-      state.id = savedNote.id;
-
-      if (state.labels.length > 0) {
-        savedNote = await $api<Note>(`/api/notes/${state.id}`, {
-          method: "PUT",
-          body: { labels: state.labels },
-        });
-      }
-    }
-    emit("saved", savedNote!);
-  } catch (e) {
-    console.error("Failed to save note", e);
-  } finally {
-    isSaving.value = false;
-    // If a save was requested while we were saving, execute it now to ensure latest state is persisted
-    if (hasPendingSave.value) {
-      hasPendingSave.value = false;
-      saveNote();
-    }
-  }
-};
-
-const createLabel = async (newLabelName: string) => {
-  try {
-    const createdLabel = await $api<Label>("/api/notes/labels", {
-      method: "POST",
-      body: { name: newLabelName },
-    });
-
-    allLabels.value.push(createdLabel);
-
-    if (!state.labels.includes(createdLabel.id)) {
-      state.labels.push(createdLabel.id);
-    }
-  } catch (e) {
-    console.error("Failed to create new label", e);
-  }
-};
-
-const debouncedSave = () => {
-  if (saveTimeout.value) {
-    clearTimeout(saveTimeout.value);
-  }
-  saveTimeout.value = setTimeout(() => {
-    saveNote();
-  }, 1000);
-};
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
 
 watch(
-  () => [state.title, state.content, state.isPinned, state.isArchived, state.labels],
-  () => {
-    debouncedSave();
+  () => note,
+  (newNote) => {
+    if (!newNote) {
+      state.id = undefined;
+      state.title = "";
+      state.content = "";
+      state.isPinned = false;
+      state.isArchived = false;
+      state.labels = [];
+    } else {
+      state.id = newNote.id;
+      state.title = newNote.title ?? "";
+      state.content = newNote.content ?? "";
+      state.isPinned = newNote.isPinned || false;
+      state.isArchived = newNote.isArchived || false;
+      state.labels = newNote.labels?.map((l: any) => l.label.id) || [];
+    }
   },
+  { immediate: true },
 );
 
-watch(open, (isOpen) => {
-  if (isOpen) {
-    syncState();
-  } else {
-    if (saveTimeout.value) {
-      clearTimeout(saveTimeout.value);
+watch(
+  () => fetchedLabels.value,
+  (newLabels) => {
+    if (newLabels) {
+      allLabels.value = [...newLabels];
     }
-    saveNote();
-    emit("close");
-  }
-});
-
-const deleteNote = async () => {
-  if (!state.id) return;
-
-  try {
-    await $api(`/api/notes/${state.id}`, {
-      method: "DELETE",
-    });
-    open.value = false;
-    emit("saved", null as any); // Trigger refresh
-  } catch (e) {
-    console.error("Failed to delete note", e);
-  }
-};
+  },
+  { immediate: true },
+);
 
 onUnmounted(() => {
   if (saveTimeout.value) {
     clearTimeout(saveTimeout.value);
   }
 });
+/* endregion */
+
+/* region Logic */
+async function saveNote() {
+  if (!state.title && !state.content) return;
+
+  isSaving.value = true;
+  try {
+    const payload = {
+      title: state.title,
+      content: state.content,
+      isPinned: state.isPinned,
+      isArchived: state.isArchived,
+      labels: state.labels,
+    };
+
+    let result: Note | undefined;
+    if (state.id) {
+      result = await $api<Note>(`/api/notes/${state.id}`, {
+        method: "PATCH",
+        body: payload,
+      });
+    } else {
+      result = await $api<Note>("/api/notes", {
+        method: "POST",
+        body: payload,
+      });
+      state.id = result.id;
+    }
+
+    if (result) emit("saved", result);
+  } catch (error) {
+    console.error("Failed to save note:", error);
+  } finally {
+    isSaving.value = false;
+    hasPendingSave.value = false;
+  }
+}
+
+function debouncedSave() {
+  hasPendingSave.value = true;
+  if (saveTimeout.value) clearTimeout(saveTimeout.value);
+  saveTimeout.value = setTimeout(() => {
+    saveNote();
+  }, 1000);
+}
+
+function toggleLabel(labelId: string) {
+  const index = state.labels.indexOf(labelId);
+  if (index === -1) {
+    state.labels.push(labelId);
+  } else {
+    state.labels.splice(index, 1);
+  }
+  debouncedSave();
+}
+
+function handleLabelUpdate(val: any) {
+  state.labels = val as string[];
+  debouncedSave();
+}
+
+async function createLabel(name: string) {
+  try {
+    const newLabel = await $api<Label>("/api/notes/labels", {
+      method: "POST",
+      body: { name },
+    });
+    allLabels.value.push(newLabel);
+    toggleLabel(newLabel.id);
+  } catch (error) {
+    console.error("Failed to create label:", error);
+  }
+}
+
+function deleteNote() {
+  if (state.id) {
+    $api(`/api/notes/${state.id}`, { method: "DELETE" })
+      .then(() => {
+        emit("close");
+      })
+      .catch((err) => console.error("Failed to delete note:", err));
+  } else {
+    emit("close");
+  }
+}
+/* endregion */
 </script>
 
 <template>
-  <UModal v-model:open="open" :ui="{ content: 'p-md flex flex-col' }">
-    <slot />
+  <UModal v-model:open="open">
     <template #content>
-      <div class="flex flex-row justify-between gap-sm">
-        <div class="flex w-full flex-col">
-          <UInput
-            v-model="state.title"
-            class="flex-1 font-bold"
-            placeholder="Title"
-            size="xl"
-            type="text"
-            variant="none"
-          />
+      <UCard :ui="{ body: 'p-0' }">
+        <div :class="root({ class: rc.root })">
+          <div :class="contentWrapper()">
+            <div :class="mainContent()">
+              <UInput
+                v-model="state.title"
+                variant="none"
+                size="xl"
+                placeholder="Title"
+                :class="titleInput()"
+                @update:model-value="debouncedSave"
+              />
 
-          <div v-if="state.labels.length > 0" class="flex flex-wrap gap-sm px-sm">
-            <UBadge
-              v-for="labelId in state.labels"
-              :key="labelId"
-              color="neutral"
-              size="md"
-              variant="soft"
-            >
-              {{ labelMap.get(labelId) || "Unknown" }}
-            </UBadge>
+              <div v-if="state.labels.length > 0" :class="labelBadgeList()">
+                <UBadge
+                  v-for="labelId in state.labels"
+                  :key="labelId"
+                  color="neutral"
+                  variant="subtle"
+                  size="sm"
+                  closable
+                  @close="toggleLabel(labelId)"
+                >
+                  {{ labelMap.get(labelId) || "Loading..." }}
+                </UBadge>
+              </div>
+
+              <UTextarea
+                v-model="state.content"
+                variant="none"
+                autoresize
+                :rows="8"
+                placeholder="Take a note..."
+                :class="contentText()"
+                @update:model-value="debouncedSave"
+              />
+            </div>
+
+            <div :class="sideActions()">
+              <UButton
+                :icon="state.isPinned ? 'lucide:pin-off' : 'lucide:pin'"
+                variant="ghost"
+                color="neutral"
+                :label="state.isPinned ? 'Unpin' : 'Pin'"
+                @click="
+                  state.isPinned = !state.isPinned;
+                  debouncedSave();
+                "
+              />
+              <USelectMenu
+                :items="labelItems"
+                icon="lucide:tag"
+                label="Labels"
+                variant="ghost"
+                color="neutral"
+                multiple
+                :model-value="state.labels"
+                @update:model-value="handleLabelUpdate"
+              >
+                <template #footer>
+                  <UInput
+                    placeholder="Create label..."
+                    size="xs"
+                    @keydown.enter="
+                      createLabel($event.target.value);
+                      $event.target.value = '';
+                    "
+                  />
+                </template>
+              </USelectMenu>
+              <UButton
+                :icon="state.isArchived ? 'lucide:archive-restore' : 'lucide:archive'"
+                variant="ghost"
+                color="neutral"
+                :label="state.isArchived ? 'Unarchive' : 'Archive'"
+                @click="
+                  state.isArchived = !state.isArchived;
+                  debouncedSave();
+                "
+              />
+            </div>
           </div>
-          <UTextarea
-            v-model="state.content"
-            :maxrows="16"
-            :rows="2"
-            autoresize
-            class="w-full"
-            placeholder="Take a note..."
-            size="lg"
-            variant="none"
-          />
+
+          <USeparator class="my-md" />
+
+          <div :class="footerWrapper()">
+            <div :class="labelActionWrapper()">
+              <UButton
+                icon="lucide:trash-2"
+                variant="ghost"
+                color="error"
+                label="Delete"
+                @click="deleteNote"
+              />
+            </div>
+
+            <div :class="statusWrapper()">
+              <span v-if="isSaving" :class="statusText()">Saving...</span>
+              <span v-else-if="hasPendingSave" :class="statusText()">Pending changes...</span>
+              <span v-else :class="statusText()">All changes saved</span>
+              <UButton label="Done" color="neutral" @click="open = false" />
+            </div>
+          </div>
         </div>
-        <div class="flex flex-col gap-xs">
-          <UButton
-            :icon="state.isPinned ? 'lucide:pin-off' : 'lucide:pin'"
-            color="neutral"
-            variant="ghost"
-            @click="state.isPinned = !state.isPinned"
-          />
-          <UButton
-            :color="state.isArchived ? 'primary' : 'neutral'"
-            :icon="state.isArchived ? 'lucide:archive-x' : 'lucide:archive-restore'"
-            size="sm"
-            variant="ghost"
-            @click="state.isArchived = !state.isArchived"
-          />
-          <UButton
-            color="error"
-            icon="lucide:trash-2"
-            size="sm"
-            variant="ghost"
-            @click="deleteNote"
-          />
-        </div>
-      </div>
-      <div class="flex items-center justify-between">
-        <div class="flex flex-row gap-xs">
-          <USelectMenu
-            v-model="state.labels"
-            :arrow="true"
-            :items="labelItems"
-            :multiple="true"
-            create-item="always"
-            icon="lucide-tag"
-            label-key="label"
-            size="sm"
-            trailing-icon=""
-            value-key="id"
-            variant="ghost"
-            @create="createLabel"
-          >
-            <template #default>
-              <span class="text-dimmed">Edit Labels</span>
-            </template>
-          </USelectMenu>
-        </div>
-        <div class="flex flex-col gap-xs">
-          <span class="text-xs text-dimmed">Last Edited: </span>
-          <span class="text-xs text-dimmed">
-            {{ state.id ? "Saved" : "Unsaved" }}
-          </span>
-        </div>
-      </div>
+      </UCard>
     </template>
   </UModal>
 </template>

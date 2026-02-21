@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export interface PlaceholderProps {
   rc?: {
     base?: string;
@@ -11,18 +13,24 @@ export interface PlaceholderProps {
 
 const { rc: rcProp } = defineProps<PlaceholderProps>();
 
+const { rc } = useRC("Placeholder", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface PlaceholderEmits {}
 
 const emit = defineEmits<PlaceholderEmits>();
+/* endregion */
 
+/* region Slots */
 export interface PlaceholderSlots {
   default: (props: {}) => any;
 }
 
 const slots = defineSlots<PlaceholderSlots>();
+/* endregion */
 
-const { rc } = useRC("Placeholder", rcProp);
-
+/* region Styles */
 const placeholderStyles = tv({
   slots: {
     base: "relative flex items-center justify-center overflow-hidden rounded-sm border border-dashed border-accented px-4 opacity-75",
@@ -31,6 +39,40 @@ const placeholderStyles = tv({
 });
 
 const { base, svg } = placeholderStyles();
+type PlaceholderVariants = VariantProps<typeof placeholderStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "Placeholder",
+});
+/* endregion */
+
+/* region State */
+// const ref1 = ref(0)
+//
+// const computed1 = computed(() => {
+//
+// })
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>
@@ -59,3 +101,5 @@ const { base, svg } = placeholderStyles();
     <slot />
   </div>
 </template>
+
+<style scoped></style>

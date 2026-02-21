@@ -1,25 +1,100 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useTodos } from "../../composables";
+import { useTodos, useRC } from "../../composables";
 import type { Todo } from "rimelight-components/shared/db/auth";
 import { useI18n } from "vue-i18n";
-import { RCTodoCard } from "#components";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
 export interface TodoListProps {
   todos: Todo[];
   archivedTodos?: Todo[];
   loading?: boolean;
+  rc?: {
+    root?: string;
+  };
 }
 
-const { todos, archivedTodos = [], loading = false } = defineProps<TodoListProps>();
+const { todos, archivedTodos = [], loading = false, rc: rcProp } = defineProps<TodoListProps>();
 
+const { rc } = useRC("TodoList", rcProp);
+/*endregion */
+
+/* region Emits */
+export interface TodoListEmits {}
+
+const emit = defineEmits<TodoListEmits>();
+/* endregion */
+
+/* region Slots */
+export interface TodoListSlots {}
+
+const slots = defineSlots<TodoListSlots>();
+/* endregion */
+
+/* region Styles */
+const todoListStyles = tv({
+  slots: {
+    root: "flex flex-col gap-md",
+    header: "flex items-center justify-between",
+    headerTitle: "text-sm font-semibold tracking-wider text-gray-500 uppercase",
+    mainContainer: "flex flex-col gap-sm",
+    quickAddWrapper: "flex flex-col gap-xs",
+    inputRow: "flex gap-sm items-center",
+    descriptionRow: "pl-0",
+    todoGrid: "flex flex-col gap-xs",
+    emptyText: "text-xs text-dimmed text-center py-sm",
+    archivedGrid: "flex flex-col gap-xs",
+  },
+});
+
+const {
+  root,
+  header,
+  headerTitle,
+  mainContainer,
+  quickAddWrapper,
+  inputRow,
+  descriptionRow,
+  todoGrid,
+  emptyText,
+  archivedGrid,
+} = todoListStyles();
+type TodoListVariants = VariantProps<typeof todoListStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "TodoList",
+});
+/* endregion */
+
+/* region State */
 const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos();
 const { t } = useI18n();
 
 const newTodoTitle = ref("");
 const newTodoDescription = ref("");
 const isAdding = ref(false);
+const showArchived = ref(false);
+/* endregion */
 
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 const handleAddTodo = async () => {
   if (!newTodoTitle.value.trim()) return;
   isAdding.value = true;
@@ -31,14 +106,13 @@ const handleAddTodo = async () => {
     isAdding.value = false;
   }
 };
-
-const showArchived = ref(false);
+/* endregion */
 </script>
 
 <template>
-  <div class="flex flex-col gap-md">
-    <div class="flex items-center justify-between">
-      <h3 class="text-sm font-semibold tracking-wider text-gray-500 uppercase">
+  <div :class="root({ class: rc.root })">
+    <div :class="header()">
+      <h3 :class="headerTitle()">
         {{ t("todo.title") }}
       </h3>
       <UButton
@@ -52,10 +126,10 @@ const showArchived = ref(false);
     </div>
 
     <UCard variant="soft" :ui="{ body: 'p-sm' }">
-      <div class="flex flex-col gap-sm">
+      <div :class="mainContainer()">
         <!-- Quick Add -->
-        <div class="flex flex-col gap-xs">
-          <div class="flex gap-sm items-center">
+        <div :class="quickAddWrapper()">
+          <div :class="inputRow()">
             <UInput
               v-model="newTodoTitle"
               :placeholder="t('todo.add_placeholder')"
@@ -72,7 +146,7 @@ const showArchived = ref(false);
             leave-from-class="transform translate-y-0 opacity-100"
             leave-to-class="transform -translate-y-2 opacity-0"
           >
-            <div v-if="newTodoTitle.length > 0" class="pl-0">
+            <div v-if="newTodoTitle.length > 0" :class="descriptionRow()">
               <UInput
                 v-model="newTodoDescription"
                 :placeholder="t('todo.description_placeholder')"
@@ -86,7 +160,7 @@ const showArchived = ref(false);
         </div>
 
         <!-- Active Todos -->
-        <div class="flex flex-col gap-xs">
+        <div :class="todoGrid()">
           <RCTodoCard
             v-for="todo in todos"
             :key="todo.id"
@@ -95,7 +169,7 @@ const showArchived = ref(false);
             @archive="archiveTodo(todo.id)"
           />
 
-          <p v-if="todos.length === 0" class="text-xs text-dimmed text-center py-sm">
+          <p v-if="todos.length === 0" :class="emptyText()">
             {{ t("todo.no_active") }}
           </p>
         </div>
@@ -103,7 +177,7 @@ const showArchived = ref(false);
         <!-- Archived Section -->
         <template v-if="showArchived">
           <USeparator :label="t('common.archive')" />
-          <div class="flex flex-col gap-xs">
+          <div :class="archivedGrid()">
             <RCTodoCard
               v-for="todo in archivedTodos"
               :key="todo.id"

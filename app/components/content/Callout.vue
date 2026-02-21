@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { useAppConfig } from "#imports";
-import { computed } from "#imports";
+import { useAppConfig, computed } from "#imports";
 import { useI18n } from "vue-i18n";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export type CalloutVariant =
   | "info"
   | "success"
@@ -26,28 +27,43 @@ export interface CalloutProps {
 
 const { variant, to, target, rc: rcProp } = defineProps<CalloutProps>();
 
+const { rc } = useRC("Callout", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface CalloutEmits {}
 
 const emit = defineEmits<CalloutEmits>();
+/* endregion */
 
+/* region Slots */
 export interface CalloutSlots {
   default: (props: {}) => any;
   leading: (props: { icon: string; iconClass: string }) => any;
 }
 
 const slots = defineSlots<CalloutSlots>();
+/* endregion */
 
-const { rc } = useRC("Callout", rcProp);
-
+/* region Styles */
 const calloutStyles = tv({
   slots: {
-    icon: "size-6",
+    iconClass: "size-6",
     tooltipIcon: "pointer-events-auto size-5",
   },
 });
 
-const { icon: iconClass, tooltipIcon } = calloutStyles();
+const { iconClass, tooltipIcon } = calloutStyles();
+type CalloutVariants = VariantProps<typeof calloutStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "Callout",
+});
+/* endregion */
+
+/* region State */
 const { t } = useI18n();
 const appConfig = useAppConfig();
 
@@ -64,6 +80,25 @@ const config = computed(() => {
 const icon = computed(() => config.value.icon);
 const title = computed(() => config.value.title);
 const tooltip = computed(() => config.value.tooltip);
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>

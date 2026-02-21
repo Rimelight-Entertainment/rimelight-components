@@ -6,8 +6,10 @@ import { tv } from "../../internal/tv";
 import { useRC } from "../../composables";
 import type { Block, SectionBlockProps, HeadingLevel } from "../../types";
 import { slugify, defaultDocument } from "../../utils";
+import { type VariantProps } from "tailwind-variants";
 
-interface TOCItem {
+/* region Props */
+export interface TOCItem {
   id: string;
   title: string;
   level: HeadingLevel;
@@ -25,84 +27,81 @@ export interface PageTOCProps {
   };
 }
 
-const props = withDefaults(defineProps<PageTOCProps>(), {
-  title: "table_of_contents",
-  levels: () => [2, 3, 4],
-});
+const {
+  pageBlocks,
+  title = "table_of_contents",
+  levels = [2, 3, 4],
+  rc: rcProp,
+} = defineProps<PageTOCProps>();
 
+const { rc } = useRC("PageTOC", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface PageTOCEmits {}
 
 const emit = defineEmits<PageTOCEmits>();
+/* endregion */
 
+/* region Slots */
 export interface PageTOCSlots {
   bottom: (props: {}) => any;
 }
 
 const slots = defineSlots<PageTOCSlots>();
+/* endregion */
 
-const { rc } = useRC("PageTOC", props.rc);
-
+/* region Styles */
 const pageTOCStyles = tv({
   slots: {
-    nav: "flex flex-col gap-sm w-full",
-    list: "flex flex-col",
-    link: "group relative flex items-center px-3 py-1.5 text-sm transition-all duration-200 border-s-2 -ms-px",
-    text: "truncate",
+    navClass: "flex flex-col gap-sm w-full",
+    listClass: "flex flex-col",
+    linkClass:
+      "group relative flex items-center px-3 py-1.5 text-sm transition-all duration-200 border-s-2 -ms-px",
+    textClass: "truncate",
   },
   variants: {
     active: {
       true: {
-        link: "border-accented font-semibold text-foreground",
+        linkClass: "border-accented font-semibold text-foreground",
       },
       false: {
-        link: "border-dimmed text-dimmed",
+        linkClass: "border-dimmed text-dimmed",
       },
     },
     level: {
-      1: { link: "ps-3" },
-      2: { link: "ps-3" },
-      3: { link: "ps-6" },
-      4: { link: "ps-9" },
-      5: { link: "ps-12" },
-      6: { link: "ps-15" },
+      1: { linkClass: "ps-3" },
+      2: { linkClass: "ps-3" },
+      3: { linkClass: "ps-6" },
+      4: { linkClass: "ps-9" },
+      5: { linkClass: "ps-12" },
+      6: { linkClass: "ps-15" },
     },
   },
 });
 
-const { nav, list, link, text } = pageTOCStyles();
+const { navClass, listClass, linkClass, textClass } = pageTOCStyles();
+type PageTOCVariants = VariantProps<typeof pageTOCStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "PageTOC",
+});
+/* endregion */
+
+/* region State */
 const { t } = useI18n();
 const activeId = ref<string | null>(null);
-
 const { locale } = useI18n();
 
-const extractHeadings = (blocks: Block[]): TOCItem[] => {
-  const headings: TOCItem[] = [];
-  if (!blocks) return headings;
-
-  for (const block of blocks) {
-    if (block.type === "SectionBlock") {
-      const p = block.props as SectionBlockProps;
-      if (p.title && p.level) {
-        headings.push({
-          id: slugify(p.title),
-          title: p.title,
-          level: p.level as HeadingLevel,
-        });
-      }
-      if (p.children?.length) {
-        headings.push(...extractHeadings(p.children));
-      }
-    }
-  }
-  return headings;
-};
-
 const items = computed(() => {
-  const all = extractHeadings(props.pageBlocks ?? []);
-  return all.filter((h) => props.levels.includes(h.level));
+  const all = extractHeadings(pageBlocks ?? []);
+  return all.filter((h) => levels.includes(h.level));
 });
+/* endregion */
 
+/* region Lifecycle */
 // Active State Observer
 onMounted(() => {
   watch(
@@ -133,25 +132,50 @@ onMounted(() => {
     { immediate: true },
   );
 });
+/* endregion */
+
+/* region Logic */
+function extractHeadings(blocks: Block[]): TOCItem[] {
+  const headings: TOCItem[] = [];
+  if (!blocks) return headings;
+
+  for (const block of blocks) {
+    if (block.type === "SectionBlock") {
+      const p = block.props as SectionBlockProps;
+      if (p.title && p.level) {
+        headings.push({
+          id: slugify(p.title),
+          title: p.title,
+          level: p.level as HeadingLevel,
+        });
+      }
+      if (p.children?.length) {
+        headings.push(...extractHeadings(p.children));
+      }
+    }
+  }
+  return headings;
+}
+/* endregion */
 </script>
 
 <template>
-  <nav :class="nav({ class: rc.nav })" aria-label="Table of Contents">
+  <nav :class="navClass({ class: rc.nav })" aria-label="Table of Contents">
     <h5 v-if="title">
       {{ t(title) }}
     </h5>
 
-    <ul v-if="items.length > 0" :class="list({ class: rc.list })">
+    <ul v-if="items.length > 0" :class="listClass({ class: rc.list })">
       <li v-for="item in items" :key="item.id">
         <NuxtLink
           :to="{ hash: `#${item.id}` }"
           :class="
-            pageTOCStyles({ active: activeId === item.id, level: item.level }).link({
+            pageTOCStyles({ active: activeId === item.id, level: item.level }).linkClass({
               class: rc.link,
             })
           "
         >
-          <span :class="text({ class: rc.text })">
+          <span :class="textClass({ class: rc.text })">
             {{ item.title }}
           </span>
         </NuxtLink>

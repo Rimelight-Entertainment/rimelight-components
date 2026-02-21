@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export interface LinkNodeProps {
   href: string;
   target?: string;
@@ -14,16 +16,22 @@ export interface LinkNodeProps {
 
 const { href, target, content, rc: rcProp } = defineProps<LinkNodeProps>();
 
+const { rc } = useRC("LinkNode", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface LinkNodeEmits {}
 
 const emit = defineEmits<LinkNodeEmits>();
+/* endregion */
 
+/* region Slots */
 export interface LinkNodeSlots {}
 
 const slots = defineSlots<LinkNodeSlots>();
+/* endregion */
 
-const { rc } = useRC("LinkNode", rcProp);
-
+/* region Styles */
 const linkNodeStyles = tv({
   slots: {
     root: "",
@@ -31,8 +39,36 @@ const linkNodeStyles = tv({
 });
 
 const { root } = linkNodeStyles();
+type LinkNodeVariants = VariantProps<typeof linkNodeStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "LinkNode",
+});
+/* endregion */
+
+/* region State */
 const rel = computed(() => (target === "_blank" ? "noopener noreferrer" : undefined));
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>
@@ -40,3 +76,5 @@ const rel = computed(() => (target === "_blank" ? "noopener noreferrer" : undefi
     {{ content }}
   </ULink>
 </template>
+
+<style scoped></style>

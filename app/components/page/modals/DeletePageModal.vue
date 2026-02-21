@@ -3,7 +3,9 @@ import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { tv } from "../../../internal/tv";
 import { useRC } from "../../../composables";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
 export interface DeletePageModalProps {
   loading?: boolean;
   pageTitle: string;
@@ -16,41 +18,65 @@ export interface DeletePageModalProps {
   };
 }
 
-const open = defineModel<boolean>("open", { default: false });
 const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>();
 
+const { rc } = useRC("DeletePageModal", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface DeletePageModalEmits {
   close: [];
   confirm: [];
 }
 
 const emits = defineEmits<DeletePageModalEmits>();
+/* endregion */
 
+/* region Slots */
 export interface DeletePageModalSlots {
   default: (props: {}) => any;
 }
 
 const slots = defineSlots<DeletePageModalSlots>();
+/* endregion */
 
-const { rc } = useRC("DeletePageModal", rcProp);
-
+/* region Styles */
 const deletePageModalStyles = tv({
   slots: {
     header: "flex items-center justify-between",
     headerTitle: "text-base font-semibold leading-6 text-error-600",
     closeButton: "-my-1",
-    body: "text-sm text-neutral-600 dark:text-neutral-400",
+    bodyClass: "text-sm text-neutral-600 dark:text-neutral-400",
     footer: "flex justify-end gap-2",
   },
 });
 
-const { header: headerClass, headerTitle, closeButton, body, footer } = deletePageModalStyles();
+const {
+  header: headerClass,
+  headerTitle,
+  closeButton,
+  bodyClass,
+  footer,
+} = deletePageModalStyles();
+type DeletePageModalVariants = VariantProps<typeof deletePageModalStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "DeletePageModal",
+});
+/* endregion */
+
+/* region State */
+const open = defineModel<boolean>("open", { default: false });
 
 const { t } = useI18n();
 
 const confirmationInput = ref("");
 const CONFIRMATION_TEXT = "DELETE";
+/* endregion */
 
+/* region Lifecycle */
 // Reset input when modal closes
 watch(open, (val) => {
   if (!val) {
@@ -59,11 +85,18 @@ watch(open, (val) => {
   }
 });
 
+// onMounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 const handleConfirm = () => {
   if (confirmationInput.value === CONFIRMATION_TEXT) {
     emits("confirm");
   }
 };
+/* endregion */
 </script>
 
 <template>
@@ -86,7 +119,7 @@ const handleConfirm = () => {
           </div>
         </template>
 
-        <div :class="body({ class: rc.body })">
+        <div :class="bodyClass({ class: rc.body })">
           <p>
             Are you sure you want to delete <strong>{{ pageTitle }}</strong
             >? This action is permanent and cannot be undone.

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export interface NewsletterSignupProps {
   fieldLabel?: string;
   description?: string;
@@ -20,16 +22,27 @@ const {
   rc: rcProp,
 } = defineProps<NewsletterSignupProps>();
 
-export interface NewsletterSignupEmits {}
+const { rc } = useRC("NewsletterSignup", rcProp);
+/*endregion */
+
+/* region Emits */
+export interface NewsletterSignupEmits {
+  // change: [id: number]
+  // update: [value: string]
+}
 
 const emit = defineEmits<NewsletterSignupEmits>();
+/* endregion */
 
-export interface NewsletterSignupSlots {}
+/* region Slots */
+export interface NewsletterSignupSlots {
+  // default: (props: {}) => any
+}
 
 const slots = defineSlots<NewsletterSignupSlots>();
+/* endregion */
 
-const { rc } = useRC("NewsletterSignup", rcProp);
-
+/* region Styles */
 const newsletterSignupStyles = tv({
   slots: {
     group: "pt-2",
@@ -37,6 +50,40 @@ const newsletterSignupStyles = tv({
 });
 
 const { group } = newsletterSignupStyles();
+type NewsletterSignupVariants = VariantProps<typeof newsletterSignupStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "NewsletterSignup",
+});
+/* endregion */
+
+/* region State */
+// const ref1 = ref(0)
+//
+// const computed1 = computed(() => {
+//
+// })
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>

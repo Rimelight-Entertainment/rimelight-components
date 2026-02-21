@@ -1,9 +1,11 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import { useRC } from "../../composables/components/useRC";
 import { useScrollToTop } from "../../composables/app/useScrollToTop";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
 export interface ScrollToTopProps {
   circleStrokeWidth?: number;
   duration?: number;
@@ -19,8 +21,21 @@ export interface ScrollToTopProps {
 const { circleStrokeWidth = 4, duration = 0.1, rc: rcProp } = defineProps<ScrollToTopProps>();
 
 const { rc } = useRC("ScrollToTop", rcProp);
-const { isVisible, scrollToTop, scrollPercentage } = useScrollToTop();
+/*endregion */
 
+/* region Emits */
+export interface ScrollToTopEmits {}
+
+const emit = defineEmits<ScrollToTopEmits>();
+/* endregion */
+
+/* region Slots */
+export interface ScrollToTopSlots {}
+
+const slots = defineSlots<ScrollToTopSlots>();
+/* endregion */
+
+/* region Styles */
 const scrollToTopStyles = tv({
   slots: {
     button: "size-14 lg:size-12 p-0",
@@ -32,14 +47,43 @@ const scrollToTopStyles = tv({
 });
 
 const { button, progressBase, svg, iconContainer, icon } = scrollToTopStyles();
+type ScrollToTopVariants = VariantProps<typeof scrollToTopStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ScrollToTop",
+});
+/* endregion */
+
+/* region State */
+const { isVisible, scrollToTop, scrollPercentage } = useScrollToTop();
 
 const circumference = 2 * Math.PI * 45;
 const percentPx = circumference / 100;
 
 const currentPercent = computed(() => ((scrollPercentage.value - 0) / 100) * 100);
-
 const percentageInPx = computed(() => `${percentPx}px`);
 const durationInSeconds = computed(() => `${duration}s`);
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export interface TeamCardProps {
   src: string;
   alt: string;
@@ -19,35 +21,69 @@ export interface TeamCardProps {
 
 const { src, alt, name, role, description, rc: rcProp } = defineProps<TeamCardProps>();
 
+const { rc } = useRC("TeamCard", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface TeamCardEmits {}
 
 const emit = defineEmits<TeamCardEmits>();
+/* endregion */
 
+/* region Slots */
 export interface TeamCardSlots {
   links: (props: {}) => any;
 }
 
 const slots = defineSlots<TeamCardSlots>();
+/* endregion */
 
-const { rc } = useRC("TeamCard", rcProp);
-
+/* region Styles */
 const teamCardStyles = tv({
   slots: {
     details: "flex flex-col gap-xs",
-    name: "text-xl font-bold",
-    role: "text-sm",
-    description: "text-md",
-    links: "flex flex-row gap-md",
+    nameClass: "text-xl font-bold",
+    roleClass: "text-sm",
+    descriptionClass: "text-md",
+    linksClass: "flex flex-row gap-md",
   },
 });
 
-const {
-  details,
-  name: nameClass,
-  role: roleClass,
-  description: descriptionClass,
-  links,
-} = teamCardStyles();
+const { details, nameClass, roleClass, descriptionClass, linksClass } = teamCardStyles();
+type TeamCardVariants = VariantProps<typeof teamCardStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "TeamCard",
+});
+/* endregion */
+
+/* region State */
+// const ref1 = ref(0)
+//
+// const computed1 = computed(() => {
+//
+// })
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>
@@ -63,7 +99,7 @@ const {
       {{ description }}
     </p>
     <template #footer>
-      <div :class="links({ class: rc.links })">
+      <div :class="linksClass({ class: rc.links })">
         <slot name="links" />
       </div>
     </template>

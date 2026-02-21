@@ -1,10 +1,21 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useRC } from "../../../composables";
 import { tv } from "../../../internal/tv";
 import { getLocalizedContent } from "../../../utils";
 import { useI18n } from "vue-i18n";
 import type { Page } from "../../../types";
+import { type VariantProps } from "tailwind-variants";
+
+/* region Props */
+export interface TreeItem {
+  label: string;
+  icon?: string;
+  slug?: string;
+  path: string;
+  children?: TreeItem[];
+  defaultExpanded?: boolean;
+}
 
 export interface PageTreeModalProps {
   loading?: boolean;
@@ -18,39 +29,64 @@ export interface PageTreeModalProps {
   };
 }
 
-const open = defineModel<boolean>("open", { default: false });
 const { loading, pages = [], rc: rcProp } = defineProps<PageTreeModalProps>();
 
+const { rc } = useRC("PageTreeModal", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface PageTreeModalEmits {
   close: [];
   navigate: [slug: string];
 }
 
 const emit = defineEmits<PageTreeModalEmits>();
+/* endregion */
 
-const { rc } = useRC("PageTreeModal", rcProp);
-const { t, locale } = useI18n();
+/* region Slots */
+export interface PageTreeModalSlots {}
 
+const slots = defineSlots<PageTreeModalSlots>();
+/* endregion */
+
+/* region Styles */
 const pageTreeModalStyles = tv({
   slots: {
-    header: "flex items-center justify-between",
-    headerTitle: "text-base font-semibold leading-6",
-    closeButton: "-my-1",
-    body: "p-0 min-h-[300px] max-h-[60vh] overflow-y-auto",
-    footer: "flex justify-end gap-2",
+    headerClass: "flex items-center justify-between",
+    headerTitleClass: "text-base font-semibold leading-6",
+    closeButtonClass: "-my-1",
+    bodyClass: "p-0 min-h-[300px] max-h-[60vh] overflow-y-auto",
+    footerClass: "flex justify-end gap-2",
+    loadingWrapper: "p-4 flex justify-center",
+    emptyWrapper: "p-4 text-center text-gray-500",
+    itemWrapper: "flex items-center gap-2 py-1 w-full",
+    itemLabel: "",
   },
 });
 
-const { header: headerClass, headerTitle, closeButton, body, footer } = pageTreeModalStyles();
+const {
+  headerClass,
+  headerTitleClass,
+  closeButtonClass,
+  bodyClass,
+  footerClass,
+  loadingWrapper,
+  emptyWrapper,
+  itemWrapper,
+} = pageTreeModalStyles();
+type PageTreeModalVariants = VariantProps<typeof pageTreeModalStyles>;
+/* endregion */
 
-interface TreeItem {
-  label: string;
-  icon?: string;
-  slug?: string;
-  path: string;
-  children?: TreeItem[];
-  defaultExpanded?: boolean;
-}
+/* region Meta */
+defineOptions({
+  name: "PageTreeModal",
+});
+/* endregion */
+
+/* region State */
+const open = defineModel<boolean>("open", { default: false });
+
+const { t, locale } = useI18n();
 
 const treeItems = computed<TreeItem[]>(() => {
   if (!pages || pages.length === 0) return [];
@@ -69,7 +105,7 @@ const treeItems = computed<TreeItem[]>(() => {
         label,
         path,
         slug: pageObj ? pageObj.slug : undefined,
-        icon: pageObj ? "i-lucide-file" : "i-lucide-folder",
+        icon: pageObj ? "lucide:file" : "lucide:folder",
         children: [],
       };
       nodeMap.set(path, newNode);
@@ -78,7 +114,7 @@ const treeItems = computed<TreeItem[]>(() => {
       const node = nodeMap.get(path)!;
       node.label = getLocalizedContent(pageObj.title, locale.value) || node.label;
       node.slug = pageObj.slug;
-      node.icon = "i-lucide-file-text"; // distinct icon for page that might have children
+      node.icon = "lucide:file-text"; // distinct icon for page that might have children
     }
     return nodeMap.get(path)!;
   };
@@ -122,14 +158,14 @@ const treeItems = computed<TreeItem[]>(() => {
           label: node.label, // Or t('common.overview') / same name
           slug: node.slug,
           path: `${node.path}:index`,
-          icon: "i-lucide-file-text",
+          icon: "lucide:file-text",
           children: [],
         };
         node.children.unshift(indexNode);
 
         // Convert parent to folder-only
         node.slug = undefined;
-        node.icon = "i-lucide-folder";
+        node.icon = "lucide:folder";
       }
 
       if (node.children && node.children.length > 0) {
@@ -141,7 +177,15 @@ const treeItems = computed<TreeItem[]>(() => {
   processNodes(rootNodes);
   return rootNodes;
 });
+/* endregion */
 
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 const handleSelect = (node: TreeItem) => {
   if (node.slug) {
     emit("navigate", node.slug);
@@ -151,6 +195,7 @@ const handleSelect = (node: TreeItem) => {
 
 // UTree requires keys
 const getKey = (item: TreeItem) => item.path;
+/* endregion */
 </script>
 
 <template>
@@ -159,22 +204,22 @@ const getKey = (item: TreeItem) => item.path;
       <UCard :ui="{ body: 'p-0 sm:p-0' }">
         <template #header>
           <div :class="headerClass({ class: rc.header })">
-            <h3 :class="headerTitle({ class: rc.headerTitle })">Page Hierarchy</h3>
+            <h3 :class="headerTitleClass({ class: rc.headerTitle })">Page Hierarchy</h3>
             <UButton
               color="neutral"
               variant="ghost"
               icon="lucide:x"
-              :class="closeButton({ class: rc.closeButton })"
+              :class="closeButtonClass({ class: rc.closeButton })"
               @click="open = false"
             />
           </div>
         </template>
 
-        <div :class="body({ class: rc.body })">
-          <div v-if="loading" class="p-4 flex justify-center">
+        <div :class="bodyClass({ class: rc.body })">
+          <div v-if="loading" :class="loadingWrapper()">
             <UIcon name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin" />
           </div>
-          <div v-else-if="treeItems.length === 0" class="p-4 text-center text-gray-500">
+          <div v-else-if="treeItems.length === 0" :class="emptyWrapper()">
             No pages found directly.
           </div>
           <UTree
@@ -188,7 +233,7 @@ const getKey = (item: TreeItem) => item.path;
             @select="(e: Event, item: TreeItem) => handleSelect(item)"
           >
             <template #item-label="{ item }">
-              <div class="flex items-center gap-2 py-1 w-full">
+              <div :class="itemWrapper()">
                 <span
                   :class="{
                     'text-gray-900 dark:text-gray-100 font-medium': item.slug,
@@ -208,7 +253,7 @@ const getKey = (item: TreeItem) => item.path;
         </div>
 
         <template #footer>
-          <div :class="footer({ class: rc.footer })">
+          <div :class="footerClass({ class: rc.footer })">
             <UButton color="neutral" variant="ghost" label="Close" @click="open = false" />
           </div>
         </template>

@@ -4,8 +4,10 @@ import { computed } from "vue";
 import { useClipboard } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export interface ColorSwatchProps {
   name?: string;
   hex?: string;
@@ -27,16 +29,22 @@ export interface ColorSwatchProps {
 
 const { name, hex, rgb, hsl, oklch, cmyk, textColor, rc: rcProp } = defineProps<ColorSwatchProps>();
 
+const { rc } = useRC("ColorSwatch", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface ColorSwatchEmits {}
 
 const emit = defineEmits<ColorSwatchEmits>();
+/* endregion */
 
+/* region Slots */
 export interface ColorSwatchSlots {}
 
 const slots = defineSlots<ColorSwatchSlots>();
+/* endregion */
 
-const { rc } = useRC("ColorSwatch", rcProp);
-
+/* region Styles */
 const colorSwatchStyles = tv({
   slots: {
     card: "w-full rounded-none xl:w-fit",
@@ -46,6 +54,7 @@ const colorSwatchStyles = tv({
     details: "flex flex-col justify-end gap-xs text-xs",
     buttonGroup: "flex w-full flex-col justify-center gap-sm",
     button: "w-full xl:w-36",
+    detailsName: "text-sm font-bold uppercase tracking-wider mb-2 border-b border-current pb-1",
   },
 });
 
@@ -57,12 +66,48 @@ const {
   details,
   buttonGroup,
   button,
+  detailsName,
 } = colorSwatchStyles();
+type ColorSwatchVariants = VariantProps<typeof colorSwatchStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "ColorSwatch",
+});
+/* endregion */
+
+/* region State */
 const { copy } = useClipboard();
 const toast = useToast();
 const { t } = useI18n();
 
+const color = computed(() => {
+  if (hex) return hex;
+  if (rgb) return rgb;
+  if (hsl) return hsl;
+  if (cmyk) return cmyk;
+  if (oklch) return oklch;
+
+  return "var(--color-primary-500)";
+});
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 const copyToClipboard = async (text: string) => {
   try {
     await copy(`${text}`);
@@ -80,34 +125,23 @@ const copyToClipboard = async (text: string) => {
   }
 };
 
-function formatColor(color: string) {
-  return color.toUpperCase().replace(/[)]/g, "").replace(/[(]/g, " ").replace(/%/g, "");
+function formatColor(colorStr: string) {
+  return colorStr.toUpperCase().replace(/[)]/g, "").replace(/[(]/g, " ").replace(/%/g, "");
 }
-
-const color = computed(() => {
-  if (hex) return hex;
-  if (rgb) return rgb;
-  if (hsl) return hsl;
-  if (cmyk) return cmyk;
-  if (oklch) return oklch;
-
-  return "var(--color-primary-500)";
-});
+/* endregion */
 </script>
 
 <template>
   <UCard variant="subtle" :class="card({ class: rc.card })">
-    <template #header v-if="name">
+    <template v-if="name" #header>
       <h3 :class="titleStyle({ class: rc.title })">{{ name }}</h3>
     </template>
     <div :class="content({ class: rc.content })">
       <div :class="preview({ class: rc.preview })" :style="{ backgroundColor: color }">
         <div :class="details({ class: rc.details })" :style="{ color: textColor || 'white' }">
-          <span
-            v-if="name"
-            class="text-sm font-bold uppercase tracking-wider mb-2 border-b border-current pb-1"
-            >{{ name }}</span
-          >
+          <span v-if="name" :class="detailsName()">
+            {{ name }}
+          </span>
           <span v-if="hex">HEX {{ formatColor(hex) }}</span>
           <span v-if="rgb">{{ formatColor(rgb) }}</span>
           <span v-if="hsl">{{ formatColor(hsl) }}</span>

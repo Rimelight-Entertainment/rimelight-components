@@ -8,7 +8,9 @@ import { useI18n } from "vue-i18n";
 import { useShare, useClipboard } from "@vueuse/core";
 import { type Page } from "../../types";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
 export interface PagePropertiesRendererProps {
   canEdit?: boolean;
   editUrl?: string;
@@ -37,63 +39,84 @@ export interface PagePropertiesRendererProps {
 
 const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>();
 
-const page = defineModel<Page>({ required: true });
+const { rc } = useRC("PagePropertiesRenderer", rcProp);
+/*endregion */
 
+/* region Emits */
 export interface PagePropertiesRendererEmits {}
 
 const emit = defineEmits<PagePropertiesRendererEmits>();
+/* endregion */
 
+/* region Slots */
 export interface PagePropertiesRendererSlots {}
 
 const slots = defineSlots<PagePropertiesRendererSlots>();
+/* endregion */
 
-const { rc } = useRC("PagePropertiesRenderer", rcProp);
-
+/* region Styles */
 const pagePropertiesRendererStyles = tv({
   slots: {
-    aside: "flex flex-col gap-md",
-    actions: "flex flex-row justify-between gap-sm",
-    icon: "rounded-full w-12 h-12 object-cover",
-    title: "",
-    type: "text-sm",
-    tags: "flex flex-row flex-wrap gap-xs",
-    tabs: "w-full",
-    image: "w-full object-cover",
-    groupButton: "group rounded-none bg-elevated text-default",
-    details: "p-sm flex flex-col gap-xs",
-    field: "grid grid-cols-3 gap-xs items-baseline",
-    fieldLabel: "text-xs font-semibold text-dimmed",
-    fieldValue: "text-xs col-span-2",
-    list: "flex flex-wrap list-disc list-inside",
-    listItem: "font-medium",
-    pageArrayList: "flex flex-col gap-y-1",
-    pageArrayItem: "flex items-center gap-x-2",
-    pageArrayBullet: "w-1 h-1 rounded-full bg-inverted shrink-0",
-    links: "flex flex-col gap-xs",
+    asideClass: "flex flex-col gap-md",
+    actionsClass: "flex flex-row justify-between gap-sm",
+    iconClass: "rounded-full w-12 h-12 object-cover",
+    titleClass: "",
+    typeClass: "text-sm",
+    tagsClass: "flex flex-row flex-wrap gap-xs",
+    tabsClass: "w-full",
+    imageClass: "w-full object-cover",
+    groupButtonClass: "group rounded-none bg-elevated text-default",
+    detailsClass: "p-sm flex flex-col gap-xs",
+    fieldClass: "grid grid-cols-3 gap-xs items-baseline",
+    fieldLabelClass: "text-xs font-semibold text-dimmed",
+    fieldValueClass: "text-xs col-span-2",
+    listClass: "flex flex-wrap list-disc list-inside",
+    listItemClass: "font-medium",
+    pageArrayListClass: "flex flex-col gap-y-1",
+    pageArrayItemClass: "flex items-center gap-x-2",
+    pageArrayBulletClass: "w-1 h-1 rounded-full bg-inverted shrink-0",
+    linksClass: "flex flex-col gap-xs",
+    actionGroup: "flex flex-row gap-sm",
+    headerContent: "flex flex-col gap-xs items-center",
+    imageWrapper: "w-full",
   },
 });
 
 const {
-  aside,
-  actions,
-  icon,
-  title: titleClass,
-  type,
-  tags,
-  tabs,
-  image,
-  groupButton,
-  details,
-  field,
-  fieldLabel,
-  fieldValue,
-  list,
-  listItem,
-  pageArrayList,
-  pageArrayItem,
-  pageArrayBullet,
-  links,
+  asideClass,
+  actionsClass,
+  iconClass,
+  titleClass,
+  typeClass,
+  tagsClass,
+  tabsClass,
+  imageClass,
+  groupButtonClass,
+  detailsClass,
+  fieldClass,
+  fieldLabelClass,
+  fieldValueClass,
+  listClass,
+  listItemClass,
+  pageArrayListClass,
+  pageArrayItemClass,
+  pageArrayBulletClass,
+  linksClass,
+  actionGroup,
+  headerContent,
+  imageWrapper,
 } = pagePropertiesRendererStyles();
+type PagePropertiesRendererVariants = VariantProps<typeof pagePropertiesRendererStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PagePropertiesRenderer",
+});
+/* endregion */
+
+/* region State */
+const page = defineModel<Page>({ required: true });
 
 const { getTypeLabelKey } = usePageRegistry();
 const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(
@@ -105,6 +128,28 @@ const { share } = useShare();
 const { copy } = useClipboard();
 const toast = useToast();
 
+const imageTabs = computed<TabsItem[]>(() => {
+  if (!page.value.images?.length) return [];
+
+  return page.value.images.map((img, index) => {
+    const localizedName = getLocalizedContent(img.name, locale.value);
+
+    return {
+      label: localizedName || `${t("label_image")} ${index + 1}`,
+      value: `image-${index}`,
+      img,
+    };
+  });
+});
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 const sharePage = async () => {
   if (!page.value) {
     return;
@@ -141,25 +186,13 @@ const copyLink = async () => {
     });
   }
 };
-
-const imageTabs = computed<TabsItem[]>(() => {
-  if (!page.value.images?.length) return [];
-
-  return page.value.images.map((img, index) => {
-    const localizedName = getLocalizedContent(img.name, locale.value);
-
-    return {
-      label: localizedName || `${t("label_image")} ${index + 1}`,
-      value: `image-${index}`,
-      img,
-    };
-  });
-});
+/* endregion */
 </script>
+
 <template>
-  <aside :class="aside({ class: rc.aside })">
-    <div :class="actions({ class: rc.actions })">
-      <div class="flex flex-row gap-sm">
+  <aside :class="asideClass({ class: rc.aside })">
+    <div :class="actionsClass({ class: rc.actions })">
+      <div :class="actionGroup()">
         <UButton
           variant="soft"
           color="neutral"
@@ -169,30 +202,34 @@ const imageTabs = computed<TabsItem[]>(() => {
         />
         <UButton variant="soft" color="neutral" icon="lucide:link" size="sm" @click="copyLink()" />
       </div>
-      <div v-if="canEdit && editUrl" class="flex flex-row gap-sm">
+      <div v-if="canEdit && editUrl" :class="actionGroup()">
         <UButton variant="soft" color="neutral" icon="lucide:pencil" size="sm" :to="editUrl" />
       </div>
     </div>
     <UCard
       variant="soft"
-      :ui="{ root: 'divide-none', header: 'bg-accented text-center', body: 'p-0 sm:p-0 bg-muted' }"
+      :ui="{
+        root: 'divide-none',
+        header: 'bg-accented text-center',
+        body: 'p-0 sm:p-0 bg-muted',
+      }"
     >
       <template #header>
-        <div class="flex flex-col gap-xs items-center">
+        <div :class="headerContent()">
           <RCImage
             v-if="page.icon?.src"
             :src="page.icon?.src"
             :alt="page.icon?.alt"
-            :class="icon({ class: rc.icon })"
+            :class="iconClass({ class: rc.icon })"
           />
 
           <h3 :class="titleClass({ class: rc.title })">
             {{ getLocalizedContent(page.title, locale) }}
           </h3>
 
-          <span :class="type({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
+          <span :class="typeClass({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
 
-          <div v-if="page.tags?.length" :class="tags({ class: rc.tags })">
+          <div v-if="page.tags?.length" :class="tagsClass({ class: rc.tags })">
             <UBadge
               v-for="(tag, index) in page.tags"
               :key="index"
@@ -204,7 +241,7 @@ const imageTabs = computed<TabsItem[]>(() => {
             </UBadge>
           </div>
 
-          <div v-if="page.images?.length" class="w-full">
+          <div v-if="page.images?.length" :class="imageWrapper()">
             <UTabs
               v-if="page.images.length > 1"
               :items="imageTabs"
@@ -212,13 +249,13 @@ const imageTabs = computed<TabsItem[]>(() => {
               variant="link"
               size="xs"
               color="neutral"
-              :class="tabs({ class: rc.tabs })"
+              :class="tabsClass({ class: rc.tabs })"
             >
               <template #content="{ item }">
                 <RCImage
                   :src="item.img.src"
                   :alt="item.img.alt"
-                  :class="image({ class: rc.image })"
+                  :class="imageClass({ class: rc.image })"
                 />
               </template>
             </UTabs>
@@ -227,7 +264,7 @@ const imageTabs = computed<TabsItem[]>(() => {
               <RCImage
                 :src="page.images[0].src"
                 :alt="page.images[0].alt"
-                :class="image({ class: rc.image })"
+                :class="imageClass({ class: rc.image })"
               />
             </div>
           </div>
@@ -247,22 +284,22 @@ const imageTabs = computed<TabsItem[]>(() => {
                     'group-data-[state=open]:rotate-180 transition-transform duration-200',
                 }"
                 block
-                :class="groupButton({ class: rc.groupButton })"
+                :class="groupButtonClass({ class: rc.groupButton })"
               />
             </template>
 
             <template #content>
-              <dl :class="details({ class: rc.details })">
+              <dl :class="detailsClass({ class: rc.details })">
                 <template
                   v-for="[fieldKey, schema] in getSortedFields(group.fields)"
                   :key="fieldKey"
                 >
-                  <div v-if="isFieldVisible(schema, true)" :class="field({ class: rc.field })">
-                    <dt :class="fieldLabel({ class: rc.fieldLabel })">
+                  <div v-if="isFieldVisible(schema, true)" :class="fieldClass({ class: rc.field })">
+                    <dt :class="fieldLabelClass({ class: rc.fieldLabel })">
                       {{ getLocalizedContent(schema.label, locale) }}
                     </dt>
 
-                    <dd :class="fieldValue({ class: rc.fieldValue })">
+                    <dd :class="fieldValueClass({ class: rc.fieldValue })">
                       <span v-if="schema.type === 'text'">
                         {{ getLocalizedContent(schema.defaultValue, locale) }}
                       </span>
@@ -270,10 +307,10 @@ const imageTabs = computed<TabsItem[]>(() => {
                         v-else-if="
                           schema.type === 'text-array' && Array.isArray(schema.defaultValue)
                         "
-                        :class="list({ class: rc.list })"
+                        :class="listClass({ class: rc.list })"
                       >
                         <li v-for="(item, index) in schema.defaultValue" :key="index">
-                          <span :class="listItem({ class: rc.listItem })">
+                          <span :class="listItemClass({ class: rc.listItem })">
                             {{ getLocalizedContent(item, locale) }}
                           </span>
                         </li>
@@ -301,12 +338,12 @@ const imageTabs = computed<TabsItem[]>(() => {
                         v-else-if="
                           schema.type === 'page-array' && Array.isArray(schema.defaultValue)
                         "
-                        :class="pageArrayList({ class: rc.pageArrayList })"
+                        :class="pageArrayListClass({ class: rc.pageArrayList })"
                       >
                         <template v-for="(id, idx) in schema.defaultValue" :key="idx">
                           <li
                             v-if="typeof id === 'string' ? !!id : !!getLocalizedContent(id, locale)"
-                            :class="pageArrayItem({ class: rc.pageArrayItem })"
+                            :class="pageArrayItemClass({ class: rc.pageArrayItem })"
                           >
                             <RCPageMention
                               :page-id="
@@ -341,7 +378,7 @@ const imageTabs = computed<TabsItem[]>(() => {
         </template>
       </template>
     </UCard>
-    <div :class="links({ class: rc.links })">
+    <div :class="linksClass({ class: rc.links })">
       <h6>Links</h6>
       <UButton
         v-for="(linkItem, index) in page.links"

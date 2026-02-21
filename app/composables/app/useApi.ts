@@ -24,7 +24,7 @@ export const $api = async <T>(path: string, opts: any = {}) => {
           isExternal = true;
         }
       }
-    } catch (e) {
+    } catch {
       // Ignore URL parsing errors, treat as internal (default)
     }
   }
@@ -74,7 +74,7 @@ export const useApi = <T>(
           isExternal = true;
         }
       }
-    } catch (e) {
+    } catch {
       // Ignore
     }
   }

@@ -1,13 +1,55 @@
 <script lang="ts" setup>
 import type { DropdownMenuItem } from "@nuxt/ui";
 import { ref, computed } from "vue";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "../../composables";
 
+/* region Props */
 export interface TeamsMenuProps {
   collapsed?: boolean;
+  rc?: {
+    root?: string;
+  };
 }
 
-const { collapsed } = defineProps<TeamsMenuProps>();
+const { collapsed, rc: rcProp } = defineProps<TeamsMenuProps>();
 
+const { rc } = useRC("TeamsMenu", rcProp);
+/*endregion */
+
+/* region Emits */
+export interface TeamsMenuEmits {}
+
+const emit = defineEmits<TeamsMenuEmits>();
+/* endregion */
+
+/* region Slots */
+export interface TeamsMenuSlots {}
+
+const slots = defineSlots<TeamsMenuSlots>();
+/* endregion */
+
+/* region Styles */
+const teamsMenuStyles = tv({
+  slots: {
+    root: "",
+    triggerButton: "data-[state=open]:bg-elevated",
+    buttonTrailing: "text-dimmed",
+  },
+});
+
+const { root, triggerButton, buttonTrailing } = teamsMenuStyles();
+type TeamsMenuVariants = VariantProps<typeof teamsMenuStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "TeamsMenu",
+});
+/* endregion */
+
+/* region State */
 const teams = ref([
   {
     label: `Nuxt`,
@@ -44,15 +86,34 @@ const items = computed<DropdownMenuItem[][]>(() => {
     [
       {
         label: `Create team`,
-        icon: `i-lucide-circle-plus`,
+        icon: `lucide:circle-plus`,
       },
       {
         label: `Manage teams`,
-        icon: `i-lucide-cog`,
+        icon: `lucide:cog`,
       },
     ],
   ];
 });
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>
@@ -64,20 +125,21 @@ const items = computed<DropdownMenuItem[][]>(() => {
     }"
   >
     <UButton
-      :class="[!collapsed && 'py-2']"
+      :class="[triggerButton(), !collapsed && 'py-2']"
       :square="collapsed"
       :ui="{
-        trailingIcon: 'text-dimmed',
+        trailingIcon: buttonTrailing(),
       }"
       block
-      class="data-[state=open]:bg-elevated"
       color="neutral"
       v-bind="{
         ...selectedTeam,
         label: collapsed ? undefined : selectedTeam?.label,
-        trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
+        trailingIcon: collapsed ? undefined : 'lucide:chevrons-up-down',
       }"
       variant="ghost"
     />
   </UDropdownMenu>
 </template>
+
+<style scoped></style>

@@ -5,8 +5,10 @@ import { useI18n } from "vue-i18n";
 import { type Page } from "../../types";
 import { useAsyncData } from "#imports";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export interface PageMentionProps {
   pageId: string;
   rc?: {
@@ -17,31 +19,47 @@ export interface PageMentionProps {
   };
 }
 
-const props = defineProps<PageMentionProps>();
+const { pageId, rc: rcProp } = defineProps<PageMentionProps>();
 
+const { rc } = useRC("PageMention", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface PageMentionEmits {}
 
 const emit = defineEmits<PageMentionEmits>();
+/* endregion */
 
+/* region Slots */
 export interface PageMentionSlots {}
 
 const slots = defineSlots<PageMentionSlots>();
+/* endregion */
 
-const { rc } = useRC("PageMention", props.rc);
-
+/* region Styles */
 const pageMentionStyles = tv({
   slots: {
-    link: "inline-flex items-baseline gap-1 align-middle hover:text-primary transition-colors font-medium text-inherit",
-    icon: "w-4 h-4 rounded-full object-cover shrink-0",
-    text: "truncate font-medium",
-    skeleton: "h-3 w-24",
+    linkClass:
+      "inline-flex items-baseline gap-1 align-middle hover:text-primary transition-colors font-medium text-inherit",
+    iconClass: "w-4 h-4 rounded-full object-cover shrink-0",
+    textClass: "truncate font-medium",
+    skeletonClass: "h-3 w-24",
+    unresolvedText: "text-xs text-dimmed italic",
   },
 });
 
-const { link, icon, text, skeleton } = pageMentionStyles();
+const { linkClass, iconClass, textClass, skeletonClass, unresolvedText } = pageMentionStyles();
+type PageMentionVariants = VariantProps<typeof pageMentionStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "PageMention",
+});
+/* endregion */
+
+/* region State */
 const { locale } = useI18n();
-
 const isServer = import.meta.server;
 const isClient = import.meta.client;
 
@@ -49,7 +67,7 @@ const resolver =
   inject<(id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>>("page-resolver");
 
 const { data: linkedPage, status } = useAsyncData(
-  () => `page-mention-${props.pageId}`,
+  () => `page-mention-${pageId}`,
   async () => {
     if (!resolver) {
       if (isClient) {
@@ -58,45 +76,55 @@ const { data: linkedPage, status } = useAsyncData(
       return null;
     }
     try {
-      const page = await resolver(props.pageId);
+      const page = await resolver(pageId);
       return page;
     } catch (e) {
       if (isClient) {
-        console.warn("RCPageMention: Failed to resolve page", props.pageId, e);
+        console.warn("RCPageMention: Failed to resolve page", pageId, e);
       }
       return null;
     }
   },
   {
     lazy: true,
-    watch: [() => props.pageId],
+    watch: [() => pageId],
   },
 );
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>
-  <NuxtLink v-if="linkedPage" :to="`/${linkedPage.slug}`" :class="link({ class: rc.link })">
+  <NuxtLink v-if="linkedPage" :to="`/${linkedPage.slug}`" :class="linkClass({ class: rc.link })">
     <NuxtImg
       v-if="linkedPage.icon?.src"
       :src="linkedPage.icon.src"
       :alt="linkedPage.icon.alt"
-      :class="icon({ class: rc.icon })"
+      :class="iconClass({ class: rc.icon })"
     />
-    <span :class="text({ class: rc.text })">
+    <span :class="textClass({ class: rc.text })">
       {{ getLocalizedContent(linkedPage.title, locale) }}
     </span>
   </NuxtLink>
   <USkeleton
     v-else-if="status === 'pending' || (isServer && status === 'idle')"
-    :class="skeleton({ class: rc.skeleton })"
+    :class="skeletonClass({ class: rc.skeleton })"
   />
   <span
-    v-else-if="
-      status !== 'idle' && props.pageId && props.pageId !== 'undefined' && props.pageId !== 'null'
-    "
-    class="text-xs text-dimmed italic"
-    >Unresolved Ref ({{ props.pageId }})</span
+    v-else-if="status !== 'idle' && pageId && pageId !== 'undefined' && pageId !== 'null'"
+    :class="unresolvedText()"
   >
+    Unresolved Ref ({{ pageId }})
+  </span>
 </template>
 
 <style scoped></style>

@@ -1,4 +1,4 @@
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { useState } from "#app";
 import { defaultDocument, defaultWindow } from "../../utils";
 

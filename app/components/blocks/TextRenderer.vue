@@ -8,12 +8,10 @@ import {
 } from "../../types";
 import { RCTextNode, RCLinkNode, RCPageMention } from "#components";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
-defineOptions({
-  name: "TextRenderer",
-});
-
+/* region Props */
 export interface TextRendererProps {
   content: RichTextContent;
   rc?: {
@@ -23,16 +21,22 @@ export interface TextRendererProps {
 
 const { content, rc: rcProp } = defineProps<TextRendererProps>();
 
+const { rc } = useRC("TextRenderer", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface TextRendererEmits {}
 
 const emit = defineEmits<TextRendererEmits>();
+/* endregion */
 
+/* region Slots */
 export interface TextRendererSlots {}
 
 const slots = defineSlots<TextRendererSlots>();
+/* endregion */
 
-const { rc } = useRC("TextRenderer", rcProp);
-
+/* region Styles */
 const textRendererStyles = tv({
   slots: {
     root: "",
@@ -40,7 +44,38 @@ const textRendererStyles = tv({
 });
 
 const { root } = textRendererStyles();
+type TextRendererVariants = VariantProps<typeof textRendererStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "TextRenderer",
+});
+/* endregion */
+
+/* region State */
+// const ref1 = ref(0)
+//
+// const computed1 = computed(() => {
+//
+// })
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 /**
  * Type representing the possible values for the `is` attribute on <component>.
  * This can be a string for a native tag or the Vue component object itself.
@@ -96,6 +131,7 @@ const getProps = (item: InlineContent): Record<string, any> => {
       return {};
   }
 };
+/* endregion */
 </script>
 
 <template>

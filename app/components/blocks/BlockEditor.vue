@@ -1,34 +1,29 @@
 <script setup lang="ts">
-import { provide, inject, ref, watch, nextTick, type Ref } from "vue";
+import { provide, ref } from "vue";
 import { v7 as uuidv7 } from "uuid";
 import type { Block } from "../../types";
 import { useBlockEditor, useRC } from "../../composables";
 import { type BlockDefinition } from "../../utils/blocks";
 import { useI18n } from "vue-i18n";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
-/**
- * Helper: Recursively regenerates IDs for a block and its children.
- * Crucial for avoiding duplicate keys during cross-container moves.
- */
-function regenerateIds(block: Block): void {
-  block.id = uuidv7();
-  if (block.props && "children" in block.props && Array.isArray(block.props.children)) {
-    block.props.children.forEach((child: Block) => regenerateIds(child));
-  }
-}
-
+/* region Props */
 export interface BlockEditorProps {
   historyLimit?: number;
   containerId?: string | null; // ID of container block, null for root
-  rc?: {};
+  rc?: {
+    root?: string;
+    content?: string;
+  };
 }
 
 const { historyLimit, containerId = null, rc: rcProp } = defineProps<BlockEditorProps>();
 
-const blocks = defineModel<Block[]>({ required: true });
+const { rc } = useRC("BlockEditor", rcProp);
+/*endregion */
 
-console.log("[BlockEditor] Component mounted with", blocks.value.length, "blocks");
-
+/* region Emits */
 export interface BlockEditorEmits {
   save: [];
   mutation: [];
@@ -38,9 +33,36 @@ export interface BlockEditorEmits {
 }
 
 const emit = defineEmits<BlockEditorEmits>();
+/* endregion */
+
+/* region Slots */
+export interface BlockEditorSlots {}
+
+const slots = defineSlots<BlockEditorSlots>();
+/* endregion */
+
+/* region Styles */
+const blockEditorStyles = tv({
+  slots: {
+    root: "flex flex-col gap-8 w-full",
+    footerClass: "flex flex-col items-center justify-center gap-md p-sm",
+  },
+});
+
+const { root, footerClass } = blockEditorStyles();
+type BlockEditorVariants = VariantProps<typeof blockEditorStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "BlockEditor",
+});
+/* endregion */
+
+/* region State */
+const blocks = defineModel<Block[]>({ required: true });
 
 const { t } = useI18n();
-const { rc } = useRC("BlockEditor", rcProp);
 
 const {
   removeBlock,
@@ -61,18 +83,6 @@ const addBlockTarget = ref<{ id: string | null; position: "before" | "after" }>(
   position: "after",
 });
 
-const openAddBlockModal = (
-  targetId: string | null = null,
-  position: "before" | "after" = "after",
-) => {
-  addBlockTarget.value = { id: targetId, position };
-  isAddBlockModalOpen.value = true;
-};
-
-const handleBlockSelect = (definition: BlockDefinition) => {
-  insertBlock(definition.type, addBlockTarget.value.id, addBlockTarget.value.position);
-};
-
 provide("block-editor-api", {
   removeBlock,
   moveBlock,
@@ -87,30 +97,53 @@ provide("block-editor-api", {
   openAddBlockModal,
 });
 
-// Handle drag start
+defineExpose({ undo, redo, canUndo, canRedo });
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+function regenerateIds(block: Block): void {
+  block.id = uuidv7();
+  if (block.props && "children" in block.props && Array.isArray(block.props.children)) {
+    block.props.children.forEach((child: Block) => regenerateIds(child));
+  }
+}
+
+function openAddBlockModal(targetId: string | null = null, position: "before" | "after" = "after") {
+  addBlockTarget.value = { id: targetId, position };
+  isAddBlockModalOpen.value = true;
+}
+
+const handleBlockSelect = (definition: BlockDefinition) => {
+  insertBlock(definition.type, addBlockTarget.value.id, addBlockTarget.value.position);
+};
+
 const handleDragStart = () => {
-  console.log("[BlockEditor] Drag started");
   emit("start");
 };
 
-// Handle drag end
 const handleDragEnd = async () => {
-  console.log("[BlockEditor] Drag ended");
   emit("end");
   emit("mutation");
 };
 
-// Handle changes from draggable (added, removed, moved)
 const handleBlockChange = (event: any) => {
-  console.log("[BlockEditor] handleBlockChange:", event);
-
-  // If a block was added (dropped from another list), regenerate its ID and its children's IDs
-  // This prevents Vue "Duplicate Key" errors because the source list might not have
-  // removed the old instance yet, or the update cycle hasn't completed.
   if (event.added) {
     const block = event.added.element;
     if (block) {
-      console.log("[BlockEditor] Regenerating IDs for added block:", block.id);
       regenerateIds(block);
     }
   }
@@ -121,33 +154,11 @@ const handleBlockChange = (event: any) => {
     emit("mutation");
   }
 };
-
-// Watch for blocks changes that come from v-model (drag and drop)
-// DISABLED: This was causing premature snapshots that destroyed nested components
-// before they could process dropped blocks. We now rely on explicit mutation events.
-/*
-watch(blocks, async (newVal, oldVal) => {
-  const newCount = newVal?.length || 0
-  const oldCount = oldVal?.length || 0
-  
-  if (newCount !== oldCount) {
-    console.log('[BlockEditor] Blocks changed via v-model from', oldCount, 'to', newCount)
-    
-    // CRITICAL: Wait for all nested updates to propagate before emitting mutation
-    // This ensures child components have updated their parent block props
-    // before the page-level snapshot is captured
-    await nextTick()
-    console.log('[BlockEditor] After nextTick, emitting mutation')
-    emit('mutation')
-  }
-}, { deep: false }) // Shallow watch - we only care about array length changes from drag/drop
-*/
-
-defineExpose({ undo, redo, canUndo, canRedo });
+/* endregion */
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 w-full">
+  <div :class="root()">
     <RCBlockEditRenderer
       v-model:blocks="blocks"
       :container-id="containerId"
@@ -156,10 +167,7 @@ defineExpose({ undo, redo, canUndo, canRedo });
       @change="handleBlockChange"
     />
 
-    <div
-      v-if="blocks && blocks.length > 0"
-      class="flex flex-col items-center justify-center gap-md p-sm"
-    >
+    <div v-if="blocks && blocks.length > 0" :class="footerClass()">
       <UButton
         color="neutral"
         :label="t('page_editor.add_block', 'Add Block')"

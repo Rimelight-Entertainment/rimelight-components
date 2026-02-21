@@ -197,7 +197,7 @@ export const MOCK_PAGES_LIST: Page[] = [
         defaultOpen: true,
         ...MOCK_MOVIE_PAGE.properties.info,
         fields: {
-          ...(MOCK_MOVIE_PAGE.properties.info?.fields || {}),
+          ...MOCK_MOVIE_PAGE.properties.info?.fields,
           releaseYear: { value: 2003, label: { en: "Release Year" }, type: "number" },
         },
       },
@@ -226,7 +226,7 @@ export const MOCK_PAGES_LIST: Page[] = [
         defaultOpen: true,
         ...MOCK_MOVIE_PAGE.properties.info,
         fields: {
-          ...(MOCK_MOVIE_PAGE.properties.info?.fields || {}),
+          ...MOCK_MOVIE_PAGE.properties.info?.fields,
           releaseYear: { value: 2003, label: { en: "Release Year" }, type: "number" },
         },
       },

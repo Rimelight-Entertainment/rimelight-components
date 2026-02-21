@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, useTemplateRef, watch, nextTick } from "vue";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 import { defaultDocument, defaultWindow } from "../../utils";
 
+/* region Props */
 export interface ImageProps {
   src: string;
   alt?: string;
@@ -26,16 +28,22 @@ const {
   rc: rcProp,
 } = defineProps<ImageProps>();
 
+const { rc } = useRC("Image", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface ImageEmits {}
 
 const emit = defineEmits<ImageEmits>();
+/* endregion */
 
+/* region Slots */
 export interface ImageSlots {}
 
 const slots = defineSlots<ImageSlots>();
+/* endregion */
 
-const { rc } = useRC("Image", rcProp);
-
+/* region Styles */
 const imageStyles = tv({
   slots: {
     base: "cursor-pointer transition-transform duration-300",
@@ -53,7 +61,16 @@ const imageStyles = tv({
 });
 
 const { base } = imageStyles();
+type ImageVariants = VariantProps<typeof imageStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "Image",
+});
+/* endregion */
+
+/* region State */
 const isOpen = ref(false);
 const imgElement = useTemplateRef<{ $el: HTMLImageElement }>("imgRef");
 
@@ -64,7 +81,37 @@ const metadata = reactive({
   format: "",
   mimeType: "",
 });
+/* endregion */
 
+/* region Lifecycle */
+onMounted(() => {
+  nextTick(() => {
+    const el = imgElement.value?.$el as HTMLImageElement | undefined;
+    if (el) {
+      if (el.complete) {
+        updateMetadata(el);
+      }
+    }
+  });
+});
+
+watch(
+  () => imgElement.value,
+  (newVal) => {
+    const el = newVal?.$el as HTMLImageElement | undefined;
+    if (el && el.complete && el.naturalWidth > 0) {
+      updateMetadata(el);
+    }
+  },
+  { immediate: true },
+);
+
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 function formatBytes(bytes: number): string {
   if (bytes === 0) return "0 Bytes";
   const k = 1024;
@@ -93,7 +140,7 @@ async function fetchExtendedMetadata() {
     }
 
     if (metadata.format === "SVG") {
-      const tempImg = new Image();
+      const tempImg = new window.Image();
       tempImg.src = URL.createObjectURL(blob);
       await tempImg.decode();
       metadata.width = tempImg.naturalWidth;
@@ -139,28 +186,7 @@ async function downloadImage() {
     console.error("Download failed", error);
   }
 }
-
-onMounted(() => {
-  nextTick(() => {
-    const el = imgElement.value?.$el as HTMLImageElement | undefined;
-    if (el) {
-      if (el.complete) {
-        updateMetadata(el);
-      }
-    }
-  });
-});
-
-watch(
-  () => imgElement.value,
-  (newVal) => {
-    const el = newVal?.$el as HTMLImageElement | undefined;
-    if (el && el.complete && el.naturalWidth > 0) {
-      updateMetadata(el);
-    }
-  },
-  { immediate: true },
-);
+/* endregion */
 </script>
 
 <template>
@@ -231,3 +257,5 @@ watch(
     </template>
   </UModal>
 </template>
+
+<style scoped></style>

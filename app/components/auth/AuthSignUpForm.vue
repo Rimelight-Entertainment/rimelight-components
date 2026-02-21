@@ -5,7 +5,78 @@ import { reactive, ref, computed, useTemplateRef } from "vue";
 import type { FormSubmitEvent, StepperItem } from "#ui/types";
 import { useToast } from "@nuxt/ui/composables/useToast";
 import { useAuth } from "../../composables/auth/useAuth";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
+export interface AuthSignUpFormProps {
+  rc?: {
+    root?: string;
+    content?: string;
+  };
+}
+
+const { rc } = defineProps<AuthSignUpFormProps>();
+/*endregion */
+
+/* region Emits */
+export interface AuthSignUpFormEmits {}
+
+const emit = defineEmits<AuthSignUpFormEmits>();
+/* endregion */
+
+/* region Slots */
+export interface AuthSignUpFormSlots {
+  // default: (props: {}) => any
+}
+
+const slots = defineSlots<AuthSignUpFormSlots>();
+/* endregion */
+
+/* region Styles */
+const authSignUpFormStyles = tv({
+  slots: {
+    stepperClass: "w-full",
+    form: "flex flex-col gap-md",
+    stepContainer: "flex flex-col gap-md",
+    input: "w-full",
+    honeypot: "absolute h-0 w-0 overflow-hidden",
+    nameWrapper: "flex flex-row gap-sm",
+    halfWidth: "w-1/2",
+    actions: "flex justify-end gap-md",
+    betweenActions: "flex justify-between gap-md",
+    strengthList: "space-y-1",
+    strengthItem: "flex items-center gap-xs text-xs",
+    strengthIcon: "size-4 shrink-0",
+    termsLink: "font-medium text-primary",
+  },
+});
+
+const {
+  stepperClass,
+  form,
+  stepContainer,
+  input,
+  honeypot,
+  nameWrapper,
+  halfWidth,
+  actions,
+  betweenActions,
+  strengthList,
+  strengthItem,
+  strengthIcon,
+  termsLink,
+} = authSignUpFormStyles();
+type AuthSignUpFormVariants = VariantProps<typeof authSignUpFormStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "AuthSignUpForm",
+});
+/* endregion */
+
+/* region State */
 const { signUp, isLoading } = useAuth();
 const toast = useToast();
 const { t } = useI18n();
@@ -97,20 +168,6 @@ const visibility = reactive({
   confirmation: false,
 });
 
-function checkStrength(str: string) {
-  const requirements = [
-    { regex: /.{8,}/, text: t("auth_password_req_length") },
-    { regex: /\d/, text: t("auth_password_req_number") },
-    { regex: /[a-z]/, text: t("auth_password_req_lowercase") },
-    { regex: /[A-Z]/, text: t("auth_password_req_uppercase") },
-    { regex: /[^\w\s]/, text: t("auth_password_req_special") },
-  ];
-  return requirements.map((req) => ({
-    met: req.regex.test(str),
-    text: req.text,
-  }));
-}
-
 const strength = computed(() => checkStrength(state.password ?? ""));
 const score = computed(() => strength.value.filter((req) => req.met).length);
 
@@ -130,6 +187,36 @@ const stepperItems = computed<StepperItem[]>(() => [
     icon: "lucide:check-circle",
   },
 ]);
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+function checkStrength(str: string) {
+  const requirements = [
+    { regex: /.{8,}/, text: t("auth_password_req_length") },
+    { regex: /\d/, text: t("auth_password_req_number") },
+    { regex: /[a-z]/, text: t("auth_password_req_lowercase") },
+    { regex: /[A-Z]/, text: t("auth_password_req_uppercase") },
+    { regex: /[^\w\s]/, text: t("auth_password_req_special") },
+  ];
+  return requirements.map((req) => ({
+    met: req.regex.test(str),
+    text: req.text,
+  }));
+}
 
 async function nextStep() {
   let isValid = false;
@@ -185,62 +272,63 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     description: t("auth_account_creation_success_description"),
   });
 }
+/* endregion */
 </script>
 
 <template>
   <UStepper
     ref="stepper"
     :items="stepperItems"
-    class="w-full"
+    :class="stepperClass()"
     size="sm"
     :model-value="currentStep"
     linear
     disabled
   >
     <template #identity>
-      <UForm
-        ref="step1Form"
-        :schema="step1Schema"
-        :state="state"
-        class="flex flex-col gap-md"
-        @submit.prevent
-      >
-        <div class="flex flex-col gap-md">
+      <UForm ref="step1Form" :schema="step1Schema" :state="state" :class="form()" @submit.prevent>
+        <div :class="stepContainer()">
           <UFormField :label="t('auth_email_label')" name="email" required>
             <UInput
               v-model="state.email"
               type="email"
               :placeholder="t('auth_email_placeholder')"
-              class="w-full"
+              :class="input()"
             />
           </UFormField>
 
-          <UFormField
-            name="emailConfirmation"
-            class="absolute h-0 w-0 overflow-hidden"
-            aria-hidden="true"
-          >
+          <UFormField name="emailConfirmation" :class="honeypot()" aria-hidden="true">
             <UInput v-model="state.emailConfirmation" type="email" autocomplete="off" />
           </UFormField>
 
           <UFormField :label="t('auth_username_label')" name="username" required>
-            <UInput v-model="state.username" placeholder="Johndoe123" class="w-full" />
+            <UInput v-model="state.username" placeholder="Johndoe123" :class="input()" />
           </UFormField>
 
-          <div class="flex flex-row gap-sm">
-            <UFormField :label="t('auth_firstname_label')" name="firstName" required class="w-1/2">
+          <div :class="nameWrapper()">
+            <UFormField
+              :label="t('auth_firstname_label')"
+              name="firstName"
+              required
+              :class="halfWidth()"
+            >
               <UInput v-model="state.firstName" placeholder="John" />
             </UFormField>
-            <UFormField :label="t('auth_lastname_label')" name="lastName" required class="w-1/2">
+            <UFormField
+              :label="t('auth_lastname_label')"
+              name="lastName"
+              required
+              :class="halfWidth()"
+            >
               <UInput v-model="state.lastName" placeholder="Doe" />
             </UFormField>
           </div>
 
-          <div class="flex justify-end gap-md">
+          <div :class="actions()">
             <UButton
               trailing-icon="lucide:arrow-right"
-              @click="nextStep"
               :label="t('navigation_next')"
+              @click="nextStep"
             />
           </div>
         </div>
@@ -248,21 +336,15 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     </template>
 
     <template #security>
-      <UForm
-        ref="step2Form"
-        :schema="step2Schema"
-        :state="state"
-        class="flex flex-col gap-md"
-        @submit.prevent
-      >
-        <div class="flex flex-col gap-md">
+      <UForm ref="step2Form" :schema="step2Schema" :state="state" :class="form()" @submit.prevent>
+        <div :class="stepContainer()">
           <UFormField :label="t('auth_password_label')" name="password" required>
             <div class="flex flex-col gap-sm">
               <UInput
                 v-model="state.password"
                 :type="visibility.password ? 'text' : 'password'"
                 placeholder="••••••••••••••••"
-                class="w-full"
+                :class="input()"
               >
                 <template #trailing>
                   <UButton
@@ -275,16 +357,15 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
                 </template>
               </UInput>
               <UProgress :color="strengthColor" v-model="score" :max="4" size="sm" />
-              <ul class="space-y-1">
+              <ul :class="strengthList()">
                 <li
                   v-for="(req, index) in strength"
                   :key="index"
-                  class="flex items-center gap-xs text-xs"
-                  :class="req.met ? 'text-success' : 'text-muted'"
+                  :class="[strengthItem(), req.met ? 'text-success' : 'text-muted']"
                 >
                   <UIcon
                     :name="req.met ? 'lucide:circle-check' : 'lucide:circle-x'"
-                    class="size-4 shrink-0"
+                    :class="strengthIcon()"
                   />
                   <span>{{ req.text }}</span>
                 </li>
@@ -301,7 +382,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
               v-model="state.passwordConfirmation"
               :type="visibility.confirmation ? 'text' : 'password'"
               placeholder="••••••••••••••••"
-              class="w-full"
+              :class="input()"
             >
               <template #trailing>
                 <UButton
@@ -315,7 +396,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             </UInput>
           </UFormField>
 
-          <div class="flex justify-between gap-md">
+          <div :class="betweenActions()">
             <UButton
               variant="outline"
               leading-icon="lucide:arrow-left"
@@ -324,8 +405,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             />
             <UButton
               trailing-icon="lucide:arrow-right"
-              @click="nextStep"
               :label="t('navigation_next')"
+              @click="nextStep"
             />
           </div>
         </div>
@@ -335,19 +416,18 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     <template #preferences>
       <UForm
         ref="step3Form"
-        :schema="schema"
+        :schema="step3Schema"
         :state="state"
+        :class="form()"
         @submit="onSubmit"
-        class="flex flex-col gap-md"
       >
-        <div class="flex flex-col gap-md">
+        <div :class="stepContainer()">
           <UFormField name="terms">
             <UCheckbox v-model="state.terms" required>
               <template #label>
                 {{ t("auth_terms_agreement_signup") }}
-                <ULink to="/documents/terms-of-service" class="font-medium text-primary">{{
-                  t("auth_terms_link")
-                }}</ULink
+                <ULink to="/documents/terms-of-service" :class="termsLink()">
+                  {{ t("auth_terms_link") }} </ULink
                 >.
               </template>
             </UCheckbox>
@@ -360,7 +440,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             :description="t('auth_newsletter_description')"
           />
 
-          <div class="flex justify-between gap-md">
+          <div :class="betweenActions()">
             <UButton
               variant="outline"
               leading-icon="lucide:arrow-left"
@@ -379,3 +459,5 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     </template>
   </UStepper>
 </template>
+
+<style scoped></style>

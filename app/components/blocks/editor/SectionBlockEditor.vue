@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { inject, ref, type Ref, computed, watch, nextTick, shallowRef } from "vue";
-import { type SectionBlockProps, type HeadingLevel, type Block } from "../../../types";
-import type { SelectItem } from "@nuxt/ui";
+import { inject, ref, computed, watch } from "vue";
+import { type SectionBlockProps } from "../../../types";
 import { tv } from "../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../../composables";
 import { SECTION_LEVEL_KEY } from "../../../internal/injectionKeys";
 
+/* region Props */
 export interface SectionBlockEditorProps extends SectionBlockProps {
   id: string;
   rc?: {
@@ -15,33 +16,55 @@ export interface SectionBlockEditorProps extends SectionBlockProps {
   };
 }
 
-const props = defineProps<SectionBlockEditorProps>();
-const { rc: rcProp } = props;
+const {
+  id,
+  rc: rcProp,
+  title,
+  description,
+  children,
+  level,
+} = defineProps<SectionBlockEditorProps>();
 
+const { rc } = useRC("SectionBlockEditor", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface SectionBlockEditorEmits {}
 
 const emit = defineEmits<SectionBlockEditorEmits>();
+/* endregion */
 
+/* region Slots */
 export interface SectionBlockEditorSlots {}
 
 const slots = defineSlots<SectionBlockEditorSlots>();
+/* endregion */
 
-const { rc } = useRC("SectionBlockEditor", rcProp);
-
+/* region Styles */
 const sectionBlockEditorStyles = tv({
   slots: {
     root: "flex flex-col gap-sm",
     headerContainer: "flex flex-row items-center gap-xs",
     titleInput: "w-full",
+    levelBadge: "text-xs font-mono text-dimmed shrink-0 leading-none",
   },
 });
 
-const { root, headerContainer, titleInput } = sectionBlockEditorStyles();
+const { root, headerContainer, titleInput, levelBadge } = sectionBlockEditorStyles();
+type SectionBlockEditorVariants = VariantProps<typeof sectionBlockEditorStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "SectionBlockEditor",
+});
+/* endregion */
+
+/* region State */
+const localTitle = ref(title);
+const localDescription = ref(description);
 
 const editorApi = inject<any>("block-editor-api");
-
-const localTitle = ref(props.title);
-const localDescription = ref(props.description);
 
 const parentLevel = inject(
   SECTION_LEVEL_KEY,
@@ -49,16 +72,63 @@ const parentLevel = inject(
 );
 const currentLevel = computed(() => Math.min(6, parentLevel.value + 1));
 
+// Use a computed property to bridge vuedraggable and the central store directly
+// This avoids maintaining a separate local state that can get out of sync
+const localChildren = computed({
+  get: () => children ?? [],
+  set: (newChildren) => {
+    if (editorApi && id) {
+      // Deep copy to ensure we break references before sending to store
+      const childrenCopy = JSON.parse(JSON.stringify(newChildren));
+      editorApi.updateBlockProps(id, { children: childrenCopy });
+    }
+  },
+});
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+
 watch(
-  currentLevel,
+  () => currentLevel.value,
   (newLevel) => {
-    if (editorApi && props.id && newLevel !== props.level) {
-      editorApi.updateBlockProps(props.id, { level: newLevel });
+    if (editorApi && id && newLevel !== level) {
+      editorApi.updateBlockProps(id, { level: newLevel });
     }
   },
   { immediate: true },
 );
 
+watch(
+  () => title,
+  (newVal) => {
+    if (newVal !== localTitle.value) {
+      localTitle.value = newVal;
+    }
+  },
+);
+
+watch(
+  () => description,
+  (newVal) => {
+    if (newVal !== localDescription.value) {
+      localDescription.value = newVal;
+    }
+  },
+);
+
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 /**
  * Updates the local title buffer on every keystroke for instant feedback.
  */
@@ -70,8 +140,8 @@ const updateLocalTitle = (e: Event) => {
  * Commits the final local title value to the global store when the input loses focus.
  */
 const commitTitleOnBlur = () => {
-  if (editorApi && props.id && localTitle.value !== props.title) {
-    editorApi.updateBlockProps(props.id, { title: localTitle.value });
+  if (editorApi && id && localTitle.value !== title) {
+    editorApi.updateBlockProps(id, { title: localTitle.value });
   }
 };
 
@@ -80,41 +150,10 @@ const updateLocalDescription = (e: Event) => {
 };
 
 const commitDescriptionOnBlur = () => {
-  if (editorApi && props.id && localDescription.value !== props.description) {
-    editorApi.updateBlockProps(props.id, { description: localDescription.value });
+  if (editorApi && id && localDescription.value !== description) {
+    editorApi.updateBlockProps(id, { description: localDescription.value });
   }
 };
-
-watch(
-  () => props.title,
-  (newVal) => {
-    if (newVal !== localTitle.value) {
-      localTitle.value = newVal;
-    }
-  },
-);
-
-watch(
-  () => props.description,
-  (newVal) => {
-    if (newVal !== localDescription.value) {
-      localDescription.value = newVal;
-    }
-  },
-);
-
-// Use a computed property to bridge vuedraggable and the central store directly
-// This avoids maintaining a separate local state that can get out of sync
-const localChildren = computed({
-  get: () => props.children ?? [],
-  set: (newChildren) => {
-    if (editorApi && props.id) {
-      // Deep copy to ensure we break references before sending to store
-      const childrenCopy = JSON.parse(JSON.stringify(newChildren));
-      editorApi.updateBlockProps(props.id, { children: childrenCopy });
-    }
-  },
-});
 
 // We no longer need to manually handle mutations since the setter does it immediately
 const handleChildrenMutation = () => {
@@ -122,6 +161,7 @@ const handleChildrenMutation = () => {
   // We can keep it empty or log for debugging.
   console.log("[SectionBlockEditor] Mutation event received (handled by setter)");
 };
+/* endregion */
 </script>
 
 <template>
@@ -129,16 +169,14 @@ const handleChildrenMutation = () => {
     <RCSection :title="localTitle" :description="description" is-editing>
       <template #title>
         <div :class="headerContainer({ class: rc.headerContainer })">
-          <span class="text-xs font-mono text-dimmed shrink-0 leading-none">
-            H{{ currentLevel }}
-          </span>
+          <span :class="levelBadge()"> H{{ currentLevel }} </span>
           <UInput
             :model-value="localTitle"
             variant="ghost"
             placeholder="Section Title..."
+            :class="titleInput({ class: rc.titleInput })"
             @input="updateLocalTitle"
             @blur="commitTitleOnBlur"
-            :class="titleInput({ class: rc.titleInput })"
           />
         </div>
       </template>
@@ -154,7 +192,7 @@ const handleChildrenMutation = () => {
       <template #default>
         <RCBlockEditor
           v-model="localChildren"
-          :container-id="props.id"
+          :container-id="id"
           @mutation="handleChildrenMutation"
           @end="handleChildrenMutation"
         />
@@ -162,3 +200,5 @@ const handleChildrenMutation = () => {
     </RCSection>
   </div>
 </template>
+
+<style scoped></style>

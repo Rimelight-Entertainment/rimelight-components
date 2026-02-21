@@ -18,9 +18,12 @@ import {
 } from "../../utils";
 import { useI18n } from "vue-i18n";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
+/* region Props */
 export interface PageEditorProps {
   isSaving: boolean;
+  isViewingVersion?: boolean;
   useSurround?: boolean;
   surround?: PageSurround | null;
   surroundStatus?: "idle" | "pending" | "success" | "error";
@@ -54,6 +57,7 @@ export interface PageEditorProps {
 
 const {
   isSaving,
+  isViewingVersion = false,
   useSurround = false,
   surroundStatus = "idle",
   surround = null,
@@ -67,9 +71,12 @@ const {
   rc: rcProp,
 } = defineProps<PageEditorProps>();
 
-const page = defineModel<Page>({ required: true });
-const versionId = defineModel<string | null>("currentVersionId", { default: null });
+const { rc } = useRC("PageEditor", rcProp);
 
+provide("page-resolver", resolvePage);
+/*endregion */
+
+/* region Emits */
 export interface PageEditorEmits {
   save: [value: Page];
   "version-navigate": [version: PageVersion];
@@ -80,69 +87,132 @@ export interface PageEditorEmits {
 }
 
 const emit = defineEmits<PageEditorEmits>();
+/* endregion */
 
+/* region Slots */
 export interface PageEditorSlots {
   "header-actions"?: (props: {}) => any;
 }
 
 const slots = defineSlots<PageEditorSlots>();
+/* endregion */
 
-const { rc } = useRC("PageEditor", rcProp);
-
+/* region Styles */
 const pageEditorStyles = tv({
   slots: {
-    header: "h-12 w-full bg-muted",
-    headerGroup: "flex items-center gap-xs",
-    splitContainer: "flex w-full min-h-0",
-    editorColumn: "relative",
-    container: "flex flex-col py-16",
-    grid: "grid grid-cols-1 lg:grid-cols-24 gap-xl items-start",
-    toc: "hidden lg:flex lg:col-span-4 sticky top-20 self-start",
-    properties: "order-1 lg:order-2 lg:col-span-6",
-    contentWrapper: "order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl",
-    banner: "rounded-xl w-full object-cover",
-    icon: "rounded-full w-12 h-12 object-cover",
-    title: "",
-    surroundSkeleton: "grid grid-cols-1 gap-md sm:grid-cols-2",
-    skeleton: "h-48 w-full rounded-xl",
-    metadata: "flex flex-col gap-xs text-xs text-dimmed p-lg",
-    resizer:
+    headerClass: "h-12 w-full bg-muted",
+    headerGroupClass: "flex items-center gap-xs",
+    splitContainerClass: "flex w-full min-h-0",
+    editorColumnClass: "relative",
+    containerClass: "flex flex-col py-16",
+    gridClass: "grid grid-cols-1 lg:grid-cols-24 gap-xl items-start",
+    tocClass: "hidden lg:flex lg:col-span-4 sticky top-20 self-start",
+    propertiesClass: "order-1 lg:order-2 lg:col-span-6",
+    contentWrapperClass: "order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl",
+    bannerClass: "rounded-xl w-full object-cover",
+    iconClass: "rounded-full w-12 h-12 object-cover",
+    titleClass: "",
+    surroundSkeletonClass: "grid grid-cols-1 gap-md sm:grid-cols-2",
+    skeletonClass: "h-48 w-full rounded-xl",
+    metadataClass: "flex flex-col gap-xs text-xs text-dimmed p-lg",
+    resizerClass:
       "sticky flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16 self-start",
-    previewColumn: "sticky self-start overflow-y-auto min-h-0",
+    previewColumnClass: "sticky self-start overflow-y-auto min-h-0",
+    headerText: "text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap",
+    headerHighLight: "text-neutral-900 dark:text-white",
+    headerSeparator: "h-4 mx-1",
+    titleWrapper: "flex flex-row gap-sm items-center w-full",
+    titleInput: "text-4xl font-bold p-0 focus:ring-0 shadow-none",
+    descriptionInput: "p-0 text-lg text-dimmed focus:ring-0 shadow-none",
   },
 });
 
 const {
-  header,
-  headerGroup,
-  splitContainer,
-  editorColumn,
-  container,
-  grid,
-  toc,
-  properties,
-  contentWrapper,
-  banner,
-  icon,
-  title: titleClass,
-  surroundSkeleton,
-  skeleton,
-  metadata,
-  resizer,
-  previewColumn,
+  headerClass,
+  headerGroupClass,
+  splitContainerClass,
+  editorColumnClass,
+  containerClass,
+  gridClass,
+  tocClass,
+  propertiesClass,
+  contentWrapperClass,
+  bannerClass,
+  iconClass,
+  titleClass,
+  surroundSkeletonClass,
+  skeletonClass,
+  metadataClass,
+  resizerClass,
+  previewColumnClass,
+  headerText,
+  headerHighLight,
+  headerSeparator,
+  titleWrapper,
+  titleInput,
+  descriptionInput,
 } = pageEditorStyles();
+type PageEditorVariants = VariantProps<typeof pageEditorStyles>;
+/* endregion */
 
-const { getTypeLabelKey } = usePageRegistry();
-const { t, locale } = useI18n();
+/* region Meta */
+defineOptions({
+  name: "PageEditor",
+});
+/* endregion */
+
+/* region State */
+const page = defineModel<Page>({ required: true });
+const versionId = defineModel<string | null>("currentVersionId", { default: null });
 
 const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } =
   usePageEditor(page);
 const { confirm } = useConfirm();
+const { t, locale } = useI18n();
+const { getTypeLabelKey } = usePageRegistry();
+const { totalHeight } = useHeaderStack();
+
+const showPreview = ref(false);
+const isResizing = ref(false);
+const SNAP_THRESHOLD = 1.5; // Snap if within 1.5% of the center
+const editorWidth = ref(50);
+
+const isDeleteModalOpen = ref(false);
+const isDeleting = ref(false);
+const isPageTreeModalOpen = ref(false);
+const isFetchingTree = ref(false);
+const treePages = ref<Pick<Page, "title" | "slug">[]>([]);
+
+const editorRef = useTemplateRef("editor");
+const containerRef = useTemplateRef<HTMLElement>("split-container");
+const versionSelectorRef = useTemplateRef<{ fetchVersions: () => Promise<void> }>(
+  "version-selector",
+);
 
 const currentDefinition = computed(() => {
   if (!page.value?.type || !pageDefinitions) return null;
   return pageDefinitions[page.value.type];
 });
+
+const previousPage = computed(() => surround?.previous);
+const nextPage = computed(() => surround?.next);
+const hasSurround = computed(() => !!(surround?.previous || surround?.next));
+
+const cursorClass = computed(() => {
+  if (isResizing.value) return "cursor-grabbing";
+  return "cursor-grab";
+});
+
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
 
 // Sync page with definition on load/change
 watch(
@@ -160,6 +230,23 @@ watch(
   { immediate: true },
 );
 
+watch(
+  () => isSaving,
+  async (newVal, oldVal) => {
+    if (!newVal && oldVal) {
+      if (versionSelectorRef.value?.fetchVersions) {
+        await versionSelectorRef.value.fetchVersions();
+      }
+    }
+  },
+);
+
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 const handleViewPage = async () => {
   if (canUndo.value) {
     const confirmed = await confirm({
@@ -209,45 +296,6 @@ const handlePublish = async () => {
   }
 };
 
-defineExpose({
-  undo,
-  redo,
-  canUndo,
-  canRedo,
-  resetHistory,
-});
-
-const editorRef = useTemplateRef("editor");
-const versionSelectorRef = useTemplateRef<{ fetchVersions: () => Promise<void> }>(
-  "version-selector",
-);
-
-watch(
-  () => isSaving,
-  async (newVal, oldVal) => {
-    if (!newVal && oldVal) {
-      if (versionSelectorRef.value?.fetchVersions) {
-        await versionSelectorRef.value.fetchVersions();
-      }
-    }
-  },
-);
-
-const showPreview = ref(false);
-
-provide("page-resolver", resolvePage);
-
-const previousPage = computed(() => surround?.previous);
-const nextPage = computed(() => surround?.next);
-const hasSurround = computed(() => !!(surround?.previous || surround?.next));
-
-const { totalHeight } = useHeaderStack();
-
-const containerRef = useTemplateRef<HTMLElement>("split-container");
-const editorWidth = ref(50);
-const isResizing = ref(false);
-const SNAP_THRESHOLD = 1.5; // Snap if within 1.5% of the center
-
 const handleMouseMove = (e: MouseEvent) => {
   if (!isResizing.value || !containerRef.value) return;
 
@@ -264,11 +312,6 @@ const handleMouseMove = (e: MouseEvent) => {
     editorWidth.value = newWidth;
   }
 };
-
-const cursorClass = computed(() => {
-  if (isResizing.value) return "cursor-grabbing";
-  return "cursor-grab";
-});
 
 const startResizing = (e: MouseEvent) => {
   if (!defaultWindow || !defaultDocument) return;
@@ -296,12 +339,6 @@ const stopResizing = () => {
   }
 };
 
-/* Handlers */
-
-// Delete Page
-const isDeleteModalOpen = ref(false);
-const isDeleting = ref(false);
-
 const handleDeleteConfirm = async () => {
   if (!onDeletePage || !page.value.id) return;
 
@@ -315,10 +352,6 @@ const handleDeleteConfirm = async () => {
     isDeleting.value = false;
   }
 };
-
-const isPageTreeModalOpen = ref(false);
-const isFetchingTree = ref(false);
-const treePages = ref<Pick<Page, "title" | "slug">[]>([]);
 
 const handleOpenTree = async () => {
   if (!onFetchPages) return;
@@ -338,13 +371,22 @@ const handleTreeNavigate = (slug: string) => {
     onNavigateToPage(slug);
   }
 };
+
+defineExpose({
+  undo,
+  redo,
+  canUndo,
+  canRedo,
+  resetHistory,
+});
+/* endregion */
 </script>
 
 <template>
   <RCHeaderLayer id="editor-header" :order="3">
-    <RCHeader :contain="false" :class="header({ class: rc.header })">
+    <RCHeader :contain="false" :class="headerClass({ class: rc.header })">
       <template #left>
-        <div :class="headerGroup({ class: rc.headerGroup })">
+        <div :class="headerGroupClass({ class: rc.headerGroup })">
           <UButton
             icon="lucide:list-tree"
             variant="ghost"
@@ -355,16 +397,12 @@ const handleTreeNavigate = (slug: string) => {
             @click="handleOpenTree"
           />
 
-          <span
-            class="text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap"
-          >
+          <span :class="headerText()">
             {{ t("common.editing", "Editing") }}:
-            <span class="text-neutral-900 dark:text-white">{{
-              getLocalizedContent(page.title, locale)
-            }}</span>
+            <span :class="headerHighLight()">{{ getLocalizedContent(page.title, locale) }}</span>
           </span>
 
-          <USeparator orientation="vertical" class="h-4 mx-1" />
+          <USeparator orientation="vertical" :class="headerSeparator()" />
 
           <RCPageVersionSelector
             v-if="page.id"
@@ -398,7 +436,7 @@ const handleTreeNavigate = (slug: string) => {
       </template>
 
       <template #right>
-        <div :class="headerGroup({ class: rc.headerGroup })">
+        <div :class="headerGroupClass({ class: rc.headerGroup })">
           <UButton
             icon="lucide:external-link"
             :label="t('page_editor.view_page')"
@@ -416,7 +454,7 @@ const handleTreeNavigate = (slug: string) => {
             @click="showPreview = !showPreview"
           />
 
-          <USeparator orientation="vertical" class="h-4 mx-1" />
+          <USeparator orientation="vertical" :class="headerSeparator()" />
 
           <slot name="header-actions" />
 
@@ -458,42 +496,46 @@ const handleTreeNavigate = (slug: string) => {
     </RCHeader>
   </RCHeaderLayer>
 
-  <div ref="split-container" :class="splitContainer({ class: rc.splitContainer })">
+  <div ref="split-container" :class="splitContainerClass({ class: rc.splitContainer })">
     <div
-      :class="editorColumn({ class: rc.editorColumn })"
+      :class="editorColumnClass({ class: rc.editorColumn })"
       :style="{ width: showPreview ? `${editorWidth}%` : '100%' }"
     >
-      <UContainer :class="container({ class: rc.container })">
-        <div :class="grid({ class: rc.grid })">
-          <RCPageTOC :page-blocks="page.blocks" :levels="[2, 3, 4]" :class="toc({ class: rc.toc })">
+      <UContainer :class="containerClass({ class: rc.container })">
+        <div :class="gridClass({ class: rc.grid })">
+          <RCPageTOC
+            :page-blocks="page.blocks"
+            :levels="[2, 3, 4]"
+            :class="tocClass({ class: rc.toc })"
+          >
             <template #bottom> </template>
           </RCPageTOC>
           <RCPagePropertiesEditor
             v-model="page"
             :on-fetch-pages="onFetchPages"
-            :class="properties({ class: rc.properties })"
+            :class="propertiesClass({ class: rc.properties })"
           />
-          <div :class="contentWrapper({ class: rc.contentWrapper })">
+          <div :class="contentWrapperClass({ class: rc.contentWrapper })">
             <RCImage
               v-if="page.banner?.src"
               :src="page.banner?.src"
               :alt="page.banner?.alt"
-              :class="banner({ class: rc.banner })"
+              :class="bannerClass({ class: rc.banner })"
             />
             <UPageHeader :headline="t(getTypeLabelKey(page.type))" :ui="{ root: 'pt-0' }">
               <template #title>
-                <div class="flex flex-row gap-sm items-center w-full">
+                <div :class="titleWrapper()">
                   <RCImage
                     v-if="page.icon?.src"
                     :src="page.icon?.src"
                     :alt="page.icon?.alt"
-                    :class="icon({ class: rc.icon })"
+                    :class="iconClass({ class: rc.icon })"
                   />
                   <UInput
                     v-model="page.title.en"
                     variant="ghost"
                     placeholder="Page Title"
-                    :ui="{ base: 'text-4xl font-bold p-0 focus:ring-0 shadow-none' }"
+                    :ui="{ base: titleInput() }"
                     class="w-full"
                     :class="titleClass({ class: rc.title })"
                   />
@@ -508,7 +550,7 @@ const handleTreeNavigate = (slug: string) => {
                   placeholder="Add a description..."
                   :rows="1"
                   autoresize
-                  :ui="{ base: 'p-0 text-lg text-dimmed focus:ring-0 shadow-none' }"
+                  :ui="{ base: descriptionInput() }"
                   class="w-full"
                 />
               </template>
@@ -527,10 +569,10 @@ const handleTreeNavigate = (slug: string) => {
             <template v-if="useSurround">
               <div
                 v-if="surroundStatus === 'pending'"
-                :class="surroundSkeleton({ class: rc.surroundSkeleton })"
+                :class="surroundSkeletonClass({ class: rc.surroundSkeleton })"
               >
-                <USkeleton :class="skeleton({ class: rc.skeleton })" />
-                <USkeleton :class="skeleton({ class: rc.skeleton })" />
+                <USkeleton :class="skeletonClass({ class: rc.skeleton })" />
+                <USkeleton :class="skeletonClass({ class: rc.skeleton })" />
               </div>
 
               <LazyRCPageSurround
@@ -547,7 +589,7 @@ const handleTreeNavigate = (slug: string) => {
 
               <USeparator />
 
-              <div :class="metadata({ class: rc.metadata })">
+              <div :class="metadataClass({ class: rc.metadata })">
                 <h6>{{ t("page_editor.metadata") }}</h6>
                 <span>{{ t("page_editor.page_id") }}: {{ page.id }}</span>
                 <span
@@ -595,7 +637,7 @@ const handleTreeNavigate = (slug: string) => {
 
     <div
       v-if="showPreview"
-      :class="[cursorClass, resizer({ class: rc.resizer })]"
+      :class="[cursorClass, resizerClass({ class: rc.resizer })]"
       :style="{ top: `${totalHeight}px`, height: `calc(100vh - ${totalHeight}px)` }"
       @mousedown="startResizing"
       @dblclick="editorWidth = 50"
@@ -605,7 +647,7 @@ const handleTreeNavigate = (slug: string) => {
 
     <div
       v-if="showPreview"
-      :class="previewColumn({ class: rc.previewColumn })"
+      :class="previewColumnClass({ class: rc.previewColumn })"
       :style="{
         width: `${100 - editorWidth}%`,
         top: `${totalHeight}px`,

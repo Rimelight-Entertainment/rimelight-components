@@ -1,9 +1,26 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import chroma from "chroma-js";
-import { RCColorSwatch } from "#components";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC, useHeaderStack } from "../../composables";
+
+/* region Props */
+export interface SwatchData {
+  name: string;
+  value: string;
+  format: "hex" | "rgb" | "hsl" | "oklch" | "cmyk" | "unknown";
+}
+
+export interface PaletteSubSection {
+  label: string;
+  swatches: SwatchData[];
+}
+
+export interface PaletteTab {
+  label: string;
+  subsections: PaletteSubSection[];
+}
 
 export interface ColorPaletteProps {
   /**
@@ -25,34 +42,47 @@ export interface ColorPaletteProps {
 const { css = "", rc: rcProp } = defineProps<ColorPaletteProps>();
 
 const { rc } = useRC("ColorPalette", rcProp);
+/*endregion */
 
-const { totalHeight } = useHeaderStack();
-const stickyTop = computed(() => `${totalHeight.value + 32}px`);
+/* region Emits */
+export interface ColorPaletteEmits {}
 
-const paletteStyles = tv({
+const emit = defineEmits<ColorPaletteEmits>();
+/* endregion */
+
+/* region Slots */
+export interface ColorPaletteSlots {}
+
+const slots = defineSlots<ColorPaletteSlots>();
+/* endregion */
+
+/* region Styles */
+const colorPaletteStyles = tv({
   slots: {
     root: "w-full",
     grid: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4",
+    tabsList:
+      "md:w-64 shrink-0 md:sticky md:top-[var(--palette-sticky-top)] self-start z-10 overflow-visible",
+    tabsContent: "flex-1 min-w-0",
+    tabsRoot: "flex flex-col md:flex-row gap-12 items-start overflow-visible",
+    title: "text-3xl font-bold text-highlighted mb-8",
+    accordion: "w-full",
   },
 });
 
-const { root, grid } = paletteStyles();
+const { root, grid, tabsList, tabsContent, tabsRoot, title, accordion } = colorPaletteStyles();
+type ColorPaletteVariants = VariantProps<typeof colorPaletteStyles>;
+/* endregion */
 
-interface SwatchData {
-  name: string;
-  value: string;
-  format: "hex" | "rgb" | "hsl" | "oklch" | "cmyk" | "unknown";
-}
+/* region Meta */
+defineOptions({
+  name: "ColorPalette",
+});
+/* endregion */
 
-interface PaletteSubSection {
-  label: string;
-  swatches: SwatchData[];
-}
-
-interface PaletteTab {
-  label: string;
-  subsections: PaletteSubSection[];
-}
+/* region State */
+const { totalHeight } = useHeaderStack();
+const stickyTop = computed(() => `${totalHeight.value + 32}px`);
 
 const tabItems = computed(() => {
   if (!css) return [];
@@ -129,7 +159,23 @@ const tabItems = computed(() => {
 
   return tabs;
 });
+/* endregion */
 
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 function parseOklch(str: string): [number, number, number] | null {
   const match = str.match(/oklch\(([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+%?)?\)/);
   if (match) {
@@ -182,6 +228,7 @@ function getSwatchProps(swatch: SwatchData) {
 
   return p;
 }
+/* endregion */
 </script>
 
 <template>
@@ -192,19 +239,19 @@ function getSwatchProps(swatch: SwatchData) {
       variant="link"
       :style="{ '--palette-sticky-top': stickyTop }"
       :ui="{
-        root: 'flex flex-col md:flex-row gap-12 items-start overflow-visible',
-        list: 'md:w-64 shrink-0 md:sticky md:top-[var(--palette-sticky-top)] self-start z-10 overflow-visible',
-        content: 'flex-1 min-w-0',
+        root: tabsRoot(),
+        list: tabsList(),
+        content: tabsContent(),
       }"
     >
       <template #content="{ item }">
-        <h2 class="text-3xl font-bold text-highlighted mb-8">
+        <h2 :class="title({ class: rc.title })">
           {{ item.label }}
         </h2>
         <UAccordion
           :items="item.subsections"
           type="multiple"
-          class="w-full"
+          :class="accordion()"
           :ui="{
             item: 'border-b border-default last:border-b-0',
             trigger: 'text-xl font-bold py-4',

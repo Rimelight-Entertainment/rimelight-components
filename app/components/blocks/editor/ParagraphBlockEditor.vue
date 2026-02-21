@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { inject, ref, watch, onMounted, nextTick } from "vue";
 import { tv } from "../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../../composables";
 import type { ParagraphBlockProps, RichTextContent } from "../../../types";
 import { richTextToHtml, parseHtmlToRichText, defaultDocument } from "../../../utils";
 
-// The external dependencies
+/* region Props */
 export interface ParagraphBlockEditorProps extends ParagraphBlockProps {
   id: string;
   rc?: {
@@ -15,16 +16,22 @@ export interface ParagraphBlockEditorProps extends ParagraphBlockProps {
 
 const { id, text, rc: rcProp } = defineProps<ParagraphBlockEditorProps>();
 
+const { rc } = useRC("ParagraphBlockEditor", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface ParagraphBlockEditorEmits {}
 
 const emit = defineEmits<ParagraphBlockEditorEmits>();
+/* endregion */
 
+/* region Slots */
 export interface ParagraphBlockEditorSlots {}
 
 const slots = defineSlots<ParagraphBlockEditorSlots>();
+/* endregion */
 
-const { rc } = useRC("ParagraphBlockEditor", rcProp);
-
+/* region Styles */
 const paragraphBlockEditorStyles = tv({
   slots: {
     root: "p-2 outline-none min-h-6 focus:ring-2 focus:ring-blue-500 rounded-md transition duration-150 text-base",
@@ -32,21 +39,64 @@ const paragraphBlockEditorStyles = tv({
 });
 
 const { root } = paragraphBlockEditorStyles();
+type ParagraphBlockEditorVariants = VariantProps<typeof paragraphBlockEditorStyles>;
+/* endregion */
 
-// The external dependencies
-const editorApi = inject<any>("block-editor-api");
+/* region Meta */
+defineOptions({
+  name: "ParagraphBlockEditor",
+});
+/* endregion */
 
-// 2. Local State for the Contenteditable Element
-// We use a reference to the DOM element to read/write its content.
+/* region State */
 const editorRef = ref<HTMLElement | null>(null);
-
-// Local buffer that holds the HTML representation of the content for initial render/sync
 const localHtml = ref(richTextToHtml(text));
-
 const isContentChanging = ref(false);
 
-// --- Commit & Update Logic ---
+const editorApi = inject<any>("block-editor-api");
+/* endregion */
 
+/* region Lifecycle */
+onMounted(() => {
+  if (editorRef.value) {
+    // 💡 FIX: Manually set content on mount. NO v-html in template.
+    editorRef.value.innerHTML = localHtml.value;
+  }
+});
+
+watch(
+  () => text,
+  (newContent) => {
+    // Only sync back if the change is external AND the user is not actively typing
+    if (
+      isContentChanging.value ||
+      !editorRef.value ||
+      defaultDocument?.activeElement === editorRef.value
+    ) {
+      return;
+    }
+
+    const newHtml = richTextToHtml(newContent);
+
+    // 💡 FIX: Manually update the DOM content, bypassing v-html
+    if (editorRef.value.innerText !== newHtml) {
+      editorRef.value.innerHTML = newHtml;
+      localHtml.value = newHtml; // Update local state for future use
+    }
+  },
+  { deep: true, immediate: true },
+);
+
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 /**
  * Commits the content of the editor to the global store on blur.
  */
@@ -74,46 +124,15 @@ const commitContentOnBlur = () => {
     isContentChanging.value = false;
   });
 };
-
-// 3. Sync-In: Watch for external changes (undo/redo) and sync back to the editor
-watch(
-  () => text,
-  (newContent) => {
-    // Only sync back if the change is external AND the user is not actively typing
-    if (
-      isContentChanging.value ||
-      !editorRef.value ||
-      defaultDocument?.activeElement === editorRef.value
-    ) {
-      return;
-    }
-
-    const newHtml = richTextToHtml(newContent);
-
-    // 💡 FIX: Manually update the DOM content, bypassing v-html
-    if (editorRef.value.innerText !== newHtml) {
-      editorRef.value.innerHTML = newHtml;
-      localHtml.value = newHtml; // Update local state for future use
-    }
-  },
-  { deep: true, immediate: true },
-);
-
-// Set the initial content when mounted (optional, handled by v-html but safer)
-onMounted(() => {
-  if (editorRef.value) {
-    // 💡 FIX: Manually set content on mount. NO v-html in template.
-    editorRef.value.innerHTML = localHtml.value;
-  }
-});
+/* endregion */
 </script>
 
 <template>
   <div
     ref="editorRef"
     contenteditable="true"
-    @blur="commitContentOnBlur"
     :class="root({ class: rc.root })"
+    @blur="commitContentOnBlur"
   ></div>
 </template>
 

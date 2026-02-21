@@ -1,5 +1,4 @@
 import { useNuxtApp, useState } from "#imports";
-import { useToast } from "@nuxt/ui/composables/useToast";
 import { Time } from "@internationalized/date";
 import { computed } from "vue";
 import { defaultWindow } from "../../utils";

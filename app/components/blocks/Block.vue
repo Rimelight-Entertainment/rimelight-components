@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { inject, ref } from "vue";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
+/* region Props */
 export interface BlockProps {
   id: string;
   type: string;
@@ -14,40 +16,48 @@ export interface BlockProps {
 
 const { id, type, rc: rcProp } = defineProps<BlockProps>();
 
+const { rc } = useRC("Block", rcProp);
+/*endregion */
+
+/* region Emits */
 export interface BlockEmits {}
 
 const emit = defineEmits<BlockEmits>();
+/* endregion */
 
+/* region Slots */
 export interface BlockSlots {
   default: (props: {}) => any;
 }
 
 const slots = defineSlots<BlockSlots>();
+/* endregion */
 
-const { rc } = useRC("Block", rcProp);
-
+/* region Styles */
 const blockStyles = tv({
   slots: {
     root: "group relative pl-12 flex flex-row gap-xs",
     menuContainer: "top-0 left-0 z-10 opacity-0 transition-opacity group-hover:opacity-100",
+    dragHandle: "drag-handle cursor-grab active:cursor-grabbing",
   },
 });
 
-const { root, menuContainer } = blockStyles();
+const { root, menuContainer, dragHandle } = blockStyles();
+type BlockVariants = VariantProps<typeof blockStyles>;
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "Block",
+});
+/* endregion */
+
+/* region State */
 const editorApi = inject<any>("block-editor-api");
 
 if (!editorApi) {
   throw new Error("RCBlock must be used within a BlockEditor component");
 }
-
-const onDelete = () => editorApi.removeBlock(id);
-const onDuplicate = () => editorApi.duplicateBlock(id);
-const onMoveUp = () => editorApi.moveBlock(id, -1);
-const onMoveDown = () => editorApi.moveBlock(id, 1);
-
-const onAddAbove = () => editorApi.openAddBlockModal(id, "before");
-const onAddBelow = () => editorApi.openAddBlockModal(id, "after");
 
 const items = ref([
   [
@@ -81,13 +91,50 @@ const items = ref([
       onSelect: onDuplicate,
     },
     {
-      color: "danger",
       icon: "lucide:trash-2",
+      color: "danger",
       label: "Delete Block",
       onSelect: onDelete,
     },
   ],
 ]);
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+function onDelete() {
+  editorApi.removeBlock(id);
+}
+function onDuplicate() {
+  editorApi.duplicateBlock(id);
+}
+function onMoveUp() {
+  editorApi.moveBlock(id, -1);
+}
+function onMoveDown() {
+  editorApi.moveBlock(id, 1);
+}
+
+function onAddAbove() {
+  editorApi.openAddBlockModal(id, "before");
+}
+function onAddBelow() {
+  editorApi.openAddBlockModal(id, "after");
+}
+/* endregion */
 </script>
 
 <template>
@@ -98,7 +145,7 @@ const items = ref([
           icon="lucide:grip-vertical"
           variant="ghost"
           color="neutral"
-          class="drag-handle cursor-grab active:cursor-grabbing"
+          :class="dragHandle()"
         />
       </UDropdownMenu>
     </div>

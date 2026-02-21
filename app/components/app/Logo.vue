@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { useAppConfig, computed, useNuxtApp } from "#imports";
-import { useAttrs } from "vue";
+import { useAttrs, computed } from "vue";
+import { useAppConfig, useNuxtApp } from "#imports";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
-defineOptions({
-  inheritAttrs: false,
-});
-
+/* region Props */
 export type LogoVariant = "mark" | "type" | "classic" | "symbol" | string;
 
 export interface LogoProps {
@@ -37,16 +35,26 @@ export interface LogoProps {
   alt?: string;
 }
 
-const props = withDefaults(defineProps<LogoProps>(), {
-  variant: "mark",
-  to: "/",
-});
+const { variant = "mark", to = "/", mode, rc: rcProp, alt } = defineProps<LogoProps>();
 
-const attrs = useAttrs();
-const { rc } = useRC("Logo", props.rc);
-const nuxtApp = useNuxtApp();
-const appConfig = useAppConfig();
+const { rc } = useRC("Logo", rcProp);
+/*endregion */
 
+/* region Emits */
+export interface LogoEmits {}
+
+const emit = defineEmits<LogoEmits>();
+/* endregion */
+
+/* region Slots */
+export interface LogoSlots {
+  default: (props: {}) => any;
+}
+
+const slots = defineSlots<LogoSlots>();
+/* endregion */
+
+/* region Styles */
 const logoStyles = tv({
   slots: {
     root: "inline-flex items-center justify-center transition-opacity hover:opacity-80 shrink-0 select-none overflow-hidden",
@@ -54,15 +62,29 @@ const logoStyles = tv({
 });
 
 const { root } = logoStyles();
+type LogoVariants = VariantProps<typeof logoStyles>;
+/* endregion */
 
-const activeMode = computed(() => props.mode || (nuxtApp as any).$colorMode?.value || "dark");
+/* region Meta */
+defineOptions({
+  name: "Logo",
+  inheritAttrs: false,
+});
+/* endregion */
+
+/* region State */
+const attrs = useAttrs();
+const nuxtApp = useNuxtApp();
+const appConfig = useAppConfig();
+
+const activeMode = computed(() => mode || (nuxtApp as any).$colorMode?.value || "dark");
 
 const logoSrc = computed<string | null>(() => {
   const rcLogos = appConfig.rimelightComponents?.logos;
   let src: any = null;
 
   if (rcLogos && typeof rcLogos === "object") {
-    src = (rcLogos as any)[props.variant];
+    src = (rcLogos as any)[variant];
     if (src && typeof src === "object") {
       src = src[activeMode.value] || src.light || src.dark;
     }
@@ -72,12 +94,12 @@ const logoSrc = computed<string | null>(() => {
 
   // Fallback to legacy top-level properties or rimelightComponents scoped legacy
   const legacy = appConfig.rimelightComponents as any;
-  if (props.variant === "mark")
+  if (variant === "mark")
     return (appConfig.logomark as string) || (legacy?.logomark as string) || null;
-  if (props.variant === "type")
+  if (variant === "type")
     return (appConfig.logotype as string) || (legacy?.logotype as string) || null;
 
-  return (appConfig[props.variant] as string) || null;
+  return (appConfig[variant] as string) || null;
 });
 
 const isIcon = computed(() => {
@@ -86,6 +108,25 @@ const isIcon = computed(() => {
   if (src.startsWith("http") || src.startsWith("/") || src.startsWith(".")) return false;
   return src.includes(":") || src.startsWith("i-");
 });
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+
+/* endregion */
 </script>
 
 <template>

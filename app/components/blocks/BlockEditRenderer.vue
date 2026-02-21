@@ -1,23 +1,31 @@
 <script setup lang="ts">
-import { type Component, watch, ref, inject } from "vue";
+import { ref, inject, defineAsyncComponent } from "vue";
 import draggable from "vuedraggable/src/vuedraggable";
 import type { Block } from "../../types";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
+import { BLOCK_EDITOR_COMPONENT_MAP } from "#build/rimelight-block-editor-map";
 
+/* region Props */
 export interface BlockEditRendererProps {
-  blocks: Block[];
+  blocks?: Block[];
   containerId?: string | null;
   rc?: {
     root?: string;
   };
 }
 
-const props = defineProps<BlockEditRendererProps>();
-const { rc: rcProp, containerId = null } = props;
+const {
+  blocks: propsBlocks,
+  containerId = null,
+  rc: rcProp,
+} = defineProps<BlockEditRendererProps>();
 
-const blocks = defineModel<Block[]>("blocks", { required: true });
+const { rc } = useRC("BlockEditRenderer", rcProp);
+/*endregion */
 
+/* region Emits */
 export interface BlockEditRendererEmits {
   start: [];
   end: [];
@@ -25,28 +33,68 @@ export interface BlockEditRendererEmits {
 }
 
 const emit = defineEmits<BlockEditRendererEmits>();
+/* endregion */
 
+/* region Slots */
 export interface BlockEditRendererSlots {}
 
 const slots = defineSlots<BlockEditRendererSlots>();
+/* endregion */
 
-const { rc } = useRC("BlockEditRenderer", rcProp);
+/* region Styles */
+const blockEditRendererStyles = tv({
+  slots: {
+    root: "flex flex-col w-full min-h-32 transition-all border-l-2 border-neutral-200/50 rounded-r-lg",
+    draggableClass: "flex flex-col w-full flex-1",
+    emptyContainer:
+      "w-full flex items-center justify-center transition-all rounded-lg border-2 border-transparent",
+    itemWrapper:
+      "w-full relative [&.ghost]:bg-blue-500 [&.ghost]:h-1 [&.ghost]:min-h-0 [&.ghost]:rounded-sm [&.ghost]:overflow-hidden [&.ghost_>_*]:hidden [&.ghost-hidden]:hidden [&.fallback]:opacity-90 [&.fallback]:shadow-lg [&.fallback]:rounded-lg [&.fallback]:bg-white [&.fallback]:z-[9999] [&.fallback]:cursor-grabbing",
+  },
+  variants: {
+    isDraggingOver: {
+      true: {
+        root: "border-l-4 border-primary-500 bg-primary-50/30 ring-1 ring-primary-500/10 z-10",
+      },
+    },
+  },
+});
+
+const { root, draggableClass, emptyContainer, itemWrapper } = blockEditRendererStyles();
+type BlockEditRendererVariants = VariantProps<typeof blockEditRendererStyles>;
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "BlockEditRenderer",
+});
+/* endregion */
+
+/* region State */
+const blocks = defineModel<Block[]>("blocks", { required: true });
 
 const rendererId = Math.random().toString(36).substring(7);
-console.log(
-  "[BlockEditRenderer] Instance created with ID:",
-  rendererId,
-  "containerId:",
-  containerId,
-  "initial blocks:",
-  blocks.value.length,
-);
-
 const editorApi = inject<any>("block-editor-api");
 
 const isDraggingOver = ref(false);
 const dragCounter = ref(0);
+/* endregion */
 
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
 const onDragEnter = () => {
   dragCounter.value++;
   isDraggingOver.value = true;
@@ -65,69 +113,30 @@ const onDrop = () => {
   isDraggingOver.value = false;
 };
 
-const blockEditRendererStyles = tv({
-  slots: {
-    root: "flex flex-col w-full min-h-32 transition-all border-l-2 border-neutral-200/50 p-4 pl-6 rounded-r-lg",
-  },
-  variants: {
-    isDraggingOver: {
-      true: {
-        root: "border-l-4 border-primary-500 bg-primary-50/30 ring-1 ring-primary-500/10 z-10",
-      },
-    },
-  },
-});
-
-const { root } = blockEditRendererStyles();
-
 const handleStart = () => {
-  console.log(
-    `[BlockEditRenderer ${rendererId}] Drag START - current blocks:`,
-    blocks.value.length,
-  );
   emit("start");
 };
 
 const handleEnd = () => {
-  console.log(`[BlockEditRenderer ${rendererId}] Drag END - current blocks:`, blocks.value.length);
   emit("end");
 };
 
 const handleChange = (event: any) => {
-  console.log(`[BlockEditRenderer ${rendererId}] Drag CHANGE event:`, {
-    event,
-    added: event.added,
-    removed: event.removed,
-    moved: event.moved,
-    currentBlocks: blocks.value.length,
-    containerId,
-    blockIds: blocks.value.map((b: any) => ({ id: b.id, type: b.type })),
-  });
-
-  // With shallowRef in container editors, vuedraggable modifies the actual
-  // block.props.children array directly, so the central state is already updated.
-  // We just need to emit the change event for the parent to know something happened.
-
-  if (event.added) {
-    console.log(
-      `[BlockEditRenderer ${rendererId}] Block ADDED to this container:`,
-      event.added.element.id,
-    );
-  }
-
-  if (event.removed) {
-    console.log(
-      `[BlockEditRenderer ${rendererId}] Block REMOVED from this container:`,
-      event.removed.element.id,
-    );
-  }
-
-  if (event.moved) {
-    console.log(`[BlockEditRenderer ${rendererId}] Block MOVED within same container`);
-  }
-
   emit("change", event);
 };
+
+const asyncEditorMap = Object.fromEntries(
+  Object.entries(BLOCK_EDITOR_COMPONENT_MAP).map(([key, importFn]) => [
+    key,
+    defineAsyncComponent(importFn as any),
+  ]),
+);
+
+const resolveBlockEditor = (type?: string) => {
+  if (!type) return "div";
+  return asyncEditorMap[type] || "div";
+};
+/* endregion */
 </script>
 
 <template>
@@ -147,18 +156,24 @@ const handleChange = (event: any) => {
       :force-fallback="true"
       fallback-class="fallback"
       :ghost-class="blocks.length === 0 ? 'ghost-hidden' : 'ghost'"
+      :class="[
+        draggableClass(),
+        blocks && blocks.length > 0 ? 'gap-lg min-h-16 pb-32' : 'gap-0 min-h-32',
+      ]"
       @change="handleChange"
-      class="flex flex-col w-full flex-1"
-      :class="[blocks && blocks.length > 0 ? 'gap-lg min-h-16 pb-32' : 'gap-0 min-h-32']"
+      @start="handleStart"
+      @end="handleEnd"
     >
       <template #header>
         <div
           v-if="!blocks || blocks.length === 0"
-          class="w-full p-4 flex items-center justify-center transition-all rounded-lg border-2 border-transparent"
-          :class="[isDraggingOver ? 'bg-primary-50/50 border-dashed border-primary-500/50' : '']"
+          :class="[
+            emptyContainer(),
+            isDraggingOver ? 'bg-primary-50/50 border-dashed border-primary-500/50' : '',
+          ]"
         >
           <UEmpty
-            icon="i-lucide-layers"
+            icon="lucide:layers"
             title="Empty Section"
             description="This area has no blocks yet. Drag items here or click to add your first block."
             variant="naked"
@@ -172,7 +187,7 @@ const handleChange = (event: any) => {
             <template #actions>
               <UButton
                 label="Add Block"
-                icon="i-lucide-plus"
+                icon="lucide:plus"
                 color="neutral"
                 variant="subtle"
                 @click="editorApi?.openAddBlockModal()"
@@ -183,12 +198,10 @@ const handleChange = (event: any) => {
       </template>
 
       <template #item="{ element: block }">
-        <div
-          class="w-full relative [&.ghost]:bg-blue-500 [&.ghost]:h-1 [&.ghost]:min-h-0 [&.ghost]:my-2 [&.ghost]:rounded-sm [&.ghost]:overflow-hidden [&.ghost_>_*]:hidden [&.ghost-hidden]:hidden [&.fallback]:opacity-90 [&.fallback]:shadow-lg [&.fallback]:rounded-lg [&.fallback]:bg-white [&.fallback]:z-[9999] [&.fallback]:cursor-grabbing"
-        >
+        <div :class="itemWrapper()">
           <RCBlock :id="block.id" :type="block.type" class="w-full">
             <component
-              :is="block.type ? resolveComponent(`RC${block.type}Editor`) : 'div'"
+              :is="resolveBlockEditor(block.type)"
               :id="block.id"
               v-bind="block.props"
               :type="block.type"
@@ -200,3 +213,5 @@ const handleChange = (event: any) => {
     </draggable>
   </div>
 </template>
+
+<style scoped></style>

@@ -3,7 +3,23 @@ import { computed } from "vue";
 import chroma from "chroma-js";
 import { useRC, useHeaderStack } from "../../composables";
 import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 import { useI18n } from "vue-i18n";
+
+/* region Props */
+export interface FontData {
+  name: string;
+  family: string;
+}
+
+export interface ColorData {
+  name: string;
+  fullVarName: string;
+  lightValue: string;
+  lightBg: string;
+  darkValue: string;
+  darkBg: string;
+}
 
 export interface FontPaletteProps {
   /**
@@ -24,79 +40,90 @@ export interface FontPaletteProps {
 const { css = "", rc: rcProp } = defineProps<FontPaletteProps>();
 
 const { rc } = useRC("FontPalette", rcProp);
-const { t } = useI18n();
+/*endregion */
 
-const { totalHeight } = useHeaderStack();
-const stickyTop = computed(() => `${totalHeight.value + 32}px`);
+/* region Emits */
+export interface FontPaletteEmits {}
 
-const paletteStyles = tv({
+const emit = defineEmits<FontPaletteEmits>();
+/* endregion */
+
+/* region Slots */
+export interface FontPaletteSlots {}
+
+const slots = defineSlots<FontPaletteSlots>();
+/* endregion */
+
+/* region Styles */
+const fontPaletteStyles = tv({
   slots: {
     root: "w-full",
     section: "flex flex-col gap-12",
+    tabsRoot: "flex flex-col md:flex-row gap-12 items-start overflow-visible",
+    tabsList:
+      "md:w-64 shrink-0 md:sticky md:top-[var(--palette-sticky-top)] self-start z-10 overflow-visible",
+    tabsContent: "flex-1 min-w-0",
+    contentHeader: "flex flex-col gap-8",
+    title: "text-3xl font-bold text-highlighted mb-2",
+    familyCode: "text-sm text-muted",
+    accordionWrapper: "flex flex-col gap-8",
+    specimenGrid: "flex flex-col gap-8 py-4 text-highlighted",
+    specimenRow: "flex flex-col md:flex-row md:items-baseline gap-4",
+    specimenLabel: "w-32 text-xs text-muted font-mono uppercase shrink-0",
+    specimenValue: "text-4xl break-all line-height-none tracking-tight",
+    hierarchyGrid: "flex flex-col gap-8 pb-8",
+    hierarchyRow: "flex flex-col md:flex-row md:items-baseline gap-4",
+    hierarchyLabel: "w-12 text-xs text-muted font-mono uppercase shrink-0",
+    paragraphText: "m-0 leading-relaxed max-w-2xl",
+    colorGrid: "flex flex-col gap-8 pb-8",
+    colorRow: "flex flex-col md:flex-row gap-4",
+    colorVarLabel: "w-32 text-xs text-muted font-mono shrink-0 pt-2",
+    colorComparisonGrid: "flex-1 grid grid-cols-2 rounded-lg overflow-hidden h-20",
+    colorCell: "flex flex-col items-center justify-center p-2 gap-1",
+    colorPreviewText: "text-2xl font-bold",
+    colorValueLabel: "text-[10px] opacity-50 font-mono hidden md:block",
   },
 });
 
-const { root } = paletteStyles();
+const {
+  root,
+  section,
+  tabsRoot,
+  tabsList,
+  tabsContent,
+  contentHeader,
+  title,
+  familyCode,
+  accordionWrapper,
+  specimenGrid,
+  specimenRow,
+  specimenLabel,
+  specimenValue,
+  hierarchyGrid,
+  hierarchyRow,
+  hierarchyLabel,
+  paragraphText,
+  colorGrid,
+  colorRow,
+  colorVarLabel,
+  colorComparisonGrid,
+  colorCell,
+  colorPreviewText,
+  colorValueLabel,
+} = fontPaletteStyles();
+type FontPaletteVariants = VariantProps<typeof fontPaletteStyles>;
+/* endregion */
 
-interface FontData {
-  name: string;
-  family: string;
-}
+/* region Meta */
+defineOptions({
+  name: "FontPalette",
+});
+/* endregion */
 
-interface ColorData {
-  name: string;
-  fullVarName: string;
-  lightValue: string;
-  lightBg: string;
-  darkValue: string;
-  darkBg: string;
-}
-
-function parseOklch(str: string): [number, number, number] | null {
-  const match = str.match(/oklch\(([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+%?)?\)/);
-  if (match) {
-    let l = parseFloat(match[1] ?? "0");
-    if (match[1]?.endsWith("%")) l /= 100;
-    const c = parseFloat(match[2] ?? "0");
-    const h = parseFloat(match[3] ?? "0");
-    return [l, c, h];
-  }
-  return null;
-}
-
-function getColor(value: string): chroma.Color | null {
-  try {
-    if (value.startsWith("oklch")) {
-      const oklchValues = parseOklch(value);
-      if (oklchValues) {
-        return (chroma as any).oklch(...oklchValues);
-      }
-    } else if (value.startsWith("#") || value.startsWith("rgb") || value.startsWith("hsl")) {
-      return chroma(value);
-    }
-  } catch (e) {
-    // ignore
-  }
-  return null;
-}
-
-function resolveVariable(
-  varName: string,
-  map: Map<string, string>,
-  fallbackMap?: Map<string, string>,
-): string {
-  let value = map.get(varName);
-  if (!value && fallbackMap) {
-    value = fallbackMap.get(varName);
-  }
-  if (!value) return varName; // Return original if not found (might be a raw color)
-
-  const varMatch = value.match(/^var\(([\w-]+)\)$/);
-  if (varMatch && varMatch[1]) {
-    return resolveVariable(varMatch[1], map, fallbackMap);
-  }
-  return value;
-}
+/* region State */
+const { totalHeight } = useHeaderStack();
+const { t } = useI18n();
+const stickyTop = computed(() => `${totalHeight.value + 32}px`);
 
 const parsedData = computed(() => {
   if (!css) return { fonts: [], colors: [] };
@@ -210,10 +237,73 @@ const tabItems = computed(() => {
     slot: "content",
   }));
 });
+/* endregion */
+
+/* region Lifecycle */
+// onMounted(() => {
+//
+// })
+//
+// watch(() => { }, (newValue, oldValue) => {
+//
+// })
+//
+// onUnmounted(() => {
+//
+// })
+/* endregion */
+
+/* region Logic */
+function parseOklch(str: string): [number, number, number] | null {
+  const match = str.match(/oklch\(([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*[\d.]+%?)?\)/);
+  if (match) {
+    let l = parseFloat(match[1] ?? "0");
+    if (match[1]?.endsWith("%")) l /= 100;
+    const c = parseFloat(match[2] ?? "0");
+    const h = parseFloat(match[3] ?? "0");
+    return [l, c, h];
+  }
+  return null;
+}
+
+function getColor(value: string): chroma.Color | null {
+  try {
+    if (value.startsWith("oklch")) {
+      const oklchValues = parseOklch(value);
+      if (oklchValues) {
+        return (chroma as any).oklch(...oklchValues);
+      }
+    } else if (value.startsWith("#") || value.startsWith("rgb") || value.startsWith("hsl")) {
+      return chroma(value);
+    }
+  } catch (e) {
+    // ignore
+  }
+  return null;
+}
+
+function resolveVariable(
+  varName: string,
+  map: Map<string, string>,
+  fallbackMap?: Map<string, string>,
+): string {
+  let value = map.get(varName);
+  if (!value && fallbackMap) {
+    value = fallbackMap.get(varName);
+  }
+  if (!value) return varName; // Return original if not found (might be a raw color)
+
+  const varMatch = value.match(/^var\(([\w-]+)\)$/);
+  if (varMatch && varMatch[1]) {
+    return resolveVariable(varMatch[1], map, fallbackMap);
+  }
+  return value;
+}
 
 function getFontStyles(family: string) {
   return { fontFamily: family };
 }
+/* endregion */
 </script>
 
 <template>
@@ -224,18 +314,18 @@ function getFontStyles(family: string) {
       variant="link"
       :style="{ '--palette-sticky-top': stickyTop }"
       :ui="{
-        root: 'flex flex-col md:flex-row gap-12 items-start overflow-visible',
-        list: 'md:w-64 shrink-0 md:sticky md:top-[var(--palette-sticky-top)] self-start z-10 overflow-visible',
-        content: 'flex-1 min-w-0',
+        root: tabsRoot(),
+        list: tabsList(),
+        content: tabsContent(),
       }"
     >
       <template #content="{ item }">
-        <div class="flex flex-col gap-8">
+        <div :class="contentHeader()">
           <header>
-            <h2 class="text-3xl font-bold text-highlighted mb-2">
+            <h2 :class="title({ class: rc.title })">
               {{ item.label }}
             </h2>
-            <code class="text-sm text-muted">{{ (item as any).font.family }}</code>
+            <code :class="familyCode()">{{ (item as any).font.family }}</code>
           </header>
 
           <UAccordion
@@ -252,38 +342,27 @@ function getFontStyles(family: string) {
             }"
           >
             <template #specimen>
-              <div
-                class="flex flex-col gap-8 py-4 text-highlighted"
-                :style="getFontStyles((item as any).font.family)"
-              >
-                <div class="flex flex-col md:flex-row md:items-baseline gap-4">
-                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">{{
-                    t("font_palette.uppercase")
-                  }}</span>
-                  <div class="text-4xl break-all line-height-none tracking-tight">
+              <div :class="specimenGrid()" :style="getFontStyles((item as any).font.family)">
+                <div :class="specimenRow()">
+                  <span :class="specimenLabel()">{{ t("font_palette.uppercase") }}</span>
+                  <div :class="specimenValue()">
                     {{ alphabet }}
                   </div>
                 </div>
-                <div class="flex flex-col md:flex-row md:items-baseline gap-4">
-                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">{{
-                    t("font_palette.lowercase")
-                  }}</span>
-                  <div class="text-4xl break-all line-height-none tracking-tight">
+                <div :class="specimenRow()">
+                  <span :class="specimenLabel()">{{ t("font_palette.lowercase") }}</span>
+                  <div :class="specimenValue()">
                     {{ alphabetLower }}
                   </div>
                 </div>
-                <div class="flex flex-col md:flex-row md:items-baseline gap-4">
-                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">{{
-                    t("font_palette.numbers")
-                  }}</span>
+                <div :class="specimenRow()">
+                  <span :class="specimenLabel()">{{ t("font_palette.numbers") }}</span>
                   <div class="text-4xl">
                     {{ numbers }}
                   </div>
                 </div>
-                <div class="flex flex-col md:flex-row md:items-baseline gap-4">
-                  <span class="w-32 text-xs text-muted font-mono uppercase shrink-0">{{
-                    t("font_palette.symbols")
-                  }}</span>
+                <div :class="specimenRow()">
+                  <span :class="specimenLabel()">{{ t("font_palette.symbols") }}</span>
                   <div class="text-4xl">
                     {{ symbols }}
                   </div>
@@ -292,23 +371,16 @@ function getFontStyles(family: string) {
             </template>
 
             <template #hierarchy>
-              <div
-                class="flex flex-col gap-8 pb-8"
-                :style="getFontStyles((item as any).font.family)"
-              >
-                <div
-                  v-for="h in headingLevels"
-                  :key="h.tag"
-                  class="flex flex-col md:flex-row md:items-baseline gap-4"
-                >
-                  <span class="w-12 text-xs text-muted font-mono uppercase shrink-0">{{
-                    h.tag
-                  }}</span>
-                  <component :is="h.tag" class="m-0">{{ h.label }}</component>
+              <div :class="hierarchyGrid()" :style="getFontStyles((item as any).font.family)">
+                <div v-for="h in headingLevels" :key="h.tag" :class="hierarchyRow()">
+                  <span :class="hierarchyLabel()">{{ h.tag }}</span>
+                  <component :is="h.tag" class="m-0">
+                    {{ h.label }}
+                  </component>
                 </div>
-                <div class="flex flex-col md:flex-row md:items-baseline gap-4">
-                  <span class="w-12 text-xs text-muted font-mono uppercase shrink-0">p</span>
-                  <p class="m-0 leading-relaxed max-w-2xl">
+                <div :class="hierarchyRow()">
+                  <span :class="hierarchyLabel()">p</span>
+                  <p :class="paragraphText()">
                     {{ sampleText }}. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
                     do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
                     veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -319,43 +391,20 @@ function getFontStyles(family: string) {
             </template>
 
             <template #colors>
-              <div
-                class="flex flex-col gap-8 pb-8"
-                :style="getFontStyles((item as any).font.family)"
-              >
-                <div
-                  v-for="c in parsedData.colors"
-                  :key="c.name"
-                  class="flex flex-col md:flex-row gap-4"
-                >
-                  <span class="w-32 text-xs text-muted font-mono shrink-0 pt-2">{{
-                    c.fullVarName
-                  }}</span>
-                  <div class="flex-1 grid grid-cols-2 rounded-lg overflow-hidden h-20">
+              <div :class="colorGrid()" :style="getFontStyles((item as any).font.family)">
+                <div v-for="c in parsedData.colors" :key="c.name" :class="colorRow()">
+                  <span :class="colorVarLabel()">{{ c.fullVarName }}</span>
+                  <div :class="colorComparisonGrid()">
                     <!-- Light Mode -->
-                    <div
-                      class="flex flex-col items-center justify-center p-2 gap-1"
-                      :class="c.lightBg"
-                    >
-                      <p class="text-2xl font-bold" :style="{ color: c.lightValue }">Aa</p>
-                      <span
-                        class="text-[10px] opacity-50 font-mono hidden md:block"
-                        :style="{ color: c.lightValue }"
-                        >{{ c.lightValue.slice(0, 15) }}...</span
-                      >
+                    <div :class="[colorCell(), c.lightBg]" :style="{ color: c.lightValue }">
+                      <p :class="colorPreviewText()">Aa</p>
+                      <span :class="colorValueLabel()">{{ c.lightValue.slice(0, 15) }}...</span>
                     </div>
 
                     <!-- Dark Mode -->
-                    <div
-                      class="flex flex-col items-center justify-center p-2 gap-1"
-                      :class="c.darkBg"
-                    >
-                      <p class="text-2xl font-bold" :style="{ color: c.darkValue }">Aa</p>
-                      <span
-                        class="text-[10px] opacity-50 font-mono hidden md:block"
-                        :style="{ color: c.darkValue }"
-                        >{{ c.darkValue.slice(0, 15) }}...</span
-                      >
+                    <div :class="[colorCell(), c.darkBg]" :style="{ color: c.darkValue }">
+                      <p :class="colorPreviewText()">Aa</p>
+                      <span :class="colorValueLabel()">{{ c.darkValue.slice(0, 15) }}...</span>
                     </div>
                   </div>
                 </div>

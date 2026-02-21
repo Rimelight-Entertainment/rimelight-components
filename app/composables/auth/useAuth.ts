@@ -6,7 +6,6 @@ import {
   useRequestHeaders,
   useState,
 } from "#imports";
-import { useToast } from "@nuxt/ui/composables/useToast";
 import { statement } from "rimelight-components/auth";
 import { computed } from "vue";
 
