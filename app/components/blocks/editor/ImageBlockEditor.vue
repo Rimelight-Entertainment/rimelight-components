@@ -20,7 +20,7 @@ export interface ImageBlockEditorProps extends ImageBlockProps {
 const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockEditorProps>();
 
 const { rc } = useRC("ImageBlockEditor", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ImageBlockEditorEmits {
@@ -54,12 +54,6 @@ const { root, upload, previewContainer, previewImage, emptyPreview } = imageBloc
 type ImageBlockEditorVariants = VariantProps<typeof imageBlockEditorStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "ImageBlockEditor",
-});
-/* endregion */
-
 /* region State */
 const fileToUpload = ref<File | null>(null);
 const localAlt = ref(alt || "");
@@ -69,6 +63,12 @@ const filePreviewUrl = useObjectUrl(fileToUpload);
 
 const previewSrc = computed(() => {
   return fileToUpload.value ? filePreviewUrl.value : src;
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ImageBlockEditor",
 });
 /* endregion */
 
@@ -98,7 +98,6 @@ watch(fileToUpload, (newFile) => {
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

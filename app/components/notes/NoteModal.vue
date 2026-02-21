@@ -17,7 +17,7 @@ export interface NoteModalProps {
 const { note, rc: rcProp } = defineProps<NoteModalProps>();
 
 const { rc } = useRC("NoteModal", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface NoteModalEmits {
@@ -69,12 +69,6 @@ const {
 type NoteModalVariants = VariantProps<typeof noteModalStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "NoteModal",
-});
-/* endregion */
-
 /* region State */
 const open = defineModel<boolean>("open", { default: false });
 
@@ -115,6 +109,12 @@ const labelItems = computed<SelectMenuItem[]>(() =>
     id: l.id,
   })),
 );
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "NoteModal",
+});
 /* endregion */
 
 /* region Lifecycle */

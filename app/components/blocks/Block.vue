@@ -17,7 +17,7 @@ export interface BlockProps {
 const { id, type, rc: rcProp } = defineProps<BlockProps>();
 
 const { rc } = useRC("Block", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface BlockEmits {}
@@ -44,12 +44,6 @@ const blockStyles = tv({
 
 const { root, menuContainer, dragHandle } = blockStyles();
 type BlockVariants = VariantProps<typeof blockStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "Block",
-});
 /* endregion */
 
 /* region State */
@@ -98,6 +92,12 @@ const items = ref([
     },
   ],
 ]);
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "Block",
+});
 /* endregion */
 
 /* region Lifecycle */

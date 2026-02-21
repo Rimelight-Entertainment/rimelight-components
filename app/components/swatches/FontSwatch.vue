@@ -25,7 +25,7 @@ export interface FontSwatchProps {
 const { name, jpg, png, webp, svg, rc: rcProp } = defineProps<FontSwatchProps>();
 
 const { rc } = useRC("FontSwatch", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface FontSwatchEmits {}
@@ -64,12 +64,6 @@ const {
 type FontSwatchVariants = VariantProps<typeof fontSwatchStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "FontSwatch",
-});
-/* endregion */
-
 /* region State */
 const { t } = useI18n();
 
@@ -80,6 +74,12 @@ const image = computed(() => {
   if (svg) return svg;
 
   return undefined;
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "FontSwatch",
 });
 /* endregion */
 
@@ -98,7 +98,6 @@ const image = computed(() => {
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

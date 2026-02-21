@@ -15,7 +15,7 @@ export interface NotificationsSlideoverProps {
 const { rc: rcProp } = defineProps<NotificationsSlideoverProps>();
 
 const { rc } = useRC("NotificationsSlideover", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface NotificationsSlideoverEmits {}
@@ -55,16 +55,16 @@ const {
 type NotificationsSlideoverVariants = VariantProps<typeof notificationsSlideoverStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "NotificationsSlideover",
-});
-/* endregion */
-
 /* region State */
 const { isNotificationsSlideoverOpen } = useDashboard();
 
 const { data: notifications } = await useApi<Notification[]>("/api/notifications");
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "NotificationsSlideover",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -82,7 +82,6 @@ const { data: notifications } = await useApi<Notification[]>("/api/notifications
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

@@ -15,7 +15,7 @@ export interface FocusTimerToolProps {
 const { rc: rcProp } = defineProps<FocusTimerToolProps>();
 
 const { rc } = useRC("FocusTimerTool", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface FocusTimerToolEmits {}
@@ -44,15 +44,15 @@ const { root, timerDisplay, timeValue, modeLabel, controls } = focusTimerToolSty
 type FocusTimerToolVariants = VariantProps<typeof focusTimerToolStyles>;
 /* endregion */
 
+/* region State */
+const focusTimer = useFocusTimer();
+const toast = useToast();
+/* endregion */
+
 /* region Meta */
 defineOptions({
   name: "FocusTimerTool",
 });
-/* endregion */
-
-/* region State */
-const focusTimer = useFocusTimer();
-const toast = useToast();
 /* endregion */
 
 /* region Lifecycle */
@@ -82,7 +82,6 @@ watch(
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

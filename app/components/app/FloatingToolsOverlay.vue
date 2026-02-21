@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useFloatingTools } from "../composables";
-import { tv } from "../internal/tv";
+import { useFloatingTools } from "rimelight-components/composables";
+import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
@@ -10,7 +10,7 @@ export interface FloatingToolsOverlayProps {
 }
 
 const {} = defineProps<FloatingToolsOverlayProps>();
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface FloatingToolsOverlayEmits {
@@ -59,15 +59,15 @@ const {
 type FloatingToolsOverlayVariants = VariantProps<typeof floatingToolsOverlayStyles>;
 /* endregion */
 
+/* region State */
+const { activeToolIds, registeredTools, isVisible, removeTool, toggleExpanded, isToolExpanded } =
+  useFloatingTools();
+/* endregion */
+
 /* region Meta */
 defineOptions({
   name: "FloatingToolsOverlay",
 });
-/* endregion */
-
-/* region State */
-const { activeToolIds, registeredTools, isVisible, removeTool, toggleExpanded, isToolExpanded } =
-  useFloatingTools();
 /* endregion */
 
 /* region Lifecycle */

@@ -32,7 +32,7 @@ export interface PageTreeModalProps {
 const { loading, pages = [], rc: rcProp } = defineProps<PageTreeModalProps>();
 
 const { rc } = useRC("PageTreeModal", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface PageTreeModalEmits {
@@ -75,12 +75,6 @@ const {
   itemWrapper,
 } = pageTreeModalStyles();
 type PageTreeModalVariants = VariantProps<typeof pageTreeModalStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "PageTreeModal",
-});
 /* endregion */
 
 /* region State */
@@ -176,6 +170,12 @@ const treeItems = computed<TreeItem[]>(() => {
 
   processNodes(rootNodes);
   return rootNodes;
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PageTreeModal",
 });
 /* endregion */
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { tv } from "../../internal/tv";
+import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
-import { useRC } from "../../composables";
+import { useRC } from "rimelight-components/composables";
 
 /* region Props */
 export interface PlaceholderProps {
@@ -14,7 +14,7 @@ export interface PlaceholderProps {
 const { rc: rcProp } = defineProps<PlaceholderProps>();
 
 const { rc } = useRC("Placeholder", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface PlaceholderEmits {}
@@ -42,18 +42,18 @@ const { base, svg } = placeholderStyles();
 type PlaceholderVariants = VariantProps<typeof placeholderStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "Placeholder",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "Placeholder",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -71,7 +71,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

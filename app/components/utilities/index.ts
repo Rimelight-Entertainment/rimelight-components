@@ -1,1 +1,1 @@
-export { default as Placeholder } from "./Placeholder.vue";
+export { default as Placeholder } from "rimelight-components/app/components/utilities/Placeholder.vue";

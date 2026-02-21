@@ -22,7 +22,7 @@ export interface TeamCardProps {
 const { src, alt, name, role, description, rc: rcProp } = defineProps<TeamCardProps>();
 
 const { rc } = useRC("TeamCard", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface TeamCardEmits {}
@@ -53,18 +53,18 @@ const { details, nameClass, roleClass, descriptionClass, linksClass } = teamCard
 type TeamCardVariants = VariantProps<typeof teamCardStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "TeamCard",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "TeamCard",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -82,7 +82,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

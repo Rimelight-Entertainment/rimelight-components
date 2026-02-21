@@ -18,7 +18,7 @@ export interface FooterProps {
 const { contain = true, rc: rcProp } = defineProps<FooterProps>();
 
 const { rc } = useRC("Footer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface FooterEmits {}
@@ -59,18 +59,18 @@ const { root, container, left, center, right } = footerStyles({ contain });
 type FooterVariants = VariantProps<typeof footerStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "Footer",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "Footer",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -88,7 +88,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

@@ -18,7 +18,7 @@ export interface CalloutBlockEditorProps extends CalloutBlockProps {
 const { id, rc: rcProp, children, variant, to, target } = defineProps<CalloutBlockEditorProps>();
 
 const { rc } = useRC("CalloutBlockEditor", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface CalloutBlockEditorEmits {}
@@ -57,12 +57,6 @@ const {
   itemDescription,
 } = calloutBlockEditorStyles();
 type CalloutBlockEditorVariants = VariantProps<typeof calloutBlockEditorStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "CalloutBlockEditor",
-});
 /* endregion */
 
 /* region State */
@@ -105,6 +99,12 @@ const localChildren = computed({
       editorApi.updateBlockProps(id, { children: childrenCopy });
     }
   },
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "CalloutBlockEditor",
 });
 /* endregion */
 

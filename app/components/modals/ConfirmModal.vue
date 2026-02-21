@@ -14,7 +14,7 @@ export interface ConfirmModalProps {
 const { rc: rcProp } = defineProps<ConfirmModalProps>();
 
 const { rc } = useRC("ConfirmModal", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ConfirmModalEmits {}
@@ -42,12 +42,6 @@ const { root, actions } = confirmModalStyles();
 type ConfirmModalVariants = VariantProps<typeof confirmModalStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "ConfirmModal",
-});
-/* endregion */
-
 /* region State */
 const { state, handleConfirm, handleCancel } = useConfirm();
 
@@ -56,6 +50,12 @@ const isOpen = computed({
   set: (value) => {
     state.value.isVisible = value;
   },
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ConfirmModal",
 });
 /* endregion */
 
@@ -74,7 +74,6 @@ const isOpen = computed({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

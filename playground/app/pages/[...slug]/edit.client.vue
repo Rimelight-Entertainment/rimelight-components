@@ -114,6 +114,18 @@ const handleVersionNavigate = (version: PageVersion) => {
 useHead({
   title: () => `Edit (Mock): ${getLocalizedContent(page.value?.title, locale) ?? appConfig.title}`,
 });
+
+/* region State */
+/* endregion */
+
+/* region Meta */
+/* endregion */
+
+/* region Lifecycle */
+/* endregion */
+
+/* region Logic */
+/* endregion */
 </script>
 
 <template>

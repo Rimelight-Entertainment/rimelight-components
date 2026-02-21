@@ -11,10 +11,10 @@
 /* region Styles */
 /* endregion */
 
-/* region Meta */
+/* region State */
 /* endregion */
 
-/* region State */
+/* region Meta */
 /* endregion */
 
 /* region Lifecycle */

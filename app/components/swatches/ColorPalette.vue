@@ -42,7 +42,7 @@ export interface ColorPaletteProps {
 const { css = "", rc: rcProp } = defineProps<ColorPaletteProps>();
 
 const { rc } = useRC("ColorPalette", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ColorPaletteEmits {}
@@ -72,12 +72,6 @@ const colorPaletteStyles = tv({
 
 const { root, grid, tabsList, tabsContent, tabsRoot, title, accordion } = colorPaletteStyles();
 type ColorPaletteVariants = VariantProps<typeof colorPaletteStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "ColorPalette",
-});
 /* endregion */
 
 /* region State */
@@ -158,6 +152,12 @@ const tabItems = computed(() => {
   });
 
   return tabs;
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ColorPalette",
 });
 /* endregion */
 

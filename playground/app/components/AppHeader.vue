@@ -12,7 +12,7 @@ export interface AppHeaderProps {
 }
 
 const {} = defineProps<AppHeaderProps>();
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface AppHeaderEmits {}
@@ -85,12 +85,6 @@ const {
   collapsedRightBody,
 } = appHeaderStyles();
 type AppHeaderVariants = VariantProps<typeof appHeaderStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "AppHeader",
-});
 /* endregion */
 
 /* region State */
@@ -194,6 +188,12 @@ const accountMenuItems = computed<DropdownMenuItem[][]>(() => [
 ]);
 /* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "AppHeader",
+});
+/* endregion */
+
 /* region Lifecycle */
 // onMounted(() => {
 //
@@ -209,10 +209,8 @@ const accountMenuItems = computed<DropdownMenuItem[][]>(() => [
 /* endregion */
 
 /* region Logic */
-
-/* endregion */
-
 defineShortcuts(extractShortcuts(accountMenuItems.value));
+/* endregion */
 </script>
 
 <template>

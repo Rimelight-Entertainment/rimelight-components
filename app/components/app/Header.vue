@@ -21,7 +21,7 @@ export interface HeaderProps {
 const { contain = true, rc: rcProp } = defineProps<HeaderProps>();
 
 const { rc } = useRC("Header", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface HeaderEmits {}
@@ -68,18 +68,18 @@ const { root, container, left, center, right, collapsedLeft, collapsedCenter, co
 type HeaderVariants = VariantProps<typeof headerStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "Header",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "Header",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -97,7 +97,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

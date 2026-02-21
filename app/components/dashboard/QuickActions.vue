@@ -16,7 +16,7 @@ export interface QuickActionsProps {
 const { rc: rcProp } = defineProps<QuickActionsProps>();
 
 const { rc } = useRC("QuickActions", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface QuickActionsEmits {}
@@ -44,12 +44,6 @@ const { root, triggerButton, triggerIcon } = quickActionsStyles();
 type QuickActionsVariants = VariantProps<typeof quickActionsStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "QuickActions",
-});
-/* endregion */
-
 /* region State */
 const { registeredActions } = useQuickActions();
 
@@ -72,6 +66,12 @@ const menuItems = computed<DropdownMenuItem[][]>(() => {
 });
 /* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "QuickActions",
+});
+/* endregion */
+
 /* region Lifecycle */
 // onMounted(() => {
 //
@@ -87,7 +87,6 @@ const menuItems = computed<DropdownMenuItem[][]>(() => {
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

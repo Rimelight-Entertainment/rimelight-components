@@ -22,7 +22,7 @@ export interface TextRendererProps {
 const { content, rc: rcProp } = defineProps<TextRendererProps>();
 
 const { rc } = useRC("TextRenderer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface TextRendererEmits {}
@@ -47,18 +47,18 @@ const { root } = textRendererStyles();
 type TextRendererVariants = VariantProps<typeof textRendererStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "TextRenderer",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "TextRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */

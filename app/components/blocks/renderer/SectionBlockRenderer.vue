@@ -22,7 +22,7 @@ const {
 } = defineProps<SectionBlockRendererProps>();
 
 const { rc } = useRC("SectionBlockRenderer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface SectionBlockRendererEmits {}
@@ -47,15 +47,15 @@ const { root } = sectionBlockRendererStyles();
 type SectionBlockRendererVariants = VariantProps<typeof sectionBlockRendererStyles>;
 /* endregion */
 
+/* region State */
+const headingId = computed(() => (title ? slugify(title) : undefined));
+const hasChildren = computed(() => children && children.length > 0);
+/* endregion */
+
 /* region Meta */
 defineOptions({
   name: "SectionBlockRenderer",
 });
-/* endregion */
-
-/* region State */
-const headingId = computed(() => (title ? slugify(title) : undefined));
-const hasChildren = computed(() => children && children.length > 0);
 /* endregion */
 
 /* region Lifecycle */
@@ -73,7 +73,6 @@ const hasChildren = computed(() => children && children.length > 0);
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

@@ -16,7 +16,7 @@ export interface FloatingActionsOverlayProps {
 }
 
 const {} = defineProps<FloatingActionsOverlayProps>();
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface FloatingActionsOverlayEmits {
@@ -47,14 +47,14 @@ const { root, actionWrapper } = floatingActionsOverlayStyles();
 type FloatingActionsOverlayVariants = VariantProps<typeof floatingActionsOverlayStyles>;
 /* endregion */
 
+/* region State */
+const { actions, registerAction } = useFloatingActions();
+/* endregion */
+
 /* region Meta */
 defineOptions({
   name: "FloatingActionsOverlay",
 });
-/* endregion */
-
-/* region State */
-const { actions, registerAction } = useFloatingActions();
 /* endregion */
 
 /* region Lifecycle */
@@ -83,7 +83,6 @@ onMounted(() => {
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

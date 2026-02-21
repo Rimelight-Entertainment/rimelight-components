@@ -26,7 +26,7 @@ const {
 } = defineProps<SectionBlockEditorProps>();
 
 const { rc } = useRC("SectionBlockEditor", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface SectionBlockEditorEmits {}
@@ -54,12 +54,6 @@ const { root, headerContainer, titleInput, levelBadge } = sectionBlockEditorStyl
 type SectionBlockEditorVariants = VariantProps<typeof sectionBlockEditorStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "SectionBlockEditor",
-});
-/* endregion */
-
 /* region State */
 const localTitle = ref(title);
 const localDescription = ref(description);
@@ -83,6 +77,12 @@ const localChildren = computed({
       editorApi.updateBlockProps(id, { children: childrenCopy });
     }
   },
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "SectionBlockEditor",
 });
 /* endregion */
 

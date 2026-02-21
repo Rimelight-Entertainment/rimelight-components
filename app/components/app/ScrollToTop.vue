@@ -21,7 +21,7 @@ export interface ScrollToTopProps {
 const { circleStrokeWidth = 4, duration = 0.1, rc: rcProp } = defineProps<ScrollToTopProps>();
 
 const { rc } = useRC("ScrollToTop", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ScrollToTopEmits {}
@@ -50,12 +50,6 @@ const { button, progressBase, svg, iconContainer, icon } = scrollToTopStyles();
 type ScrollToTopVariants = VariantProps<typeof scrollToTopStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "ScrollToTop",
-});
-/* endregion */
-
 /* region State */
 const { isVisible, scrollToTop, scrollPercentage } = useScrollToTop();
 
@@ -65,6 +59,12 @@ const percentPx = circumference / 100;
 const currentPercent = computed(() => ((scrollPercentage.value - 0) / 100) * 100);
 const percentageInPx = computed(() => `${percentPx}px`);
 const durationInSeconds = computed(() => `${duration}s`);
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ScrollToTop",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -82,7 +82,6 @@ const durationInSeconds = computed(() => `${duration}s`);
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

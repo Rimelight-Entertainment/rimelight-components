@@ -40,7 +40,7 @@ export interface PagePropertiesRendererProps {
 const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>();
 
 const { rc } = useRC("PagePropertiesRenderer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface PagePropertiesRendererEmits {}
@@ -109,12 +109,6 @@ const {
 type PagePropertiesRendererVariants = VariantProps<typeof pagePropertiesRendererStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "PagePropertiesRenderer",
-});
-/* endregion */
-
 /* region State */
 const page = defineModel<Page>({ required: true });
 
@@ -140,6 +134,12 @@ const imageTabs = computed<TabsItem[]>(() => {
       img,
     };
   });
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PagePropertiesRenderer",
 });
 /* endregion */
 

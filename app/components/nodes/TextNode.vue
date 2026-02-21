@@ -14,7 +14,7 @@ export interface TextNodeProps {
 const { content, rc: rcProp } = defineProps<TextNodeProps>();
 
 const { rc } = useRC("TextNode", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface TextNodeEmits {}
@@ -39,18 +39,18 @@ const { root } = textNodeStyles();
 type TextNodeVariants = VariantProps<typeof textNodeStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "TextNode",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "TextNode",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -68,7 +68,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

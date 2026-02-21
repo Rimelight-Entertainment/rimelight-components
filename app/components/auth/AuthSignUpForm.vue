@@ -17,7 +17,7 @@ export interface AuthSignUpFormProps {
 }
 
 const { rc } = defineProps<AuthSignUpFormProps>();
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface AuthSignUpFormEmits {}
@@ -68,12 +68,6 @@ const {
   termsLink,
 } = authSignUpFormStyles();
 type AuthSignUpFormVariants = VariantProps<typeof authSignUpFormStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "AuthSignUpForm",
-});
 /* endregion */
 
 /* region State */
@@ -187,6 +181,12 @@ const stepperItems = computed<StepperItem[]>(() => [
     icon: "lucide:check-circle",
   },
 ]);
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "AuthSignUpForm",
+});
 /* endregion */
 
 /* region Lifecycle */

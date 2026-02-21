@@ -16,7 +16,7 @@ export interface AuthSignInFormProps {
 }
 
 const { rc } = defineProps<AuthSignInFormProps>();
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface AuthSignInFormEmits {}
@@ -52,12 +52,6 @@ const { root, form, input, emailField, passwordWrapper, footerWrapper, termsLink
 type AuthSignInFormVariants = VariantProps<typeof authSignInFormStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "AuthSignInForm",
-});
-/* endregion */
-
 /* region State */
 const { signIn, isLoading } = useAuth();
 const { t } = useI18n();
@@ -79,6 +73,12 @@ const state = reactive<Partial<Schema>>({
 });
 
 const showPassword = ref(false);
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "AuthSignInForm",
+});
 /* endregion */
 
 /* region Lifecycle */

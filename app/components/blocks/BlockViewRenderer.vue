@@ -17,7 +17,7 @@ export interface BlockViewRendererProps {
 const { blocks, rc: rcProp } = defineProps<BlockViewRendererProps>();
 
 const { rc } = useRC("BlockViewRenderer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface BlockViewRendererEmits {}
@@ -42,18 +42,18 @@ const { root } = blockViewRendererStyles();
 type BlockViewRendererVariants = VariantProps<typeof blockViewRendererStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "BlockViewRenderer",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "BlockViewRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */

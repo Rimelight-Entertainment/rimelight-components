@@ -30,7 +30,7 @@ export interface ColorSwatchProps {
 const { name, hex, rgb, hsl, oklch, cmyk, textColor, rc: rcProp } = defineProps<ColorSwatchProps>();
 
 const { rc } = useRC("ColorSwatch", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ColorSwatchEmits {}
@@ -71,12 +71,6 @@ const {
 type ColorSwatchVariants = VariantProps<typeof colorSwatchStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "ColorSwatch",
-});
-/* endregion */
-
 /* region State */
 const { copy } = useClipboard();
 const toast = useToast();
@@ -90,6 +84,12 @@ const color = computed(() => {
   if (oklch) return oklch;
 
   return "var(--color-primary-500)";
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ColorSwatch",
 });
 /* endregion */
 

@@ -31,7 +31,7 @@ const {
 } = defineProps<BaseDashboardLayoutProps>();
 
 const { rc } = useRC("BaseDashboardLayout", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface BaseDashboardLayoutEmits {
@@ -71,12 +71,6 @@ const { root, dashboardGroup, sidebar, sidebarFooterWrapper, footerActions } =
 type BaseDashboardLayoutVariants = VariantProps<typeof baseDashboardLayoutStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "BaseDashboardLayout",
-});
-/* endregion */
-
 /* region State */
 const sidebarOpenModel = computed({
   get: () => sidebarOpen,
@@ -86,6 +80,12 @@ const sidebarOpenModel = computed({
 const { totalHeight } = useHeaderStack();
 /* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "BaseDashboardLayout",
+});
+/* endregion */
+
 /* region Lifecycle */
 // onMounted(() => {
 //
@@ -93,7 +93,6 @@ const { totalHeight } = useHeaderStack();
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

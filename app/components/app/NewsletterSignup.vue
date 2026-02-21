@@ -23,7 +23,7 @@ const {
 } = defineProps<NewsletterSignupProps>();
 
 const { rc } = useRC("NewsletterSignup", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface NewsletterSignupEmits {
@@ -53,18 +53,18 @@ const { group } = newsletterSignupStyles();
 type NewsletterSignupVariants = VariantProps<typeof newsletterSignupStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "NewsletterSignup",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "NewsletterSignup",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -82,7 +82,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

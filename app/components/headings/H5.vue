@@ -13,7 +13,7 @@ export interface H5Props {
 const { rc: rcProp } = defineProps<H5Props>();
 
 const { rc } = useRC("H5", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface H5Emits {}
@@ -40,18 +40,18 @@ const { root } = h5Styles();
 type H5Variants = VariantProps<typeof h5Styles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "H5",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "H5",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -69,7 +69,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

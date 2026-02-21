@@ -15,7 +15,7 @@ export interface DeleteModalProps {
 const { count = 0, rc: rcProp } = defineProps<DeleteModalProps>();
 
 const { rc } = useRC("DeleteModal", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface DeleteModalEmits {}
@@ -43,14 +43,14 @@ const { root, actions } = deleteModalStyles();
 type DeleteModalVariants = VariantProps<typeof deleteModalStyles>;
 /* endregion */
 
+/* region State */
+const open = ref(false);
+/* endregion */
+
 /* region Meta */
 defineOptions({
   name: "DeleteModal",
 });
-/* endregion */
-
-/* region State */
-const open = ref(false);
 /* endregion */
 
 /* region Lifecycle */

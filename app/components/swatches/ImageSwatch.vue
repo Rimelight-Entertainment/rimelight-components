@@ -25,7 +25,7 @@ export interface ImageSwatchProps {
 const { name, jpg, png, webp, svg, rc: rcProp } = defineProps<ImageSwatchProps>();
 
 const { rc } = useRC("ImageSwatch", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ImageSwatchEmits {}
@@ -55,12 +55,6 @@ const { card, title: titleStyle, content, imageClass, buttonGroup, button } = im
 type ImageSwatchVariants = VariantProps<typeof imageSwatchStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "ImageSwatch",
-});
-/* endregion */
-
 /* region State */
 const { t } = useI18n();
 
@@ -71,6 +65,12 @@ const image = computed(() => {
   if (svg) return svg;
 
   return undefined;
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ImageSwatch",
 });
 /* endregion */
 
@@ -89,7 +89,6 @@ const image = computed(() => {
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

@@ -40,7 +40,7 @@ export interface FontPaletteProps {
 const { css = "", rc: rcProp } = defineProps<FontPaletteProps>();
 
 const { rc } = useRC("FontPalette", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface FontPaletteEmits {}
@@ -112,12 +112,6 @@ const {
   colorValueLabel,
 } = fontPaletteStyles();
 type FontPaletteVariants = VariantProps<typeof fontPaletteStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "FontPalette",
-});
 /* endregion */
 
 /* region State */
@@ -236,6 +230,12 @@ const tabItems = computed(() => {
     font: f,
     slot: "content",
   }));
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "FontPalette",
 });
 /* endregion */
 

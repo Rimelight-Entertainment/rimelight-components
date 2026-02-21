@@ -30,7 +30,7 @@ export interface AddBlockModalProps {
 const { rc: rcProp } = defineProps<AddBlockModalProps>();
 
 const { rc } = useRC("AddBlockModal", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface AddBlockModalEmits {
@@ -91,12 +91,6 @@ const {
 type AddBlockModalVariants = VariantProps<typeof addBlockModalStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "AddBlockModal",
-});
-/* endregion */
-
 /* region State */
 const open = defineModel<boolean>("open", { default: false });
 
@@ -155,6 +149,12 @@ const groupedBlocks = computed(() => {
   });
 
   return sortedGroups;
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "AddBlockModal",
 });
 /* endregion */
 

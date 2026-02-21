@@ -23,7 +23,7 @@ export interface PageVersionSelectorProps {
 const { pageId, isAdmin = false, rc: rcProp } = defineProps<PageVersionSelectorProps>();
 
 const { rc } = useRC("PageVersionSelector", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface PageVersionSelectorEmits {
@@ -101,13 +101,8 @@ const {
 type PageVersionSelectorVariants = VariantProps<typeof pageVersionSelectorStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "PageVersionSelector",
-});
-/* endregion */
-
-/* region State */ const selectedVersionId = defineModel<string | null>("currentVersionId", {
+/* region State */
+const selectedVersionId = defineModel<string | null>("currentVersionId", {
   default: null,
 });
 
@@ -132,7 +127,12 @@ const currentVersionStatus = computed(() => {
 });
 
 const currentVersion = computed(() => versions.value.find((v) => v.id === selectedVersionId.value));
+/* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "PageVersionSelector",
+});
 /* endregion */
 
 /* region Lifecycle */

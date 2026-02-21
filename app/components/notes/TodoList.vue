@@ -19,7 +19,7 @@ export interface TodoListProps {
 const { todos, archivedTodos = [], loading = false, rc: rcProp } = defineProps<TodoListProps>();
 
 const { rc } = useRC("TodoList", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface TodoListEmits {}
@@ -64,12 +64,6 @@ const {
 type TodoListVariants = VariantProps<typeof todoListStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "TodoList",
-});
-/* endregion */
-
 /* region State */
 const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos();
 const { t } = useI18n();
@@ -78,6 +72,12 @@ const newTodoTitle = ref("");
 const newTodoDescription = ref("");
 const isAdding = ref(false);
 const showArchived = ref(false);
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "TodoList",
+});
 /* endregion */
 
 /* region Lifecycle */

@@ -21,7 +21,7 @@ export interface DeletePageModalProps {
 const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>();
 
 const { rc } = useRC("DeletePageModal", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface DeletePageModalEmits {
@@ -61,12 +61,6 @@ const {
 type DeletePageModalVariants = VariantProps<typeof deletePageModalStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "DeletePageModal",
-});
-/* endregion */
-
 /* region State */
 const open = defineModel<boolean>("open", { default: false });
 
@@ -74,6 +68,12 @@ const { t } = useI18n();
 
 const confirmationInput = ref("");
 const CONFIRMATION_TEXT = "DELETE";
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "DeletePageModal",
+});
 /* endregion */
 
 /* region Lifecycle */

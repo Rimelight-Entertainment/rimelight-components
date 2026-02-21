@@ -13,7 +13,7 @@ export interface H2Props {
 const { rc: rcProp } = defineProps<H2Props>();
 
 const { rc } = useRC("H2", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface H2Emits {}
@@ -40,18 +40,18 @@ const { root } = h2Styles();
 type H2Variants = VariantProps<typeof h2Styles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "H2",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "H2",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -69,7 +69,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

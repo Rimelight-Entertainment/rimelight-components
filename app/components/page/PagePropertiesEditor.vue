@@ -29,7 +29,7 @@ export interface PagePropertiesEditorProps {
 const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>();
 
 const { rc } = useRC("PagePropertiesEditor", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface PagePropertiesEditorEmits {}
@@ -98,12 +98,6 @@ const {
 type PagePropertiesEditorVariants = VariantProps<typeof pagePropertiesEditorStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "PagePropertiesEditor",
-});
-/* endregion */
-
 /* region State */
 const page = defineModel<Page>({ required: true });
 
@@ -159,6 +153,12 @@ const linkDraft = reactive<Partial<Link>>({
   icon: "",
   color: "neutral",
   variant: "link",
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PagePropertiesEditor",
 });
 /* endregion */
 

@@ -16,7 +16,7 @@ export interface TeamsMenuProps {
 const { collapsed, rc: rcProp } = defineProps<TeamsMenuProps>();
 
 const { rc } = useRC("TeamsMenu", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface TeamsMenuEmits {}
@@ -41,12 +41,6 @@ const teamsMenuStyles = tv({
 
 const { root, triggerButton, buttonTrailing } = teamsMenuStyles();
 type TeamsMenuVariants = VariantProps<typeof teamsMenuStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "TeamsMenu",
-});
 /* endregion */
 
 /* region State */
@@ -97,6 +91,12 @@ const items = computed<DropdownMenuItem[][]>(() => {
 });
 /* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "TeamsMenu",
+});
+/* endregion */
+
 /* region Lifecycle */
 // onMounted(() => {
 //
@@ -112,7 +112,6 @@ const items = computed<DropdownMenuItem[][]>(() => {
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

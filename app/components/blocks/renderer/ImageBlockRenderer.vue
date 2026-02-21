@@ -16,7 +16,7 @@ export interface ImageBlockRendererProps extends ImageBlockProps {
 const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockRendererProps>();
 
 const { rc } = useRC("ImageBlockRenderer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ImageBlockRendererEmits {}
@@ -43,18 +43,18 @@ const { root, image, captionClass } = imageBlockRendererStyles();
 type ImageBlockRendererVariants = VariantProps<typeof imageBlockRendererStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "ImageBlockRenderer",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ImageBlockRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -72,7 +72,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

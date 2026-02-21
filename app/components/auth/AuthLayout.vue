@@ -21,7 +21,7 @@ const {
   backgroundDesktop = "",
   rc,
 } = defineProps<AuthLayoutProps>();
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface AuthLayoutEmits {}
@@ -56,12 +56,6 @@ const { root, bgWrapper, bgMobile, bgDesktop, overlay, container, card, tabsClas
 type AuthLayoutVariants = VariantProps<typeof authLayoutStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "AuthLayout",
-});
-/* endregion */
-
 /* region State */
 const route = useRoute();
 const router = useRouter();
@@ -73,6 +67,12 @@ const activeTab = computed({
   set(path) {
     if (path) router.push(path as string);
   },
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "AuthLayout",
 });
 /* endregion */
 
@@ -91,7 +91,6 @@ const activeTab = computed({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

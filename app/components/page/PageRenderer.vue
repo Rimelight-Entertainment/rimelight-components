@@ -43,7 +43,7 @@ const {
 const { rc } = useRC("PageRenderer", rcProp);
 
 provide("page-resolver", resolvePage);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface PageRendererEmits {}
@@ -91,12 +91,6 @@ const {
 type PageRendererVariants = VariantProps<typeof pageRendererStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "PageRenderer",
-});
-/* endregion */
-
 /* region State */
 const page = defineModel<Page>({ required: true });
 
@@ -114,6 +108,12 @@ const currentDefinition = computed(() => {
 const previousPage = computed(() => surround?.previous);
 const nextPage = computed(() => surround?.next);
 const hasSurround = computed(() => !!(surround?.previous || surround?.next));
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PageRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */

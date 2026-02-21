@@ -21,7 +21,7 @@ export interface BlockEditorProps {
 const { historyLimit, containerId = null, rc: rcProp } = defineProps<BlockEditorProps>();
 
 const { rc } = useRC("BlockEditor", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface BlockEditorEmits {
@@ -51,12 +51,6 @@ const blockEditorStyles = tv({
 
 const { root, footerClass } = blockEditorStyles();
 type BlockEditorVariants = VariantProps<typeof blockEditorStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "BlockEditor",
-});
 /* endregion */
 
 /* region State */
@@ -98,6 +92,12 @@ provide("block-editor-api", {
 });
 
 defineExpose({ undo, redo, canUndo, canRedo });
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "BlockEditor",
+});
 /* endregion */
 
 /* region Lifecycle */

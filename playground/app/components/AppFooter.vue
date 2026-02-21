@@ -10,7 +10,7 @@ export interface AppFooterProps {
 }
 
 const {} = defineProps<AppFooterProps>();
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface AppFooterEmits {}
@@ -55,12 +55,6 @@ const {
 type AppFooterVariants = VariantProps<typeof appFooterStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "AppFooter",
-});
-/* endregion */
-
 /* region State */
 const appConfig = useAppConfig();
 const { locale, setLocale } = useI18n();
@@ -101,6 +95,12 @@ const columns: FooterColumn[] = [
     ],
   },
 ];
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "AppFooter",
+});
 /* endregion */
 
 /* region Lifecycle */

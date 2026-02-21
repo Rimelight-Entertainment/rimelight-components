@@ -29,7 +29,7 @@ const {
 } = defineProps<ImageProps>();
 
 const { rc } = useRC("Image", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ImageEmits {}
@@ -64,12 +64,6 @@ const { base } = imageStyles();
 type ImageVariants = VariantProps<typeof imageStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "Image",
-});
-/* endregion */
-
 /* region State */
 const isOpen = ref(false);
 const imgElement = useTemplateRef<{ $el: HTMLImageElement }>("imgRef");
@@ -80,6 +74,12 @@ const metadata = reactive({
   size: "",
   format: "",
   mimeType: "",
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "Image",
 });
 /* endregion */
 

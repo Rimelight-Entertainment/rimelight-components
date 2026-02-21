@@ -13,7 +13,7 @@ export interface H1Props {
 const { rc: rcProp } = defineProps<H1Props>();
 
 const { rc } = useRC("H1", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface H1Emits {}
@@ -40,18 +40,18 @@ const { root } = h1Styles();
 type H1Variants = VariantProps<typeof h1Styles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "H1",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "H1",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -69,7 +69,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

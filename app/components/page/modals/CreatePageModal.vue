@@ -23,7 +23,7 @@ export interface CreatePageModalProps {
 const { loading, definitions, rc: rcProp } = defineProps<CreatePageModalProps>();
 
 const { rc } = useRC("CreatePageModal", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface CreatePageModalEmits {
@@ -65,12 +65,6 @@ const {
 type CreatePageModalVariants = VariantProps<typeof createPageModalStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "CreatePageModal",
-});
-/* endregion */
-
 /* region State */
 const open = defineModel<boolean>("open", { default: false });
 
@@ -85,6 +79,12 @@ const typeOptions = computed(() => {
     label: t(def.typeLabelKey) === def.typeLabelKey ? key : t(def.typeLabelKey),
     value: key,
   }));
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "CreatePageModal",
 });
 /* endregion */
 

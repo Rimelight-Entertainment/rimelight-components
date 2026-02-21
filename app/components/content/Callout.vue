@@ -28,7 +28,7 @@ export interface CalloutProps {
 const { variant, to, target, rc: rcProp } = defineProps<CalloutProps>();
 
 const { rc } = useRC("Callout", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface CalloutEmits {}
@@ -57,12 +57,6 @@ const { iconClass, tooltipIcon } = calloutStyles();
 type CalloutVariants = VariantProps<typeof calloutStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "Callout",
-});
-/* endregion */
-
 /* region State */
 const { t } = useI18n();
 const appConfig = useAppConfig();
@@ -82,6 +76,12 @@ const title = computed(() => config.value.title);
 const tooltip = computed(() => config.value.tooltip);
 /* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "Callout",
+});
+/* endregion */
+
 /* region Lifecycle */
 // onMounted(() => {
 //
@@ -97,7 +97,6 @@ const tooltip = computed(() => config.value.tooltip);
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

@@ -14,6 +14,18 @@ useSeoMeta({
   ogTitle: "Branding",
   description: "Branding guidelines and assets for Rimelight Components.",
 });
+
+/* region State */
+/* endregion */
+
+/* region Meta */
+/* endregion */
+
+/* region Lifecycle */
+/* endregion */
+
+/* region Logic */
+/* endregion */
 </script>
 
 <template>

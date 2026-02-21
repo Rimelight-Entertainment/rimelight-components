@@ -38,7 +38,7 @@ const {
 } = defineProps<PageSurroundProps>();
 
 const { rc } = useRC("PageSurround", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface PageSurroundEmits {}
@@ -92,14 +92,14 @@ const {
 type PageSurroundVariants = VariantProps<typeof pageSurroundStyles>;
 /* endregion */
 
+/* region State */
+const { t } = useI18n();
+/* endregion */
+
 /* region Meta */
 defineOptions({
   name: "PageSurround",
 });
-/* endregion */
-
-/* region State */
-const { t } = useI18n();
 /* endregion */
 
 /* region Lifecycle */
@@ -109,7 +109,6 @@ const { t } = useI18n();
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

@@ -35,7 +35,7 @@ const {
 } = defineProps<PageTOCProps>();
 
 const { rc } = useRC("PageTOC", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface PageTOCEmits {}
@@ -84,12 +84,6 @@ const { navClass, listClass, linkClass, textClass } = pageTOCStyles();
 type PageTOCVariants = VariantProps<typeof pageTOCStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "PageTOC",
-});
-/* endregion */
-
 /* region State */
 const { t } = useI18n();
 const activeId = ref<string | null>(null);
@@ -98,6 +92,12 @@ const { locale } = useI18n();
 const items = computed(() => {
   const all = extractHeadings(pageBlocks ?? []);
   return all.filter((h) => levels.includes(h.level));
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PageTOC",
 });
 /* endregion */
 

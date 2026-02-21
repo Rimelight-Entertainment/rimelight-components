@@ -38,7 +38,7 @@ export interface LogoProps {
 const { variant = "mark", to = "/", mode, rc: rcProp, alt } = defineProps<LogoProps>();
 
 const { rc } = useRC("Logo", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface LogoEmits {}
@@ -63,13 +63,6 @@ const logoStyles = tv({
 
 const { root } = logoStyles();
 type LogoVariants = VariantProps<typeof logoStyles>;
-/* endregion */
-
-/* region Meta */
-defineOptions({
-  name: "Logo",
-  inheritAttrs: false,
-});
 /* endregion */
 
 /* region State */
@@ -110,6 +103,13 @@ const isIcon = computed(() => {
 });
 /* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "Logo",
+  inheritAttrs: false,
+});
+/* endregion */
+
 /* region Lifecycle */
 // onMounted(() => {
 //
@@ -125,7 +125,6 @@ const isIcon = computed(() => {
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

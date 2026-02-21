@@ -13,7 +13,7 @@ export interface H3Props {
 const { rc: rcProp } = defineProps<H3Props>();
 
 const { rc } = useRC("H3", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface H3Emits {}
@@ -40,18 +40,18 @@ const { root } = h3Styles();
 type H3Variants = VariantProps<typeof h3Styles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "H3",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "H3",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -69,7 +69,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

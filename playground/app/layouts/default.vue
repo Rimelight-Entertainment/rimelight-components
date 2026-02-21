@@ -18,10 +18,7 @@ const { totalHeight } = useHeaderStack();
       <AppHeader />
     </RCHeaderLayer>
 
-    <UMain
-      class="bg-default"
-      :style="{ paddingTop: 'var(--total-header-offset)' }"
-    >
+    <UMain class="bg-default" :style="{ paddingTop: 'var(--total-header-offset)' }">
       <slot />
     </UMain>
     <AppFooter />

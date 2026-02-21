@@ -12,7 +12,7 @@ export interface H6Props {
 const { rc: rcProp } = defineProps<H6Props>();
 
 const { rc } = useRC("H6", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface H6Emits {}
@@ -47,6 +47,12 @@ type H6Variants = VariantProps<typeof h6Styles>;
 // })
 /* endregion */
 
+/* region Meta */
+defineOptions({
+  name: "H6",
+});
+/* endregion */
+
 /* region Lifecycle */
 // onMounted(() => {
 //
@@ -61,14 +67,7 @@ type H6Variants = VariantProps<typeof h6Styles>;
 // })
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "H6",
-});
-/* endregion */
-
 /* region Logic */
-
 /* endregion */
 </script>
 

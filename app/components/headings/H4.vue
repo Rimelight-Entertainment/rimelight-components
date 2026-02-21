@@ -13,7 +13,7 @@ export interface H4Props {
 const { rc: rcProp } = defineProps<H4Props>();
 
 const { rc } = useRC("H4", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface H4Emits {}
@@ -40,18 +40,18 @@ const { root } = h4Styles();
 type H4Variants = VariantProps<typeof h4Styles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "H4",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "H4",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -69,7 +69,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

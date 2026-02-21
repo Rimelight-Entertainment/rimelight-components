@@ -16,7 +16,7 @@ export interface NoteCardProps {
 const { note, rc: rcProp } = defineProps<NoteCardProps>();
 
 const { rc } = useRC("NoteCard", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface NoteCardEmits {
@@ -69,15 +69,15 @@ const {
 type NoteCardVariants = VariantProps<typeof noteCardStyles>;
 /* endregion */
 
+/* region State */
+const selected = defineModel<boolean>("selected", { default: false });
+const isHovered = ref(false);
+/* endregion */
+
 /* region Meta */
 defineOptions({
   name: "NoteCard",
 });
-/* endregion */
-
-/* region State */
-const selected = defineModel<boolean>("selected", { default: false });
-const isHovered = ref(false);
 /* endregion */
 
 /* region Lifecycle */
@@ -95,7 +95,6 @@ const isHovered = ref(false);
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

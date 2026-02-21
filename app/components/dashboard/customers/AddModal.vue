@@ -17,7 +17,7 @@ export interface AddModalProps {
 const { rc: rcProp } = defineProps<AddModalProps>();
 
 const { rc } = useRC("AddModal", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface AddModalEmits {}
@@ -44,12 +44,6 @@ const { root, form, actions } = addModalStyles();
 type AddModalVariants = VariantProps<typeof addModalStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "AddModal",
-});
-/* endregion */
-
 /* region State */
 const open = ref(false);
 const toast = useToast();
@@ -64,6 +58,12 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Partial<Schema>>({
   name: undefined,
   email: undefined,
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "AddModal",
 });
 /* endregion */
 

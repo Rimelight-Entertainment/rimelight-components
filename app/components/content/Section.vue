@@ -30,7 +30,7 @@ export interface SectionProps {
 const { title, description, isEditing = false, rc: rcProp } = defineProps<SectionProps>();
 
 const { rc } = useRC("Section", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface SectionEmits {}
@@ -97,12 +97,6 @@ const styles = computed(() => sectionStyles({ level: level.value as SectionLevel
 type SectionVariants = VariantProps<typeof sectionStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "SectionComponent",
-});
-/* endregion */
-
 /* region State */
 const parentLevel = inject(
   SECTION_LEVEL_KEY,
@@ -120,6 +114,12 @@ const sectionHash = computed(() => `#${sectionId.value}`);
 const fullSectionUrl = computed(() => {
   if (!defaultWindow) return sectionHash.value;
   return `${defaultWindow.location.origin}${route.path}${sectionHash.value}`;
+});
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "SectionComponent",
 });
 /* endregion */
 

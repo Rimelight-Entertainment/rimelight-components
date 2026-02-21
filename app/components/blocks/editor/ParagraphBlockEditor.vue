@@ -17,7 +17,7 @@ export interface ParagraphBlockEditorProps extends ParagraphBlockProps {
 const { id, text, rc: rcProp } = defineProps<ParagraphBlockEditorProps>();
 
 const { rc } = useRC("ParagraphBlockEditor", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ParagraphBlockEditorEmits {}
@@ -42,18 +42,18 @@ const { root } = paragraphBlockEditorStyles();
 type ParagraphBlockEditorVariants = VariantProps<typeof paragraphBlockEditorStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "ParagraphBlockEditor",
-});
-/* endregion */
-
 /* region State */
 const editorRef = ref<HTMLElement | null>(null);
 const localHtml = ref(richTextToHtml(text));
 const isContentChanging = ref(false);
 
 const editorApi = inject<any>("block-editor-api");
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ParagraphBlockEditor",
+});
 /* endregion */
 
 /* region Lifecycle */

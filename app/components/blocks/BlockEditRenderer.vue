@@ -23,7 +23,7 @@ const {
 } = defineProps<BlockEditRendererProps>();
 
 const { rc } = useRC("BlockEditRenderer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface BlockEditRendererEmits {
@@ -64,12 +64,6 @@ const { root, draggableClass, emptyContainer, itemWrapper } = blockEditRendererS
 type BlockEditRendererVariants = VariantProps<typeof blockEditRendererStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "BlockEditRenderer",
-});
-/* endregion */
-
 /* region State */
 const blocks = defineModel<Block[]>("blocks", { required: true });
 
@@ -78,6 +72,12 @@ const editorApi = inject<any>("block-editor-api");
 
 const isDraggingOver = ref(false);
 const dragCounter = ref(0);
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "BlockEditRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */

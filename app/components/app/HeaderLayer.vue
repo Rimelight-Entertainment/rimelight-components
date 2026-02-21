@@ -19,7 +19,7 @@ export interface HeaderLayerProps {
 const { id, order, hideOnScroll = false, rc: rcProp } = defineProps<HeaderLayerProps>();
 
 const { rc } = useRC("HeaderLayer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface HeaderLayerEmits {}
@@ -47,12 +47,6 @@ const { root, content } = headerLayerStyles();
 type HeaderLayerVariants = VariantProps<typeof headerLayerStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "HeaderLayer",
-});
-/* endregion */
-
 /* region State */
 provide("header_layer_id", id);
 
@@ -69,6 +63,12 @@ const { registerHeader, unregisterHeader, offsets, zIndices } = useHeaderStack()
 
 const topOffset = computed(() => offsets.value[id] ?? 0);
 const zIndex = computed(() => zIndices.value[id] ?? 50);
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "HeaderLayer",
+});
 /* endregion */
 
 /* region Lifecycle */

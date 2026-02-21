@@ -14,7 +14,7 @@ export interface CalloutBlockRendererProps extends CalloutBlockProps {
 const { variant, children, to, target, rc: rcProp } = defineProps<CalloutBlockRendererProps>();
 
 const { rc } = useRC("CalloutBlockRenderer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface CalloutBlockRendererEmits {}
@@ -39,18 +39,18 @@ const { root } = calloutBlockRendererStyles();
 type CalloutBlockRendererVariants = VariantProps<typeof calloutBlockRendererStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "CalloutBlockRenderer",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "CalloutBlockRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -68,7 +68,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

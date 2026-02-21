@@ -17,7 +17,7 @@ export interface LinkNodeProps {
 const { href, target, content, rc: rcProp } = defineProps<LinkNodeProps>();
 
 const { rc } = useRC("LinkNode", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface LinkNodeEmits {}
@@ -42,14 +42,14 @@ const { root } = linkNodeStyles();
 type LinkNodeVariants = VariantProps<typeof linkNodeStyles>;
 /* endregion */
 
+/* region State */
+const rel = computed(() => (target === "_blank" ? "noopener noreferrer" : undefined));
+/* endregion */
+
 /* region Meta */
 defineOptions({
   name: "LinkNode",
 });
-/* endregion */
-
-/* region State */
-const rel = computed(() => (target === "_blank" ? "noopener noreferrer" : undefined));
 /* endregion */
 
 /* region Lifecycle */
@@ -67,7 +67,6 @@ const rel = computed(() => (target === "_blank" ? "noopener noreferrer" : undefi
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 

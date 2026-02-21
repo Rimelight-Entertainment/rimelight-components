@@ -14,7 +14,7 @@ export interface ParagraphBlockRendererProps extends ParagraphBlockProps {
 const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>();
 
 const { rc } = useRC("ParagraphBlockRenderer", rcProp);
-/*endregion */
+/* endregion */
 
 /* region Emits */
 export interface ParagraphBlockRendererEmits {}
@@ -39,18 +39,18 @@ const { root } = paragraphBlockRendererStyles();
 type ParagraphBlockRendererVariants = VariantProps<typeof paragraphBlockRendererStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "ParagraphBlockRenderer",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "ParagraphBlockRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -68,7 +68,6 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-
 /* endregion */
 </script>
 
