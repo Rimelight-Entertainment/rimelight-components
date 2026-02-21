@@ -5,22 +5,34 @@ import { useRC } from "../../composables";
 
 /* region Props */
 export interface NewsletterSignupProps {
+  title?: string;
   fieldLabel?: string;
   description?: string;
   placeholder?: string;
+  submit?: string;
   buttonLabel?: string;
   rc?: {
     group?: string;
+    label?: string;
+    description?: string;
+    input?: string;
+    button?: string;
   };
 }
 
 const {
-  fieldLabel = "Subscribe to our Newsletter",
-  description = "Stay updated on new posts and updates. Unsubscribe at any time.",
+  title,
+  fieldLabel,
+  description,
   placeholder = "email@domain.com",
-  buttonLabel = "Subscribe",
+  submit,
+  buttonLabel,
   rc: rcProp,
 } = defineProps<NewsletterSignupProps>();
+
+const resolvedFieldLabel = title ?? fieldLabel ?? "Subscribe to our Newsletter";
+const resolvedButtonLabel = submit ?? buttonLabel ?? "Subscribe";
+const resolvedDescription = description ?? "Stay updated on new posts and updates. Unsubscribe at any time.";
 
 const { rc } = useRC("NewsletterSignup", rcProp);
 /* endregion */
@@ -87,10 +99,10 @@ defineOptions({
 
 <template>
   <UForm>
-    <UFormField name="email" :label="fieldLabel" :description="description">
+    <UFormField name="email" :label="resolvedFieldLabel" :description="resolvedDescription" :ui="{ label: rc.label, description: rc.description }">
       <UFieldGroup :class="group({ class: rc.group })">
-        <UInput type="email" :placeholder="placeholder" />
-        <UButton type="submit" :label="buttonLabel" />
+        <UInput type="email" :placeholder="placeholder" :class="rc.input" />
+        <UButton type="submit" :label="resolvedButtonLabel" :class="rc.button" />
       </UFieldGroup>
     </UFormField>
   </UForm>
