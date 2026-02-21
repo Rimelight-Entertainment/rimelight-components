@@ -14,7 +14,7 @@ export function addBlockMapTemplates(blockNames: string[]) {
 
       blockNames.forEach((name) => {
         const fullComponentName = `${name}Renderer`; // e.g., 'SectionBlockRenderer'
-        const componentPath = `rimelight-components/app/components/blocks/renderer/${fullComponentName}.vue`;
+        const componentPath = `rimelight-components/app/components/article/blocks/renderer/${fullComponentName}.vue`;
 
         content += `  '${name}': () => import('${componentPath}'),\n`;
       });
@@ -69,7 +69,7 @@ export function addEditorBlockMapTemplates(blockNames: string[]) {
 
       blockNames.forEach((name) => {
         const fullComponentName = `${name}Editor`; // e.g., 'SectionBlockEditor'
-        const componentPath = `rimelight-components/app/components/blocks/editor/${fullComponentName}.vue`;
+        const componentPath = `rimelight-components/app/components/article/blocks/editor/${fullComponentName}.vue`;
 
         // The dynamic import function
         content += `  '${name}': () => import('${componentPath}'),\n`;

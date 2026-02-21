@@ -29,7 +29,7 @@ const slots = defineSlots<AppHeaderSlots>();
 /* region Styles */
 const appHeaderStyles = tv({
   slots: {
-    root: "bg-inverted",
+    root: "bg-default",
     leftGroup: "flex flex-row items-center gap-md",
     logo: "h-6 w-auto",
     navigation: "",
@@ -231,8 +231,6 @@ defineShortcuts(extractShortcuts(accountMenuItems.value));
               viewportWrapper:
                 'top-[var(--header-bottom-boundary)] flex fixed w-screen mt-[var(--ui-header-height)]',
               viewport: 'rounded-none',
-              label: 'text-white',
-              link: 'hover:text-primary-200 active:text-500',
             }"
           >
             <template #megamenu-content="{ item }">

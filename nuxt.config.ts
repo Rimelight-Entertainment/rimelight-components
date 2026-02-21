@@ -48,7 +48,7 @@ export default defineNuxtConfig({
       const resolvePath = (path: string) => resolve(currentDir, path);
 
       // Scan the directory for all .vue files
-      const blockRendererPath = resolvePath("./app/components/blocks/renderer");
+      const blockRendererPath = resolvePath("./app/components/article/blocks/renderer");
       const blockRendererFiles = readdirSync(blockRendererPath).filter((name) =>
         name.endsWith(".vue"),
       );
@@ -65,7 +65,7 @@ export default defineNuxtConfig({
       // Expose the map template to the runtime via an alias
       nuxt.options.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst;
 
-      const blockEditorPath = resolvePath("./app/components/blocks/editor");
+      const blockEditorPath = resolvePath("./app/components/article/blocks/editor");
       const blockEditorFiles = readdirSync(blockEditorPath).filter((name) => name.endsWith(".vue"));
 
       // Generate a clean list of component names

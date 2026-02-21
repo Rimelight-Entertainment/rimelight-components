@@ -27,7 +27,7 @@ const slots = defineSlots<AppFooterSlots>();
 /* region Styles */
 const appFooterStyles = tv({
   slots: {
-    root: "bg-black z-50",
+    root: "bg-dfefault z-50",
     signup: "max-w-64",
     branding: "flex flex-col items-center gap-xs lg:items-start",
     logo: "h-6 w-auto",
