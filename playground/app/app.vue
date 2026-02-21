@@ -130,7 +130,6 @@ onMounted(() => {
         :loading="isCreating"
         @confirm="handleCreateConfirm"
       />
-      <RCScrollToTop />
       <RCFloatingActionsOverlay />
     </ClientOnly>
   </UApp>

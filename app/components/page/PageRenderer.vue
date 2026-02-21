@@ -83,11 +83,10 @@ const {
   contentWrapper,
   banner,
   icon,
-  title: titleStyle,
+  title,
   surroundSkeleton,
   skeleton,
   metadata,
-  headerTitleWrapper,
 } = pageRendererStyles();
 type PageRendererVariants = VariantProps<typeof pageRendererStyles>;
 /* endregion */
@@ -140,47 +139,33 @@ function getLabel(key: string) {
 <template>
   <UContainer v-if="page" :class="container({ class: rc.container })">
     <div :class="grid({ class: rc.grid })">
-      <div :class="toc({ class: rc.toc })">
-        <RCPageTOC :page-blocks="page.blocks" />
-      </div>
+      <RCPageTOC
+        :page-blocks="page.blocks"
+        :levels="[2, 3, 4]"
+        :class="toc({ class: rc.toc })"
+      >
+        <template #bottom> </template>
+      </RCPageTOC>
 
-      <div :class="properties({ class: rc.properties })">
-        <RCPagePropertiesRenderer v-model="page" :can-edit="canEdit" :edit-url="editUrl" />
-        <div :class="metadata({ class: rc.metadata })">
-          <p v-if="page.id">ID: {{ page.id }}</p>
-          <p v-if="page.createdAt">Created: {{ page.createdAt }}</p>
-          <p v-if="page.updatedAt">Updated: {{ page.updatedAt }}</p>
-        </div>
-      </div>
+      <RCPagePropertiesRenderer
+        v-model="page"
+        :can-edit="canEdit" :edit-url="editUrl"
+        :class="properties({ class: rc.properties })"
+      />
 
       <div :class="contentWrapper({ class: rc.contentWrapper })">
-        <UCard v-if="page.banner?.src" variant="naked">
-          <NuxtImg :src="page.banner.src" :class="banner({ class: rc.banner })" />
-        </UCard>
+        <RCImage
+          v-if="page.banner?.src"
+          :src="page.banner?.src"
+          :alt="page.banner?.alt"
+          :class="banner({ class: rc.banner })"
+        />
 
-        <div class="flex flex-col gap-md">
-          <div :class="headerTitleWrapper()">
-            <NuxtImg v-if="page.icon?.src" :src="page.icon.src" :class="icon({ class: rc.icon })" />
-            <h1 :class="titleStyle({ class: rc.title })">
-              {{ getLocalizedContent(page.title, locale) }}
-            </h1>
-          </div>
-
-          <p v-if="page.description" class="text-lg text-dimmed">
-            {{ getLocalizedContent(page.description, locale) }}
-          </p>
-
-          <UBadge v-if="page.type" variant="subtle" color="neutral" size="md" class="w-fit">
-            {{ getLabel(page.type) }}
-          </UBadge>
-        </div>
-
-        <USeparator />
+        <UPageHeader :headline="t(getTypeLabelKey(page.type))" :title="getLocalizedContent(page.title, locale)" :description="getLocalizedContent(page.description, locale)" :ui="{ root: 'pt-0' }"/>
 
         <RCBlockViewRenderer :blocks="page.blocks!" />
 
         <template v-if="useSurround">
-          <USeparator />
           <div
             v-if="surroundStatus === 'pending'"
             :class="surroundSkeleton({ class: rc.surroundSkeleton })"
@@ -188,25 +173,60 @@ function getLabel(key: string) {
             <USkeleton :class="skeleton({ class: rc.skeleton })" />
             <USkeleton :class="skeleton({ class: rc.skeleton })" />
           </div>
-          <div
+
+          <LazyRCPageSurround
             v-else-if="surroundStatus === 'success' && hasSurround"
-            class="grid grid-cols-1 gap-md sm:grid-cols-2"
-          >
-            <RCPageSurround
-              v-if="previousPage"
-              :pageType="getTypeLabelKey(page.type)"
-              :previousTitle="getLocalizedContent(previousPage?.title, locale)"
-              :previousDescription="getLocalizedContent(previousPage?.description, locale)"
-              :previousTo="`/${previousPage?.slug}`"
-            />
-            <div v-else />
-            <RCPageSurround
-              v-if="nextPage"
-              :pageType="getTypeLabelKey(page.type)"
-              :nextTitle="getLocalizedContent(nextPage?.title, locale)"
-              :nextDescription="getLocalizedContent(nextPage?.description, locale)"
-              :nextTo="`/${nextPage?.slug}`"
-            />
+            hydrate-on-visible
+            :pageType="getTypeLabelKey(page.type)"
+            :previousTitle="getLocalizedContent(previousPage?.title, locale)"
+            :previousDescription="getLocalizedContent(previousPage?.description, locale)"
+            :previousTo="`/${previousPage?.slug}`"
+            :nextTitle="getLocalizedContent(nextPage?.title, locale)"
+            :nextDescription="getLocalizedContent(nextPage?.description, locale)"
+            :nextTo="`/${nextPage?.slug}`"
+          />
+
+          <USeparator />
+
+          <div :class="metadata({ class: rc.metadata })">
+            <h6>{{ t("page_editor.metadata") }}</h6>
+            <span>{{ t("page_editor.page_id") }}: {{ page.id }}</span>
+            <span
+            >{{ t("page_editor.created_at") }}:
+                  <NuxtTime
+                    :datetime="page.createdAt ?? ''"
+                    year="numeric"
+                    month="numeric"
+                    day="numeric"
+                    hour="numeric"
+                    minute="numeric"
+                    second="numeric"
+                    time-zone-name="short"
+                  /></span>
+            <span
+            >{{ t("page_editor.posted_at") }}:
+                  <NuxtTime
+                    :datetime="page.createdAt ?? ''"
+                    year="numeric"
+                    month="numeric"
+                    day="numeric"
+                    hour="numeric"
+                    minute="numeric"
+                    second="numeric"
+                    time-zone-name="short"
+                  /></span>
+            <span
+            >{{ t("page_editor.updated_at") }}:
+                  <NuxtTime
+                    :datetime="page.createdAt ?? ''"
+                    year="numeric"
+                    month="numeric"
+                    day="numeric"
+                    hour="numeric"
+                    minute="numeric"
+                    second="numeric"
+                    time-zone-name="short"
+                  /></span>
           </div>
         </template>
       </div>

@@ -100,24 +100,24 @@ const slots = defineSlots<PageEditorSlots>();
 /* region Styles */
 const pageEditorStyles = tv({
   slots: {
-    headerClass: "h-12 w-full bg-muted",
-    headerGroupClass: "flex items-center gap-xs",
-    splitContainerClass: "flex w-full min-h-0",
-    editorColumnClass: "relative",
-    containerClass: "flex flex-col py-16",
-    gridClass: "grid grid-cols-1 lg:grid-cols-24 gap-xl items-start",
-    tocClass: "hidden lg:flex lg:col-span-4 sticky top-20 self-start",
-    propertiesClass: "order-1 lg:order-2 lg:col-span-6",
-    contentWrapperClass: "order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl",
-    bannerClass: "rounded-xl w-full object-cover",
-    iconClass: "rounded-full w-12 h-12 object-cover",
-    titleClass: "",
-    surroundSkeletonClass: "grid grid-cols-1 gap-md sm:grid-cols-2",
-    skeletonClass: "h-48 w-full rounded-xl",
-    metadataClass: "flex flex-col gap-xs text-xs text-dimmed p-lg",
-    resizerClass:
+    header: "h-12 w-full bg-muted",
+    headerGroup: "flex items-center gap-xs",
+    splitContainer: "flex w-full min-h-0",
+    editorColumn: "relative",
+    container: "flex flex-col py-16",
+    grid: "grid grid-cols-1 lg:grid-cols-24 gap-xl items-start",
+    toc: "hidden lg:flex lg:col-span-4 sticky top-20 self-start",
+    properties: "order-1 lg:order-2 lg:col-span-6",
+    contentWrapper: "order-2 lg:order-1 lg:col-span-14 flex flex-col gap-xl",
+    banner: "rounded-xl w-full object-cover",
+    icon: "rounded-full w-12 h-12 object-cover",
+    title: "",
+    surroundSkeleton: "grid grid-cols-1 gap-md sm:grid-cols-2",
+    skeleton: "h-48 w-full rounded-xl",
+    metadata: "flex flex-col gap-xs text-xs text-dimmed p-lg",
+    resizer:
       "sticky flex flex-col items-center justify-center w-6 cursor-col-resize group px-1 py-16 self-start",
-    previewColumnClass: "sticky self-start overflow-y-auto min-h-0",
+    previewColumn: "sticky self-start overflow-y-auto min-h-0",
     headerText: "text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap",
     headerHighLight: "text-neutral-900 dark:text-white",
     headerSeparator: "h-4 mx-1",
@@ -128,23 +128,23 @@ const pageEditorStyles = tv({
 });
 
 const {
-  headerClass,
-  headerGroupClass,
-  splitContainerClass,
-  editorColumnClass,
-  containerClass,
-  gridClass,
-  tocClass,
-  propertiesClass,
-  contentWrapperClass,
-  bannerClass,
-  iconClass,
-  titleClass,
-  surroundSkeletonClass,
-  skeletonClass,
-  metadataClass,
-  resizerClass,
-  previewColumnClass,
+  header,
+  headerGroup,
+  splitContainer,
+  editorColumn,
+  container,
+  grid,
+  toc,
+  properties,
+  contentWrapper,
+  banner,
+  icon,
+  title,
+  surroundSkeleton,
+  skeleton,
+  metadata,
+  resizer,
+  previewColumn,
   headerText,
   headerHighLight,
   headerSeparator,
@@ -198,7 +198,7 @@ const previousPage = computed(() => surround?.previous);
 const nextPage = computed(() => surround?.next);
 const hasSurround = computed(() => !!(surround?.previous || surround?.next));
 
-const cursorClass = computed(() => {
+const cursor = computed(() => {
   if (isResizing.value) return "cursor-grabbing";
   return "cursor-grab";
 });
@@ -384,9 +384,9 @@ defineExpose({
 
 <template>
   <RCHeaderLayer id="editor-header" :order="3">
-    <RCHeader :contain="false" :class="headerClass({ class: rc.header })">
+    <RCHeader :contain="false" :class="header({ class: rc.header })">
       <template #left>
-        <div :class="headerGroupClass({ class: rc.headerGroup })">
+        <div :class="headerGroup({ class: rc.headerGroup })">
           <UButton
             icon="lucide:list-tree"
             variant="ghost"
@@ -436,7 +436,7 @@ defineExpose({
       </template>
 
       <template #right>
-        <div :class="headerGroupClass({ class: rc.headerGroup })">
+        <div :class="headerGroup({ class: rc.headerGroup })">
           <UButton
             icon="lucide:external-link"
             :label="t('page_editor.view_page')"
@@ -496,32 +496,34 @@ defineExpose({
     </RCHeader>
   </RCHeaderLayer>
 
-  <div ref="split-container" :class="splitContainerClass({ class: rc.splitContainer })">
+  <div ref="split-container" :class="splitContainer({ class: rc.splitContainer })">
     <div
-      :class="editorColumnClass({ class: rc.editorColumn })"
+      :class="editorColumn({ class: rc.editorColumn })"
       :style="{ width: showPreview ? `${editorWidth}%` : '100%' }"
     >
-      <UContainer :class="containerClass({ class: rc.container })">
-        <div :class="gridClass({ class: rc.grid })">
+      <UContainer :class="container({ class: rc.container })">
+        <div :class="grid({ class: rc.grid })">
           <RCPageTOC
             :page-blocks="page.blocks"
             :levels="[2, 3, 4]"
-            :class="tocClass({ class: rc.toc })"
+            :class="toc({ class: rc.toc })"
           >
             <template #bottom> </template>
           </RCPageTOC>
           <RCPagePropertiesEditor
             v-model="page"
             :on-fetch-pages="onFetchPages"
-            :class="propertiesClass({ class: rc.properties })"
+            :class="properties({ class: rc.properties })"
           />
-          <div :class="contentWrapperClass({ class: rc.contentWrapper })">
+
+          <div :class="contentWrapper({ class: rc.contentWrapper })">
             <RCImage
               v-if="page.banner?.src"
               :src="page.banner?.src"
               :alt="page.banner?.alt"
-              :class="bannerClass({ class: rc.banner })"
+              :class="banner({ class: rc.banner })"
             />
+
             <UPageHeader :headline="t(getTypeLabelKey(page.type))" :ui="{ root: 'pt-0' }">
               <template #title>
                 <div :class="titleWrapper()">
@@ -529,7 +531,7 @@ defineExpose({
                     v-if="page.icon?.src"
                     :src="page.icon?.src"
                     :alt="page.icon?.alt"
-                    :class="iconClass({ class: rc.icon })"
+                    :class="icon({ class: rc.icon })"
                   />
                   <UInput
                     v-model="page.title.en"
@@ -537,7 +539,7 @@ defineExpose({
                     placeholder="Page Title"
                     :ui="{ base: titleInput() }"
                     class="w-full"
-                    :class="titleClass({ class: rc.title })"
+                    :class="title({ class: rc.title })"
                   />
                 </div>
               </template>
@@ -555,6 +557,7 @@ defineExpose({
                 />
               </template>
             </UPageHeader>
+
             <RCBlockEditor
               ref="editor"
               v-model="page.blocks"
@@ -569,10 +572,10 @@ defineExpose({
             <template v-if="useSurround">
               <div
                 v-if="surroundStatus === 'pending'"
-                :class="surroundSkeletonClass({ class: rc.surroundSkeleton })"
+                :class="surroundSkeleton({ class: rc.surroundSkeleton })"
               >
-                <USkeleton :class="skeletonClass({ class: rc.skeleton })" />
-                <USkeleton :class="skeletonClass({ class: rc.skeleton })" />
+                <USkeleton :class="skeleton({ class: rc.skeleton })" />
+                <USkeleton :class="skeleton({ class: rc.skeleton })" />
               </div>
 
               <LazyRCPageSurround
@@ -589,7 +592,7 @@ defineExpose({
 
               <USeparator />
 
-              <div :class="metadataClass({ class: rc.metadata })">
+              <div :class="metadata({ class: rc.metadata })">
                 <h6>{{ t("page_editor.metadata") }}</h6>
                 <span>{{ t("page_editor.page_id") }}: {{ page.id }}</span>
                 <span
@@ -637,7 +640,7 @@ defineExpose({
 
     <div
       v-if="showPreview"
-      :class="[cursorClass, resizerClass({ class: rc.resizer })]"
+      :class="[cursor, resizer({ class: rc.resizer })]"
       :style="{ top: `${totalHeight}px`, height: `calc(100vh - ${totalHeight}px)` }"
       @mousedown="startResizing"
       @dblclick="editorWidth = 50"
@@ -647,7 +650,7 @@ defineExpose({
 
     <div
       v-if="showPreview"
-      :class="previewColumnClass({ class: rc.previewColumn })"
+      :class="previewColumn({ class: rc.previewColumn })"
       :style="{
         width: `${100 - editorWidth}%`,
         top: `${totalHeight}px`,

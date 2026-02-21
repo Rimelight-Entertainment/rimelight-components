@@ -45,11 +45,6 @@ const appHeaderStyles = tv({
       "block w-full rounded-md px-3 py-1 text-left text-sm transition-colors hover:text-primary",
     megaMenuSlash: "text-xs text-muted mr-2",
     megaMenuLabel: "font-medium",
-    megaMenu2Grid: "grid gap-2 p-4 lg:w-125 lg:grid-cols-[minmax(0,.75fr)_minmax(0,1fr)]",
-    megaMenu2Image: "row-span-3 size-full min-h-48",
-    megaMenu2Link: "rounded-md p-3 text-left text-sm transition-colors hover:bg-elevated/50",
-    megaMenu2Heading: "font-medium text-highlighted",
-    megaMenu2Description: "line-clamp-2 text-muted",
     rightGroup: "flex flex-row items-center gap-sm",
     rightAuthGroup: "flex flex-row items-center gap-md",
     popoverContent: "flex flex-col",
@@ -78,11 +73,6 @@ const {
   megaMenuSubLink,
   megaMenuSlash,
   megaMenuLabel,
-  megaMenu2Grid,
-  megaMenu2Image,
-  megaMenu2Link,
-  megaMenu2Heading,
-  megaMenu2Description,
   rightGroup,
   rightAuthGroup,
   popoverContent,
@@ -161,34 +151,7 @@ const items = computed<NavigationMenuItem[]>(() => [
     label: "Branding",
     to: "/branding",
     active: route.path === "/branding",
-  },
-  {
-    label: "Megamenu 2",
-    active: route.path.startsWith("/megamenu2"),
-    slot: "megamenu2" as const,
-    children: [
-      {
-        label: "History",
-        icon: "lucide:book",
-        description: "Learn about our beginnings and our mission.",
-      },
-      {
-        label: "Jobs",
-        icon: "lucide:briefcase",
-        description: "Check out our currently open positions and their requirements.!",
-      },
-      {
-        label: "Studios",
-        icon: "lucide:building-2",
-        description: "Take a tour of our facilities.",
-      },
-      {
-        label: "Benefits",
-        icon: "lucide:hand-heart",
-        description: "Discover what benefits and compensations are available to our employees.",
-      },
-    ],
-  },
+  }
 ]);
 
 const accountMenuItems = computed<DropdownMenuItem[][]>(() => [
@@ -304,26 +267,6 @@ defineShortcuts(extractShortcuts(accountMenuItems.value));
                     </li>
                   </ul>
                 </div>
-              </UContainer>
-            </template>
-            <template #megamenu2-content="{ item }">
-              <UContainer>
-                <ul :class="megaMenu2Grid()">
-                  <li class="row-span-3">
-                    <RCPlaceholder :class="megaMenu2Image()" />
-                  </li>
-
-                  <li v-for="child in (item as NavigationMenuItem).children" :key="child.label">
-                    <ULink :class="megaMenu2Link()">
-                      <p :class="megaMenu2Heading()">
-                        {{ child.label }}
-                      </p>
-                      <p :class="megaMenu2Description()">
-                        {{ child.description }}
-                      </p>
-                    </ULink>
-                  </li>
-                </ul>
               </UContainer>
             </template>
           </UNavigationMenu>
