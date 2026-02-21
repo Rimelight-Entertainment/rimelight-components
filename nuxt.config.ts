@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     "rimelight-components/auth": resolve(currentDir, "shared/auth"),
     "#rimelight-components/db": resolve(currentDir, "shared/db"),
     "rimelight-components/db": resolve(currentDir, "shared/db"),
+    "#rimelight-components/composables": resolve(currentDir, "app/composables"),
     "rimelight-components/composables": resolve(currentDir, "app/composables"),
     "rimelight-components": currentDir,
   },

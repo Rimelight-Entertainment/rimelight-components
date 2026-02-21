@@ -196,14 +196,26 @@ const handleDelete = async (id: string) => {
 const handleVersionNavigate = async (version: PageVersion) => {
   if (!version?.id || !localPage.value?.slug) return;
 
+  const base = baseUrl.replace(/\/$/, "");
+  const cleanBase = base.replace(/^\//, "");
+  const slugToUse = localPage.value.slug.startsWith(cleanBase)
+    ? localPage.value.slug
+    : `${cleanBase}/${localPage.value.slug}`;
+
   await navigateTo({
-    path: `/${localPage.value.slug}/review`,
+    path: `/${slugToUse}/review`,
     query: { version: version.id },
   });
 };
 
 const handleNavigateToPage = async (slug: string) => {
-  await navigateTo(`/${slug}/edit`);
+  const base = baseUrl.replace(/\/$/, "");
+  const cleanBase = base.replace(/^\//, "");
+  const slugToUse = slug.startsWith(cleanBase)
+    ? slug
+    : `${cleanBase}/${slug}`;
+
+  await navigateTo(`/${slugToUse}/edit`);
 };
 
 const handleVersionApproved = async (version: PageVersion) => {

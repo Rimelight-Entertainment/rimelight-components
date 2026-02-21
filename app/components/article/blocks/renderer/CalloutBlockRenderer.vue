@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CalloutBlockProps } from "#rimelight-components/types";
+import type { CalloutBlockProps } from "rimelight-components/types";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
 import { useRC } from "rimelight-components/composables";

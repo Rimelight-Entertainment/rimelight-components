@@ -3,8 +3,8 @@ import { inject, ref, watch, onMounted, nextTick } from "vue";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
 import { useRC } from "rimelight-components/composables";
-import type { ParagraphBlockProps, RichTextContent } from "#rimelight-components/types";
-import { richTextToHtml, parseHtmlToRichText, defaultDocument } from "#rimelight-components/utils";
+import type { ParagraphBlockProps, RichTextContent } from "rimelight-components/types";
+import { richTextToHtml, parseHtmlToRichText, defaultDocument } from "rimelight-components/utils";
 
 /* region Props */
 export interface ParagraphBlockEditorProps extends ParagraphBlockProps {

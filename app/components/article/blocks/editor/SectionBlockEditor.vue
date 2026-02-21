@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, ref, computed, watch } from "vue";
-import { type SectionBlockProps } from "#rimelight-components/types";
+import { type SectionBlockProps } from "rimelight-components/types";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
 import { useRC } from "rimelight-components/composables";

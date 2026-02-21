@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { getLocalizedContent } from "#rimelight-components/utils";
+import { getLocalizedContent } from "rimelight-components/utils";
 import { usePageRegistry, useInfobox, useRC } from "rimelight-components/composables";
 import { useToast } from "@nuxt/ui/composables/useToast";
 import type { TabsItem } from "@nuxt/ui";
 import { useI18n } from "vue-i18n";
 import { useShare, useClipboard } from "@vueuse/core";
-import { type Page } from "#rimelight-components/types";
+import { type Page } from "rimelight-components/types";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
 
@@ -70,7 +70,7 @@ const pagePropertiesRendererStyles = tv({
     fieldClass: "grid grid-cols-3 gap-xs items-baseline",
     fieldLabelClass: "text-xs font-semibold text-dimmed",
     fieldValueClass: "text-xs col-span-2",
-    listClass: "flex flex-wrap list-disc list-inside",
+    listClass: "flex flex-col list-disc list-inside",
     listItemClass: "font-medium",
     pageArrayListClass: "flex flex-col gap-y-1",
     pageArrayItemClass: "flex items-center gap-x-2",

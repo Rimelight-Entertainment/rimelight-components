@@ -7,5 +7,6 @@ export { default as PageSurround } from "rimelight-components/app/components/art
 export { default as PageTOC } from "rimelight-components/app/components/article/PageTOC.vue";
 export { default as PageVersionSelector } from "rimelight-components/app/components/article/PageVersionSelector.vue";
 
+export * from "./views";
 export * from "./blocks";
 export * from "./modals";

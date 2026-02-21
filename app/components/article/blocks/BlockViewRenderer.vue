@@ -2,7 +2,7 @@
 import { defineAsyncComponent } from "vue";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
-import type { Block } from "#rimelight-components/types";
+import type { Block } from "rimelight-components/types";
 import { useRC } from "rimelight-components/composables";
 import { BLOCK_RENDERER_COMPONENT_MAP } from "#build/rimelight-block-renderer-map";
 

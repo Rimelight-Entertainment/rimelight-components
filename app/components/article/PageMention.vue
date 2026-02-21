@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { inject } from "vue";
-import { getLocalizedContent } from "#rimelight-components/utils";
+import { getLocalizedContent } from "rimelight-components/utils";
 import { useI18n } from "vue-i18n";
-import { type Page } from "#rimelight-components/types";
+import { type Page } from "rimelight-components/types";
 import { useAsyncData } from "#imports";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";

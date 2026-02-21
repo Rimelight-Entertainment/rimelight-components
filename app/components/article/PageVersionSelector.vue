@@ -5,7 +5,7 @@ import { computed, ref, watch } from "vue";
 import { useRC, $api } from "rimelight-components/composables";
 import { useI18n } from "vue-i18n";
 import { tv } from "rimelight-components/app/internal/tv";
-import type { PageVersion } from "#rimelight-components/types";
+import type { PageVersion } from "rimelight-components/types";
 import { type VariantProps } from "tailwind-variants";
 
 /* region Props */

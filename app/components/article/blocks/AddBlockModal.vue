@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, inject } from "vue";
-import { BLOCK_DEFINITIONS, CATEGORY_ORDER, type BlockDefinition } from "rimelight-components/utils/blocks";
+import {
+  BLOCK_DEFINITIONS,
+  CATEGORY_ORDER,
+  type BlockDefinition,
+} from "rimelight-components/utils/blocks";
 import { useRC } from "rimelight-components/composables";
 import { useI18n } from "vue-i18n";
 import { tv } from "rimelight-components/app/internal/tv";

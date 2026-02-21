@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { provide, ref } from "vue";
 import { v7 as uuidv7 } from "uuid";
-import type { Block } from "#rimelight-components/types";
+import type { Block } from "rimelight-components/types";
 import { useBlockEditor, useRC } from "rimelight-components/composables";
 import { type BlockDefinition } from "rimelight-components/utils/blocks";
 import { useI18n } from "vue-i18n";

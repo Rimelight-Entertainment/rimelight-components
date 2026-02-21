@@ -3,7 +3,7 @@ import { ref, watch, computed } from "vue";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
 import { useRC } from "rimelight-components/composables";
-import { type ImageBlockProps } from "#rimelight-components/types";
+import { type ImageBlockProps } from "rimelight-components/types";
 import { useObjectUrl } from "@vueuse/core";
 
 /* region Props */

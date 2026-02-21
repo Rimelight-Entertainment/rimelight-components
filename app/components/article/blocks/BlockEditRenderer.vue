@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, inject, defineAsyncComponent } from "vue";
 import draggable from "vuedraggable/src/vuedraggable";
-import type { Block } from "#rimelight-components/types";
+import type { Block } from "rimelight-components/types";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
 import { useRC } from "rimelight-components/composables";

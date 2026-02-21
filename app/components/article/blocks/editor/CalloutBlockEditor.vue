@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import type { CalloutBlockProps, CalloutVariant, Block } from "#rimelight-components/types";
+import type { CalloutBlockProps, CalloutVariant, Block } from "rimelight-components/types";
 import { useAppConfig } from "#imports";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";

@@ -2,9 +2,9 @@
 import { computed, ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageRegistry, useInfobox, useRC } from "rimelight-components/composables";
-import { getLocalizedContent } from "#rimelight-components/utils";
+import { getLocalizedContent } from "rimelight-components/utils";
 import type { TabsItem } from "@nuxt/ui";
-import { type Page, type Link, type Localized } from "#rimelight-components/types";
+import { type Page, type Link, type Localized } from "rimelight-components/types";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
 
@@ -263,6 +263,19 @@ function compareValues(a: any, b: any) {
 
   return valA === valB && valA !== "";
 }
+
+function normalizePageValue(val: any) {
+  if (!val) return undefined;
+  const str = typeof val === "object" ? getLocalizedContent(val, locale.value) : String(val);
+  // Find matching item by ID or Slug
+  const matched = pageItems.value.find((p) => p.slug === str || p.value === str);
+  return matched ? matched.value : str;
+}
+
+function normalizePageArrayValue(val: any) {
+  if (!Array.isArray(val)) return [];
+  return val.map((v) => normalizePageValue(v));
+}
 /* endregion */
 </script>
 
@@ -382,10 +395,23 @@ function compareValues(a: any, b: any) {
                     >
                       <UInput
                         v-if="schema.type === 'text'"
-                        v-model="schema.defaultValue.en"
+                        :model-value="
+                          typeof schema.defaultValue === 'object'
+                            ? schema.defaultValue[locale]
+                            : schema.defaultValue
+                        "
                         variant="subtle"
                         placeholder="Type here..."
                         :class="fieldClass({ class: rc.field })"
+                        @update:model-value="
+                          (val: string) => {
+                            if (typeof schema.defaultValue === 'object') {
+                              schema.defaultValue[locale] = val;
+                            } else {
+                              schema.defaultValue = val;
+                            }
+                          }
+                        "
                       />
 
                       <UInput
@@ -406,8 +432,7 @@ function compareValues(a: any, b: any) {
                               : { label: getLocalizedContent(opt, locale), value: opt },
                           )
                         "
-                        value-attribute="value"
-                        :by="compareValues"
+                        value-key="value"
                         variant="subtle"
                         :class="fieldClass({ class: rc.field })"
                       >
@@ -439,9 +464,10 @@ function compareValues(a: any, b: any) {
 
                       <USelectMenu
                         v-else-if="schema.type === 'page'"
-                        v-model="schema.defaultValue"
+                        :model-value="normalizePageValue(schema.defaultValue)"
+                        @update:model-value="(val: any) => (schema.defaultValue = val)"
                         :items="getFilteredPageItems(schema.allowedPageTypes)"
-                        value-attribute="value"
+                        value-key="value"
                         searchable
                         icon="lucide:link-2"
                         variant="subtle"
@@ -453,8 +479,12 @@ function compareValues(a: any, b: any) {
                             {{
                               pageItems.find(
                                 (p) =>
-                                  p.value === schema.defaultValue || p.slug === schema.defaultValue,
-                              )?.label || schema.defaultValue
+                                  compareValues(p.value, schema.defaultValue) ||
+                                  compareValues(p.slug, schema.defaultValue),
+                              )?.label ||
+                              (typeof schema.defaultValue === "object"
+                                ? getLocalizedContent(schema.defaultValue, locale)
+                                : schema.defaultValue)
                             }}
                           </span>
                           <span v-else class="text-dimmed"> None </span>
@@ -463,9 +493,10 @@ function compareValues(a: any, b: any) {
 
                       <USelectMenu
                         v-else-if="schema.type === 'page-array'"
-                        v-model="schema.defaultValue"
+                        :model-value="normalizePageArrayValue(schema.defaultValue)"
+                        @update:model-value="(val: any) => (schema.defaultValue = val)"
                         :items="getFilteredPageItems(schema.allowedPageTypes)"
-                        value-attribute="value"
+                        value-key="value"
                         searchable
                         multiple
                         icon="lucide:link-2"

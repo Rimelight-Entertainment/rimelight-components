@@ -58,11 +58,19 @@ const resolvePage = async (id: string) => {
 };
 
 const editUrl = computed(() => {
-  if (page.value?.slug) return `/${page.value.slug}/edit`;
+  const base = baseUrl.replace(/\/$/, "");
+  
+  if (page.value?.slug) {
+    const slug = page.value.slug;
+    const cleanBase = base.replace(/^\//, "");
+    if (slug.startsWith(cleanBase)) {
+      return `/${slug}/edit`;
+    }
+    return `${base}/${slug}/edit`;
+  }
 
   const s = route.params.slug;
   const slugParam = Array.isArray(s) ? s.join("/") : (s as string);
-  const base = baseUrl.replace(/\/$/, "");
   return `${base}/${slugParam}/edit`;
 });
 

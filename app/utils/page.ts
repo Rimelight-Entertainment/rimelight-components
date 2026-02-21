@@ -175,9 +175,23 @@ export function getPageResolutionPath(idOrSlug: string): string {
   )
     return "";
 
-  // Remove possible API prefix or full URL prefix if already present
-  // Matches: /api/pages/id/, /api/pages/find/, http://.../api/pages/id/, etc.
-  const clean = String(idOrSlug).replace(/^(?:.*\/)?api\/pages\/(?:id|find)\//, "");
+  // 1. Remove possible full URL or API prefix
+  let clean = String(idOrSlug).replace(/^(?:.*\/)?api\/pages\/(?:id|find)\//, "");
+
+  // 2. Remove leading/trailing slashes
+  clean = clean.replace(/^\/|\/$/g, "");
+
+  // 3. Robust doubling check: if the first part of the slug is exactly repeated
+  // e.g. "franchises/grand-tale/wiki/franchises/grand-tale/wiki/..."
+  const parts = clean.split("/");
+  if (parts.length >= 4) {
+    // Check for common 3-part prefixes like franchises/grand-tale/wiki
+    const threePart = parts.slice(0, 3).join("/");
+    const nextThreePart = parts.slice(3, 6).join("/");
+    if (threePart === nextThreePart) {
+      clean = parts.slice(3).join("/");
+    }
+  }
 
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean);
   return isUuid ? `/api/pages/id/${clean}` : `/api/pages/find/${clean}`;

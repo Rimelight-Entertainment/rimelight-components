@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, provide, watch } from "vue";
-import { type Page, type PageSurround } from "#rimelight-components/types";
-import { getLocalizedContent, syncPageWithDefinition } from "#rimelight-components/utils";
+import { type Page, type PageSurround } from "rimelight-components/types";
+import { getLocalizedContent, syncPageWithDefinition } from "rimelight-components/utils";
 import { useI18n } from "vue-i18n";
 import { usePageRegistry, useRC } from "rimelight-components/composables";
 import { tv } from "rimelight-components/app/internal/tv";

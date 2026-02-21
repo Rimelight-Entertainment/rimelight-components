@@ -5,7 +5,7 @@ import {
   type InlineText,
   type InlineLink,
   type InlineMention,
-} from "#rimelight-components/types";
+} from "rimelight-components/types";
 import { RCTextNode, RCLinkNode, RCPageMention } from "#components";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { type PageDefinition, type PageType, type Page } from "#rimelight-components/types";
+import { type PageDefinition, type PageType, type Page } from "rimelight-components/types";
 import { tv } from "rimelight-components/app/internal/tv";
 import { useRC } from "rimelight-components/composables/components/useRC";
 import { useI18n } from "vue-i18n";

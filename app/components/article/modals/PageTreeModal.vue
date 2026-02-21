@@ -2,9 +2,9 @@
 import { computed, ref } from "vue";
 import { useRC } from "rimelight-components/composables";
 import { tv } from "rimelight-components/app/internal/tv";
-import { getLocalizedContent } from "#rimelight-components/utils";
+import { getLocalizedContent } from "rimelight-components/utils";
 import { useI18n } from "vue-i18n";
-import type { Page } from "#rimelight-components/types";
+import type { Page } from "rimelight-components/types";
 import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
@@ -20,6 +20,7 @@ export interface TreeItem {
 export interface PageTreeModalProps {
   loading?: boolean;
   pages?: Pick<Page, "title" | "slug">[];
+  basePath?: string;
   rc?: {
     header?: string;
     headerTitle?: string;
@@ -29,7 +30,7 @@ export interface PageTreeModalProps {
   };
 }
 
-const { loading, pages = [], rc: rcProp } = defineProps<PageTreeModalProps>();
+const { loading, pages = [], basePath, rc: rcProp } = defineProps<PageTreeModalProps>();
 
 const { rc } = useRC("PageTreeModal", rcProp);
 /* endregion */
@@ -115,7 +116,21 @@ const treeItems = computed<TreeItem[]>(() => {
 
   // Iterate over all pages to build the tree
   pages.forEach((page) => {
-    const parts = page.slug.split("/").filter(Boolean);
+    let relativeSlug = page.slug;
+
+    if (basePath && page.slug.startsWith(basePath)) {
+      relativeSlug = page.slug.slice(basePath.length).replace(/^\//, "");
+    }
+
+    const parts = relativeSlug.split("/").filter(Boolean);
+
+    // If empty after slicing (meaning the page is exactly the basePath)
+    if (parts.length === 0) {
+      const node = getNode("/", "Home", page);
+      if (!rootNodes.includes(node)) rootNodes.push(node);
+      return;
+    }
+
     let currentPath = "";
     let parent: TreeItem | null = null;
 

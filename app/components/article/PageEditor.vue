@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, useTemplateRef, provide, watch } from "vue";
 import { navigateTo } from "#imports";
-import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "#rimelight-components/types";
+import {
+  type Page,
+  type PageSurround,
+  type PageDefinition,
+  type PageVersion,
+} from "rimelight-components/types";
 import {
   usePageEditor,
   usePageRegistry,
@@ -15,7 +20,7 @@ import {
   dehydratePageProperties,
   defaultDocument,
   defaultWindow,
-} from "#rimelight-components/utils";
+} from "rimelight-components/utils";
 import { useI18n } from "vue-i18n";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
@@ -33,6 +38,7 @@ export interface PageEditorProps {
   onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>;
   onNavigateToPage?: (slug: string) => void;
   onViewPage?: (slug: string) => void;
+  basePath?: string;
   isAdmin?: boolean;
   rc?: {
     header?: string;
@@ -66,6 +72,7 @@ const {
   onFetchPages,
   onNavigateToPage,
   onViewPage,
+  basePath,
   isAdmin = false,
   pageDefinitions,
   rc: rcProp,
@@ -84,6 +91,7 @@ export interface PageEditorEmits {
   "version-rejected": [version: PageVersion];
   "version-reverted": [version: PageVersion];
   publish: [value: Page];
+  unpublish: [value: Page];
 }
 
 const emit = defineEmits<PageEditorEmits>();
@@ -275,15 +283,35 @@ const handleSave = () => {
   emit("save", dataToPersist);
 };
 
-const handlePublish = async () => {
+const handlePublishToggle = async () => {
+  const isPublished = !!page.value.postedAt;
+
+  const title = isPublished
+    ? t("page_editor.unpublish_page", "Unpublish Page")
+    : t("page_editor.publish_page", "Publish Page");
+
+  const description = isPublished
+    ? t(
+        "page_editor.unpublish_confirmation",
+        "Are you sure you want to unpublish this page? It will no longer be visible to the public.",
+      )
+    : t(
+        "page_editor.publish_confirmation",
+        "Are you sure you want to publish this page? This will make it visible to the public.",
+      );
+
+  const confirmLabel = isPublished
+    ? t("page_editor.unpublish", "Unpublish")
+    : t("page_editor.publish", "Publish");
+
+  const color = isPublished ? "error" : "primary";
+
   const confirmed = await confirm({
-    title: t("page_editor.publish_page", "Publish Page"),
-    description: t(
-      "page_editor.publish_confirmation",
-      "Are you sure you want to publish this page? This will make it visible to the public.",
-    ),
-    confirmLabel: t("page_editor.publish", "Publish"),
+    title,
+    description,
+    confirmLabel,
     cancelLabel: t("common.cancel", "Cancel"),
+    danger: isPublished,
   });
 
   if (confirmed) {
@@ -292,7 +320,11 @@ const handlePublish = async () => {
     }
     const dataToPersist = JSON.parse(JSON.stringify(page.value));
     dataToPersist.properties = dehydratePageProperties(dataToPersist.properties);
-    emit("publish", dataToPersist);
+    if (isPublished) {
+      emit("unpublish", dataToPersist);
+    } else {
+      emit("publish", dataToPersist);
+    }
   }
 };
 
@@ -459,13 +491,24 @@ defineExpose({
           <slot name="header-actions" />
 
           <UButton
+            v-if="!!page.postedAt"
+            icon="lucide:globe"
+            :label="t('page_editor.unpublish', 'Unpublish')"
+            color="error"
+            variant="outline"
+            size="xs"
+            :loading="isSaving"
+            @click="handlePublishToggle"
+          />
+          <UButton
+            v-else
             icon="lucide:globe"
             :label="t('page_editor.publish', 'Publish')"
             color="neutral"
             variant="outline"
             size="xs"
             :loading="isSaving"
-            @click="handlePublish"
+            @click="handlePublishToggle"
           />
 
           <UButton
@@ -671,6 +714,7 @@ defineExpose({
   <RCPageTreeModal
     v-model:open="isPageTreeModalOpen"
     :pages="treePages"
+    :base-path="basePath"
     :loading="isFetchingTree"
     @navigate="handleTreeNavigate"
   />

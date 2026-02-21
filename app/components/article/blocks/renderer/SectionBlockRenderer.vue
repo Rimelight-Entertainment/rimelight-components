@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { SectionBlockProps } from "#rimelight-components/types";
-import { slugify } from "#rimelight-components/utils";
+import type { SectionBlockProps } from "rimelight-components/types";
+import { slugify } from "rimelight-components/utils";
 import { tv } from "rimelight-components/app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
 import { useRC } from "rimelight-components/composables";

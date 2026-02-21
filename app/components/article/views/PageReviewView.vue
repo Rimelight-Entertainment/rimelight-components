@@ -225,7 +225,12 @@ const handleApprove = async () => {
     emit("approved", versionData.value!);
     // Default navigation to live page
     if (page.value?.slug) {
-      await navigateTo(`/${page.value.slug}`);
+      const base = baseUrl.replace(/\/$/, "");
+      const cleanBase = base.replace(/^\//, "");
+      const slugToUse = page.value.slug.startsWith(cleanBase)
+        ? page.value.slug
+        : `${cleanBase}/${page.value.slug}`;
+      await navigateTo(`/${slugToUse}`);
     }
   } catch (e: any) {
     toast.add({
@@ -251,7 +256,12 @@ const handleReject = async () => {
     emit("rejected", versionData.value!);
     // Default navigation to edit page
     if (page.value?.slug) {
-      await navigateTo(`/${page.value.slug}/edit`);
+      const base = baseUrl.replace(/\/$/, "");
+      const cleanBase = base.replace(/^\//, "");
+      const slugToUse = page.value.slug.startsWith(cleanBase)
+        ? page.value.slug
+        : `${cleanBase}/${page.value.slug}`;
+      await navigateTo(`/${slugToUse}/edit`);
     }
   } catch (e: any) {
     toast.add({
