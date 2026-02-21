@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { Note } from "#shared/db/auth";
-import { ref } from "vue";
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "rimelight-components/composables";
+import type { Note } from "#rimelight-components/db"
+import { ref } from "vue"
+import { tv } from "../../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface NoteCardProps {

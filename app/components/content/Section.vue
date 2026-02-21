@@ -20,8 +20,8 @@ export interface SectionProps {
   rc?: {
     section?: string;
     link?: string;
-    heading?: string;
-    descriptionText?: string;
+    title?: string;
+    description?: string;
     separator?: string;
     content?: string;
   };
@@ -53,8 +53,8 @@ const sectionStyles = tv({
   slots: {
     section: "flex flex-col scroll-mt-24 w-full",
     link: "",
-    heading: "font-bold w-full",
-    descriptionText: "text-muted",
+    title: "font-bold w-full",
+    description: "text-muted",
     separator: "py-2",
     content: "flex flex-col gap-md mt-2",
     anchorButtonWrapper: "group relative lg:-ms-2 lg:ps-2 inline-block w-full",
@@ -67,27 +67,27 @@ const sectionStyles = tv({
     level: {
       1: {
         section: "gap-2",
-        descriptionText: "text-2xl",
+        description: "text-2xl",
       },
       2: {
         section: "gap-1.5",
-        descriptionText: "text-xl",
+        description: "text-xl",
       },
       3: {
         section: "gap-1",
-        descriptionText: "text-lg",
+        description: "text-lg",
       },
       4: {
         section: "gap-0.5",
-        descriptionText: "text-md",
+        description: "text-md",
       },
       5: {
         section: "gap-0.25",
-        descriptionText: "text-sm",
+        description: "text-sm",
       },
       6: {
         section: "gap-0.125",
-        descriptionText: "text-xs",
+        description: "text-xs",
       },
     },
   },
@@ -161,8 +161,8 @@ const copyToClipboard = async (text: string) => {
   <section :id="sectionId" :class="styles.section({ class: rc.section })" v-bind="$attrs">
     <component
       :is="`h${level}`"
-      :id="`${sectionId}-heading`"
-      :class="styles.heading({ class: rc.heading })"
+      :id="`${sectionId}-title`"
+      :class="styles.title({ class: rc.title })"
     >
       <NuxtLink
         v-if="!isEditing"
@@ -189,7 +189,7 @@ const copyToClipboard = async (text: string) => {
       </slot>
     </component>
     <slot name="description">
-      <p v-if="description" :class="styles.descriptionText({ class: rc.descriptionText })">
+      <p v-if="description" :class="styles.description({ class: rc.description })">
         {{ description }}
       </p>
     </slot>

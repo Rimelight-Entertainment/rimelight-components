@@ -419,7 +419,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         :schema="step3Schema"
         :state="state"
         :class="form()"
-        @submit="onSubmit"
+        @submit.prevent="() => onSubmit({ data: state } as FormSubmitEvent<Schema>)"
       >
         <div :class="stepContainer()">
           <UFormField name="terms">

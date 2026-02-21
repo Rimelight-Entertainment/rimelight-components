@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useTodos, useRC } from "rimelight-components/composables";
-import type { Todo } from "#shared/db/auth";
+import { useTodos } from "#rimelight-components/composables";
+import type { Todo } from "#rimelight-components/db";
 import { useI18n } from "vue-i18n";
-import { tv } from "rimelight-components/app/internal/tv";
+import { tv } from "../../../internal/tv";
 import { type VariantProps } from "tailwind-variants";
 
 /* region Props */

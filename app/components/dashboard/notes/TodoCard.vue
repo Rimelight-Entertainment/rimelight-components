@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Todo } from "#shared/db/auth";
-import { tv } from "rimelight-components/app/internal/tv";
+import type { Todo } from "#rimelight-components/db";
+import { tv } from "../../../internal/tv";
 import { type VariantProps } from "tailwind-variants";
 
 /* region Props */

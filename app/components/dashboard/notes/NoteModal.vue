@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { SelectMenuItem } from "@nuxt/ui";
 import { computed, reactive, ref, watch, onUnmounted } from "vue";
-import type { Label, Note } from "#shared/db/auth";
-import { useApi, $api, useRC } from "rimelight-components/composables";
-import { tv } from "rimelight-components/app/internal/tv";
+import type { Label, Note } from "#rimelight-components/db";
+import { useApi, $api } from "#rimelight-components/composables";
+import { tv } from "../../../internal/tv";
 import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
@@ -99,12 +99,12 @@ const hasPendingSave = ref(false);
 
 const labelMap = computed(() => {
   const map = new Map<string, string>();
-  allLabels.value.forEach((l) => map.set(l.id, l.name));
+  allLabels.value.forEach((l: Label) => map.set(l.id, l.name));
   return map;
 });
 
 const labelItems = computed<SelectMenuItem[]>(() =>
-  allLabels.value.map((l) => ({
+  allLabels.value.map((l: Label) => ({
     label: l.name,
     id: l.id,
   })),
@@ -308,27 +308,27 @@ function deleteNote() {
                   debouncedSave();
                 "
               />
-              <USelectMenu
-                :items="labelItems"
-                icon="lucide:tag"
-                label="Labels"
-                variant="ghost"
-                color="neutral"
-                multiple
-                :model-value="state.labels"
-                @update:model-value="handleLabelUpdate"
-              >
-                <template #footer>
-                  <UInput
-                    placeholder="Create label..."
-                    size="xs"
-                    @keydown.enter="
-                      createLabel($event.target.value);
-                      $event.target.value = '';
-                    "
-                  />
-                </template>
-              </USelectMenu>
+              <div class="flex gap-xs">
+                <USelectMenu
+                  :items="labelItems"
+                  icon="lucide:tag"
+                  label="Labels"
+                  variant="ghost"
+                  color="neutral"
+                  multiple
+                  :model-value="state.labels"
+                  @update:model-value="handleLabelUpdate"
+                />
+                <UInput
+                  placeholder="Create label..."
+                  size="xs"
+                  class="flex-1"
+                  @keydown.enter="
+                    createLabel(($event.target as HTMLInputElement).value);
+                    ($event.target as HTMLInputElement).value = '';
+                  "
+                />
+              </div>
               <UButton
                 :icon="state.isArchived ? 'lucide:archive-restore' : 'lucide:archive'"
                 variant="ghost"

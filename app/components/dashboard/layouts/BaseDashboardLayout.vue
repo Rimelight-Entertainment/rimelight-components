@@ -110,13 +110,13 @@ defineOptions({
     >
       <UDashboardSidebar :id="id" v-model:open="sidebarOpenModel" :class="sidebar()">
         <template #header="{ collapsed }">
-          <slot name="sidebar-header" :collapsed="collapsed">
+          <slot name="sidebar-header" :collapsed="collapsed!">
             <RCTeamsMenu :collapsed="collapsed" />
           </slot>
         </template>
 
         <template #default="{ collapsed }">
-          <slot name="sidebar-content" :collapsed="collapsed">
+          <slot name="sidebar-content" :collapsed="collapsed!">
             <UDashboardSearchButton :collapsed="collapsed" class="w-full" />
             <UNavigationMenu
               :collapsed="collapsed"
@@ -129,7 +129,7 @@ defineOptions({
         </template>
 
         <template #footer="{ collapsed }">
-          <slot name="sidebar-footer" :collapsed="collapsed">
+          <slot name="sidebar-footer" :collapsed="collapsed!">
             <div :class="sidebarFooterWrapper()">
               <UNavigationMenu
                 v-if="footerLinks.length > 0"
@@ -144,7 +144,7 @@ defineOptions({
               <USeparator />
 
               <div :class="footerActions()">
-                <slot name="sidebar-footer-actions" :collapsed="collapsed" />
+                <slot name="sidebar-footer-actions" :collapsed="collapsed!" />
               </div>
             </div>
           </slot>
