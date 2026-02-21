@@ -19,7 +19,7 @@ const { totalHeight } = useHeaderStack();
     </RCHeaderLayer>
 
     <UMain
-      class="bg-primary-900 transition-[padding-top] duration-400 ease-in-out"
+      class="bg-default"
       :style="{ paddingTop: 'var(--total-header-offset)' }"
     >
       <slot />

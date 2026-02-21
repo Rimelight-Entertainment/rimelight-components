@@ -2,7 +2,6 @@
 import type { Todo } from "rimelight-components/shared/db/auth";
 import { tv } from "../../internal/tv";
 import { type VariantProps } from "tailwind-variants";
-import { useRC } from "../../composables";
 
 /* region Props */
 export interface TodoCardProps {
@@ -74,18 +73,18 @@ const {
 type TodoCardVariants = VariantProps<typeof todoCardStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "TodoCard",
-});
-/* endregion */
-
 /* region State */
 // const state1 = ref()
 //
 // const computed1 = computed(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "TodoCard",
+});
 /* endregion */
 
 /* region Lifecycle */

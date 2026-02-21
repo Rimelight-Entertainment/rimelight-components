@@ -130,6 +130,22 @@
     "heading_5": "Heading 5",
     "heading_6": "Heading 6"
   },
+  "pages": {
+    "home": {
+      "meta": {
+        "title": "Home"
+      },
+      "hero": {
+        "title": "Rimelight Components",
+        "description": "A component and utility library used at Rimelight Entertainment.",
+        "links": {
+          "01": "View Components",
+          "02": "View Wiki",
+          "03": "View Branding"
+        }
+      }
+    }
+  },
   "page_editor": {
     "preview": "Preview",
     "view_page": "View Page",

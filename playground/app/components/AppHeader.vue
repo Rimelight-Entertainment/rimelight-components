@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, reactive, ref, inject } from "vue";
-import type { NavigationMenuItem, DropdownMenuItem } from "@nuxt/ui";
+import type { DropdownMenuItem, NavigationMenuItem } from "@nuxt/ui";
 import { useHeaderStack } from "rimelight-components/composables";
-import { MOCK_PAGES_LIST } from "../mocks/pages";
-import { tv } from "../../../app/internal/tv";
 import { type VariantProps } from "tailwind-variants";
+import { computed, inject, reactive, ref } from "vue";
+import { tv } from "../../../app/internal/tv";
+import { MOCK_PAGES_LIST } from "../mocks/pages";
 
 /* region Props */
 export interface AppHeaderProps {
@@ -29,7 +29,7 @@ const slots = defineSlots<AppHeaderSlots>();
 /* region Styles */
 const appHeaderStyles = tv({
   slots: {
-    root: "bg-black",
+    root: "bg-inverted",
     leftGroup: "flex flex-row items-center gap-md",
     logo: "h-6 w-auto",
     navigation: "",

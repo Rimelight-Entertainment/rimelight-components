@@ -1,33 +1,47 @@
 <script setup lang="ts">
+import { type ButtonProps } from "#ui/types"
+import { ref } from 'vue'
+
+/* region State */
+const { t } = useI18n()
+
+const heroLinks = ref<ButtonProps[]>([
+  {
+    icon: 'lucide:layout-template',
+    label: t('pages.home.hero.links.01'),
+    to: '/components',
+  },
+  {
+    color: 'neutral',
+    variant: 'outline',
+    icon: 'lucide:book',
+    label: t('pages.home.hero.links.02'),
+    to: '/matrix',
+  },
+  {
+    color: 'neutral',
+    variant: 'ghost',
+    icon: 'lucide:palette',
+    label: t('pages.home.hero.links.03'),
+    to: '/branding',
+  }
+])
+
+/* endregion */
+
+/* region Meta */
 useHead({
-  title: "Playground",
-});
+  title: t('pages.home.meta.title')
+})
+/* endregion */
 </script>
 
 <template>
   <UPage>
     <UPageHero
-      title="Rimelight Components"
-      description="A modern UI component library for building high-fidelity web applications with Nuxt and Tailwind CSS."
-      :links="[
-        { label: 'View Components', to: '/components', icon: 'lucide:layout-template', size: 'xl' },
-        {
-          label: 'Wiki',
-          to: '/matrix',
-          icon: 'lucide:book',
-          color: 'neutral',
-          variant: 'outline',
-          size: 'xl',
-        },
-        {
-          label: 'Branding',
-          to: '/branding',
-          icon: 'lucide:palette',
-          color: 'neutral',
-          variant: 'ghost',
-          size: 'xl',
-        },
-      ]"
+      :title="t('pages.home.hero.title')"
+      :description="t('pages.home.hero.description')"
+      :links="heroLinks"
     />
   </UPage>
 </template>

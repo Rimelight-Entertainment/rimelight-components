@@ -52,12 +52,6 @@ const { linkClass, iconClass, textClass, skeletonClass, unresolvedText } = pageM
 type PageMentionVariants = VariantProps<typeof pageMentionStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "PageMention",
-});
-/* endregion */
-
 /* region State */
 const { locale } = useI18n();
 const isServer = import.meta.server;
@@ -90,6 +84,12 @@ const { data: linkedPage, status } = useAsyncData(
     watch: [() => pageId],
   },
 );
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PageMention",
+});
 /* endregion */
 
 /* region Lifecycle */

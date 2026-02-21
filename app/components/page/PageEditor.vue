@@ -155,12 +155,6 @@ const {
 type PageEditorVariants = VariantProps<typeof pageEditorStyles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "PageEditor",
-});
-/* endregion */
-
 /* region State */
 const page = defineModel<Page>({ required: true });
 const versionId = defineModel<string | null>("currentVersionId", { default: null });
@@ -203,6 +197,12 @@ const cursor = computed(() => {
   return "cursor-grab";
 });
 
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "PageEditor",
+});
 /* endregion */
 
 /* region Lifecycle */

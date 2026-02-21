@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { tv } from "../../internal/tv";
 import { type VariantProps } from "tailwind-variants";
-import { useRC } from "../../composables";
 
 /* region Props */
 export interface H6Props {
@@ -40,12 +39,6 @@ const { root } = h6Styles();
 type H6Variants = VariantProps<typeof h6Styles>;
 /* endregion */
 
-/* region Meta */
-defineOptions({
-  name: "H6",
-});
-/* endregion */
-
 /* region State */
 // const ref1 = ref(0)
 //
@@ -66,6 +59,12 @@ defineOptions({
 // onUnmounted(() => {
 //
 // })
+/* endregion */
+
+/* region Meta */
+defineOptions({
+  name: "H6",
+});
 /* endregion */
 
 /* region Logic */
