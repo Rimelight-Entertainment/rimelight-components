@@ -104,6 +104,12 @@ export const useAuth = () => {
       canPublish: computed(() => checkPermission({ blogPost: ["publish"] })),
       canDelete: computed(() => checkPermission({ blogPost: ["delete"] })),
     },
+    documents: {
+      canCreate: computed(() => checkPermission({ document: ["create"] })),
+      canEdit: computed(() => checkPermission({ document: ["edit"] })),
+      canPublish: computed(() => checkPermission({ document: ["publish"] })),
+      canDelete: computed(() => checkPermission({ document: ["delete"] })),
+    },
     team: {
       canCreate: computed(() => checkPermission({ team: ["create"] })),
       canUpdate: computed(() => checkPermission({ team: ["update"] })),

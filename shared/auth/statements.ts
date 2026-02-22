@@ -7,4 +7,5 @@ export const statement = {
   admin: ["access"],
   project: ["create", "share", "update", "delete"],
   blogPost: ["create", "edit", "publish", "delete"],
+  document: ["create", "edit", "publish", "delete"],
 } as const;
