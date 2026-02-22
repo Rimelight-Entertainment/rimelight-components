@@ -11,6 +11,7 @@ export const owner = ac.newRole({
   project: ["create", "update", "delete"],
   document: ["create", "edit", "publish", "delete"],
   blogPost: ["create", "edit", "publish", "delete"],
+  asset: ["view", "upload", "edit", "delete"],
 });
 
 export const admin = ac.newRole({
@@ -20,12 +21,15 @@ export const admin = ac.newRole({
   document: ["create", "edit", "publish", "delete"],
   blogPost: ["create", "edit", "publish", "delete"],
   project: ["create", "update"],
+  asset: ["view", "upload", "edit", "delete"],
 });
 
 export const member = ac.newRole({
   project: ["create"],
+  asset: ["view"],
 });
 
 export const user = ac.newRole({
   project: ["create"],
+  asset: ["view"],
 });

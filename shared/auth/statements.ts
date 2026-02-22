@@ -8,4 +8,5 @@ export const statement = {
   project: ["create", "share", "update", "delete"],
   blogPost: ["create", "edit", "publish", "delete"],
   document: ["create", "edit", "publish", "delete"],
+  asset: ["view", "upload", "edit", "delete"],
 } as const;

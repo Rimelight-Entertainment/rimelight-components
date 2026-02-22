@@ -120,6 +120,12 @@ export const useAuth = () => {
       canUpdate: computed(() => checkPermission({ organization: ["update"] })),
       canDelete: computed(() => checkPermission({ organization: ["delete"] })),
     },
+    assets: {
+      canView: computed(() => checkPermission({ asset: ["view"] })),
+      canUpload: computed(() => checkPermission({ asset: ["upload"] })),
+      canEdit: computed(() => checkPermission({ asset: ["edit"] })),
+      canDelete: computed(() => checkPermission({ asset: ["delete"] })),
+    },
   };
 
   // 5. Methods
