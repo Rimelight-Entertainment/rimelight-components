@@ -9,6 +9,7 @@ export const owner = ac.newRole({
   admin: ["access"],
   team: ["create", "update", "delete"],
   project: ["create", "update", "delete"],
+  document: ["create", "edit", "publish", "delete"],
   blogPost: ["create", "edit", "publish", "delete"],
 });
 
@@ -16,6 +17,8 @@ export const admin = ac.newRole({
   ...adminAc.statements,
   admin: ["access"],
   team: ["create", "update", "delete"],
+  document: ["create", "edit", "publish", "delete"],
+  blogPost: ["create", "edit", "publish", "delete"],
   project: ["create", "update"],
 });
 
