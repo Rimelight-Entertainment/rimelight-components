@@ -145,7 +145,12 @@ const handlePublish = async (updatedPage: Page): Promise<void> => {
 
     // Redirect to the live page
     await nextTick();
-    await navigateTo(`/${updatedPage.slug}`);
+    const base = baseUrl.replace(/\/$/, "");
+    const cleanBase = base.replace(/^\//, "");
+    const slugToUse = updatedPage.slug.startsWith(cleanBase)
+      ? updatedPage.slug
+      : `${cleanBase}/${updatedPage.slug}`;
+    await navigateTo(`/${slugToUse}`);
   } catch (e) {
     toast.add({ color: "error", title: t("toast_publish_error") });
   } finally {
