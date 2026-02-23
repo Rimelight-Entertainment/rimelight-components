@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { DropdownMenuItem } from "@nuxt/ui";
-import { ref, computed } from "vue";
+import { computed, watch } from "vue";
 import { tv } from "../../internal/tv";
 import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
+import { useDashboard } from "../../composables/dashboard/useDashboard";
 
 /* region Props */
 export interface TeamsMenuProps {
@@ -24,12 +24,6 @@ export interface TeamsMenuEmits {}
 const emit = defineEmits<TeamsMenuEmits>();
 /* endregion */
 
-/* region Slots */
-export interface TeamsMenuSlots {}
-
-const slots = defineSlots<TeamsMenuSlots>();
-/* endregion */
-
 /* region Styles */
 const teamsMenuStyles = tv({
   slots: {
@@ -40,54 +34,59 @@ const teamsMenuStyles = tv({
 });
 
 const { root, triggerButton, buttonTrailing } = teamsMenuStyles();
-type TeamsMenuVariants = VariantProps<typeof teamsMenuStyles>;
 /* endregion */
 
 /* region State */
-const teams = ref([
-  {
-    label: `Nuxt`,
-    avatar: {
-      src: `https://github.com/nuxt.png`,
-      alt: `Nuxt`,
-    },
-  },
-  {
-    label: `NuxtHub`,
-    avatar: {
-      src: `https://github.com/nuxt-hub.png`,
-      alt: `NuxtHub`,
-    },
-  },
-  {
-    label: `NuxtLabs`,
-    avatar: {
-      src: `https://github.com/nuxtlabs.png`,
-      alt: `NuxtLabs`,
-    },
-  },
-]);
-const selectedTeam = ref(teams.value[0]);
+const nuxtApp = useNuxtApp();
+const authClient = (nuxtApp as any).$authClient;
+const { activeOrganization, activeTeamId, setActiveTeam } = useDashboard();
 
-const items = computed<DropdownMenuItem[][]>(() => {
-  return [
-    teams.value.map((team) => ({
-      ...team,
-      onSelect() {
-        selectedTeam.value = team;
-      },
-    })),
-    [
-      {
-        label: `Create team`,
-        icon: `lucide:circle-plus`,
-      },
-      {
-        label: `Manage teams`,
-        icon: `lucide:cog`,
-      },
-    ],
-  ];
+const activeOrgId = computed(() => activeOrganization.value?.id);
+
+// 1. Fetch only teams the user is a part of
+const { data: userTeamsRes, refresh: refreshUserTeams } = useAsyncData('user-membership-teams', async () => {
+    if (!authClient?.organization?.listUserTeams) return [];
+    const { data } = await authClient.organization.listUserTeams();
+    return data || [];
+}, {
+    watch: [activeOrgId], 
+    default: () => []
+});
+
+// 2. Filter teams by the active organization
+const teams = computed(() => {
+    const allUserTeams = userTeamsRes.value || [];
+    if (!activeOrgId.value) return [];
+    return allUserTeams.filter((team: any) => team.organizationId === activeOrgId.value);
+});
+
+// 3. Current selection
+const selectedTeam = computed(() => {
+    if (activeTeamId.value) {
+        const found = teams.value.find((t: any) => t.id === activeTeamId.value);
+        if (found) return found;
+    }
+    return teams.value[0] || null;
+});
+
+// Auto-select first team if none selected
+watch(teams, (newTeams) => {
+    if (newTeams.length > 0 && !activeTeamId.value) {
+        setActiveTeam(newTeams[0].id);
+    }
+}, { immediate: true });
+
+const items = computed(() => {
+  const list = teams.value.map((team: any) => ({
+    label: team.name,
+    avatar: team.logo ? { src: team.logo, alt: team.name } : undefined,
+    icon: !team.logo ? "lucide:users" : undefined,
+    onSelect: () => {
+      setActiveTeam(team.id);
+    },
+  }));
+
+  return [list];
 });
 /* endregion */
 
@@ -96,49 +95,35 @@ defineOptions({
   name: "TeamsMenu",
 });
 /* endregion */
-
-/* region Lifecycle */
-// onMounted(() => {
-//
-// })
-//
-// watch(() => { }, (newValue, oldValue) => {
-//
-// })
-//
-// onUnmounted(() => {
-//
-// })
-/* endregion */
-
-/* region Logic */
-/* endregion */
 </script>
 
 <template>
-  <UDropdownMenu
-    :content="{ align: 'center', collisionPadding: 12 }"
-    :items="items"
-    :ui="{
-      content: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)',
-    }"
-  >
-    <UButton
-      :class="[triggerButton(), !collapsed && 'py-2']"
-      :square="collapsed"
+  <div v-if="teams.length > 0">
+    <UDropdownMenu
+      :content="{ align: 'center', collisionPadding: 12 }"
+      :items="items"
       :ui="{
-        trailingIcon: buttonTrailing(),
+        content: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)',
       }"
-      block
-      color="neutral"
-      v-bind="{
-        ...selectedTeam,
-        label: collapsed ? undefined : selectedTeam?.label,
-        trailingIcon: collapsed ? undefined : 'lucide:chevrons-up-down',
-      }"
-      variant="ghost"
-    />
-  </UDropdownMenu>
+    >
+      <UButton
+        :class="[triggerButton(), !collapsed && 'py-2']"
+        :square="collapsed"
+        :ui="{
+          trailingIcon: buttonTrailing(),
+        }"
+        block
+        color="neutral"
+        v-bind="{
+          label: collapsed ? undefined : selectedTeam?.name,
+          avatar: selectedTeam?.logo ? { src: selectedTeam.logo, alt: selectedTeam.name } : undefined,
+          icon: (!selectedTeam?.logo && selectedTeam?.name) ? 'lucide:users' : (selectedTeam?.name ? undefined : 'lucide:users'),
+          trailingIcon: collapsed ? undefined : 'lucide:chevrons-up-down',
+        }"
+        variant="ghost"
+      />
+    </UDropdownMenu>
+  </div>
 </template>
 
 <style scoped></style>

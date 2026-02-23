@@ -111,7 +111,10 @@ defineOptions({
       <UDashboardSidebar :id="id" v-model:open="sidebarOpenModel" :class="sidebar()">
         <template #header="{ collapsed }">
           <slot name="sidebar-header" :collapsed="collapsed!">
-            <RCTeamsMenu :collapsed="collapsed" />
+            <div class="flex flex-col gap-xs w-full">
+              <RCOrganizationsMenu :collapsed="collapsed" />
+              <RCTeamsMenu :collapsed="collapsed" />
+            </div>
           </slot>
         </template>
 
