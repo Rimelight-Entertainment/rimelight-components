@@ -107,7 +107,7 @@ const newFolderName = ref("");
 
 // --- Upload State ---
 const showUploadModal = ref(false);
-const pendingFile = ref<File | null>(null);
+const pendingFiles = ref<File[]>([]);
 const uploadFileBasename = ref("");
 const uploadFileExtension = ref("");
 const uploadTargetFolder = ref("");
@@ -121,34 +121,22 @@ const moveTargetFolder = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
 
 const modalUploadTargetValue = computed({
-  get: () => [uploadTargetFolder.value || "Root"],
+  get: () => [(uploadTargetFolder.value === "" || uploadTargetFolder.value === "/") ? "Root" : uploadTargetFolder.value],
   set: (val: any) => {
     const selected = Array.isArray(val) ? val[0] : val;
     if (!selected) return;
-
-    if (selected === "Root" || selected === "") {
-      uploadTargetFolder.value = "";
-    } else if (typeof selected === 'string') {
-      uploadTargetFolder.value = selected;
-    } else if (selected && typeof selected === 'object' && 'fullPath' in selected) {
-      uploadTargetFolder.value = (selected as any).fullPath;
-    }
+    const path = typeof selected === 'object' ? (selected.fullPath ?? "") : selected;
+    uploadTargetFolder.value = path === "Root" ? "" : path;
   }
 });
 
 const modalMoveTargetValue = computed({
-  get: () => [moveTargetFolder.value || "Root"],
+  get: () => [(moveTargetFolder.value === "" || moveTargetFolder.value === "/") ? "Root" : moveTargetFolder.value],
   set: (val: any) => {
     const selected = Array.isArray(val) ? val[0] : val;
     if (!selected) return;
-
-    if (selected === "Root" || selected === "") {
-      moveTargetFolder.value = "";
-    } else if (typeof selected === 'string') {
-      moveTargetFolder.value = selected;
-    } else if (selected && typeof selected === 'object' && 'fullPath' in selected) {
-      moveTargetFolder.value = (selected as any).fullPath;
-    }
+    const path = typeof selected === 'object' ? (selected.fullPath ?? "") : selected;
+    moveTargetFolder.value = path === "Root" ? "" : path;
   }
 });
 /* endregion */
@@ -239,18 +227,12 @@ const currentNode = computed(() => {
 });
 
 const activeTreeValue = computed({
-  get: () => [selectedPath.value || "Root"],
-  set: (val) => {
+  get: () => [(selectedPath.value === "" || selectedPath.value === "/") ? "Root" : selectedPath.value],
+  set: (val: any) => {
     const selected = Array.isArray(val) ? val[0] : val;
     if (!selected) return;
-
-    if (selected === "Root" || selected === "") {
-       selectedPath.value = "";
-    } else if (typeof selected === 'string') {
-      selectedPath.value = selected;
-    } else if (selected && typeof selected === 'object' && 'fullPath' in selected) {
-      selectedPath.value = (selected as any).fullPath;
-    }
+    const path = typeof selected === 'object' ? (selected.fullPath ?? "") : selected;
+    selectedPath.value = path === "Root" ? "" : path;
   }
 });
 
@@ -281,27 +263,42 @@ function triggerFilePicker() {
   fileInput.value?.click();
 }
 
-function handleFileSelected(event: Event) {
-  const input = event.target as HTMLInputElement;
-  if (input.files?.length) {
-    const file = input.files[0];
-    if (file) {
-      pendingFile.value = file;
-      const { basename, extension } = splitFilename(file.name);
+function handleFileSelected(event: Event | { target: { files: File | File[] } }) {
+  const filesInput = (event.target as any).files;
+  if (!filesInput) return;
+  
+  const filesList = Array.isArray(filesInput) ? filesInput : Array.from(filesInput as FileList);
+  if (filesList.length > 0) {
+    pendingFiles.value = filesList;
+    uploadTargetFolder.value = selectedPath.value;
+    
+    if (filesList.length === 1) {
+      const { basename, extension } = splitFilename(filesList[0].name);
       uploadFileBasename.value = basename;
       uploadFileExtension.value = extension;
-      uploadTargetFolder.value = selectedPath.value;
-      showUploadModal.value = true;
+    } else {
+      uploadFileBasename.value = "";
+      uploadFileExtension.value = "";
     }
+    
+    showUploadModal.value = true;
   }
 }
 
 async function performUpload() {
-  if (!pendingFile.value || !uploadFileBasename.value) return;
-  const success = await uploadAsset(pendingFile.value, uploadTargetFolder.value, uploadFileBasename.value);
+  if (pendingFiles.value.length === 0) return;
+  
+  const filesToUpload = pendingFiles.value.length === 1 ? (pendingFiles.value[0] as File) : pendingFiles.value;
+  
+  const success = await uploadAsset(
+    filesToUpload, 
+    uploadTargetFolder.value, 
+    pendingFiles.value.length === 1 ? uploadFileBasename.value : undefined
+  );
+  
   if (success) {
     showUploadModal.value = false;
-    pendingFile.value = null;
+    pendingFiles.value = [];
     uploadFileBasename.value = "";
     uploadFileExtension.value = "";
   }
@@ -405,6 +402,18 @@ function formatSize(bytes: number) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 }
 
+function formatDate(date: string | Date) {
+  if (!date) return "";
+  const d = new Date(date);
+  return d.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
 watch(open, (isOpen) => {
   if (isOpen) refresh();
 });
@@ -468,6 +477,7 @@ watch(open, (isOpen) => {
                 </template>
               </div>
               <div class="flex items-center gap-sm shrink-0 ml-md">
+                <span class="text-[10px] text-dimmed uppercase">{{ gridItems.length }} Items</span>
                 <UButton
                   icon="lucide:rotate-ccw"
                   size="xs"
@@ -476,7 +486,6 @@ watch(open, (isOpen) => {
                   :loading="status === 'pending'"
                   @click="refresh()"
                 />
-                <span class="text-[10px] text-dimmed uppercase">{{ gridItems.length }} Items</span>
               </div>
             </div>
 
@@ -517,6 +526,7 @@ watch(open, (isOpen) => {
                       label="Upload Here"
                       description="Max: 5 GiB"
                       :dropzone="true"
+                      multiple
                       class="size-full"
                       :ui="{
                         base: 'size-full border-0 bg-transparent flex flex-col items-center justify-center text-center p-md',
@@ -525,12 +535,9 @@ watch(open, (isOpen) => {
                         description: 'text-[10px]',
                         actions: 'mt-xs'
                       }"
-                      @update:model-value="(file: any) => {
-                        if (file) {
-                          pendingFile = file as File;
-                          splitFilename((file as File).name);
-                          uploadTargetFolder = selectedPath;
-                          showUploadModal = true;
+                      @update:model-value="(files: any) => {
+                        if (files) {
+                           handleFileSelected({ target: { files } } as any);
                         }
                       }"
                     >
@@ -614,7 +621,7 @@ watch(open, (isOpen) => {
                       <div :class="preview()">
                         <img
                           v-if="isImage(itemObj.contentType, itemObj.key)"
-                          :src="`/api/assets/${itemObj.key}`"
+                          :src="`/api/assets/${itemObj.key.split('/').map(encodeURIComponent).join('/')}`"
                           :class="previewImage()"
                           loading="lazy"
                         />
@@ -626,7 +633,10 @@ watch(open, (isOpen) => {
 
                       <div :class="itemInfo()">
                         <span :class="itemLabel()" :title="(itemObj as any).key">{{ (itemObj as any).key.split('/').pop() }}</span>
-                        <span :class="itemSize()">{{ formatSize((itemObj as any).size) }}</span>
+                        <div class="flex flex-col gap-0">
+                          <span :class="itemSize()">{{ formatSize((itemObj as any).size) }}</span>
+                          <span v-if="(itemObj as any).uploaded" class="text-[9px] text-dimmed uppercase mt-0.5">{{ formatDate((itemObj as any).uploaded) }}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -639,6 +649,7 @@ watch(open, (isOpen) => {
         <input
           ref="fileInput"
           type="file"
+          multiple
           class="hidden"
           @change="handleFileSelected"
         />
@@ -749,9 +760,23 @@ watch(open, (isOpen) => {
   >
     <template #body>
       <div class="flex flex-col gap-md">
-        <UFormField label="Filename">
-          <UInput v-model="uploadFileBasename" class="w-full" />
-        </UFormField>
+        <template v-if="pendingFiles.length === 1">
+          <UFormField label="Filename">
+            <UInput v-model="uploadFileBasename" class="w-full" />
+          </UFormField>
+        </template>
+        <template v-else>
+          <div class="p-md rounded-lg bg-warning-500/10 border border-warning-500/20 flex gap-md items-start">
+            <UIcon name="lucide:alert-triangle" class="size-5 text-warning-500 shrink-0 mt-0.5" />
+            <div class="flex flex-col gap-1">
+              <span class="text-xs font-bold text-warning-600 dark:text-warning-400">Multiple File Upload</span>
+              <p class="text-[11px] text-dimmed leading-relaxed">
+                Renaming is disabled for multiple files. Ensure files are named correctly before uploading, or rename them individually later.
+              </p>
+            </div>
+          </div>
+          <p class="text-xs font-semibold px-1">{{ pendingFiles.length }} files selected</p>
+        </template>
         <UFormField label="Upload to Folder">
           <div class="border border-default rounded-md max-h-48 overflow-y-auto p-1 bg-elevated/50">
             <UTree

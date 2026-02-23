@@ -19,9 +19,29 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const list = await BLOB.list();
+  // Force no-cache on the API response itself
+  event.node.res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  event.node.res.setHeader('Pragma', 'no-cache');
+  event.node.res.setHeader('Expires', '0');
+
+  let allObjects: any[] = [];
+  let truncated = true;
+  let cursor: string | undefined;
+
+  while (truncated) {
+    const list: any = await BLOB.list({ cursor });
+    allObjects.push(...list.objects);
+    truncated = list.truncated;
+    cursor = list.cursor;
+  }
   
-  return list.objects.map((obj: any) => ({
+  // Deduplicate by key just in case R2 pagination overlaps
+  const uniqueObjectsMap = new Map();
+  allObjects.forEach(obj => {
+    uniqueObjectsMap.set(obj.key, obj);
+  });
+  
+  return Array.from(uniqueObjectsMap.values()).map((obj: any) => ({
     key: obj.key,
     size: obj.size,
     uploaded: obj.uploaded,

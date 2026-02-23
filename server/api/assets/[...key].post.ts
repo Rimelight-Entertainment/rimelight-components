@@ -1,13 +1,16 @@
-import { defineEventHandler, createError, readBody } from "h3";
+import { defineEventHandler, createError, readBody, getRouterParam } from "h3";
 
 export default defineEventHandler(async (event) => {
   const cloudflare = (event.context as any).cloudflare;
-  const key = event.context.params?.key;
+  const reqUrl = event.node.req.url || "";
+  const url = new URL(reqUrl, 'http://localhost');
+  const pathParts = url.pathname.split('/api/assets/');
+  const key = pathParts.length > 1 ? decodeURIComponent(pathParts[1]) : null;
 
   if (!cloudflare || !key) {
     throw createError({
       statusCode: 500,
-      statusMessage: "Context or source key missing",
+      statusMessage: `Context or source key missing (key: ${key})`,
     });
   }
 
@@ -22,24 +25,34 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // 1. Get the original object metadata
-  const original = await BLOB.get(key);
-  if (!original) {
+  try {
+    // 1. Get the original object metadata
+    const original = await BLOB.get(key);
+    if (!original) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: `Source asset not found: ${key}`,
+      });
+    }
+
+    // 2. Put to new location
+    // We use original.body directly as it's a ReadableStream.
+    // For smaller files, R2 handles this efficiently.
+    await BLOB.put(to, original.body, {
+      httpMetadata: original.httpMetadata,
+      customMetadata: original.customMetadata,
+    });
+
+    // 3. Delete original
+    await BLOB.delete(key);
+
+    return { success: true, from: key, to };
+  } catch (err: any) {
+    console.error(`Move/Rename failed from ${key} to ${to}:`, err);
     throw createError({
-      statusCode: 404,
-      statusMessage: "Source asset not found",
+      statusCode: 500,
+      statusMessage: err.message || "Failed to move/rename asset",
+      data: { error: err.toString(), from: key, to }
     });
   }
-
-  // 2. Put to new location
-  // Note: Body can be used Directly as R2.get().body is a ReadableStream
-  await BLOB.put(to, original.body, {
-    httpMetadata: original.httpMetadata,
-    customMetadata: original.customMetadata,
-  });
-
-  // 3. Delete original
-  await BLOB.delete(key);
-
-  return { success: true, from: key, to };
 });

@@ -1,7 +1,13 @@
 import { defineEventHandler, getRouterParam, createError, setHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
-  const key = getRouterParam(event, "key");
+  // Extract the key from the pathname to ensure we get the full catch-all path correctly
+  // Path is like /api/assets/Images/file.png -> key is Images/file.png
+  const reqUrl = event.node.req.url || "";
+  const url = new URL(reqUrl, 'http://localhost');
+  const pathParts = url.pathname.split('/api/assets/');
+  const key = (pathParts.length > 1 && pathParts[1]) ? decodeURIComponent(pathParts[1]) : null;
+
   if (!key) {
     throw createError({ statusCode: 400, statusMessage: "Missing key" });
   }

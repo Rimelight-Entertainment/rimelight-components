@@ -17,9 +17,26 @@ export function useAssetManagement() {
   const { confirm } = useConfirm();
   const toast = useToast();
 
-  const { data: assets, refresh, status } = useApi<Asset[]>("/api/assets", {
-    default: () => [] as Asset[],
+  const refreshTick = useState("assetManagement-refreshTick", () => 0);
+
+  const { data: assets, refresh: originalRefresh, status, clear } = useApi<Asset[]>(() => `/api/assets?t=${refreshTick.value}`, {
+    default: () => [],
+    server: false,
+    lazy: true,
+    headers: {
+      "Cache-Control": "no-cache",
+      "Pragma": "no-cache",
+      "Expires": "0"
+    }
   } as any);
+
+  async function refresh() {
+    clear();
+    refreshTick.value++;
+    selectedKeys.value = [];
+    localFolders.value = [];
+    await originalRefresh();
+  }
 
   const selectedPath = useState("assetManagement-selectedPath", () => "");
   const selectedKeys = useState<string[]>("assetManagement-selectedKeys", () => []);
@@ -44,27 +61,45 @@ export function useAssetManagement() {
   }
 
   // --- Operations ---
-  async function uploadAsset(file: File, targetPath: string, customBasename?: string) {
+  async function uploadAsset(file: File | File[], targetPath: string, customBasename?: string) {
+    const files = Array.isArray(file) ? file : [file];
     isProcessing.value = true;
+    
     try {
-      const body = await file.arrayBuffer();
-      const { extension } = splitFilename(file.name);
-      const filename = (customBasename || file.name.substring(0, file.name.lastIndexOf(".")) || file.name) + extension;
+      const uploadPromises = files.map(async (f) => {
+        const body = await f.arrayBuffer();
+        const { extension } = splitFilename(f.name);
+        
+        // Use customBasename only for single file uploads
+        const finalBasename = (files.length === 1 && customBasename) 
+        ? customBasename 
+        : (f.name.substring(0, f.name.lastIndexOf(".")) || f.name);
+        
+      const filename = finalBasename + extension;
       const fullKey = targetPath ? `${targetPath}/${filename}` : filename;
 
-      await $api(`/api/assets/${fullKey}`, {
+      // Encode only segments to preserve slashes for the catch-all route
+      const encodedKey = fullKey.split("/").map(encodeURIComponent).join("/");
+
+      return $api(`/api/assets/${encodedKey}`, {
         method: "PUT",
         body,
         headers: {
-          "Content-Type": file.type,
+          "Content-Type": f.type,
         },
       });
+      });
 
-      toast.add({ color: "success", title: "Asset uploaded successfully" });
+      await Promise.all(uploadPromises);
+
+      toast.add({ 
+        color: "success", 
+        title: files.length === 1 ? "Asset uploaded successfully" : `${files.length} assets uploaded successfully` 
+      });
       await refresh();
-      return { success: true, key: fullKey };
+      return { success: true };
     } catch (err) {
-      toast.add({ color: "error", title: "Failed to upload asset" });
+      toast.add({ color: "error", title: "Failed to upload asset(s)" });
       console.error("Upload failed", err);
       return { success: false, error: err };
     } finally {
@@ -83,7 +118,8 @@ export function useAssetManagement() {
     if (!isConfirmed) return false;
 
     try {
-      await $api(`/api/assets/${key}`, { method: "DELETE" });
+      const encodedKey = key.split("/").map(encodeURIComponent).join("/");
+      await $api(`/api/assets/${encodedKey}`, { method: "DELETE" });
       toast.add({ color: "success", title: "Asset deleted successfully" });
       await refresh();
       return true;
@@ -111,7 +147,8 @@ export function useAssetManagement() {
 
     isProcessing.value = true;
     try {
-      await $api(`/api/assets/${originalKey}`, {
+      const encodedOriginalKey = originalKey.split("/").map(encodeURIComponent).join("/");
+      await $api(`/api/assets/${encodedOriginalKey}`, {
         method: "POST",
         body: { to: newKey }
       });
@@ -142,9 +179,11 @@ export function useAssetManagement() {
 
     isProcessing.value = true;
     try {
-      await Promise.all(
-        selectedKeys.value.map(key => $api(`/api/assets/${key}`, { method: "DELETE" }))
-      );
+      const deletePromises = selectedKeys.value.map(key => {
+        const encodedKey = key.split("/").map(encodeURIComponent).join("/");
+        return $api(`/api/assets/${encodedKey}`, { method: "DELETE" });
+      });
+      await Promise.all(deletePromises);
       toast.add({ color: "success", title: "Assets deleted successfully" });
       selectedKeys.value = [];
       await refresh();
@@ -159,8 +198,9 @@ export function useAssetManagement() {
   }
 
   function downloadAsset(key: string) {
+    const encodedKey = key.split("/").map(encodeURIComponent).join("/");
     const link = document.createElement('a');
-    link.href = `/api/assets/${key}`;
+    link.href = `/api/assets/${encodedKey}`;
     const fileName = key.split("/").pop() || key;
     link.download = fileName;
     document.body.appendChild(link);

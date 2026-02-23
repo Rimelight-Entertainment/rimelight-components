@@ -84,10 +84,10 @@ export const useApi = <T>(
     ...opts,
   };
 
-  // Use a unique key based on path, method, and query to avoid collisions
-  if (!fetchOptions.key) {
-    const pathStr = typeof path === "function" ? path() : path;
-    fetchOptions.key = hash([pathStr, opts.method || "GET", opts.query, opts.params]);
+  // We only generate a static key if the path is a string.
+  // If it's a function (reactive), we let useFetch handle the key generation based on the URL.
+  if (!fetchOptions.key && typeof path === "string") {
+    fetchOptions.key = hash([path, opts.method || "GET", opts.query, opts.params]);
   }
 
   // We can't use async/await here easily inside useApi without making it complicated
