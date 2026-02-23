@@ -426,11 +426,11 @@ function formatDate(date: string | Date) {
 }
 
 function getAssetUrl(key: string): string {
-  const cdnBase = appConfig.cdn || "";
+  const cdnBase = (appConfig.cdn as string) || "";
   const encodedKey = key.split("/").map(encodeURIComponent).join("/");
 
   // If CDN is configured, use it directly (Cloudflare handles subfolders in the path)
-  if (cdnBase && cdnBase.startsWith("http")) {
+  if (cdnBase && typeof cdnBase === "string" && cdnBase.startsWith("http")) {
     return `${cdnBase.replace(/\/$/, "")}/${encodedKey}`;
   }
 
@@ -621,81 +621,210 @@ watch(open, (isOpen) => {
                       </div>
                     </div>
 
-                    <div v-else :class="item()" class="drag-handle cursor-grab active:cursor-grabbing group">
-                      <!-- Card Header with Selection and Actions -->
-                      <div class="absolute top-sm left-0 right-0 z-20 flex items-center justify-between px-sm">
-                          <!-- Selection (Left) -->
+                    <RCImage
+                      v-else-if="isImage(itemObj.contentType, itemObj.key)"
+                      :src="`/api/assets/${itemObj.key.split('/').map(encodeURIComponent).join('/')}`"
+                      :metadata="{
+                        size: (itemObj as any).size,
+                        format: (itemObj as any).contentType?.split('/').pop()?.toUpperCase() || (itemObj as any).key.split('.').pop()?.toUpperCase(),
+                      }"
+                    >
+                      <template #trigger="{ open: openImage }">
+                        <div
+                          :class="item()"
+                          class="drag-handle cursor-grab active:cursor-grabbing group"
+                          @click="openImage"
+                        >
+                          <!-- Card Header with Selection and Actions -->
                           <div
-                            class="flex items-center transition-opacity"
-                            :class="[selectedKeys.includes(itemObj.key) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']"
+                            class="absolute top-sm left-0 right-0 z-20 flex items-center justify-between px-sm"
                           >
-                            <UCheckbox
-                              :model-value="selectedKeys.includes(itemObj.key)"
-                              @update:model-value="toggleSelection(itemObj.key)"
-                              color="primary"
-                              @click.stop
+                            <!-- Selection (Left) -->
+                            <div
+                              class="flex items-center transition-opacity"
+                              :class="[
+                                selectedKeys.includes(itemObj.key)
+                                  ? 'opacity-100'
+                                  : 'opacity-0 group-hover:opacity-100',
+                              ]"
+                            >
+                              <UCheckbox
+                                :model-value="selectedKeys.includes(itemObj.key)"
+                                color="primary"
+                                @update:model-value="toggleSelection(itemObj.key)"
+                                @click.stop
+                              />
+                            </div>
+
+                            <!-- Actions (Right) -->
+                            <div
+                              class="flex items-center transition-opacity"
+                              :class="[
+                                selectedKeys.includes(itemObj.key)
+                                  ? 'opacity-100'
+                                  : 'opacity-0 group-hover:opacity-100',
+                              ]"
+                            >
+                              <UFieldGroup size="xs">
+                                <UButton
+                                  :title="t('modals.assetManager.item.copy_url')"
+                                  icon="lucide:copy"
+                                  variant="ghost"
+                                  color="neutral"
+                                  class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                                  @click.stop="copyAssetUrl((itemObj as any).key)"
+                                />
+                                <UButton
+                                  icon="lucide:download"
+                                  variant="ghost"
+                                  color="neutral"
+                                  class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                                  @click.stop="downloadAsset((itemObj as any).key)"
+                                />
+                                <UButton
+                                  v-if="authPermissions.assets.canEdit.value"
+                                  icon="lucide:pencil"
+                                  variant="ghost"
+                                  color="neutral"
+                                  class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                                  @click.stop="triggerMove(itemObj)"
+                                />
+                                <UButton
+                                  v-if="authPermissions.assets.canDelete.value"
+                                  icon="lucide:trash-2"
+                                  variant="ghost"
+                                  color="error"
+                                  class="hover:bg-error-500/20 bg-black/60 backdrop-blur-sm"
+                                  @click.stop="deleteAsset((itemObj as any).key)"
+                                />
+                              </UFieldGroup>
+                            </div>
+                          </div>
+
+                          <div :class="preview()">
+                            <NuxtImg
+                              :src="`/api/assets/${itemObj.key.split('/').map(encodeURIComponent).join('/')}`"
+                              :class="previewImage()"
+                              loading="lazy"
                             />
                           </div>
 
-                          <!-- Actions (Right) -->
-                          <div
-                            class="flex items-center transition-opacity"
-                            :class="[selectedKeys.includes(itemObj.key) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']"
-                          >
-                            <UFieldGroup size="xs">
-                              <UButton
-                                :title="t('modals.assetManager.item.copy_url')"
-                                icon="lucide:copy"
-                                variant="ghost"
-                                color="neutral"
-                                class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
-                                @click.stop="copyAssetUrl((itemObj as any).key)"
-                              />
-                              <UButton
-                                icon="lucide:download"
-                                variant="ghost"
-                                color="neutral"
-                                class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
-                                @click.stop="downloadAsset((itemObj as any).key)"
-                              />
-                              <UButton
-                                v-if="authPermissions.assets.canEdit.value"
-                                icon="lucide:pencil"
-                                variant="ghost"
-                                color="neutral"
-                                class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
-                                @click.stop="triggerMove(itemObj)"
-                              />
-                              <UButton
-                                v-if="authPermissions.assets.canDelete.value"
-                                icon="lucide:trash-2"
-                                variant="ghost"
-                                color="error"
-                                class="hover:bg-error-500/20 bg-black/60 backdrop-blur-sm"
-                                @click.stop="deleteAsset((itemObj as any).key)"
-                              />
-                            </UFieldGroup>
+                          <div :class="itemInfo()">
+                            <span :class="itemLabel()" :title="(itemObj as any).key">{{
+                              (itemObj as any).key.split("/").pop()
+                            }}</span>
+                            <div class="flex flex-col gap-0">
+                              <span :class="itemSize()" class="uppercase">{{
+                                (itemObj as any).key.split(".").pop()
+                              }}</span>
+                              <span :class="itemSize()">{{
+                                formatSize((itemObj as any).size)
+                              }}</span>
+                              <span
+                                v-if="(itemObj as any).uploaded"
+                                class="text-[9px] text-dimmed uppercase mt-0.5"
+                                >{{ formatDate((itemObj as any).uploaded) }}</span
+                              >
+                            </div>
                           </div>
+                        </div>
+                      </template>
+                    </RCImage>
+
+                    <div
+                      v-else
+                      :class="item()"
+                      class="drag-handle cursor-grab active:cursor-grabbing group"
+                    >
+                      <!-- Card Header with Selection and Actions -->
+                      <div
+                        class="absolute top-sm left-0 right-0 z-20 flex items-center justify-between px-sm"
+                      >
+                        <!-- Selection (Left) -->
+                        <div
+                          class="flex items-center transition-opacity"
+                          :class="[
+                            selectedKeys.includes(itemObj.key)
+                              ? 'opacity-100'
+                              : 'opacity-0 group-hover:opacity-100',
+                          ]"
+                        >
+                          <UCheckbox
+                            :model-value="selectedKeys.includes(itemObj.key)"
+                            color="primary"
+                            @update:model-value="toggleSelection(itemObj.key)"
+                            @click.stop
+                          />
+                        </div>
+
+                        <!-- Actions (Right) -->
+                        <div
+                          class="flex items-center transition-opacity"
+                          :class="[
+                            selectedKeys.includes(itemObj.key)
+                              ? 'opacity-100'
+                              : 'opacity-0 group-hover:opacity-100',
+                          ]"
+                        >
+                          <UFieldGroup size="xs">
+                            <UButton
+                              :title="t('modals.assetManager.item.copy_url')"
+                              icon="lucide:copy"
+                              variant="ghost"
+                              color="neutral"
+                              class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                              @click.stop="copyAssetUrl((itemObj as any).key)"
+                            />
+                            <UButton
+                              icon="lucide:download"
+                              variant="ghost"
+                              color="neutral"
+                              class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                              @click.stop="downloadAsset((itemObj as any).key)"
+                            />
+                            <UButton
+                              v-if="authPermissions.assets.canEdit.value"
+                              icon="lucide:pencil"
+                              variant="ghost"
+                              color="neutral"
+                              class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                              @click.stop="triggerMove(itemObj)"
+                            />
+                            <UButton
+                              v-if="authPermissions.assets.canDelete.value"
+                              icon="lucide:trash-2"
+                              variant="ghost"
+                              color="error"
+                              class="hover:bg-error-500/20 bg-black/60 backdrop-blur-sm"
+                              @click.stop="deleteAsset((itemObj as any).key)"
+                            />
+                          </UFieldGroup>
+                        </div>
                       </div>
 
                       <div :class="preview()">
-                        <NuxtImg
-                          v-if="isImage(itemObj.contentType, itemObj.key)"
-                          :src="`/api/assets/${itemObj.key.split('/').map(encodeURIComponent).join('/')}`"
-                          :class="previewImage()"
-                          loading="lazy"
-                        />
-                        <div v-else class="flex flex-col items-center gap-xs">
+                        <div class="flex flex-col items-center gap-xs">
                           <UIcon name="lucide:file" class="size-8 text-dimmed" />
-                          <span class="text-[10px] uppercase text-dimmed">{{ (itemObj as any).key.split('.').pop() }}</span>
+                          <span class="text-[10px] uppercase text-dimmed">{{
+                            (itemObj as any).key.split(".").pop()
+                          }}</span>
                         </div>
                       </div>
 
                       <div :class="itemInfo()">
-                        <span :class="itemLabel()" :title="(itemObj as any).key">{{ (itemObj as any).key.split('/').pop() }}</span>
+                        <span :class="itemLabel()" :title="(itemObj as any).key">{{
+                          (itemObj as any).key.split("/").pop()
+                        }}</span>
                         <div class="flex flex-col gap-0">
+                          <span :class="itemSize()" class="uppercase">{{
+                            (itemObj as any).key.split(".").pop()
+                          }}</span>
                           <span :class="itemSize()">{{ formatSize((itemObj as any).size) }}</span>
-                          <span v-if="(itemObj as any).uploaded" class="text-[9px] text-dimmed uppercase mt-0.5">{{ formatDate((itemObj as any).uploaded) }}</span>
+                          <span
+                            v-if="(itemObj as any).uploaded"
+                            class="text-[9px] text-dimmed uppercase mt-0.5"
+                            >{{ formatDate((itemObj as any).uploaded) }}</span
+                          >
                         </div>
                       </div>
                     </div>

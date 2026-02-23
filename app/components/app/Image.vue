@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, useTemplateRef, watch, nextTick } from "vue";
+import { reactive, onMounted, useTemplateRef, watch, nextTick } from "vue";
 import { tv } from "../../internal/tv";
 import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
@@ -13,6 +13,13 @@ export interface ImageProps {
   width?: string | number;
   loading?: "lazy" | "eager";
   fit?: "cover" | "contain" | "fill" | "inside" | "outside";
+  /** Optional pre-calculated metadata */
+  metadata?: {
+    width?: number;
+    height?: number;
+    size?: string | number;
+    format?: string;
+  };
   rc?: {
     base?: string;
   };
@@ -25,6 +32,7 @@ const {
   width,
   loading = "lazy",
   fit = "cover",
+  metadata: initialMetadata,
   rc: rcProp,
 } = defineProps<ImageProps>();
 
@@ -38,9 +46,12 @@ const emit = defineEmits<ImageEmits>();
 /* endregion */
 
 /* region Slots */
-export interface ImageSlots {}
+export interface ImageSlots {
+  /** The trigger content for the image viewer */
+  trigger?: (props: { open: () => void }) => any;
+}
 
-const slots = defineSlots<ImageSlots>();
+defineSlots<ImageSlots>();
 /* endregion */
 
 /* region Styles */
@@ -54,7 +65,7 @@ const imageStyles = tv({
         base: "w-full h-full object-contain mx-auto block rounded-lg",
       },
       false: {
-        base: "w-full h-full object-cover hover:scale-[1.02] active:scale-95",
+        base: "w-full h-full hover:scale-[1.02] active:scale-95",
       },
     },
   },
@@ -65,16 +76,24 @@ type ImageVariants = VariantProps<typeof imageStyles>;
 /* endregion */
 
 /* region State */
-const isOpen = ref(false);
+const open = defineModel<boolean>("open", { default: false });
 const imgElement = useTemplateRef<{ $el: HTMLImageElement }>("imgRef");
+const expandedImgElement = useTemplateRef<{ $el: HTMLImageElement }>("expandedImgRef");
 
-const metadata = reactive({
-  width: 0,
-  height: 0,
-  size: "",
-  format: "",
+const internalMetadata = reactive({
+  width: initialMetadata?.width ?? 0,
+  height: initialMetadata?.height ?? 0,
+  size: typeof initialMetadata?.size === "number" ? formatBytes(initialMetadata.size) : (initialMetadata?.size ?? ""),
+  format: initialMetadata?.format ?? "",
   mimeType: "",
 });
+
+const displayMetadata = computed(() => ({
+  width: internalMetadata.width || 0,
+  height: internalMetadata.height || 0,
+  size: internalMetadata.size || "Unknown",
+  format: internalMetadata.format || "IMG",
+}));
 /* endregion */
 
 /* region Meta */
@@ -85,14 +104,23 @@ defineOptions({
 
 /* region Lifecycle */
 onMounted(() => {
-  nextTick(() => {
-    const el = imgElement.value?.$el as HTMLImageElement | undefined;
-    if (el) {
-      if (el.complete) {
-        updateMetadata(el);
-      }
+  if (imgElement.value?.$el) {
+    const el = imgElement.value.$el;
+    if (el.complete) {
+      updateMetadata(el);
     }
-  });
+  }
+});
+
+watch(open, (isOpen) => {
+  if (isOpen && (!internalMetadata.width || !internalMetadata.size)) {
+     // Try to fetch metadata if missing when opened
+     if (expandedImgElement.value?.$el) {
+       updateMetadata(expandedImgElement.value.$el);
+     } else {
+       fetchExtendedMetadata();
+     }
+  }
 });
 
 watch(
@@ -105,10 +133,6 @@ watch(
   },
   { immediate: true },
 );
-
-// onUnmounted(() => {
-//
-// })
 /* endregion */
 
 /* region Logic */
@@ -124,33 +148,37 @@ async function fetchExtendedMetadata() {
   try {
     const response = await fetch(src, {
       method: "GET",
-      mode: "cors",
     });
 
     if (!response.ok) throw new Error("Network response was not ok");
 
     const blob = await response.blob();
 
-    metadata.size = formatBytes(blob.size);
+    if (!internalMetadata.size || internalMetadata.size === "Unknown") {
+      internalMetadata.size = formatBytes(blob.size);
+    }
 
     const type = response.headers.get("content-type") || blob.type;
     if (type) {
-      metadata.mimeType = type;
-      metadata.format = type.split("/")[1]?.split("+")[0]?.toUpperCase() || "IMG";
+      internalMetadata.mimeType = type;
+      if (!internalMetadata.format) {
+        internalMetadata.format = type.split("/")[1]?.split("+")[0]?.toUpperCase() || "IMG";
+      }
     }
 
-    if (metadata.format === "SVG") {
+    if (internalMetadata.format === "SVG" && !internalMetadata.width) {
       const tempImg = new window.Image();
       tempImg.src = URL.createObjectURL(blob);
       await tempImg.decode();
-      metadata.width = tempImg.naturalWidth;
-      metadata.height = tempImg.naturalHeight;
+      internalMetadata.width = tempImg.naturalWidth;
+      internalMetadata.height = tempImg.naturalHeight;
       URL.revokeObjectURL(tempImg.src);
     }
   } catch (e) {
-    console.error("Metadata fetch failed:", e);
-    metadata.format = src.split(".").pop()?.toUpperCase() || "IMG";
-    metadata.size = "Unknown";
+    console.warn("Metadata fetch failed:", e);
+    if (!internalMetadata.format) {
+       internalMetadata.format = src.split(".").pop()?.toUpperCase() || "IMG";
+    }
   }
 }
 
@@ -158,8 +186,8 @@ function updateMetadata(el: HTMLImageElement | null) {
   if (!import.meta.client || !el) return;
 
   if (el.naturalWidth > 0) {
-    metadata.width = el.naturalWidth;
-    metadata.height = el.naturalHeight;
+    internalMetadata.width = el.naturalWidth;
+    internalMetadata.height = el.naturalHeight;
     fetchExtendedMetadata();
   }
 }
@@ -177,7 +205,7 @@ async function downloadImage() {
     const url = defaultWindow.URL.createObjectURL(blob);
     const link = defaultDocument.createElement("a");
     link.href = url;
-    link.download = `file-${Date.now()}.${metadata.format.toLowerCase()}`;
+    link.download = `file-${Date.now()}.${displayMetadata.value.format.toLowerCase()}`;
     defaultDocument.body.appendChild(link);
     link.click();
     defaultDocument.body.removeChild(link);
@@ -191,7 +219,7 @@ async function downloadImage() {
 
 <template>
   <UModal
-    v-model="isOpen"
+    v-model:open="open"
     title="Image Viewer"
     :description="`${src}`"
     :ui="{
@@ -199,25 +227,35 @@ async function downloadImage() {
     }"
   >
     <template #default>
-      <div class="relative">
-        <NuxtImg
-          ref="imgRef"
-          :src="src"
-          :alt="alt"
-          :height="height"
-          :width="width"
-          :loading="loading"
-          :class="base({ isExpanded: false, class: rc.base })"
-          @click="isOpen = true"
-          @load="handleImageLoad"
-        />
-      </div>
+      <slot name="trigger" :open="() => (open = true)">
+        <div class="relative">
+          <NuxtImg
+            ref="imgRef"
+            :src="src"
+            :alt="alt"
+            :height="height"
+            :width="width"
+            :loading="loading"
+            :style="{ objectFit: fit }"
+            :class="base({ isExpanded: false, class: rc.base })"
+            @click="open = true"
+            @load="handleImageLoad"
+          />
+        </div>
+      </slot>
     </template>
 
     <template #body>
       <div class="flex flex-col gap-md">
         <div class="flex-1 min-h-0 w-full flex items-center">
-          <NuxtImg :src="src" :alt="alt" :class="base({ isExpanded: true, class: rc.base })" />
+          <NuxtImg
+            ref="expandedImgRef"
+            :src="src"
+            :alt="alt"
+            :style="{ objectFit: 'contain' }"
+            :class="base({ isExpanded: true, class: rc.base })"
+            @load="handleImageLoad"
+          />
         </div>
 
         <USeparator />
@@ -233,20 +271,20 @@ async function downloadImage() {
             <div class="flex flex-row gap-xs items-center">
               <UIcon name="lucide:file-question-mark" class="size-4" />
               <p class="text-sm">
-                Format: <span class="text-dimmed">{{ metadata.format }}</span>
+                Format: <span class="text-dimmed">{{ displayMetadata.format }}</span>
               </p>
             </div>
             <div class="flex flex-row gap-xs items-center">
               <UIcon name="lucide:weight" class="size-4" />
               <p class="text-sm">
-                Size: <span class="text-dimmed">{{ metadata.size || "Unknown" }}</span>
+                Size: <span class="text-dimmed">{{ displayMetadata.size }}</span>
               </p>
             </div>
             <div class="flex flex-row gap-xs items-center">
               <UIcon name="lucide:image-upscale" class="size-4" />
               <p class="text-sm">
                 Dimensions:
-                <span class="text-dimmed">{{ metadata.width }} × {{ metadata.height }}</span>
+                <span class="text-dimmed">{{ displayMetadata.width }} × {{ displayMetadata.height }}</span>
               </p>
             </div>
           </div>
@@ -257,5 +295,8 @@ async function downloadImage() {
     </template>
   </UModal>
 </template>
+
+<style scoped></style>
+
 
 <style scoped></style>
