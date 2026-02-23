@@ -4,6 +4,12 @@ import { useRC, useAuth, useAssetManagement } from "#rimelight-components/compos
 import { tv } from "../../../internal/tv";
 import type { TreeItem } from "@nuxt/ui";
 import draggable from "vuedraggable/src/vuedraggable";
+import { useI18n } from "vue-i18n";
+import { useClipboard } from "@vueuse/core";
+import { useRoute } from "#imports";
+import { useToast } from "@nuxt/ui/composables";
+import { defaultWindow } from "../../../utils";
+import { useAppConfig } from "#imports";
 
 /* region Props */
 export interface RCAssetManagerModalProps {
@@ -14,6 +20,11 @@ export interface RCAssetManagerModalProps {
 
 const { rc: rcProp } = defineProps<RCAssetManagerModalProps>();
 const { rc } = useRC("RCAssetManagerModal", rcProp);
+const { t } = useI18n();
+const { copy } = useClipboard();
+const toast = useToast();
+const route = useRoute();
+const appConfig = useAppConfig();
 /* endregion */
 
 /* region Emits */
@@ -159,7 +170,7 @@ const treeItems = computed<TreeItemExtended[]>(() => {
   if (!assets.value) return rootNode;
 
   const foldersSet = new Set<string>();
-  
+
   assets.value.forEach(asset => {
     const parts = asset.key.split("/");
     if (parts.length > 1) {
@@ -176,7 +187,7 @@ const treeItems = computed<TreeItemExtended[]>(() => {
   });
 
   const sortedFolders = Array.from(foldersSet).sort();
-  
+
   const findOrCreateNode = (parent: TreeItemExtended[], path: string, label: string): TreeItemExtended => {
     let node = parent.find(n => n.label === label);
     if (!node) {
@@ -198,7 +209,7 @@ const treeItems = computed<TreeItemExtended[]>(() => {
 
     let currentLevel = first.children as TreeItemExtended[];
     let currentFullPath = "";
-    
+
     parts.forEach(part => {
       currentFullPath += (currentFullPath ? "/" : "") + part;
       const node = findOrCreateNode(currentLevel, currentFullPath, part);
@@ -211,7 +222,7 @@ const treeItems = computed<TreeItemExtended[]>(() => {
 
 const currentNode = computed(() => {
   if (selectedPath.value === "") return treeItems.value[0];
-  
+
   const search = (nodes: TreeItemExtended[], path: string): TreeItemExtended | null => {
     for (const node of nodes) {
       if (node.fullPath === path) return node;
@@ -222,7 +233,7 @@ const currentNode = computed(() => {
     }
     return null;
   };
-  
+
   return search(treeItems.value, selectedPath.value);
 });
 
@@ -266,12 +277,12 @@ function triggerFilePicker() {
 function handleFileSelected(event: Event | { target: { files: File | File[] } }) {
   const filesInput = (event.target as any).files;
   if (!filesInput) return;
-  
+
   const filesList = Array.isArray(filesInput) ? filesInput : Array.from(filesInput as FileList);
   if (filesList.length > 0) {
     pendingFiles.value = filesList;
     uploadTargetFolder.value = selectedPath.value;
-    
+
     if (filesList.length === 1) {
       const { basename, extension } = splitFilename(filesList[0].name);
       uploadFileBasename.value = basename;
@@ -280,22 +291,22 @@ function handleFileSelected(event: Event | { target: { files: File | File[] } })
       uploadFileBasename.value = "";
       uploadFileExtension.value = "";
     }
-    
+
     showUploadModal.value = true;
   }
 }
 
 async function performUpload() {
   if (pendingFiles.value.length === 0) return;
-  
+
   const filesToUpload = pendingFiles.value.length === 1 ? (pendingFiles.value[0] as File) : pendingFiles.value;
-  
+
   const success = await uploadAsset(
-    filesToUpload, 
-    uploadTargetFolder.value, 
+    filesToUpload,
+    uploadTargetFolder.value,
     pendingFiles.value.length === 1 ? uploadFileBasename.value : undefined
   );
-  
+
   if (success) {
     showUploadModal.value = false;
     pendingFiles.value = [];
@@ -323,7 +334,7 @@ function triggerMove(asset: any) {
   const parts = asset.key.split("/");
   const fullFilename = parts.pop()!;
   const lastDot = fullFilename.lastIndexOf(".");
-  
+
   moveTargetFolder.value = parts.join("/");
   if (lastDot === -1) {
     moveTargetBasename.value = fullFilename;
@@ -371,7 +382,7 @@ function handleDragMove(evt: any) {
 async function handleDragEnd() {
   const asset = draggedItem.value;
   const folder = dropTarget.value;
-  
+
   if (asset && folder && asset.type === "asset" && asset.key && folder.type === "folder") {
     const fileName = asset.key.split("/").pop() || "";
     const lastDot = fileName.lastIndexOf(".");
@@ -405,13 +416,45 @@ function formatSize(bytes: number) {
 function formatDate(date: string | Date) {
   if (!date) return "";
   const d = new Date(date);
-  return d.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  const hours = String(d.getHours()).padStart(2, "0");
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  const dateStr = `${day}/${month}/${year} ${hours}:${minutes}`;
+  return t("modals.assetManager.item.last_modified", { date: dateStr });
+}
+
+function getAssetUrl(key: string): string {
+  const cdnBase = appConfig.cdn || "";
+  const encodedKey = key.split("/").map(encodeURIComponent).join("/");
+
+  // If CDN is configured, use it directly (Cloudflare handles subfolders in the path)
+  if (cdnBase && cdnBase.startsWith("http")) {
+    return `${cdnBase.replace(/\/$/, "")}/${encodedKey}`;
+  }
+
+  // Fallback to local API endpoint
+  if (!defaultWindow) return `/api/assets/${encodedKey}`;
+  return `${defaultWindow.location.origin}/api/assets/${encodedKey}`;
+}
+
+async function copyAssetUrl(key: string) {
+  try {
+    const url = getAssetUrl(key);
+    await copy(url);
+    toast.add({
+      title: t("modals.assetManager.item.copy_url_success"),
+      description: url,
+      color: "success",
+    });
+  } catch {
+    toast.add({
+      title: t("modals.assetManager.item.copy_url_failed"),
+      description: t("swatch.copy_error_description"),
+      color: "error",
+    });
+  }
 }
 
 watch(open, (isOpen) => {
@@ -423,8 +466,8 @@ watch(open, (isOpen) => {
 <template>
   <UModal
     v-model:open="open"
-    title="Asset Manager"
-    description="Manage and organize your R2 bucket assets"
+    :title="t('modals.assetManager.header.title')"
+    :description="t('modals.assetManager.header.description')"
     :ui="{
       content: 'sm:max-w-6xl max-h-[90vh] flex flex-col',
       body: 'p-0 flex-1 overflow-hidden min-h-0',
@@ -433,7 +476,7 @@ watch(open, (isOpen) => {
   >
     <template #actions>
       <div v-if="selectedKeys.length > 0" class="flex items-center gap-sm bg-primary-500/10 px-sm py-1 rounded-full border border-primary-500/20">
-        <span class="text-xs font-bold text-primary-600 dark:text-primary-400">{{ selectedKeys.length }} Selected</span>
+        <span class="text-xs font-bold text-primary-600 dark:text-primary-400">{{ t('modals.assetManager.toolbar.selected_count', { count: selectedKeys.length }) }}</span>
         <UButton
           icon="lucide:x"
           size="xs"
@@ -477,7 +520,7 @@ watch(open, (isOpen) => {
                 </template>
               </div>
               <div class="flex items-center gap-sm shrink-0 ml-md">
-                <span class="text-[10px] text-dimmed uppercase">{{ gridItems.length }} Items</span>
+                <span class="text-[10px] text-dimmed uppercase">{{ t('modals.assetManager.toolbar.items_count', { count: gridItems.length }) }}</span>
                 <UButton
                   icon="lucide:rotate-ccw"
                   size="xs"
@@ -496,9 +539,9 @@ watch(open, (isOpen) => {
             <div v-else-if="!gridItems.length" class="flex-1 flex items-center justify-center p-xl overflow-y-auto">
               <UEmpty
                 icon="lucide:folder-open"
-                title="No items found"
+                :title="t('modals.assetManager.empty.title')"
                 variant="naked"
-                description="This location is currently empty."
+                :description="t('modals.assetManager.empty.description')"
               />
             </div>
 
@@ -516,15 +559,15 @@ watch(open, (isOpen) => {
                 ghost-class="opacity-50"
               >
                 <template #header>
-                  <div 
-                    v-if="authPermissions.assets.canUpload.value" 
-                    :class="item()" 
+                  <div
+                    v-if="authPermissions.assets.canUpload.value"
+                    :class="item()"
                     class="flex items-center justify-center p-0 overflow-hidden cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-950/20"
                   >
                     <UFileUpload
                       size="xs"
-                      label="Upload Here"
-                      description="Max: 5 GiB"
+                      :label="t('modals.assetManager.upload.dropzone_label')"
+                      :description="t('modals.assetManager.upload.dropzone_description')"
                       :dropzone="true"
                       multiple
                       class="size-full"
@@ -544,7 +587,7 @@ watch(open, (isOpen) => {
                       <template #actions="{ open: openPicker }">
                         <UButton
                           size="xs"
-                          label="Select"
+                          :label="t('modals.assetManager.upload.select_button')"
                           icon="lucide:upload"
                           color="neutral"
                           variant="outline"
@@ -570,13 +613,13 @@ watch(open, (isOpen) => {
                       </div>
                       <div :class="[itemInfo(), isDragging ? 'pointer-events-none' : '']">
                         <span :class="itemLabel()">{{ itemObj.label }}</span>
-                        <span :class="itemSize()">Folder</span>
+                        <span :class="itemSize()">{{ t('modals.assetManager.item.folder_label') }}</span>
                       </div>
                     </div>
 
                     <div v-else :class="item()" class="drag-handle cursor-grab active:cursor-grabbing group">
                       <!-- Selection (Top Left) -->
-                      <div 
+                      <div
                         class="absolute top-2 left-2 z-20 transition-opacity"
                         :class="[selectedKeys.includes(itemObj.key) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']"
                       >
@@ -590,6 +633,15 @@ watch(open, (isOpen) => {
 
                       <!-- Actions (Top Right) -->
                       <div class="absolute top-2 right-2 flex gap-xs opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-1 rounded-md backdrop-blur-sm z-20">
+                        <UButton
+                          :title="t('modals.assetManager.item.copy_url')"
+                          icon="lucide:copy"
+                          size="xs"
+                          variant="ghost"
+                          color="neutral"
+                          class="text-white hover:bg-white/20"
+                          @click.stop="copyAssetUrl((itemObj as any).key)"
+                        />
                         <UButton
                           icon="lucide:download"
                           size="xs"
@@ -619,7 +671,7 @@ watch(open, (isOpen) => {
                       </div>
 
                       <div :class="preview()">
-                        <img
+                        <NuxtImg
                           v-if="isImage(itemObj.contentType, itemObj.key)"
                           :src="`/api/assets/${itemObj.key.split('/').map(encodeURIComponent).join('/')}`"
                           :class="previewImage()"
@@ -662,7 +714,7 @@ watch(open, (isOpen) => {
           <UButton
              v-if="selectedKeys.length > 0"
              icon="lucide:trash-2"
-             label="Delete"
+             :label="t('modals.assetManager.actions.delete_selected')"
              color="error"
              variant="subtle"
              @click="batchDelete"
@@ -672,8 +724,7 @@ watch(open, (isOpen) => {
             size="sm"
             variant="ghost"
             icon="lucide:folder-plus"
-            label="New Subfolder"
-            color="neutral"
+            :label="t('modals.assetManager.actions.new_subfolder')"
             @click="triggerNewFolder"
           />
         </div>
@@ -682,7 +733,7 @@ watch(open, (isOpen) => {
           <UButton
             v-if="authPermissions.assets.canUpload.value"
             icon="lucide:upload"
-            label="Add Asset"
+            :label="t('modals.assetManager.upload.add_asset_button')"
             color="primary"
             @click="triggerFilePicker"
           />
@@ -694,15 +745,15 @@ watch(open, (isOpen) => {
   <!-- New Folder Modal -->
   <UModal
     v-model:open="showNewFolderModal"
-    title="New Subfolder"
-    description="Organize your assets by creating a virtual directory"
+    :title="t('modals.newFolder.title')"
+    :description="t('modals.newFolder.description')"
   >
     <template #body>
       <div class="flex flex-col gap-md">
-        <p class="text-sm text-dimmed">Entering a name for the folder in <span class="text-primary font-bold">/{{ selectedPath || 'Root' }}</span>:</p>
+        <p class="text-sm text-dimmed">{{ t('modals.newFolder.label', { path: `/${selectedPath || 'Root'}` }) }}</p>
         <UInput
           v-model="newFolderName"
-          placeholder="e.g. documentation"
+          :placeholder="t('modals.newFolder.placeholder')"
           autofocus
           class="w-full"
           @keydown.enter="confirmNewFolder"
@@ -711,8 +762,8 @@ watch(open, (isOpen) => {
     </template>
     <template #footer>
       <div class="flex justify-between items-center w-full">
-        <UButton label="Cancel" color="error" variant="ghost" @click="showNewFolderModal = false" />
-        <UButton label="Create Folder" color="primary" @click="confirmNewFolder" />
+        <UButton :label="t('modals.newFolder.cancel_button')" color="error" variant="ghost" @click="showNewFolderModal = false" />
+        <UButton :label="t('modals.newFolder.create_button')" color="primary" @click="confirmNewFolder" />
       </div>
     </template>
   </UModal>
@@ -720,14 +771,14 @@ watch(open, (isOpen) => {
   <!-- Move/Rename Modal -->
   <UModal
     v-model:open="showMoveModal"
-    title="Move or Rename Asset"
+    :title="t('modals.move.title')"
   >
     <template #body>
       <div class="flex flex-col gap-md">
-        <UFormField label="New Name (Basename)">
+        <UFormField :label="t('modals.move.name_label')">
           <UInput v-model="moveTargetBasename" class="w-full" />
         </UFormField>
-        <UFormField label="Target Folder">
+        <UFormField :label="t('modals.move.folder_label')">
           <div class="border border-default rounded-md max-h-48 overflow-y-auto p-1 bg-elevated/50">
             <UTree
               v-model="modalMoveTargetValue"
@@ -741,14 +792,14 @@ watch(open, (isOpen) => {
           </div>
         </UFormField>
         <p class="text-[11px] text-dimmed">
-          Current location: <span class="font-mono">{{ movingAsset?.key }}</span>
+          {{ t('modals.move.current_location', { path: movingAsset?.key }) }}
         </p>
       </div>
     </template>
     <template #footer>
       <div class="flex justify-between items-center w-full">
-        <UButton label="Cancel" color="error" variant="ghost" @click="showMoveModal = false" />
-        <UButton label="Move Asset" color="primary" :loading="isProcessing" @click="performMove" />
+        <UButton :label="t('modals.move.cancel_button')" color="error" variant="ghost" @click="showMoveModal = false" />
+        <UButton :label="t('modals.move.move_button')" color="primary" :loading="isProcessing" @click="performMove" />
       </div>
     </template>
   </UModal>
@@ -756,12 +807,12 @@ watch(open, (isOpen) => {
   <!-- Upload Filename Modal -->
   <UModal
     v-model:open="showUploadModal"
-    title="Confirm Upload"
+    :title="t('modals.upload.title')"
   >
     <template #body>
       <div class="flex flex-col gap-md">
         <template v-if="pendingFiles.length === 1">
-          <UFormField label="Filename">
+          <UFormField :label="t('modals.upload.filename_label')">
             <UInput v-model="uploadFileBasename" class="w-full" />
           </UFormField>
         </template>
@@ -769,15 +820,15 @@ watch(open, (isOpen) => {
           <div class="p-md rounded-lg bg-warning-500/10 border border-warning-500/20 flex gap-md items-start">
             <UIcon name="lucide:alert-triangle" class="size-5 text-warning-500 shrink-0 mt-0.5" />
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-bold text-warning-600 dark:text-warning-400">Multiple File Upload</span>
+              <span class="text-xs font-bold text-warning-600 dark:text-warning-400">{{ t('modals.upload.multiple_files_warning.title') }}</span>
               <p class="text-[11px] text-dimmed leading-relaxed">
-                Renaming is disabled for multiple files. Ensure files are named correctly before uploading, or rename them individually later.
+                {{ t('modals.upload.multiple_files_warning.description') }}
               </p>
             </div>
           </div>
-          <p class="text-xs font-semibold px-1">{{ pendingFiles.length }} files selected</p>
+          <p class="text-xs font-semibold px-1">{{ t('modals.upload.files_selected', { count: pendingFiles.length }) }}</p>
         </template>
-        <UFormField label="Upload to Folder">
+        <UFormField :label="t('modals.upload.folder_label')">
           <div class="border border-default rounded-md max-h-48 overflow-y-auto p-1 bg-elevated/50">
             <UTree
               v-model="modalUploadTargetValue"
@@ -794,8 +845,8 @@ watch(open, (isOpen) => {
     </template>
     <template #footer>
       <div class="flex justify-between items-center w-full">
-        <UButton label="Cancel" color="error" variant="ghost" @click="showUploadModal = false" />
-        <UButton label="Start Upload" color="primary" :loading="isProcessing" @click="performUpload" />
+        <UButton :label="t('modals.upload.cancel_button')" color="error" variant="ghost" @click="showUploadModal = false" />
+        <UButton :label="t('modals.upload.upload_button')" color="primary" :loading="isProcessing" @click="performUpload" />
       </div>
     </template>
   </UModal>

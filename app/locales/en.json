@@ -101,6 +101,67 @@
     "versions": "Versions",
     "editing": "Editing"
   },
+  "modals": {
+    "assetManager": {
+      "header": {
+        "title": "Asset Manager",
+        "description": "View and manage stored assets."
+      },
+      "toolbar": {
+        "items_count": "{count} Items",
+        "selected_count": "{count} Selected"
+      },
+      "empty": {
+        "title": "No items found",
+        "description": "This location is currently empty."
+      },
+      "upload": {
+        "dropzone_label": "Drag & Drop Here",
+        "dropzone_description": "Max: 5 GB",
+        "select_button": "Upload Files",
+        "add_asset_button": "Upload Asset"
+      },
+      "item": {
+        "folder_label": "Folder",
+        "last_modified": "Last Modified: {date}",
+        "copy_url": "Copy URL",
+        "copy_url_success": "URL copied to clipboard!",
+        "copy_url_failed": "Failed to copy URL to clipboard."
+      },
+      "actions": {
+        "delete_selected": "Delete",
+        "new_subfolder": "New Folder"
+      }
+    },
+    "newFolder": {
+      "title": "New Folder",
+      "description": "Organize your assets by creating a virtual directory",
+      "label": "Entering a name for the folder in {path}:",
+      "placeholder": "e.g. documentation",
+      "cancel_button": "Cancel",
+      "create_button": "Create Folder"
+    },
+    "move": {
+      "title": "Move or Rename Asset",
+      "name_label": "New Name (Basename)",
+      "folder_label": "Target Folder",
+      "current_location": "Current location: {path}",
+      "cancel_button": "Cancel",
+      "move_button": "Move Asset"
+    },
+    "upload": {
+      "title": "Confirm Upload",
+      "filename_label": "Filename",
+      "folder_label": "Upload to Folder",
+      "multiple_files_warning": {
+        "title": "Multiple File Upload",
+        "description": "Renaming is disabled for multiple files. Ensure files are named correctly before uploading, or rename them individually later."
+      },
+      "files_selected": "{count} files selected",
+      "cancel_button": "Cancel",
+      "upload_button": "Start Upload"
+    }
+  },
   "swatch": {
     "copy_hex": "Copy HEX",
     "copy_rgb": "Copy RGB",
