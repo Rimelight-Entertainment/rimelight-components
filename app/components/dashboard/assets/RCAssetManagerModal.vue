@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from "vue";
-import { useApi, $api, useRC, useConfirm, useAuth } from "#rimelight-components/composables";
+import { useRC, useAuth, useAssetManagement } from "#rimelight-components/composables";
 import { tv } from "../../../internal/tv";
 import type { TreeItem } from "@nuxt/ui";
 import draggable from "vuedraggable/src/vuedraggable";
@@ -65,15 +65,25 @@ const {
 
 /* region State */
 const open = defineModel<boolean>("open", { default: false });
-const { data: assets, refresh, status } = useApi<any[]>("/api/assets", {
-  default: () => [] as any,
-} as any);
-
-const { confirm } = useConfirm();
 const { permissions: authPermissions } = useAuth();
 
-const selectedPath = ref(""); 
-const selectedKeys = ref<Set<string>>(new Set());
+const {
+  assets,
+  status,
+  selectedPath,
+  selectedKeys,
+  localFolders,
+  isProcessing,
+  refresh,
+  uploadAsset,
+  deleteAsset,
+  moveAsset,
+  batchDelete,
+  downloadAsset,
+  addLocalFolder,
+  splitFilename,
+} = useAssetManagement();
+
 const isDragging = ref(false);
 const draggedItem = ref<any>(null);
 const dropTarget = ref<any>(null);
@@ -92,18 +102,15 @@ const breadcrumbs = computed(() => {
 });
 
 // --- New Folder State ---
-const localFolders = ref<string[]>([]); 
 const showNewFolderModal = ref(false);
 const newFolderName = ref("");
 
 // --- Upload State ---
-const isUploading = ref(false);
 const showUploadModal = ref(false);
 const pendingFile = ref<File | null>(null);
 const uploadFileBasename = ref("");
 const uploadFileExtension = ref("");
 const uploadTargetFolder = ref("");
-const uploadFilename = computed(() => uploadFileBasename.value + uploadFileExtension.value);
 
 // --- Move/Rename State ---
 const showMoveModal = ref(false);
@@ -114,31 +121,33 @@ const moveTargetFolder = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
 
 const modalUploadTargetValue = computed({
-  get: () => uploadTargetFolder.value || "Root",
+  get: () => [uploadTargetFolder.value || "Root"],
   set: (val: any) => {
-    if (val === "Root" || val === "") {
+    const selected = Array.isArray(val) ? val[0] : val;
+    if (!selected) return;
+
+    if (selected === "Root" || selected === "") {
       uploadTargetFolder.value = "";
-      return;
-    }
-    if (typeof val === 'string') {
-      uploadTargetFolder.value = val;
-    } else if (val && typeof val === 'object' && 'fullPath' in val) {
-      uploadTargetFolder.value = (val as any).fullPath;
+    } else if (typeof selected === 'string') {
+      uploadTargetFolder.value = selected;
+    } else if (selected && typeof selected === 'object' && 'fullPath' in selected) {
+      uploadTargetFolder.value = (selected as any).fullPath;
     }
   }
 });
 
 const modalMoveTargetValue = computed({
-  get: () => moveTargetFolder.value || "Root",
+  get: () => [moveTargetFolder.value || "Root"],
   set: (val: any) => {
-    if (val === "Root" || val === "") {
+    const selected = Array.isArray(val) ? val[0] : val;
+    if (!selected) return;
+
+    if (selected === "Root" || selected === "") {
       moveTargetFolder.value = "";
-      return;
-    }
-    if (typeof val === 'string') {
-      moveTargetFolder.value = val;
-    } else if (val && typeof val === 'object' && 'fullPath' in val) {
-      moveTargetFolder.value = (val as any).fullPath;
+    } else if (typeof selected === 'string') {
+      moveTargetFolder.value = selected;
+    } else if (selected && typeof selected === 'object' && 'fullPath' in selected) {
+      moveTargetFolder.value = (selected as any).fullPath;
     }
   }
 });
@@ -230,16 +239,17 @@ const currentNode = computed(() => {
 });
 
 const activeTreeValue = computed({
-  get: () => selectedPath.value || "Root",
+  get: () => [selectedPath.value || "Root"],
   set: (val) => {
-    if (val === "Root" || val === "") {
+    const selected = Array.isArray(val) ? val[0] : val;
+    if (!selected) return;
+
+    if (selected === "Root" || selected === "") {
        selectedPath.value = "";
-       return;
-    }
-    if (typeof val === 'string') {
-      selectedPath.value = val;
-    } else if (val && typeof val === 'object' && 'fullPath' in val) {
-      selectedPath.value = (val as any).fullPath;
+    } else if (typeof selected === 'string') {
+      selectedPath.value = selected;
+    } else if (selected && typeof selected === 'object' && 'fullPath' in selected) {
+      selectedPath.value = (selected as any).fullPath;
     }
   }
 });
@@ -266,20 +276,9 @@ watch(gridItems, (val) => {
 }, { immediate: true });
 /* endregion */
 
-/* region Logic */
+/* region UI Handlers */
 function triggerFilePicker() {
   fileInput.value?.click();
-}
-
-function splitFilename(name: string) {
-  const lastDotIndex = name.lastIndexOf(".");
-  if (lastDotIndex === -1) {
-    uploadFileBasename.value = name;
-    uploadFileExtension.value = "";
-  } else {
-    uploadFileBasename.value = name.substring(0, lastDotIndex);
-    uploadFileExtension.value = name.substring(lastDotIndex);
-  }
 }
 
 function handleFileSelected(event: Event) {
@@ -288,7 +287,9 @@ function handleFileSelected(event: Event) {
     const file = input.files[0];
     if (file) {
       pendingFile.value = file;
-      splitFilename(file.name);
+      const { basename, extension } = splitFilename(file.name);
+      uploadFileBasename.value = basename;
+      uploadFileExtension.value = extension;
       uploadTargetFolder.value = selectedPath.value;
       showUploadModal.value = true;
     }
@@ -297,58 +298,13 @@ function handleFileSelected(event: Event) {
 
 async function performUpload() {
   if (!pendingFile.value || !uploadFileBasename.value) return;
-
-  isUploading.value = true;
-  try {
-    const file = pendingFile.value!;
-    const body = await file.arrayBuffer();
-    const fullKey = uploadTargetFolder.value ? `${uploadTargetFolder.value}/${uploadFilename.value}` : uploadFilename.value;
-    
-    await $api(`/api/assets/${fullKey}`, {
-      method: "PUT",
-      body,
-      headers: {
-        "Content-Type": file.type,
-      },
-    });
+  const success = await uploadAsset(pendingFile.value, uploadTargetFolder.value, uploadFileBasename.value);
+  if (success) {
     showUploadModal.value = false;
     pendingFile.value = null;
     uploadFileBasename.value = "";
     uploadFileExtension.value = "";
-    await refresh();
-  } catch (err) {
-    console.error("Upload failed", err);
-  } finally {
-    isUploading.value = false;
   }
-}
-
-async function deleteAsset(key: string) {
-  const isConfirmed = await confirm({
-    title: "Delete Asset",
-    description: `Are you sure you want to delete ${key}? This action cannot be undone.`,
-    confirmLabel: "Delete",
-    danger: true,
-  });
-
-  if (!isConfirmed) return;
-
-  try {
-    await $api(`/api/assets/${key}`, { method: "DELETE" });
-    await refresh();
-  } catch (err) {
-    console.error("Delete failed", err);
-  }
-}
-
-function downloadAsset(key: string) {
-  const link = document.createElement('a');
-  link.href = `/api/assets/${key}`;
-  const fileName = key.split("/").pop() || key;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 }
 
 function triggerNewFolder() {
@@ -357,16 +313,12 @@ function triggerNewFolder() {
 }
 
 function confirmNewFolder() {
-  const name = newFolderName.value.trim().replace(/\//g, "-");
-  if (!name) return;
-  
-  const newPath = selectedPath.value ? `${selectedPath.value}/${name}` : name;
-  if (!localFolders.value.includes(newPath)) {
-    localFolders.value.push(newPath);
+  const newPath = addLocalFolder(newFolderName.value, selectedPath.value);
+  if (newPath) {
+    selectedPath.value = newPath;
+    showNewFolderModal.value = false;
+    newFolderName.value = "";
   }
-  selectedPath.value = newPath;
-  showNewFolderModal.value = false;
-  newFolderName.value = "";
 }
 
 function triggerMove(asset: any) {
@@ -386,73 +338,24 @@ function triggerMove(asset: any) {
 
 async function performMove() {
   if (!movingAsset.value || !moveTargetBasename.value) return;
-  
-  const originalKey = movingAsset.value.key;
-  const ext = originalKey.includes(".") ? originalKey.substring(originalKey.lastIndexOf(".")) : "";
-  const newFilename = moveTargetBasename.value + ext;
-  const newKey = moveTargetFolder.value ? `${moveTargetFolder.value}/${newFilename}` : newFilename;
-
-  if (originalKey === newKey) {
+  const success = await moveAsset(movingAsset.value.key, moveTargetFolder.value, moveTargetBasename.value);
+  if (success) {
     showMoveModal.value = false;
-    return;
-  }
-
-  isUploading.value = true;
-  try {
-    await $api(`/api/assets/${originalKey}`, {
-      method: "POST",
-      body: { to: newKey }
-    });
-    showMoveModal.value = false;
-    await refresh();
-  } catch (err) {
-    console.error("Move failed", err);
-  } finally {
-    isUploading.value = false;
   }
 }
 
 function toggleSelection(key: string) {
-  const newSet = new Set(selectedKeys.value);
-  if (newSet.has(key)) {
-    newSet.delete(key);
+  const index = selectedKeys.value.indexOf(key);
+  if (index > -1) {
+    selectedKeys.value = selectedKeys.value.filter(k => k !== key);
   } else {
-    newSet.add(key);
-  }
-  selectedKeys.value = newSet;
-}
-
-async function batchDelete() {
-  const count = selectedKeys.value.size;
-  if (count === 0) return;
-
-  const isConfirmed = await confirm({
-    title: "Batch Delete",
-    description: `Are you sure you want to delete ${count} selected assets? This action cannot be undone.`,
-    confirmLabel: "Delete Selected",
-    danger: true,
-  });
-
-  if (!isConfirmed) return;
-
-  isUploading.value = true;
-  try {
-    await Promise.all(
-      Array.from(selectedKeys.value).map(key => $api(`/api/assets/${key}`, { method: "DELETE" }))
-    );
-    selectedKeys.value.clear();
-    await refresh();
-  } catch (err) {
-    console.error("Batch delete failed", err);
-  } finally {
-    isUploading.value = false;
+    selectedKeys.value = [...selectedKeys.value, key];
   }
 }
 
 // --- Drag and Drop Logic ---
 function handleDragStart(evt: any) {
   isDragging.value = true;
-  // Capture item precisely from the local grid using the index
   if (evt.oldIndex !== undefined) {
     draggedItem.value = localGridItems.value[evt.oldIndex];
   }
@@ -473,29 +376,18 @@ async function handleDragEnd() {
   const folder = dropTarget.value;
   
   if (asset && folder && asset.type === "asset" && asset.key && folder.type === "folder") {
-    const fileName = asset.key.split("/").pop();
-    const newKey = folder.key ? `${folder.key}/${fileName}` : fileName;
-    
-    if (asset.key !== newKey) {
-      isUploading.value = true;
-      try {
-        await $api(`/api/assets/${asset.key}`, {
-          method: "POST",
-          body: { to: newKey },
-        });
-        await refresh();
-      } catch (err) {
-        console.error("Move failed", err);
-      } finally {
-        isUploading.value = false;
-      }
+    const fileName = asset.key.split("/").pop() || "";
+    const lastDot = fileName.lastIndexOf(".");
+    const basename = lastDot === -1 ? fileName : fileName.substring(0, lastDot);
+    const success = await moveAsset(asset.key, folder.key, basename);
+    if (!success) {
+       // Optional: Notify or handle failure
     }
   }
 
   isDragging.value = false;
   draggedItem.value = null;
   dropTarget.value = null;
-  // Always reset local grid to match source of truth
   localGridItems.value = [...gridItems.value];
 }
 
@@ -531,14 +423,14 @@ watch(open, (isOpen) => {
     }"
   >
     <template #actions>
-      <div v-if="selectedKeys.size > 0" class="flex items-center gap-sm bg-primary-500/10 px-sm py-1 rounded-full border border-primary-500/20">
-        <span class="text-xs font-bold text-primary-600 dark:text-primary-400">{{ selectedKeys.size }} Selected</span>
+      <div v-if="selectedKeys.length > 0" class="flex items-center gap-sm bg-primary-500/10 px-sm py-1 rounded-full border border-primary-500/20">
+        <span class="text-xs font-bold text-primary-600 dark:text-primary-400">{{ selectedKeys.length }} Selected</span>
         <UButton
           icon="lucide:x"
           size="xs"
           variant="ghost"
           color="neutral"
-          @click="selectedKeys.clear()"
+          @click="selectedKeys = []"
         />
       </div>
     </template>
@@ -555,7 +447,7 @@ watch(open, (isOpen) => {
                 :get-key="(i: any) => i.fullPath === '' ? 'Root' : i.fullPath"
                 color="primary"
                 variant="neutral"
-                selection-behavior="replace"
+                :multiple="false"
                 class="w-full"
               />
             </div>
@@ -575,7 +467,17 @@ watch(open, (isOpen) => {
                   </button>
                 </template>
               </div>
-              <span class="text-[10px] text-dimmed shrink-0 ml-md uppercase">{{ gridItems.length }} Items</span>
+              <div class="flex items-center gap-sm shrink-0 ml-md">
+                <UButton
+                  icon="lucide:rotate-ccw"
+                  size="xs"
+                  variant="ghost"
+                  color="neutral"
+                  :loading="status === 'pending'"
+                  @click="refresh()"
+                />
+                <span class="text-[10px] text-dimmed uppercase">{{ gridItems.length }} Items</span>
+              </div>
             </div>
 
             <div v-if="status === 'pending' && !assets.length" class="flex flex-1 items-center justify-center">
@@ -669,10 +571,10 @@ watch(open, (isOpen) => {
                       <!-- Selection (Top Left) -->
                       <div 
                         class="absolute top-2 left-2 z-20 transition-opacity"
-                        :class="[selectedKeys.has(itemObj.key) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']"
+                        :class="[selectedKeys.includes(itemObj.key) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']"
                       >
                          <UCheckbox
-                           :model-value="selectedKeys.has(itemObj.key)"
+                           :model-value="selectedKeys.includes(itemObj.key)"
                            @update:model-value="toggleSelection(itemObj.key)"
                            color="primary"
                            @click.stop
@@ -747,7 +649,7 @@ watch(open, (isOpen) => {
       <div class="flex justify-between items-center w-full">
         <div class="flex items-center gap-sm">
           <UButton
-             v-if="selectedKeys.size > 0"
+             v-if="selectedKeys.length > 0"
              icon="lucide:trash-2"
              label="Delete"
              color="error"
@@ -766,13 +668,6 @@ watch(open, (isOpen) => {
         </div>
 
         <div class="flex items-center gap-sm">
-          <UButton
-            icon="lucide:refresh-cw"
-            variant="ghost"
-            color="neutral"
-            :loading="status === 'pending'"
-            @click="refresh()"
-          />
           <UButton
             v-if="authPermissions.assets.canUpload.value"
             icon="lucide:upload"
@@ -804,8 +699,8 @@ watch(open, (isOpen) => {
       </div>
     </template>
     <template #footer>
-      <div class="flex justify-end gap-sm">
-        <UButton label="Cancel" color="neutral" variant="ghost" @click="showNewFolderModal = false" />
+      <div class="flex justify-between items-center w-full">
+        <UButton label="Cancel" color="error" variant="ghost" @click="showNewFolderModal = false" />
         <UButton label="Create Folder" color="primary" @click="confirmNewFolder" />
       </div>
     </template>
@@ -829,7 +724,7 @@ watch(open, (isOpen) => {
               :get-key="(i: any) => i.fullPath === '' ? 'Root' : i.fullPath"
               color="primary"
               variant="neutral"
-              selection-behavior="replace"
+              :multiple="false"
               class="w-full"
             />
           </div>
@@ -840,9 +735,9 @@ watch(open, (isOpen) => {
       </div>
     </template>
     <template #footer>
-      <div class="flex justify-end gap-sm">
-        <UButton label="Cancel" color="neutral" variant="ghost" @click="showMoveModal = false" />
-        <UButton label="Move Asset" color="primary" :loading="isUploading" @click="performMove" />
+      <div class="flex justify-between items-center w-full">
+        <UButton label="Cancel" color="error" variant="ghost" @click="showMoveModal = false" />
+        <UButton label="Move Asset" color="primary" :loading="isProcessing" @click="performMove" />
       </div>
     </template>
   </UModal>
@@ -865,7 +760,7 @@ watch(open, (isOpen) => {
               :get-key="(i: any) => i.fullPath === '' ? 'Root' : i.fullPath"
               color="primary"
               variant="neutral"
-              selection-behavior="replace"
+              :multiple="false"
               class="w-full"
             />
           </div>
@@ -873,9 +768,9 @@ watch(open, (isOpen) => {
       </div>
     </template>
     <template #footer>
-      <div class="flex justify-end gap-sm">
-        <UButton label="Cancel" color="neutral" variant="ghost" @click="showUploadModal = false" />
-        <UButton label="Start Upload" color="primary" :loading="isUploading" @click="performUpload" />
+      <div class="flex justify-between items-center w-full">
+        <UButton label="Cancel" color="error" variant="ghost" @click="showUploadModal = false" />
+        <UButton label="Start Upload" color="primary" :loading="isProcessing" @click="performUpload" />
       </div>
     </template>
   </UModal>
