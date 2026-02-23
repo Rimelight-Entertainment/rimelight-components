@@ -474,19 +474,6 @@ watch(open, (isOpen) => {
       header: 'flex items-center justify-between shrink-0'
     }"
   >
-    <template #actions>
-      <div v-if="selectedKeys.length > 0" class="flex items-center gap-sm bg-primary-500/10 px-sm py-1 rounded-full border border-primary-500/20">
-        <span class="text-xs font-bold text-primary-600 dark:text-primary-400">{{ t('modals.assetManager.toolbar.selected_count', { count: selectedKeys.length }) }}</span>
-        <UButton
-          icon="lucide:x"
-          size="xs"
-          variant="ghost"
-          color="neutral"
-          @click="selectedKeys = []"
-        />
-      </div>
-    </template>
-
     <template #body>
       <div :class="root({ class: rc.root })">
         <div :class="main()">
@@ -520,6 +507,23 @@ watch(open, (isOpen) => {
                 </template>
               </div>
               <div class="flex items-center gap-sm shrink-0 ml-md">
+                <div v-if="selectedKeys.length > 0" class="flex items-center gap-xs mr-sm">
+                  <span class="text-xs font-bold text-primary-600 dark:text-primary-400">{{ t('modals.assetManager.toolbar.selected_count', { count: selectedKeys.length }) }}</span>
+                  <UButton
+                    icon="lucide:trash-2"
+                    size="xs"
+                    variant="ghost"
+                    color="error"
+                    @click="batchDelete"
+                  />
+                  <UButton
+                    icon="lucide:x"
+                    size="xs"
+                    variant="ghost"
+                    color="neutral"
+                    @click="selectedKeys = []"
+                  />
+                </div>
                 <span class="text-[10px] text-dimmed uppercase">{{ t('modals.assetManager.toolbar.items_count', { count: gridItems.length }) }}</span>
                 <UButton
                   icon="lucide:rotate-ccw"
@@ -618,56 +622,60 @@ watch(open, (isOpen) => {
                     </div>
 
                     <div v-else :class="item()" class="drag-handle cursor-grab active:cursor-grabbing group">
-                      <!-- Selection (Top Left) -->
-                      <div
-                        class="absolute top-2 left-2 z-20 transition-opacity"
-                        :class="[selectedKeys.includes(itemObj.key) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']"
-                      >
-                         <UCheckbox
-                           :model-value="selectedKeys.includes(itemObj.key)"
-                           @update:model-value="toggleSelection(itemObj.key)"
-                           color="primary"
-                           @click.stop
-                         />
-                      </div>
+                      <!-- Card Header with Selection and Actions -->
+                      <div class="absolute top-sm left-0 right-0 z-20 flex items-center justify-between px-sm">
+                          <!-- Selection (Left) -->
+                          <div
+                            class="flex items-center transition-opacity"
+                            :class="[selectedKeys.includes(itemObj.key) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']"
+                          >
+                            <UCheckbox
+                              :model-value="selectedKeys.includes(itemObj.key)"
+                              @update:model-value="toggleSelection(itemObj.key)"
+                              color="primary"
+                              @click.stop
+                            />
+                          </div>
 
-                      <!-- Actions (Top Right) -->
-                      <div class="absolute top-2 right-2 flex gap-xs opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-1 rounded-md backdrop-blur-sm z-20">
-                        <UButton
-                          :title="t('modals.assetManager.item.copy_url')"
-                          icon="lucide:copy"
-                          size="xs"
-                          variant="ghost"
-                          color="neutral"
-                          class="text-white hover:bg-white/20"
-                          @click.stop="copyAssetUrl((itemObj as any).key)"
-                        />
-                        <UButton
-                          icon="lucide:download"
-                          size="xs"
-                          variant="ghost"
-                          color="neutral"
-                          class="text-white hover:bg-white/20"
-                          @click.stop="downloadAsset((itemObj as any).key)"
-                        />
-                        <UButton
-                          v-if="authPermissions.assets.canEdit.value"
-                          icon="lucide:pencil"
-                          size="xs"
-                          variant="ghost"
-                          color="neutral"
-                          class="text-white hover:bg-white/20"
-                          @click.stop="triggerMove(itemObj)"
-                        />
-                        <UButton
-                          v-if="authPermissions.assets.canDelete.value"
-                          icon="lucide:trash-2"
-                          size="xs"
-                          variant="ghost"
-                          color="error"
-                          class="hover:bg-error-500/20"
-                          @click.stop="deleteAsset((itemObj as any).key)"
-                        />
+                          <!-- Actions (Right) -->
+                          <div
+                            class="flex items-center transition-opacity"
+                            :class="[selectedKeys.includes(itemObj.key) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']"
+                          >
+                            <UFieldGroup size="xs">
+                              <UButton
+                                :title="t('modals.assetManager.item.copy_url')"
+                                icon="lucide:copy"
+                                variant="ghost"
+                                color="neutral"
+                                class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                                @click.stop="copyAssetUrl((itemObj as any).key)"
+                              />
+                              <UButton
+                                icon="lucide:download"
+                                variant="ghost"
+                                color="neutral"
+                                class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                                @click.stop="downloadAsset((itemObj as any).key)"
+                              />
+                              <UButton
+                                v-if="authPermissions.assets.canEdit.value"
+                                icon="lucide:pencil"
+                                variant="ghost"
+                                color="neutral"
+                                class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                                @click.stop="triggerMove(itemObj)"
+                              />
+                              <UButton
+                                v-if="authPermissions.assets.canDelete.value"
+                                icon="lucide:trash-2"
+                                variant="ghost"
+                                color="error"
+                                class="hover:bg-error-500/20 bg-black/60 backdrop-blur-sm"
+                                @click.stop="deleteAsset((itemObj as any).key)"
+                              />
+                            </UFieldGroup>
+                          </div>
                       </div>
 
                       <div :class="preview()">
@@ -711,14 +719,6 @@ watch(open, (isOpen) => {
     <template #footer>
       <div class="flex justify-between items-center w-full">
         <div class="flex items-center gap-sm">
-          <UButton
-             v-if="selectedKeys.length > 0"
-             icon="lucide:trash-2"
-             :label="t('modals.assetManager.actions.delete_selected')"
-             color="error"
-             variant="subtle"
-             @click="batchDelete"
-          />
           <UButton
             v-if="authPermissions.assets.canEdit.value"
             size="sm"
