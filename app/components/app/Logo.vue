@@ -66,7 +66,6 @@ type LogoVariants = VariantProps<typeof logoStyles>;
 /* endregion */
 
 /* region State */
-const attrs = useAttrs();
 const colorMode = useColorMode();
 const appConfig = useAppConfig();
 
@@ -130,13 +129,11 @@ defineOptions({
 
 <template>
   <NuxtLink
-    v-bind="attrs"
     :to="to"
-    :class="root({ class: [rc.root, attrs.class as any] })"
+    :class="root({ class: rc.root })"
     :aria-label="alt || variant"
   >
     <template v-if="logoSrc">
-      <!-- Using mode='svg' ensures the icon has an intrinsic aspect ratio, allowing w-auto to work -->
       <UIcon v-if="isIcon" :name="logoSrc" mode="svg" class="h-full w-auto block shrink-0" />
       <NuxtImg
         v-else

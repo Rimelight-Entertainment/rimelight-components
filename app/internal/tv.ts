@@ -1,8 +1,7 @@
 import { createTV } from "tailwind-variants";
-import type { defaultConfig } from "tailwind-variants";
-import type { AppConfig } from "@nuxt/schema";
-import appConfig from "#build/app.config";
 
-const appConfigTv = appConfig as AppConfig & { rimelightComponents: { tv: typeof defaultConfig } };
-
-export const tv = /* @__PURE__ */ createTV(appConfigTv.rimelightComponents?.tv);
+// Use a truly static/safe default for the library's TV instance.
+// Overrides can be passed via the components' local tv() calls if needed.
+export const tv = createTV({
+  twMerge: true,
+});

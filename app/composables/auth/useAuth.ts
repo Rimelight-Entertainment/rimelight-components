@@ -35,9 +35,10 @@ type PermissionsInput = Partial<{
 type AppRole = "user" | "member" | "admin" | "owner";
 
 export const useAuth = () => {
-  // 1. Initializing
+  // 1. Initializing (Sync)
   const nuxtApp = useNuxtApp() as unknown as NuxtAppWithAuth;
   const authClient = nuxtApp.$authClient;
+  const reqHeaders = import.meta.server ? useRequestHeaders(["cookie"]) : {};
 
   // 2. Refs
   const isLoading = useState("auth-loading", () => false);
@@ -47,40 +48,34 @@ export const useAuth = () => {
   const asyncData = useAsyncData(
     "auth-session",
     async () => {
+      // Server-side Logic
       if (import.meta.server) {
         try {
           const auth = nuxtApp.$auth;
-          if (!auth) {
-            console.warn("[SSR Auth] Auth provider not found.");
-            return null;
-          }
-          // useRequestHeaders must be called inside the async function or setup
-          const reqHeaders = useRequestHeaders(["cookie"]);
+          if (!auth) return null;
+
           return await auth.api.getSession({
             headers: new Headers(reqHeaders as any),
           });
         } catch (e) {
-          console.error("[SSR Auth] Session fetch failed:", e);
+          console.error("[SSR Auth] Session fetch failed", e);
           return null;
         }
       }
 
-      // Client side
+      // Client-side Logic
       if (!authClient) return null;
 
       try {
         const timeoutPromise = new Promise<null>((_, reject) =>
-          setTimeout(() => reject(new Error("Client auth timeout")), 8000),
+          setTimeout(() => reject(new Error("Auth timeout")), 5000),
         );
 
         const response = await Promise.race([authClient.getSession(), timeoutPromise]);
         const data = (response as any)?.data || response;
         return data?.user ? data : null;
       } catch (e) {
-        if (import.meta.client) {
-          console.error("Client auth session fetch failed:", e);
-        }
-        return null;
+        return null; // Silent fail on client background refresh
       }
     },
     {
@@ -93,6 +88,16 @@ export const useAuth = () => {
 
   // 4. Computed
   const user = computed(() => session.value?.user);
+
+  const checkPermission = (permissions: PermissionsInput) => {
+    const userRole = session.value?.user?.role as AppRole | undefined;
+    if (!userRole || !authClient) return false;
+
+    return authClient.organization.checkRolePermission({
+      permissions,
+      role: userRole,
+    });
+  };
 
   const permissions = {
     admin: {
@@ -130,21 +135,17 @@ export const useAuth = () => {
 
   // 5. Methods
   const signUp = async (input: SignUpInput, redirectTo?: string) => {
+    if (!authClient) return;
     isLoading.value = true;
     actionError.value = null;
     try {
-      if (!authClient) throw new Error("Auth client not initialized");
       const { data, error } = await authClient.signUp.email(input);
-
       if (error) {
         actionError.value = error;
         return { data, error };
       }
-
       await refresh();
-      if (redirectTo !== undefined) {
-        await navigateTo(redirectTo || "/");
-      }
+      if (redirectTo !== undefined) await navigateTo(redirectTo || "/");
       return { data, error: null };
     } catch (err) {
       actionError.value = err;
@@ -155,21 +156,17 @@ export const useAuth = () => {
   };
 
   const signIn = async (credentials: SignInInput, redirectTo?: string) => {
+    if (!authClient) return;
     isLoading.value = true;
     actionError.value = null;
     try {
-      if (!authClient) throw new Error("Auth client not initialized");
       const { data, error } = await authClient.signIn.email(credentials);
-
       if (error) {
         actionError.value = error;
         return { data, error };
       }
-
       await refresh();
-      if (redirectTo !== undefined) {
-        await navigateTo(redirectTo || "/");
-      }
+      if (redirectTo !== undefined) await navigateTo(redirectTo || "/");
       return { data, error: null };
     } catch (err) {
       actionError.value = err;
@@ -180,17 +177,15 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
+    if (!authClient) return;
     isLoading.value = true;
     actionError.value = null;
     try {
-      if (!authClient) throw new Error("Auth client not initialized");
       const { error } = await authClient.signOut();
-
       if (error) {
         actionError.value = error;
         return { error };
       }
-
       nuxtApp.runWithContext(() => clearNuxtData("auth-session"));
       await navigateTo("/");
       return { error: null };
@@ -200,18 +195,6 @@ export const useAuth = () => {
     } finally {
       isLoading.value = false;
     }
-  };
-
-  const checkPermission = (permissions: PermissionsInput) => {
-    const userRole = session.value?.user?.role as AppRole | undefined;
-
-    if (!userRole) return false;
-    if (!authClient) return false;
-
-    return authClient.organization.checkRolePermission({
-      permissions,
-      role: userRole,
-    });
   };
 
   return {
