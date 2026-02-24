@@ -38,39 +38,37 @@ export const useAuth = () => {
   // 1. Initializing
   const nuxtApp = useNuxtApp() as unknown as NuxtAppWithAuth;
   const authClient = nuxtApp.$authClient;
-  const headers = import.meta.server ? useRequestHeaders(["cookie"]) : ({} as HeadersInit);
 
   // 2. Refs
   const isLoading = useState("auth-loading", () => false);
   const actionError = useState<any>("auth-action-error", () => null);
 
   // 3. Data/Async (Session)
-  const {
-    data: session,
-    status,
-    refresh,
-    error: sessionError,
-  } = useAsyncData(
+  const asyncData = useAsyncData(
     "auth-session",
     async () => {
-      try {
-        if (import.meta.server) {
-          try {
-            const auth = nuxtApp.$auth;
-            if (!auth) {
-              console.warn("[SSR Auth] auth provider not found in Nuxt app context.");
-              return null;
-            }
-            return await auth.api.getSession({
-              headers: headers as HeadersInit,
-            });
-          } catch (e) {
-            console.error("[SSR Auth] Internal session fetch failed:", e);
+      if (import.meta.server) {
+        try {
+          const auth = nuxtApp.$auth;
+          if (!auth) {
+            console.warn("[SSR Auth] Auth provider not found.");
             return null;
           }
+          // useRequestHeaders must be called inside the async function or setup
+          const reqHeaders = useRequestHeaders(["cookie"]);
+          return await auth.api.getSession({
+            headers: new Headers(reqHeaders as any),
+          });
+        } catch (e) {
+          console.error("[SSR Auth] Session fetch failed:", e);
+          return null;
         }
+      }
 
-        // Client side
+      // Client side
+      if (!authClient) return null;
+
+      try {
         const timeoutPromise = new Promise<null>((_, reject) =>
           setTimeout(() => reject(new Error("Client auth timeout")), 8000),
         );
@@ -90,6 +88,8 @@ export const useAuth = () => {
       immediate: true,
     },
   );
+
+  const { data: session, status, refresh, error: sessionError } = asyncData;
 
   // 4. Computed
   const user = computed(() => session.value?.user);
@@ -133,6 +133,7 @@ export const useAuth = () => {
     isLoading.value = true;
     actionError.value = null;
     try {
+      if (!authClient) throw new Error("Auth client not initialized");
       const { data, error } = await authClient.signUp.email(input);
 
       if (error) {
@@ -157,6 +158,7 @@ export const useAuth = () => {
     isLoading.value = true;
     actionError.value = null;
     try {
+      if (!authClient) throw new Error("Auth client not initialized");
       const { data, error } = await authClient.signIn.email(credentials);
 
       if (error) {
@@ -181,6 +183,7 @@ export const useAuth = () => {
     isLoading.value = true;
     actionError.value = null;
     try {
+      if (!authClient) throw new Error("Auth client not initialized");
       const { error } = await authClient.signOut();
 
       if (error) {
@@ -203,6 +206,7 @@ export const useAuth = () => {
     const userRole = session.value?.user?.role as AppRole | undefined;
 
     if (!userRole) return false;
+    if (!authClient) return false;
 
     return authClient.organization.checkRolePermission({
       permissions,
@@ -215,6 +219,7 @@ export const useAuth = () => {
     session,
     user,
     permissions,
+    promise: asyncData,
 
     // State
     status,

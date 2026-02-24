@@ -7,7 +7,7 @@ import { defaultWindow } from "../../utils";
  * $api: For imperative calls (buttons, save actions, Pinia Colada)
  */
 export const $api = async <T>(path: string, opts: any = {}) => {
-  const config = (useNuxtApp() as any).$config || useRuntimeConfig();
+  const config = useRuntimeConfig();
   const apiBase = config.public.apiBase as string;
   const isTauri = config.public.isTauri as boolean;
 
@@ -61,7 +61,7 @@ export const useApi = <T>(
   path: string | (() => string),
   opts: UseFetchOptions<T> = {},
 ): AsyncData<T, Error | null> => {
-  const config = (useNuxtApp() as any).$config || useRuntimeConfig();
+  const config = useRuntimeConfig();
   const apiBase = config.public.apiBase as string;
   const isTauri = config.public.isTauri as boolean;
 

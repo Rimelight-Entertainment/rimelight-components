@@ -67,10 +67,10 @@ type LogoVariants = VariantProps<typeof logoStyles>;
 
 /* region State */
 const attrs = useAttrs();
-const nuxtApp = useNuxtApp();
+const colorMode = useColorMode();
 const appConfig = useAppConfig();
 
-const activeMode = computed(() => mode || (nuxtApp as any).$colorMode?.value || "dark");
+const activeMode = computed(() => mode || colorMode.value || "dark");
 
 const logoSrc = computed<string | null>(() => {
   const rcLogos = appConfig.rimelightComponents?.logos;
