@@ -22,6 +22,7 @@
     "./types": "./app/types/index.ts",
     "./utils": "./app/utils/index.ts",
     "./auth": "./shared/auth/index.ts",
+    "./auth/*": "./shared/auth/*",
     "./db": "./shared/db/index.ts",
     "./components/*": "./app/components/*"
   },

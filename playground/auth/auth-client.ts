@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/vue";
 import { adminClient, organizationClient } from "better-auth/client/plugins";
-import { ac, owner, admin, member, user } from "rimelight-components/auth";
+import { ac, owner, admin, member, user } from "rimelight-components/auth/permissions";
 
 export const authClient = createAuthClient({
   plugins: [

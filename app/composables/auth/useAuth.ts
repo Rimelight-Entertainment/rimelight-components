@@ -6,7 +6,7 @@ import {
   useRequestHeaders,
   useState,
 } from "#imports";
-import { statement } from "rimelight-components/auth";
+import { statement } from "rimelight-components/auth/statements";
 import { computed } from "vue";
 
 interface AuthInterface {
