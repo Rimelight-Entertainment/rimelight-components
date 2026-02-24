@@ -57,7 +57,7 @@ const slots = defineSlots<LogoSlots>();
 /* region Styles */
 const logoStyles = tv({
   slots: {
-    root: "inline-flex items-center justify-center transition-opacity hover:opacity-80 shrink-0 select-none overflow-hidden",
+    root: "flex items-center justify-center transition-opacity hover:opacity-80 shrink-0 select-none overflow-hidden",
   },
 });
 
@@ -65,7 +65,7 @@ const { root } = logoStyles();
 type LogoVariants = VariantProps<typeof logoStyles>;
 /* endregion */
 
-/* region State */
+const attrs = useAttrs();
 const colorMode = useColorMode();
 const appConfig = useAppConfig();
 
@@ -109,37 +109,25 @@ defineOptions({
 });
 /* endregion */
 
-/* region Lifecycle */
-// onMounted(() => {
-//
-// })
-//
-// watch(() => { }, (newValue, oldValue) => {
-//
-// })
-//
-// onUnmounted(() => {
-//
-// })
-/* endregion */
-
 /* region Logic */
 /* endregion */
 </script>
 
 <template>
   <NuxtLink
+    v-bind="attrs"
     :to="to"
-    :class="root({ class: rc.root })"
+    :class="root({ class: [rc.root, attrs.class as string] })"
     :aria-label="alt || variant"
   >
     <template v-if="logoSrc">
-      <UIcon v-if="isIcon" :name="logoSrc" mode="svg" class="h-full w-auto block shrink-0" />
+      <!-- Using mode='svg' ensures the icon has an intrinsic aspect ratio, allowing w-auto to work -->
+      <UIcon v-if="isIcon" :name="logoSrc" mode="svg" class="size-full block shrink-0" />
       <NuxtImg
         v-else
         :src="logoSrc"
         :alt="alt"
-        class="h-full w-auto block object-contain shrink-0"
+        class="size-full block object-contain shrink-0"
       />
     </template>
     <slot v-else />

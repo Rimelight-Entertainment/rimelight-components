@@ -6,10 +6,12 @@ export const useDashboard = () => {
   const authClient = (nuxtApp as any).$authClient;
   const route = useRoute();
 
-  // 1. Auth States
-  const activeOrgState = authClient?.useActiveOrganization?.();
+  const { session } = useAuth();
+
+  // 1. Auth States (Client-only, only if logged in)
+  const activeOrgState = (import.meta.client && session.value) ? authClient?.useActiveOrganization?.() : null;
   
-  const activeOrganization = computed(() => activeOrgState?.value?.data || null);
+  const activeOrganization = computed(() => (activeOrgState as any)?.value?.data || null);
 
   // 2. Team State (Client-side managed)
   const activeTeamId = useState<string | null>("dashboard:activeTeamId", () => null);
