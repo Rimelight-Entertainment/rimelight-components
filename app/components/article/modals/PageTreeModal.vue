@@ -89,6 +89,9 @@ const treeItems = computed<TreeItem[]>(() => {
   const nodeMap = new Map<string, TreeItem>();
   const rootNodes: TreeItem[] = [];
 
+  // Sanitize basePath (remove leading/trailing slashes)
+  const cleanBasePath = basePath ? basePath.replace(/^\/|\/$/g, "") : "";
+
   // Helper to get or create node
   const getNode = (path: string, partLabel: string, pageObj?: Pick<Page, "title" | "slug">) => {
     if (!nodeMap.has(path)) {
@@ -109,24 +112,35 @@ const treeItems = computed<TreeItem[]>(() => {
       const node = nodeMap.get(path)!;
       node.label = getLocalizedContent(pageObj.title, locale.value) || node.label;
       node.slug = pageObj.slug;
-      node.icon = "lucide:file-text"; // distinct icon for page that might have children
+      node.icon = "lucide:file-text";
     }
     return nodeMap.get(path)!;
   };
 
   // Iterate over all pages to build the tree
   pages.forEach((page) => {
-    let relativeSlug = page.slug;
-
-    if (basePath && page.slug.startsWith(basePath)) {
-      relativeSlug = page.slug.slice(basePath.length).replace(/^\//, "");
+    // Sanitize current slug
+    const cleanSlug = page.slug.replace(/^\/|\/$/g, "");
+    
+    let relativePath = cleanSlug;
+    if (cleanBasePath && cleanSlug.startsWith(cleanBasePath)) {
+      relativePath = cleanSlug.slice(cleanBasePath.length).replace(/^\//, "");
+    } else if (cleanBasePath) {
+      // If it doesn't start with basePath but we HAVE a basePath, 
+      // check if it's the basePath itself
+      if (cleanSlug === cleanBasePath) {
+        relativePath = "";
+      } else {
+        // Just show it as is, maybe under a separate root or ignored if strictly filtering
+        // For now, we keep it as is.
+      }
     }
 
-    const parts = relativeSlug.split("/").filter(Boolean);
+    const parts = relativePath.split("/").filter(Boolean);
 
     // If empty after slicing (meaning the page is exactly the basePath)
     if (parts.length === 0) {
-      const node = getNode("/", "Home", page);
+      const node = getNode("__root__", "Overview", page);
       if (!rootNodes.includes(node)) rootNodes.push(node);
       return;
     }
@@ -146,7 +160,7 @@ const treeItems = computed<TreeItem[]>(() => {
           rootNodes.push(node);
         }
       } else {
-        if (parent && !parent.children?.includes(node)) {
+        if (parent && !parent.children?.some(c => c.path === node.path)) {
           if (!parent.children) parent.children = [];
           parent.children.push(node);
         }
@@ -164,15 +178,18 @@ const treeItems = computed<TreeItem[]>(() => {
       // so the parent can act as a folder (toggle only) and the child as the page link.
       if (node.slug && node.children && node.children.length > 0) {
         const indexNode: TreeItem = {
-          label: node.label, // Or t('common.overview') / same name
+          label: `Overview: ${node.label}`,
           slug: node.slug,
           path: `${node.path}:index`,
           icon: "lucide:file-text",
           children: [],
         };
-        node.children.unshift(indexNode);
+        // Avoid duplicate index nodes if re-processing (though computed should be fresh)
+        if (!node.children.some(c => c.path === indexNode.path)) {
+          node.children.unshift(indexNode);
+        }
 
-        // Convert parent to folder-only
+        // Convert parent to folder-only in UI
         node.slug = undefined;
         node.icon = "lucide:folder";
       }
