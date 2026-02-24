@@ -54,6 +54,7 @@ export const getLocalizedContent = <T = string>(
 
 /**
  * Ensures a page strictly adheres to its PageDefinition.
+ * Syncs properties and templated blocks.
  */
 export function syncPageWithDefinition(page: Page, definition?: PageDefinition): Page {
   if (!definition) return page;
@@ -88,9 +89,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
       if (existingGroup) {
         // 1. Check if it's already hydrated: group.fields[fieldId].defaultValue
         if (
-          existingGroup.fields &&
-          existingGroup.fields[fieldId] &&
-          existingGroup.fields[fieldId].defaultValue !== undefined
+          existingGroup.fields?.[fieldId]?.defaultValue !== undefined
         ) {
           value = existingGroup.fields[fieldId].defaultValue;
         }
@@ -109,7 +108,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
       }
 
       updatedGroupFields[fieldId] = {
-        ...JSON.parse(JSON.stringify(definitionField)),
+        ...(JSON.parse(JSON.stringify(definitionField)) as Property),
         defaultValue: value,
       };
     }
@@ -121,6 +120,60 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
   }
 
   page.properties = updatedProperties as any;
+
+  // 2. Sync Blocks
+  if (definition.initialBlocks) {
+    const templateBlocks = definition.initialBlocks();
+    const currentBlocks = page.blocks || [];
+
+    const isSameBlock = (a: any, b: any) => {
+      if (a.id === b.id) return true;
+      if (a.type !== b.type) return false;
+      // Heuristic for SectionBlocks: match by title
+      if (a.type === "SectionBlock" && b.type === "SectionBlock") {
+        return a.props.title === b.props.title;
+      }
+      return false;
+    };
+
+    const definitionTemplatedBlocks = templateBlocks.filter((b) => b.isTemplated);
+
+    // Filter existing blocks: keep user blocks and valid templated blocks
+    let updatedBlocks = currentBlocks.filter((b) => {
+      if (!b.isTemplated) return true;
+      return definitionTemplatedBlocks.some((db) => isSameBlock(b, db));
+    });
+
+    // Add missing templated blocks or update existing ones
+    for (const db of definitionTemplatedBlocks) {
+      const existingIdx = updatedBlocks.findIndex((b) => isSameBlock(b, db));
+      const dbIndexAtStart = templateBlocks.findIndex((b) => b.id === db.id);
+
+      if (existingIdx === -1) {
+        // Missing templated block, add it at its prescribed position
+        updatedBlocks.splice(dbIndexAtStart, 0, { ...db });
+      } else {
+        // Update existing templated block (sync properties if needed)
+        const existing = updatedBlocks[existingIdx]!;
+        const updated = {
+          ...existing,
+          ...db,
+          props: {
+            ...db.props,
+          },
+        } as any;
+
+        // Preserve children if it's a section
+        if (existing.type === "SectionBlock" && db.type === "SectionBlock") {
+          updated.props.children = existing.props.children || db.props.children || [];
+        }
+
+        updatedBlocks[existingIdx] = updated;
+      }
+    }
+
+    page.blocks = updatedBlocks;
+  }
 
   return page;
 }
