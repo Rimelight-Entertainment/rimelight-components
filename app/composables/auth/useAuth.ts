@@ -35,25 +35,24 @@ type PermissionsInput = Partial<{
 type AppRole = "user" | "member" | "admin" | "owner";
 
 export const useAuth = () => {
-  // 1. Initializing (Sync)
   const nuxtApp = useNuxtApp() as unknown as NuxtAppWithAuth;
   const authClient = nuxtApp.$authClient;
-  const reqHeaders = import.meta.server ? useRequestHeaders(["cookie"]) : {};
-
-  // 2. Refs
+  
+  // 1. Shared State
   const isLoading = useState("auth-loading", () => false);
   const actionError = useState<any>("auth-action-error", () => null);
 
-  // 3. Data/Async (Session)
+  // 2. Main Session Fetch (Singleton per request)
   const asyncData = useAsyncData(
     "auth-session",
     async () => {
-      // Server-side Logic
+      // Server-side
       if (import.meta.server) {
-        try {
-          const auth = nuxtApp.$auth;
-          if (!auth) return null;
+        const auth = nuxtApp.$auth;
+        if (!auth) return null;
 
+        const reqHeaders = useRequestHeaders(["cookie"]);
+        try {
           return await auth.api.getSession({
             headers: new Headers(reqHeaders as any),
           });
@@ -63,19 +62,14 @@ export const useAuth = () => {
         }
       }
 
-      // Client-side Logic
+      // Client-side
       if (!authClient) return null;
-
       try {
-        const timeoutPromise = new Promise<null>((_, reject) =>
-          setTimeout(() => reject(new Error("Auth timeout")), 5000),
-        );
-
-        const response = await Promise.race([authClient.getSession(), timeoutPromise]);
+        const response = await authClient.getSession();
         const data = (response as any)?.data || response;
         return data?.user ? data : null;
       } catch (e) {
-        return null; // Silent fail on client background refresh
+        return null; 
       }
     },
     {
@@ -86,7 +80,7 @@ export const useAuth = () => {
 
   const { data: session, status, refresh, error: sessionError } = asyncData;
 
-  // 4. Computed
+  // 3. Computed
   const user = computed(() => session.value?.user);
 
   const checkPermission = (permissions: PermissionsInput) => {
@@ -133,7 +127,7 @@ export const useAuth = () => {
     },
   };
 
-  // 5. Methods
+  // 4. Actions
   const signUp = async (input: SignUpInput, redirectTo?: string) => {
     if (!authClient) return;
     isLoading.value = true;
@@ -198,19 +192,14 @@ export const useAuth = () => {
   };
 
   return {
-    // Data
     session,
     user,
     permissions,
     promise: asyncData,
-
-    // State
     status,
     isLoading,
     sessionError,
     actionError,
-
-    // Actions
     signUp,
     signIn,
     signOut,
