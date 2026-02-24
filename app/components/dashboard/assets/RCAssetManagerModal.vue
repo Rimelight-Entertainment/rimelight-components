@@ -12,13 +12,12 @@ import { defaultWindow } from "../../../utils";
 import { useAppConfig } from "#imports";
 
 /* region Props */
-export interface RCAssetManagerModalProps {
+const { rc: rcProp, selectionMode = false } = defineProps<{
   rc?: {
     root?: string;
   };
-}
-
-const { rc: rcProp } = defineProps<RCAssetManagerModalProps>();
+  selectionMode?: boolean;
+}>();
 const { rc } = useRC("RCAssetManagerModal", rcProp);
 const { t } = useI18n();
 const { copy } = useClipboard();
@@ -28,10 +27,10 @@ const appConfig = useAppConfig();
 /* endregion */
 
 /* region Emits */
-export interface RCAssetManagerModalEmits {
+const emit = defineEmits<{
   close: [];
-}
-const emit = defineEmits<RCAssetManagerModalEmits>();
+  select: [key: string];
+}>();
 /* endregion */
 
 /* region Styles */
@@ -667,6 +666,15 @@ watch(open, (isOpen) => {
                             >
                               <UFieldGroup size="xs">
                                 <UButton
+                                  v-if="selectionMode"
+                                  :title="t('common.select', 'Select')"
+                                  icon="lucide:check"
+                                  variant="ghost"
+                                  color="primary"
+                                  class="text-white hover:bg-primary-500/20 bg-primary-600/60 backdrop-blur-sm"
+                                  @click.stop="emit('select', (itemObj as any).key)"
+                                />
+                                <UButton
                                   :title="t('modals.assetManager.item.copy_url')"
                                   icon="lucide:copy"
                                   variant="ghost"
@@ -767,14 +775,23 @@ watch(open, (isOpen) => {
                           ]"
                         >
                           <UFieldGroup size="xs">
-                            <UButton
-                              :title="t('modals.assetManager.item.copy_url')"
-                              icon="lucide:copy"
-                              variant="ghost"
-                              color="neutral"
-                              class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
-                              @click.stop="copyAssetUrl((itemObj as any).key)"
-                            />
+                                <UButton
+                                  v-if="selectionMode"
+                                  :title="t('common.select', 'Select')"
+                                  icon="lucide:check"
+                                  variant="ghost"
+                                  color="primary"
+                                  class="text-white hover:bg-primary-500/20 bg-primary-600/60 backdrop-blur-sm"
+                                  @click.stop="emit('select', (itemObj as any).key)"
+                                />
+                                <UButton
+                                  :title="t('modals.assetManager.item.copy_url')"
+                                  icon="lucide:copy"
+                                  variant="ghost"
+                                  color="neutral"
+                                  class="text-white hover:bg-white/20 bg-black/60 backdrop-blur-sm"
+                                  @click.stop="copyAssetUrl((itemObj as any).key)"
+                                />
                             <UButton
                               icon="lucide:download"
                               variant="ghost"

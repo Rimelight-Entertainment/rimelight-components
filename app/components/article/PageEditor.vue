@@ -191,6 +191,10 @@ const versionSelectorRef = useTemplateRef<{ fetchVersions: () => Promise<void> }
   "version-selector",
 );
 
+// Asset management state
+const isAssetModalOpen = ref(false);
+const assetSelectionTarget = ref<"banner" | null>(null);
+
 const currentDefinition = computed(() => {
   if (!page.value?.type || !pageDefinitions) return null;
   return pageDefinitions[page.value.type];
@@ -404,6 +408,33 @@ const handleTreeNavigate = (slug: string) => {
   }
 };
 
+const openAssetPicker = (target: "banner") => {
+  assetSelectionTarget.value = target;
+  isAssetModalOpen.value = true;
+};
+
+const onAssetSelected = (key: string) => {
+  const encodedKey = key
+    .split("/")
+    .map((seg) => encodeURIComponent(seg))
+    .join("/");
+  const src = `/api/assets/${encodedKey}`;
+
+  if (assetSelectionTarget.value === "banner") {
+    page.value.banner = {
+      src,
+      alt: getLocalizedContent(page.value.title, locale.value) || "Banner",
+    };
+  }
+
+  isAssetModalOpen.value = false;
+  assetSelectionTarget.value = null;
+};
+
+const removeBanner = () => {
+  page.value.banner = undefined;
+};
+
 defineExpose({
   undo,
   redo,
@@ -556,12 +587,45 @@ defineExpose({
           />
 
           <div :class="contentWrapper({ class: rc.contentWrapper })">
-            <RCImage
-              v-if="page.banner?.src"
-              :src="page.banner?.src"
-              :alt="page.banner?.alt"
-              :class="banner({ class: rc.banner })"
-            />
+            <div
+              class="w-full relative group/banner aspect-[5/1] xl:aspect-[6/1] rounded-xl overflow-hidden bg-muted mb-sm border border-default"
+            >
+              <RCImage
+                v-if="page.banner?.src"
+                :src="page.banner?.src"
+                :alt="page.banner?.alt"
+                :class="banner({ class: rc.banner })"
+                class="absolute inset-0 size-full object-cover"
+              />
+              <div
+                v-else
+                class="flex flex-col items-center justify-center h-full text-dimmed gap-1 opacity-50 group-hover/banner:opacity-100 transition-opacity"
+              >
+                <UIcon name="lucide:image" class="size-8" />
+                <span class="text-xs uppercase font-bold tracking-wider">{{
+                  t("page_editor.add_banner", "Add Banner")
+                }}</span>
+              </div>
+              <div
+                class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/banner:opacity-100 transition-opacity"
+              >
+                <UButton
+                  :icon="page.banner?.src ? 'lucide:pencil' : 'lucide:plus'"
+                  size="xs"
+                  variant="solid"
+                  color="neutral"
+                  @click="openAssetPicker('banner')"
+                />
+                <UButton
+                  v-if="page.banner?.src"
+                  icon="lucide:trash-2"
+                  size="xs"
+                  variant="solid"
+                  color="error"
+                  @click="removeBanner"
+                />
+              </div>
+            </div>
 
             <UPageHeader :headline="t(getTypeLabelKey(page.type))" :ui="{ root: 'pt-0' }">
               <template #title>
@@ -717,6 +781,11 @@ defineExpose({
     :base-path="basePath"
     :loading="isFetchingTree"
     @navigate="handleTreeNavigate"
+  />
+  <RCAssetManagerModal
+    v-model:open="isAssetModalOpen"
+    selection-mode
+    @select="onAssetSelected"
   />
   <RCConfirmModal />
 </template>

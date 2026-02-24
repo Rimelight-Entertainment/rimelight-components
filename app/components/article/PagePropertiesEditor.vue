@@ -154,6 +154,17 @@ const linkDraft = reactive<Partial<Link>>({
   color: "neutral",
   variant: "link",
 });
+
+// Asset management state
+const isAssetModalOpen = ref(false);
+const assetSelectionTarget = ref<"icon" | "images" | "property-image" | null>(null);
+const activePropertySchema = ref<any>(null);
+
+// Image naming state
+const isNamingModalOpen = ref(false);
+const editingImageIndex = ref<number | null>(null);
+const pendingImageSrc = ref("");
+const imageDraftName = ref("");
 /* endregion */
 
 /* region Meta */
@@ -276,6 +287,79 @@ function normalizePageArrayValue(val: any) {
   if (!Array.isArray(val)) return [];
   return val.map((v) => normalizePageValue(v));
 }
+
+function openAssetPicker(target: "icon" | "images") {
+  assetSelectionTarget.value = target;
+  isAssetModalOpen.value = true;
+}
+
+function onAssetSelected(key: string) {
+  const encodedKey = key
+    .split("/")
+    .map((seg) => encodeURIComponent(seg))
+    .join("/");
+  const src = `/api/assets/${encodedKey}`;
+
+  if (assetSelectionTarget.value === "icon") {
+    page.value.icon = { src, alt: page.value.title.en || "Icon" };
+  } else if (assetSelectionTarget.value === "images") {
+    const images = page.value.images;
+    const index = editingImageIndex.value;
+    if (images && index !== null) {
+      const targetImg = images[index];
+      if (targetImg) {
+        targetImg.src = src;
+      }
+    } else {
+      pendingImageSrc.value = src;
+      imageDraftName.value = "";
+      isNamingModalOpen.value = true;
+    }
+  }
+
+  isAssetModalOpen.value = false;
+  assetSelectionTarget.value = null;
+}
+
+function openImageEditor(index: number) {
+  const img = page.value.images?.[index];
+  if (!img) return;
+
+  editingImageIndex.value = index;
+  pendingImageSrc.value = img.src;
+  imageDraftName.value = getLocalizedContent(img.name, locale.value) || "";
+  isNamingModalOpen.value = true;
+}
+
+function confirmImageAddition() {
+  if (!page.value.images) page.value.images = [];
+
+  const imageData = {
+    src: pendingImageSrc.value,
+    alt: page.value.title.en || "Page Image",
+    name: { en: imageDraftName.value || `Image ${page.value.images.length + 1}` },
+  };
+
+  if (editingImageIndex.value !== null) {
+    page.value.images[editingImageIndex.value] = {
+      ...page.value.images[editingImageIndex.value],
+      ...imageData,
+    };
+  } else {
+    page.value.images.push(imageData);
+  }
+
+  isNamingModalOpen.value = false;
+  editingImageIndex.value = null;
+  pendingImageSrc.value = "";
+  imageDraftName.value = "";
+}
+
+function removeImage(index: number) {
+  if (page.value.images) {
+    page.value.images.splice(index, 1);
+  }
+}
 /* endregion */
 </script>
 
@@ -291,36 +375,50 @@ function normalizePageArrayValue(val: any) {
     >
       <template #header>
         <div :class="headerContent()">
-          <RCImage
-            v-if="page.icon?.src"
-            :src="page.icon?.src"
-            :alt="page.icon?.alt"
-            :class="iconClass({ class: rc.icon })"
-          />
 
-          <UInput
-            v-model="page.title.en"
-            variant="subtle"
-            placeholder="Enter page title..."
-            size="xl"
-            :ui="{ base: 'text-center font-bold text-lg' }"
-            :class="titleInputClass({ class: rc.titleInput })"
-          />
+            <div class="relative group/icon mb-xs">
+              <RCImage
+                v-if="page.icon?.src"
+                :src="page.icon?.src"
+                :alt="page.icon?.alt"
+                :class="iconClass({ class: rc.icon })"
+              />
+              <div v-else class="w-12 h-12 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-default">
+                <UIcon name="lucide:image" class="size-6 text-dimmed" />
+              </div>
+              <UButton
+                icon="lucide:pencil"
+                size="xs"
+                variant="solid"
+                color="neutral"
+                class="absolute -bottom-1 -right-1 opacity-0 group-hover/icon:opacity-100 transition-opacity rounded-full p-1"
+                @click="openAssetPicker('icon')"
+              />
+            </div>
 
-          <UInput
-            v-model="page.slug"
-            variant="subtle"
-            placeholder="page-slug"
-            size="xs"
-            :ui="{ base: 'text-center text-dimmed font-mono' }"
-            :class="slugInput()"
-          >
-            <template #leading>
-              <span class="text-gray-500 dark:text-gray-400 text-xs text-dimmed">/</span>
-            </template>
-          </UInput>
+            <UInput
+              v-model="page.title.en"
+              variant="subtle"
+              placeholder="Enter page title..."
+              size="xl"
+              :ui="{ base: 'text-center font-bold text-lg' }"
+              :class="titleInputClass({ class: rc.titleInput })"
+            />
 
-          <span :class="typeClass({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
+            <UInput
+              v-model="page.slug"
+              variant="subtle"
+              placeholder="page-slug"
+              size="xs"
+              :ui="{ base: 'text-center text-dimmed font-mono' }"
+              :class="slugInput()"
+            >
+              <template #leading>
+                <span class="text-gray-500 dark:text-gray-400 text-xs text-dimmed">/</span>
+              </template>
+            </UInput>
+
+            <span :class="typeClass({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
 
           <div v-if="page.tags?.length" :class="tagsClass({ class: rc.tags })">
             <UBadge
@@ -334,31 +432,83 @@ function normalizePageArrayValue(val: any) {
             </UBadge>
           </div>
 
-          <div v-if="page.images?.length" class="w-full">
-            <UTabs
-              v-if="page.images.length > 1"
-              :items="imageTabs"
-              default-value="image-0"
-              variant="link"
-              size="xs"
-              color="neutral"
-              :class="tabsClass({ class: rc.tabs })"
-            >
-              <template #content="{ item }">
+          <div class="w-full flex flex-col gap-xs mt-sm">
+            <div class="flex items-center justify-between pointer-events-auto px-xs">
+              <span class="text-[10px] font-bold uppercase text-dimmed">{{
+                t("page_properties.images", "Images")
+              }}</span>
+              <UButton
+                icon="lucide:plus"
+                size="xs"
+                variant="ghost"
+                color="primary"
+                @click="openAssetPicker('images')"
+              />
+            </div>
+            <div v-if="page.images?.length" class="w-full">
+              <UTabs
+                v-if="page.images.length > 1"
+                :items="imageTabs"
+                default-value="image-0"
+                variant="link"
+                size="xs"
+                color="neutral"
+                :class="tabsClass({ class: rc.tabs })"
+              >
+                <template #content="{ item }">
+                  <div class="relative group/image-tab">
+                    <RCImage
+                      :src="item.img.src"
+                      :alt="item.img.alt"
+                      :class="imageClass({ class: rc.image })"
+                    />
+                    <div
+                      class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover/image-tab:opacity-100 transition-opacity"
+                    >
+                      <UButton
+                        icon="lucide:pencil"
+                        size="xs"
+                        variant="solid"
+                        color="neutral"
+                        @click="openImageEditor(imageTabs.indexOf(item))"
+                      />
+                      <UButton
+                        icon="lucide:trash-2"
+                        size="xs"
+                        variant="solid"
+                        color="error"
+                        @click="removeImage(imageTabs.indexOf(item))"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </UTabs>
+
+              <div v-else-if="page.images[0]" class="relative group/image-tab">
                 <RCImage
-                  :src="item.img.src"
-                  :alt="item.img.alt"
+                  :src="page.images[0].src"
+                  :alt="page.images[0].alt"
                   :class="imageClass({ class: rc.image })"
                 />
-              </template>
-            </UTabs>
-
-            <div v-else-if="page.images[0]">
-              <RCImage
-                :src="page.images[0].src"
-                :alt="page.images[0].alt"
-                :class="imageClass({ class: rc.image })"
-              />
+                <div
+                  class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover/image-tab:opacity-100 transition-opacity"
+                >
+                  <UButton
+                    icon="lucide:pencil"
+                    size="xs"
+                    variant="solid"
+                    color="neutral"
+                    @click="openImageEditor(0)"
+                  />
+                  <UButton
+                    icon="lucide:trash-2"
+                    size="xs"
+                    variant="solid"
+                    color="error"
+                    @click="removeImage(0)"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -610,6 +760,7 @@ function normalizePageArrayValue(val: any) {
                       'warning',
                       'success',
                       'info',
+                      'info',
                     ]"
                     class="w-full"
                   />
@@ -644,6 +795,72 @@ function normalizePageArrayValue(val: any) {
               </div>
             </template>
           </UCard>
+        </template>
+      </UModal>
+
+      <!-- Asset Manager Picker -->
+      <RCAssetManagerModal
+        v-model:open="isAssetModalOpen"
+        selection-mode
+        @select="onAssetSelected"
+      />
+
+      <!-- Image Naming Modal -->
+      <UModal
+        v-model:open="isNamingModalOpen"
+        :title="
+          editingImageIndex !== null
+            ? t('page_properties.edit_image_title', 'Edit Image')
+            : t('page_properties.image_name_title', 'Name Image')
+        "
+      >
+        <template #body>
+          <div class="flex flex-col gap-md">
+            <div class="relative group/edit-preview aspect-video rounded-md overflow-hidden bg-muted border border-default">
+              <RCImage
+                v-if="pendingImageSrc"
+                :src="pendingImageSrc"
+                class="size-full object-cover"
+              />
+              <UButton
+                icon="lucide:pencil"
+                size="xs"
+                variant="solid"
+                color="neutral"
+                class="absolute top-2 right-2 opacity-0 group-hover/edit-preview:opacity-100 transition-opacity"
+                @click="openAssetPicker('images')"
+              />
+            </div>
+
+            <UFormField :label="t('page_properties.image_name', 'Image Name')">
+              <UInput
+                v-model="imageDraftName"
+                :placeholder="t('page_properties.image_name_placeholder', 'Enter image name...')"
+                autofocus
+                @keydown.enter="confirmImageAddition"
+              />
+            </UFormField>
+          </div>
+        </template>
+        <template #footer>
+          <div class="flex justify-end gap-sm">
+            <UButton
+              :label="t('common.cancel')"
+              variant="ghost"
+              color="neutral"
+              @click="
+                () => {
+                  isNamingModalOpen = false;
+                  editingImageIndex = null;
+                }
+              "
+            />
+            <UButton
+              :label="editingImageIndex !== null ? t('common.save') : t('common.add')"
+              color="primary"
+              @click="confirmImageAddition"
+            />
+          </div>
         </template>
       </UModal>
     </div>

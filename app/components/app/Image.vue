@@ -104,12 +104,14 @@ defineOptions({
 
 /* region Lifecycle */
 onMounted(() => {
-  if (imgElement.value?.$el) {
-    const el = imgElement.value.$el;
-    if (el.complete) {
-      updateMetadata(el);
+  nextTick(() => {
+    if (imgElement.value?.$el) {
+      const el = imgElement.value.$el;
+      if (el.complete) {
+        updateMetadata(el);
+      }
     }
-  }
+  });
 });
 
 watch(open, (isOpen) => {
@@ -192,7 +194,8 @@ function updateMetadata(el: HTMLImageElement | null) {
   }
 }
 
-function handleImageLoad(event: Event) {
+function handleImageLoad(event: Event, isExpanded = false) {
+  if (isExpanded) return;
   updateMetadata(event.currentTarget as HTMLImageElement);
 }
 
@@ -228,7 +231,7 @@ async function downloadImage() {
   >
     <template #default>
       <slot name="trigger" :open="() => (open = true)">
-        <div class="relative">
+        <div class="relative inline-block" @click.stop="open = true">
           <NuxtImg
             ref="imgRef"
             :src="src"
@@ -238,8 +241,7 @@ async function downloadImage() {
             :loading="loading"
             :style="{ objectFit: fit }"
             :class="base({ isExpanded: false, class: rc.base })"
-            @click="open = true"
-            @load="handleImageLoad"
+            @load="handleImageLoad($event, false)"
           />
         </div>
       </slot>
@@ -254,7 +256,7 @@ async function downloadImage() {
             :alt="alt"
             :style="{ objectFit: 'contain' }"
             :class="base({ isExpanded: true, class: rc.base })"
-            @load="handleImageLoad"
+            @load="handleImageLoad($event, true)"
           />
         </div>
 
@@ -295,8 +297,5 @@ async function downloadImage() {
     </template>
   </UModal>
 </template>
-
-<style scoped></style>
-
 
 <style scoped></style>
