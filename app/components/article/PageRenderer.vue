@@ -182,10 +182,10 @@ function getLabel(key: string) {
             :pageType="getTypeLabelKey(page.type)"
             :previousTitle="getLocalizedContent(previousPage?.title, locale)"
             :previousDescription="getLocalizedContent(previousPage?.description, locale)"
-            :previousTo="`/${previousPage?.slug}`"
+            :previousTo="previousPage?.slug ? `/${previousPage.slug}` : undefined"
             :nextTitle="getLocalizedContent(nextPage?.title, locale)"
             :nextDescription="getLocalizedContent(nextPage?.description, locale)"
-            :nextTo="`/${nextPage?.slug}`"
+            :nextTo="nextPage?.slug ? `/${nextPage.slug}` : undefined"
           />
 
           <USeparator />

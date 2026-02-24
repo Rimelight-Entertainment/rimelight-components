@@ -71,6 +71,7 @@ const editUrl = computed(() => {
 
   const s = route.params.slug;
   const slugParam = Array.isArray(s) ? s.join("/") : (s as string);
+  if (!slugParam) return `${base}/edit`;
   return `${base}/${slugParam}/edit`;
 });
 
