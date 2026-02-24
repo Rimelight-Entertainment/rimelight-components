@@ -131,7 +131,7 @@ const moveTargetFolder = ref("");
 const fileInput = ref<HTMLInputElement | null>(null);
 
 const modalUploadTargetValue = computed({
-  get: () => [(uploadTargetFolder.value === "" || uploadTargetFolder.value === "/") ? "Root" : uploadTargetFolder.value],
+  get: () => findNodeByPath(uploadTargetFolder.value, treeItems.value) || treeItems.value[0],
   set: (val: any) => {
     const selected = Array.isArray(val) ? val[0] : val;
     if (!selected) return;
@@ -141,7 +141,7 @@ const modalUploadTargetValue = computed({
 });
 
 const modalMoveTargetValue = computed({
-  get: () => [(moveTargetFolder.value === "" || moveTargetFolder.value === "/") ? "Root" : moveTargetFolder.value],
+  get: () => findNodeByPath(moveTargetFolder.value, treeItems.value) || treeItems.value[0],
   set: (val: any) => {
     const selected = Array.isArray(val) ? val[0] : val;
     if (!selected) return;
@@ -155,6 +155,18 @@ const modalMoveTargetValue = computed({
 interface TreeItemExtended extends TreeItem {
   fullPath: string;
   children?: TreeItemExtended[];
+}
+
+function findNodeByPath(path: string, nodes: TreeItemExtended[]): TreeItemExtended | undefined {
+  const normalizedPath = (path === "/" || path === "Root" || !path) ? "" : path;
+  for (const node of nodes) {
+    if (node.fullPath === normalizedPath) return node;
+    if (node.children?.length) {
+      const found = findNodeByPath(normalizedPath, node.children);
+      if (found) return found;
+    }
+  }
+  return undefined;
 }
 
 const treeItems = computed<TreeItemExtended[]>(() => {
@@ -220,24 +232,11 @@ const treeItems = computed<TreeItemExtended[]>(() => {
 });
 
 const currentNode = computed(() => {
-  if (selectedPath.value === "") return treeItems.value[0];
-
-  const search = (nodes: TreeItemExtended[], path: string): TreeItemExtended | null => {
-    for (const node of nodes) {
-      if (node.fullPath === path) return node;
-      if (node.children) {
-        const found = search(node.children, path);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
-
-  return search(treeItems.value, selectedPath.value);
+  return findNodeByPath(selectedPath.value, treeItems.value) || treeItems.value[0];
 });
 
 const activeTreeValue = computed({
-  get: () => [(selectedPath.value === "" || selectedPath.value === "/") ? "Root" : selectedPath.value],
+  get: () => currentNode.value,
   set: (val: any) => {
     const selected = Array.isArray(val) ? val[0] : val;
     if (!selected) return;
@@ -513,7 +512,7 @@ watch(open, (isOpen) => {
                     size="xs"
                     variant="ghost"
                     color="error"
-                    @click="batchDelete"
+                    @click="() => { batchDelete(); }"
                   />
                   <UButton
                     icon="lucide:x"
