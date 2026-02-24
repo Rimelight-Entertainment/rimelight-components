@@ -129,7 +129,7 @@ export const useAuth = () => {
 
   // 4. Actions
   const signUp = async (input: SignUpInput, redirectTo?: string) => {
-    if (!authClient) return;
+    if (!authClient) return { data: null, error: null };
     isLoading.value = true;
     actionError.value = null;
     try {
@@ -150,7 +150,7 @@ export const useAuth = () => {
   };
 
   const signIn = async (credentials: SignInInput, redirectTo?: string) => {
-    if (!authClient) return;
+    if (!authClient) return { data: null, error: null };
     isLoading.value = true;
     actionError.value = null;
     try {
@@ -171,7 +171,7 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
-    if (!authClient) return;
+    if (!authClient) return { data: null, error: null };
     isLoading.value = true;
     actionError.value = null;
     try {
