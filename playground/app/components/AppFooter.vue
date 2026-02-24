@@ -127,7 +127,7 @@ function onLocaleUpdate(newLocale: string | undefined) {
 </script>
 
 <template>
-  <RCFooter :contain="false" :class="root()">
+  <RCFooter :contain="false" :rc="{ center: 'lg:items-start' }" :class="root()">
     <template #left>
       <RCNewsletterSignup :class="signup()" />
       <div :class="branding()">
