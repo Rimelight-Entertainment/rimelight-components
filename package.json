@@ -1,6 +1,8 @@
 {
   "name": "rimelight-components",
-  "version": "2.2.8",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
   "description": "A component library by Rimelight Entertainment.",
   "keywords": [
     "nuxt",
@@ -14,7 +16,6 @@
     "type": "git",
     "url": "git+https://github.com/Rimelight-Entertainment/rimelight-components.git"
   },
-  "type": "module",
   "main": "./nuxt.config.ts",
   "exports": {
     ".": "./nuxt.config.ts",
@@ -46,11 +47,11 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@nuxt/a11y": "1.0.0-alpha.1",
     "@nuxt/icon": "^2.2.1",
+    "@nuxt/content": "^3.11.2",
     "@nuxt/image": "^2.0.0",
-    "@nuxt/kit": "^4.3.1",
-    "@nuxt/ui": "^4.4.0",
+    "@nuxt/scripts": "^0.13.2",
+    "@nuxt/ui": "^4.5.0",
     "@nuxtjs/device": "^4.0.0",
     "@nuxtjs/i18n": "^10.2.3",
     "@vueuse/nuxt": "^14.2.1",
@@ -58,9 +59,12 @@
     "chroma-js": "^3.2.0",
     "date-fns": "^4.1.0",
     "defu": "^6.1.4",
+    "motion-v": "^2.0.0",
+    "nuxt": "^4.3.1",
+    "nuxt-og-image": "^5.1.13",
     "tailwind-merge": "^3.4.0",
     "tailwind-variants": "^3.2.2",
-    "tailwindcss": "^4.1.18",
+    "tailwindcss": "^4.2.1",
     "uuid": "^13.0.0",
     "vuedraggable": "^4.1.0"
   },
@@ -68,7 +72,8 @@
     "@commitlint/cli": "^20.4.1",
     "@commitlint/config-conventional": "^20.4.1",
     "@iconify-json/lucide": "^1.2.90",
-    "@nuxt/devtools": "^3.2.1",
+    "@nuxt/devtools": "^3.2.2",
+    "@nuxt/a11y": "^1.0.0-alpha.1",
     "@nuxt/schema": "^4.3.1",
     "@nuxt/test-utils": "^3.23.0",
     "@tauri-apps/plugin-http": "^2.5.7",
@@ -76,18 +81,19 @@
     "@types/node": "^25.2.3",
     "@vueuse/core": "^14.2.1",
     "husky": "^9.1.7",
-    "nuxt": "4.3.0",
-    "oxfmt": "^0.28.0",
-    "oxlint": "^1.47.0",
+    "oxfmt": "^0.35.0",
+    "oxlint": "^1.50.0",
+    "sharp": "^0.34.5",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
     "vue-i18n-extract": "^2.0.7",
-    "vue-tsc": "^3.2.4"
+    "vue-tsc": "^3.2.5",
+    "wrangler": "^4.68.1"
   },
   "peerDependencies": {
     "@nuxt/image": "^2.0.0",
-    "@nuxt/ui": "^4.4.0",
-    "@nuxtjs/i18n": "^10.2.1",
+    "@nuxt/ui": "^4.5.0",
+    "@nuxtjs/i18n": "^10.2.3",
     "@tauri-apps/plugin-http": "^2.5.7",
     "@vueuse/core": "^14.2.0",
     "@vueuse/nuxt": "^14.2.0",
@@ -95,13 +101,5 @@
     "nuxt": "4.3.0",
     "vue": "^3.5.27",
     "zod": "^4.3.6"
-  },
-  "trustedDependencies": [
-    "@parcel/watcher",
-    "@tailwindcss/oxide",
-    "esbuild",
-    "sharp",
-    "vue-demi",
-    "workerd"
-  ]
+  }
 }

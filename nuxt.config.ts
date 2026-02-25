@@ -9,40 +9,16 @@ const currentDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineNuxtConfig({
   compatibilityDate: "2026-02-13",
-  alias: {
-    "#rimelight-components/types": resolve(currentDir, "app/types"),
-    "#rimelight-components/utils": resolve(currentDir, "app/utils"),
-    "rimelight-components/types": resolve(currentDir, "app/types"),
-    "rimelight-components/utils": resolve(currentDir, "app/utils"),
-    "#rimelight-components/validators": resolve(currentDir, "shared/validators"),
-    "rimelight-components/validators": resolve(currentDir, "shared/validators"),
-    "#rimelight-components/auth": resolve(currentDir, "shared/auth"),
-    "rimelight-components/auth": resolve(currentDir, "shared/auth"),
-    "#rimelight-components/db": resolve(currentDir, "shared/db"),
-    "rimelight-components/db": resolve(currentDir, "shared/db"),
-    "#rimelight-components/composables": resolve(currentDir, "app/composables"),
-    "rimelight-components/composables": resolve(currentDir, "app/composables"),
-    "rimelight-components": currentDir,
+  future: {
+    compatibilityVersion: 5,
   },
-  $env: {
-    development: {
-      devtools: { enabled: true },
-      devServer: { host: "127.0.0.1", port: 3000 },
-      typescript: { typeCheck: false },
-      a11y: {
-        defaultHighlight: false,
-        logIssues: false,
-      },
-    },
-  },
-  devtools: { enabled: true },
-  devServer: { host: "127.0.0.1", port: 3000 },
+
   modules: [
+    "@nuxt/a11y",
     "@nuxt/ui",
     "@nuxt/icon",
     "@nuxt/image",
     "@nuxtjs/i18n",
-    "@nuxt/a11y",
     "@vueuse/nuxt",
     "@nuxtjs/device",
     function (options, nuxt) {
@@ -87,18 +63,62 @@ export default defineNuxtConfig({
       });
     },
   ],
+
+  ignore: ["**/src-tauri/**"],
+
+  $development: {
+    devtools: { enabled: true },
+    // Change to true in case the issue gets resolved: https://github.com/fi3ework/vite-plugin-checker/issues/557
+    typescript: { typeCheck: false },
+    a11y: {
+      enabled: true,
+      defaultHighlight: false,
+      logIssues: false,
+    },
+    site: { indexable: false },
+  },
+
+  $test: {
+    devtools: { enabled: true },
+  },
+
+  $production: {
+    devtools: { enabled: false },
+    typescript: { typeCheck: false },
+    nitro: {
+      compressPublicAssets: true,
+      minify: true,
+    },
+    // Switch to true on release
+    site: { url: "https://rimelight-components.com", indexable: false },
+    robots: {
+      blockAiBots: true,
+      blockNonSeoBots: true,
+      disallow: ["/dashboard"],
+    },
+    a11y: {
+      enabled: false,
+    },
+  },
+
+  alias: {
+    "#rimelight-components/types": resolve(currentDir, "app/types"),
+    "#rimelight-components/utils": resolve(currentDir, "app/utils"),
+    "rimelight-components/types": resolve(currentDir, "app/types"),
+    "rimelight-components/utils": resolve(currentDir, "app/utils"),
+    "#rimelight-components/validators": resolve(currentDir, "shared/validators"),
+    "rimelight-components/validators": resolve(currentDir, "shared/validators"),
+    "#rimelight-components/auth": resolve(currentDir, "shared/auth"),
+    "rimelight-components/auth": resolve(currentDir, "shared/auth"),
+    "#rimelight-components/db": resolve(currentDir, "shared/db"),
+    "rimelight-components/db": resolve(currentDir, "shared/db"),
+    "#rimelight-components/composables": resolve(currentDir, "app/composables"),
+    "rimelight-components/composables": resolve(currentDir, "app/composables"),
+    "rimelight-components": currentDir,
+  },
   appConfig: {
     rimelightComponents: defaultOptions,
   },
-  components: [
-    {
-      path: resolve(currentDir, "app/components"),
-      pathPrefix: false,
-      prefix: "RC",
-      global: false,
-      ignore: ["**/index.*"],
-    },
-  ],
   experimental: {
     viteEnvironmentApi: false,
     typescriptPlugin: true,
@@ -162,18 +182,98 @@ export default defineNuxtConfig({
       },
     ],
   },
+
   i18n: {
+    strategy: "prefix_except_default",
+    defaultLocale: "en",
+    file: resolve(currentDir, "app/locales/en.json"),
     locales: [
+      //{
+      //  code: "ar",
+      //  name: "العربية",
+      //  file: "ar.json"
+      //},
       {
         code: "en",
-        file: resolve(currentDir, "app/locales/en.json"),
+        name: "English",
+        file: "en.json",
+      },
+      //{
+      //  code: "es",
+      //  name: "Español",
+      //  file: "es.json"
+      //},
+      //{
+      //  code: "fr",
+      //  name: "Français",
+      //  file: "fr.json"
+      //},
+      //{
+      //  code: "ja",
+      //  name: "日本語",
+      //  file: "ja.json"
+      //},
+      //{
+      //  code: "ko",
+      //  name: "한국어",
+      //  file: "ko.json"
+      //},
+      {
+        code: "pt",
+        name: "Português",
+        file: "pt.json",
+      },
+      //{
+      //  code: "ro",
+      //  name: "Română",
+      //  file: "ro.json"
+      //},
+      //{
+      //  code: "zh_cn",
+      //  name: "简体中文",
+      //  file: "zh_cn.json"
+      //}
+    ],
+  },
+
+  css: [resolve(currentDir, "app/assets/css/index.css")],
+
+  components: [
+    {
+      path: resolve(currentDir, "app/components"),
+      pathPrefix: false,
+      prefix: "RC",
+      global: false,
+      ignore: ["**/index.*"],
+    },
+  ],
+
+  pages: {
+    pattern: ["**/*.vue", "!**/components/**"],
+  },
+
+  image: {
+    format: ["webp"],
+    provider: "cloudflare",
+    cloudflare: {
+      baseURL: "https://cdn.rimelight-components.com",
+    },
+  },
+
+  icon: {
+    class: "icon",
+    size: "24px",
+    customCollections: [
+      {
+        prefix: "first-party",
+        dir: "./app/assets/icons/first-party",
+        normalizeIconName: false,
+      },
+      {
+        prefix: "third-party",
+        dir: "./app/assets/icons/third-party",
+        normalizeIconName: false,
       },
     ],
-    defaultLocale: "en",
-    strategy: "no_prefix",
-  },
-  css: [resolve(currentDir, "app/assets/css/index.css")],
-  future: {
-    compatibilityVersion: 5,
   },
 });
