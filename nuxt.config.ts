@@ -186,53 +186,18 @@ export default defineNuxtConfig({
   i18n: {
     strategy: "prefix_except_default",
     defaultLocale: "en",
-    file: resolve(currentDir, "app/locales/en.json"),
+    langDir: resolve(currentDir, "app/locales"),
     locales: [
-      //{
-      //  code: "ar",
-      //  name: "العربية",
-      //  file: "ar.json"
-      //},
       {
         code: "en",
         name: "English",
         file: "en.json",
       },
-      //{
-      //  code: "es",
-      //  name: "Español",
-      //  file: "es.json"
-      //},
-      //{
-      //  code: "fr",
-      //  name: "Français",
-      //  file: "fr.json"
-      //},
-      //{
-      //  code: "ja",
-      //  name: "日本語",
-      //  file: "ja.json"
-      //},
-      //{
-      //  code: "ko",
-      //  name: "한국어",
-      //  file: "ko.json"
-      //},
       {
         code: "pt",
         name: "Português",
         file: "pt.json",
       },
-      //{
-      //  code: "ro",
-      //  name: "Română",
-      //  file: "ro.json"
-      //},
-      //{
-      //  code: "zh_cn",
-      //  name: "简体中文",
-      //  file: "zh_cn.json"
-      //}
     ],
   },
 
