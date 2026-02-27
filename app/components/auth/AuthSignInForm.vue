@@ -9,13 +9,34 @@ import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface AuthSignInFormProps {
+  recovery?: boolean;
+  terms?: boolean;
+  remember?: boolean;
   rc?: {
     root?: string;
-    content?: string;
+    form?: string;
+    input?: string;
+    label?: string;
+    description?: string;
+    help?: string;
+    button?: string;
+    submit?: string;
+    rememberCheckbox?: string;
+    rememberCheckboxIndicator?: string;
+    rememberText?: string;
+    emailField?: string;
+    passwordWrapper?: string;
+    footerWrapper?: string;
+    termsLink?: string;
   };
 }
 
-const { rc } = defineProps<AuthSignInFormProps>();
+const {
+  recovery = true,
+  terms = true,
+  remember = true,
+  rc,
+} = defineProps<AuthSignInFormProps>();
 /* endregion */
 
 /* region Emits */
@@ -38,8 +59,16 @@ const slots = defineSlots<AuthSignInFormSlots>();
 const authSignInFormStyles = tv({
   slots: {
     root: "w-full flex flex-col gap-lg max-w-md",
-    form: "flex flex-col gap-md",
+    form: "flex flex-col gap-md text-left",
     input: "w-full",
+    label: "",
+    description: "text-sm text-dimmed",
+    help: "text-xs text-dimmed",
+    button: "",
+    submit: "",
+    rememberCheckbox: "",
+    rememberCheckboxIndicator: "",
+    rememberText: "",
     emailField: "text-black",
     passwordWrapper: "flex flex-col gap-sm",
     footerWrapper: "text-center text-sm text-black",
@@ -47,8 +76,23 @@ const authSignInFormStyles = tv({
   },
 });
 
-const { root, form, input, emailField, passwordWrapper, footerWrapper, termsLink } =
-  authSignInFormStyles();
+const {
+  root,
+  form,
+  input,
+  label: labelStyles,
+  description: descriptionStyles,
+  help: helpStyles,
+  button: buttonStyles,
+  submit: submitStyles,
+  rememberCheckbox: rememberCheckboxStyles,
+  rememberCheckboxIndicator: rememberCheckboxIndicatorStyles,
+  rememberText: rememberTextStyles,
+  emailField,
+  passwordWrapper,
+  footerWrapper,
+  termsLink,
+} = authSignInFormStyles();
 type AuthSignInFormVariants = VariantProps<typeof authSignInFormStyles>;
 /* endregion */
 
@@ -69,7 +113,7 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Partial<Schema>>({
   email: "",
   password: "",
-  rememberMe: true,
+  rememberMe: remember,
 });
 
 const showPassword = ref(false);
@@ -126,20 +170,30 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <div :class="root()">
-    <UForm :schema="schema" :state="state" :class="form()" @submit="onSubmit">
+  <div :class="root({ class: rc?.root })">
+    <UForm
+      :schema="schema"
+      :state="state"
+      :class="form({ class: rc?.form })"
+      @submit="onSubmit"
+    >
       <UFormField
         :label="t('auth_email_label')"
         name="email"
         :description="t('auth_email_description')"
         required
-        :class="emailField()"
+        :class="emailField({ class: rc?.emailField })"
+        :ui="{
+          label: labelStyles({ class: rc?.label }),
+          description: descriptionStyles({ class: rc?.description }),
+          help: helpStyles({ class: rc?.help }),
+        }"
       >
         <UInput
           v-model="state.email"
           type="email"
           :placeholder="t('auth_email_placeholder')"
-          :class="input()"
+          :class="input({ class: rc?.input })"
         >
           <template v-if="state.email?.length" #trailing>
             <UButton
@@ -152,9 +206,11 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             />
           </template>
         </UInput>
-        <template #help>
+        <template v-if="recovery" #help>
           <slot name="email-help">
-            <ULink to="/auth/recovery">{{ t("auth_sign-in_email_help") }}</ULink>
+            <ULink to="/auth/recovery" :class="helpStyles({ class: rc?.help })">
+              {{ t("auth_sign-in_email_help") }}
+            </ULink>
           </slot>
         </template>
       </UFormField>
@@ -163,13 +219,18 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         name="password"
         :description="t('auth_password_description')"
         required
+        :ui="{
+          label: labelStyles({ class: rc?.label }),
+          description: descriptionStyles({ class: rc?.description }),
+          help: helpStyles({ class: rc?.help }),
+        }"
       >
-        <div :class="passwordWrapper()">
+        <div :class="passwordWrapper({ class: rc?.passwordWrapper })">
           <UInput
             v-model="state.password"
             :type="showPassword ? 'text' : 'password'"
             placeholder="••••••••••••••••"
-            :class="input()"
+            :class="input({ class: rc?.input })"
           >
             <template #trailing>
               <UButton
@@ -185,13 +246,25 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             </template>
           </UInput>
         </div>
-        <template #help>
+        <template v-if="recovery" #help>
           <slot name="password-help">
-            <ULink to="/auth/recovery">{{ t("auth_sign-in_password_help") }}</ULink>
+            <ULink to="/auth/recovery" :class="helpStyles({ class: rc?.help })">
+              {{ t("auth_sign-in_password_help") }}
+            </ULink>
           </slot>
         </template>
       </UFormField>
-      <UCheckbox v-model="state.rememberMe" name="rememberMe" :label="t('auth_remember_me')" />
+      <UCheckbox
+        v-if="remember"
+        v-model="state.rememberMe"
+        name="rememberMe"
+        :label="t('auth_remember_me')"
+        :ui="{
+          base: rememberCheckboxStyles({ class: rc?.rememberCheckbox }),
+          label: rememberTextStyles({ class: rc?.rememberText }),
+          indicator: rememberCheckboxIndicatorStyles({ class: rc?.rememberCheckboxIndicator }),
+        }"
+      />
       <UButton
         color="primary"
         variant="solid"
@@ -200,12 +273,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         block
         :loading="isLoading"
         :disabled="isLoading"
+        :class="submitStyles({ class: rc?.submit || rc?.button })"
       />
     </UForm>
-    <slot name="footer">
-      <span :class="footerWrapper()">
+    <slot v-if="terms" name="footer">
+      <span :class="footerWrapper({ class: rc?.footerWrapper })">
         {{ t("auth_terms_agreement") }}
-        <ULink to="/documents/terms-of-service" :class="termsLink()">
+        <ULink to="/documents/terms-of-service" :class="termsLink({ class: rc?.termsLink })">
           {{ t("auth_terms_link") }} </ULink
         >.
       </span>
