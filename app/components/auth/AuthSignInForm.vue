@@ -31,12 +31,7 @@ export interface AuthSignInFormProps {
   };
 }
 
-const {
-  recovery = true,
-  terms = true,
-  remember = true,
-  rc,
-} = defineProps<AuthSignInFormProps>();
+const { recovery = true, terms = true, remember = true, rc } = defineProps<AuthSignInFormProps>();
 /* endregion */
 
 /* region Emits */
@@ -171,12 +166,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
 <template>
   <div :class="root({ class: rc?.root })">
-    <UForm
-      :schema="schema"
-      :state="state"
-      :class="form({ class: rc?.form })"
-      @submit="onSubmit"
-    >
+    <UForm :schema="schema" :state="state" :class="form({ class: rc?.form })" @submit="onSubmit">
       <UFormField
         :label="t('auth_email_label')"
         name="email"

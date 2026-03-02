@@ -2,9 +2,9 @@ import { defineEventHandler, getRouterParam, getHeader, createError, readRawBody
 
 export default defineEventHandler(async (event) => {
   const reqUrl = event.node.req.url || "";
-  const url = new URL(reqUrl, 'http://localhost');
-  const pathParts = url.pathname.split('/api/assets/');
-  const key = (pathParts.length > 1 && pathParts[1]) ? decodeURIComponent(pathParts[1]) : null;
+  const url = new URL(reqUrl, "http://localhost");
+  const pathParts = url.pathname.split("/api/assets/");
+  const key = pathParts.length > 1 && pathParts[1] ? decodeURIComponent(pathParts[1]) : null;
 
   if (!key) {
     throw createError({ statusCode: 400, statusMessage: "Missing key" });
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const contentType = getHeader(event, "content-type");
-  
+
   const buffer = await readRawBody(event, false);
   if (!buffer) {
     throw createError({ statusCode: 400, statusMessage: "Empty body" });

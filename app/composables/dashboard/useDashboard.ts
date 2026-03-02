@@ -9,15 +9,16 @@ export const useDashboard = () => {
   const { session } = useAuth();
 
   // 1. Auth States (Client-only, only if logged in)
-  const activeOrgState = (import.meta.client && session.value) ? authClient?.useActiveOrganization?.() : null;
-  
+  const activeOrgState =
+    import.meta.client && session.value ? authClient?.useActiveOrganization?.() : null;
+
   const activeOrganization = computed(() => (activeOrgState as any)?.value?.data || null);
 
   // 2. Team State (Client-side managed)
   const activeTeamId = useState<string | null>("dashboard:activeTeamId", () => null);
-  
+
   // We'll need the list of teams to resolve the full team object
-  // This is a bit tricky since useDashboard is a composable. 
+  // This is a bit tricky since useDashboard is a composable.
   // We'll rely on the caller or a shared state if needed, but for now let's provide a way to set ID.
   const setActiveTeam = (id: string | null) => {
     activeTeamId.value = id;

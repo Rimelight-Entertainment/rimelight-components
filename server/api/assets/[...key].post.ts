@@ -3,8 +3,8 @@ import { defineEventHandler, createError, readBody, getRouterParam } from "h3";
 export default defineEventHandler(async (event) => {
   const cloudflare = (event.context as any).cloudflare;
   const reqUrl = event.node.req.url || "";
-  const url = new URL(reqUrl, 'http://localhost');
-  const pathParts = url.pathname.split('/api/assets/');
+  const url = new URL(reqUrl, "http://localhost");
+  const pathParts = url.pathname.split("/api/assets/");
   const key = pathParts.length > 1 ? decodeURIComponent(pathParts[1]!) : null;
 
   if (!cloudflare || !key) {
@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 500,
       statusMessage: err.message || "Failed to move/rename asset",
-      data: { error: err.toString(), from: key, to }
+      data: { error: err.toString(), from: key, to },
     });
   }
 });

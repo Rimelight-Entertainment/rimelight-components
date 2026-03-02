@@ -104,7 +104,11 @@ defineOptions({
 </script>
 
 <template>
-  <NuxtLink v-if="linkedPage && linkedPage.slug" :to="`/${linkedPage.slug}`" :class="linkClass({ class: rc.link })">
+  <NuxtLink
+    v-if="linkedPage && linkedPage.slug"
+    :to="`/${linkedPage.slug}`"
+    :class="linkClass({ class: rc.link })"
+  >
     <NuxtImg
       v-if="linkedPage.icon?.src"
       :src="linkedPage.icon.src"

@@ -50,9 +50,7 @@ export interface UsePaginatedPagesReturn {
  * })
  * ```
  */
-export function usePaginatedPages(
-  options: UsePaginatedPagesOptions,
-): UsePaginatedPagesReturn {
+export function usePaginatedPages(options: UsePaginatedPagesOptions): UsePaginatedPagesReturn {
   const {
     key,
     type = "Default" as PageType,

@@ -123,12 +123,7 @@ defineOptions({
     <template v-if="logoSrc">
       <!-- Using mode='svg' ensures the icon has an intrinsic aspect ratio, allowing w-auto to work -->
       <UIcon v-if="isIcon" :name="logoSrc" mode="svg" class="size-full block shrink-0" />
-      <NuxtImg
-        v-else
-        :src="logoSrc"
-        :alt="alt"
-        class="size-full block object-contain shrink-0"
-      />
+      <NuxtImg v-else :src="logoSrc" :alt="alt" class="size-full block object-contain shrink-0" />
     </template>
     <slot v-else />
   </NuxtLink>

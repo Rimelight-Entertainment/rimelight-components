@@ -83,7 +83,10 @@ const expandedImgElement = useTemplateRef<{ $el: HTMLImageElement }>("expandedIm
 const internalMetadata = reactive({
   width: initialMetadata?.width ?? 0,
   height: initialMetadata?.height ?? 0,
-  size: typeof initialMetadata?.size === "number" ? formatBytes(initialMetadata.size) : (initialMetadata?.size ?? ""),
+  size:
+    typeof initialMetadata?.size === "number"
+      ? formatBytes(initialMetadata.size)
+      : (initialMetadata?.size ?? ""),
   format: initialMetadata?.format ?? "",
   mimeType: "",
 });
@@ -116,12 +119,12 @@ onMounted(() => {
 
 watch(open, (isOpen) => {
   if (isOpen && (!internalMetadata.width || !internalMetadata.size)) {
-     // Try to fetch metadata if missing when opened
-     if (expandedImgElement.value?.$el) {
-       updateMetadata(expandedImgElement.value.$el);
-     } else {
-       fetchExtendedMetadata();
-     }
+    // Try to fetch metadata if missing when opened
+    if (expandedImgElement.value?.$el) {
+      updateMetadata(expandedImgElement.value.$el);
+    } else {
+      fetchExtendedMetadata();
+    }
   }
 });
 
@@ -179,7 +182,7 @@ async function fetchExtendedMetadata() {
   } catch (e) {
     console.warn("Metadata fetch failed:", e);
     if (!internalMetadata.format) {
-       internalMetadata.format = src.split(".").pop()?.toUpperCase() || "IMG";
+      internalMetadata.format = src.split(".").pop()?.toUpperCase() || "IMG";
     }
   }
 }
@@ -286,7 +289,9 @@ async function downloadImage() {
               <UIcon name="lucide:image-upscale" class="size-4" />
               <p class="text-sm">
                 Dimensions:
-                <span class="text-dimmed">{{ displayMetadata.width }} × {{ displayMetadata.height }}</span>
+                <span class="text-dimmed"
+                  >{{ displayMetadata.width }} × {{ displayMetadata.height }}</span
+                >
               </p>
             </div>
           </div>

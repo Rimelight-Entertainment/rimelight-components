@@ -53,7 +53,7 @@ const selectedOrganization = computed(() => {
 
 const items = computed(() => {
   const orgs = organizations.value || [];
-  
+
   const list = orgs.map((org: any) => ({
     label: org.name,
     avatar: org.logo
@@ -104,8 +104,15 @@ defineOptions({
         color="neutral"
         v-bind="{
           label: collapsed ? undefined : selectedOrganization?.name || 'Personal Workspace',
-          avatar: selectedOrganization?.logo ? { src: selectedOrganization.logo, alt: selectedOrganization.name } : undefined,
-          icon: (!selectedOrganization?.logo && selectedOrganization?.name) ? 'lucide:building' : (selectedOrganization?.name ? undefined : 'lucide:user'),
+          avatar: selectedOrganization?.logo
+            ? { src: selectedOrganization.logo, alt: selectedOrganization.name }
+            : undefined,
+          icon:
+            !selectedOrganization?.logo && selectedOrganization?.name
+              ? 'lucide:building'
+              : selectedOrganization?.name
+                ? undefined
+                : 'lucide:user',
           trailingIcon: collapsed ? undefined : 'lucide:chevrons-up-down',
         }"
         variant="ghost"

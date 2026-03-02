@@ -121,12 +121,12 @@ const treeItems = computed<TreeItem[]>(() => {
   pages.forEach((page) => {
     // Sanitize current slug
     const cleanSlug = page.slug.replace(/^\/|\/$/g, "");
-    
+
     let relativePath = cleanSlug;
     if (cleanBasePath && cleanSlug.startsWith(cleanBasePath)) {
       relativePath = cleanSlug.slice(cleanBasePath.length).replace(/^\//, "");
     } else if (cleanBasePath) {
-      // If it doesn't start with basePath but we HAVE a basePath, 
+      // If it doesn't start with basePath but we HAVE a basePath,
       // check if it's the basePath itself
       if (cleanSlug === cleanBasePath) {
         relativePath = "";
@@ -160,7 +160,7 @@ const treeItems = computed<TreeItem[]>(() => {
           rootNodes.push(node);
         }
       } else {
-        if (parent && !parent.children?.some(c => c.path === node.path)) {
+        if (parent && !parent.children?.some((c) => c.path === node.path)) {
           if (!parent.children) parent.children = [];
           parent.children.push(node);
         }
@@ -185,7 +185,7 @@ const treeItems = computed<TreeItem[]>(() => {
           children: [],
         };
         // Avoid duplicate index nodes if re-processing (though computed should be fresh)
-        if (!node.children.some(c => c.path === indexNode.path)) {
+        if (!node.children.some((c) => c.path === indexNode.path)) {
           node.children.unshift(indexNode);
         }
 

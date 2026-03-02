@@ -44,37 +44,45 @@ const { activeOrganization, activeTeamId, setActiveTeam } = useDashboard();
 const activeOrgId = computed(() => activeOrganization.value?.id);
 
 // 1. Fetch only teams the user is a part of
-const { data: userTeamsRes, refresh: refreshUserTeams } = useAsyncData('user-membership-teams', async () => {
+const { data: userTeamsRes, refresh: refreshUserTeams } = useAsyncData(
+  "user-membership-teams",
+  async () => {
     if (!authClient?.organization?.listUserTeams) return [];
     const { data } = await authClient.organization.listUserTeams();
     return data || [];
-}, {
-    watch: [activeOrgId], 
-    default: () => []
-});
+  },
+  {
+    watch: [activeOrgId],
+    default: () => [],
+  },
+);
 
 // 2. Filter teams by the active organization
 const teams = computed(() => {
-    const allUserTeams = userTeamsRes.value || [];
-    if (!activeOrgId.value) return [];
-    return allUserTeams.filter((team: any) => team.organizationId === activeOrgId.value);
+  const allUserTeams = userTeamsRes.value || [];
+  if (!activeOrgId.value) return [];
+  return allUserTeams.filter((team: any) => team.organizationId === activeOrgId.value);
 });
 
 // 3. Current selection
 const selectedTeam = computed(() => {
-    if (activeTeamId.value) {
-        const found = teams.value.find((t: any) => t.id === activeTeamId.value);
-        if (found) return found;
-    }
-    return teams.value[0] || null;
+  if (activeTeamId.value) {
+    const found = teams.value.find((t: any) => t.id === activeTeamId.value);
+    if (found) return found;
+  }
+  return teams.value[0] || null;
 });
 
 // Auto-select first team if none selected
-watch(teams, (newTeams) => {
+watch(
+  teams,
+  (newTeams) => {
     if (newTeams.length > 0 && !activeTeamId.value) {
-        setActiveTeam(newTeams[0].id);
+      setActiveTeam(newTeams[0].id);
     }
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
 const items = computed(() => {
   const list = teams.value.map((team: any) => ({
@@ -116,8 +124,15 @@ defineOptions({
         color="neutral"
         v-bind="{
           label: collapsed ? undefined : selectedTeam?.name,
-          avatar: selectedTeam?.logo ? { src: selectedTeam.logo, alt: selectedTeam.name } : undefined,
-          icon: (!selectedTeam?.logo && selectedTeam?.name) ? 'lucide:users' : (selectedTeam?.name ? undefined : 'lucide:users'),
+          avatar: selectedTeam?.logo
+            ? { src: selectedTeam.logo, alt: selectedTeam.name }
+            : undefined,
+          icon:
+            !selectedTeam?.logo && selectedTeam?.name
+              ? 'lucide:users'
+              : selectedTeam?.name
+                ? undefined
+                : 'lucide:users',
           trailingIcon: collapsed ? undefined : 'lucide:chevrons-up-down',
         }"
         variant="ghost"

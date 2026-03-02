@@ -88,9 +88,7 @@ export function syncPageWithDefinition(page: Page, definition?: PageDefinition):
 
       if (existingGroup) {
         // 1. Check if it's already hydrated: group.fields[fieldId].defaultValue
-        if (
-          existingGroup.fields?.[fieldId]?.defaultValue !== undefined
-        ) {
+        if (existingGroup.fields?.[fieldId]?.defaultValue !== undefined) {
           value = existingGroup.fields[fieldId].defaultValue;
         }
         // 2. Check if it's flat in a group: group[fieldId]

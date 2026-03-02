@@ -32,7 +32,8 @@ const {
 
 const resolvedFieldLabel = title ?? fieldLabel ?? "Subscribe to our Newsletter";
 const resolvedButtonLabel = submit ?? buttonLabel ?? "Subscribe";
-const resolvedDescription = description ?? "Stay updated on new posts and updates. Unsubscribe at any time.";
+const resolvedDescription =
+  description ?? "Stay updated on new posts and updates. Unsubscribe at any time.";
 
 const { rc } = useRC("NewsletterSignup", rcProp);
 /* endregion */
@@ -99,7 +100,12 @@ defineOptions({
 
 <template>
   <UForm>
-    <UFormField name="email" :label="resolvedFieldLabel" :description="resolvedDescription" :ui="{ label: rc.label, description: rc.description }">
+    <UFormField
+      name="email"
+      :label="resolvedFieldLabel"
+      :description="resolvedDescription"
+      :ui="{ label: rc.label, description: rc.description }"
+    >
       <UFieldGroup :class="group({ class: rc.group })">
         <UInput type="email" :placeholder="placeholder" :class="rc.input" />
         <UButton type="submit" :label="resolvedButtonLabel" :class="rc.button" />

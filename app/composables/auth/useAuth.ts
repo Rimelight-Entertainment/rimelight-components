@@ -37,7 +37,7 @@ type AppRole = "user" | "member" | "admin" | "owner";
 export const useAuth = () => {
   const nuxtApp = useNuxtApp() as unknown as NuxtAppWithAuth;
   const authClient = nuxtApp.$authClient;
-  
+
   // 1. Shared State
   const isLoading = useState("auth-loading", () => false);
   const actionError = useState<any>("auth-action-error", () => null);
@@ -69,7 +69,7 @@ export const useAuth = () => {
         const data = (response as any)?.data || response;
         return data?.user ? data : null;
       } catch (e) {
-        return null; 
+        return null;
       }
     },
     {
@@ -139,7 +139,11 @@ export const useAuth = () => {
         return { data, error };
       }
       await refresh();
-      if (redirectTo !== undefined) await navigateTo(redirectTo || "/");
+      if (redirectTo !== undefined && redirectTo !== "undefined") {
+        await navigateTo(redirectTo || "/");
+      } else if (redirectTo === "undefined") {
+        await navigateTo("/");
+      }
       return { data, error: null };
     } catch (err) {
       actionError.value = err;
@@ -160,7 +164,11 @@ export const useAuth = () => {
         return { data, error };
       }
       await refresh();
-      if (redirectTo !== undefined) await navigateTo(redirectTo || "/");
+      if (redirectTo !== undefined && redirectTo !== "undefined") {
+        await navigateTo(redirectTo || "/");
+      } else if (redirectTo === "undefined") {
+        await navigateTo("/");
+      }
       return { data, error: null };
     } catch (err) {
       actionError.value = err;

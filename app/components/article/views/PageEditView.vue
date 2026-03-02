@@ -101,7 +101,7 @@ const resolvePage = async (idOrSlug: string): Promise<Pick<Page, "title" | "icon
 const fetchPages = async () => {
   const types = Object.keys(pageDefinitions).join(",");
   const prefix = (hierarchyPath ?? baseUrl).replace(/^\/|\/$/g, "");
-  
+
   return $api<Pick<Page, "title" | "slug" | "type" | "id">[]>("/api/pages/list", {
     query: { select: "title,slug,type,id", types, prefix },
   });
@@ -216,9 +216,7 @@ const handleVersionNavigate = async (version: PageVersion) => {
 const handleNavigateToPage = async (slug: string) => {
   const base = baseUrl.replace(/\/$/, "");
   const cleanBase = base.replace(/^\//, "");
-  const slugToUse = slug.startsWith(cleanBase)
-    ? slug
-    : `${cleanBase}/${slug}`;
+  const slugToUse = slug.startsWith(cleanBase) ? slug : `${cleanBase}/${slug}`;
 
   await navigateTo(`/${slugToUse}/edit`);
 };

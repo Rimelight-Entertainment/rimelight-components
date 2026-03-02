@@ -375,50 +375,52 @@ function removeImage(index: number) {
     >
       <template #header>
         <div :class="headerContent()">
-
-            <div class="relative group/icon mb-xs">
-              <RCImage
-                v-if="page.icon?.src"
-                :src="page.icon?.src"
-                :alt="page.icon?.alt"
-                :class="iconClass({ class: rc.icon })"
-              />
-              <div v-else class="w-12 h-12 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-default">
-                <UIcon name="lucide:image" class="size-6 text-dimmed" />
-              </div>
-              <UButton
-                icon="lucide:pencil"
-                size="xs"
-                variant="solid"
-                color="neutral"
-                class="absolute -bottom-1 -right-1 opacity-0 group-hover/icon:opacity-100 transition-opacity rounded-full p-1"
-                @click="openAssetPicker('icon')"
-              />
-            </div>
-
-            <UInput
-              v-model="page.title.en"
-              variant="subtle"
-              placeholder="Enter page title..."
-              size="xl"
-              :ui="{ base: 'text-center font-bold text-lg' }"
-              :class="titleInputClass({ class: rc.titleInput })"
+          <div class="relative group/icon mb-xs">
+            <RCImage
+              v-if="page.icon?.src"
+              :src="page.icon?.src"
+              :alt="page.icon?.alt"
+              :class="iconClass({ class: rc.icon })"
             />
-
-            <UInput
-              v-model="page.slug"
-              variant="subtle"
-              placeholder="page-slug"
-              size="xs"
-              :ui="{ base: 'text-center text-dimmed font-mono' }"
-              :class="slugInput()"
+            <div
+              v-else
+              class="w-12 h-12 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-default"
             >
-              <template #leading>
-                <span class="text-gray-500 dark:text-gray-400 text-xs text-dimmed">/</span>
-              </template>
-            </UInput>
+              <UIcon name="lucide:image" class="size-6 text-dimmed" />
+            </div>
+            <UButton
+              icon="lucide:pencil"
+              size="xs"
+              variant="solid"
+              color="neutral"
+              class="absolute -bottom-1 -right-1 opacity-0 group-hover/icon:opacity-100 transition-opacity rounded-full p-1"
+              @click="openAssetPicker('icon')"
+            />
+          </div>
 
-            <span :class="typeClass({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
+          <UInput
+            v-model="page.title.en"
+            variant="subtle"
+            placeholder="Enter page title..."
+            size="xl"
+            :ui="{ base: 'text-center font-bold text-lg' }"
+            :class="titleInputClass({ class: rc.titleInput })"
+          />
+
+          <UInput
+            v-model="page.slug"
+            variant="subtle"
+            placeholder="page-slug"
+            size="xs"
+            :ui="{ base: 'text-center text-dimmed font-mono' }"
+            :class="slugInput()"
+          >
+            <template #leading>
+              <span class="text-gray-500 dark:text-gray-400 text-xs text-dimmed">/</span>
+            </template>
+          </UInput>
+
+          <span :class="typeClass({ class: rc.type })">{{ t(getTypeLabelKey(page.type)) }}</span>
 
           <div v-if="page.tags?.length" :class="tagsClass({ class: rc.tags })">
             <UBadge
@@ -816,7 +818,9 @@ function removeImage(index: number) {
       >
         <template #body>
           <div class="flex flex-col gap-md">
-            <div class="relative group/edit-preview aspect-video rounded-md overflow-hidden bg-muted border border-default">
+            <div
+              class="relative group/edit-preview aspect-video rounded-md overflow-hidden bg-muted border border-default"
+            >
               <RCImage
                 v-if="pendingImageSrc"
                 :src="pendingImageSrc"

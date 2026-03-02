@@ -59,7 +59,7 @@ const resolvePage = async (id: string) => {
 
 const editUrl = computed(() => {
   const base = baseUrl.replace(/\/$/, "");
-  
+
   if (page.value?.slug) {
     const slug = page.value.slug;
     const cleanBase = base.replace(/^\//, "");

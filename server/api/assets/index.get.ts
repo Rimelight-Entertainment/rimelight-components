@@ -20,9 +20,12 @@ export default defineEventHandler(async (event) => {
   }
 
   // Force no-cache on the API response itself
-  event.node.res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  event.node.res.setHeader('Pragma', 'no-cache');
-  event.node.res.setHeader('Expires', '0');
+  event.node.res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
+  );
+  event.node.res.setHeader("Pragma", "no-cache");
+  event.node.res.setHeader("Expires", "0");
 
   let allObjects: any[] = [];
   let truncated = true;
@@ -34,13 +37,13 @@ export default defineEventHandler(async (event) => {
     truncated = list.truncated;
     cursor = list.cursor;
   }
-  
+
   // Deduplicate by key just in case R2 pagination overlaps
   const uniqueObjectsMap = new Map();
-  allObjects.forEach(obj => {
+  allObjects.forEach((obj) => {
     uniqueObjectsMap.set(obj.key, obj);
   });
-  
+
   return Array.from(uniqueObjectsMap.values()).map((obj: any) => ({
     key: obj.key,
     size: obj.size,

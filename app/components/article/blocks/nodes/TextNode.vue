@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { tv } from "../../../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { tv } from "../../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface TextNodeProps {

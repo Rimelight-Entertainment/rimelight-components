@@ -782,11 +782,7 @@ defineExpose({
     :loading="isFetchingTree"
     @navigate="handleTreeNavigate"
   />
-  <RCAssetManagerModal
-    v-model:open="isAssetModalOpen"
-    selection-mode
-    @select="onAssetSelected"
-  />
+  <RCAssetManagerModal v-model:open="isAssetModalOpen" selection-mode @select="onAssetSelected" />
   <RCConfirmModal />
 </template>
 

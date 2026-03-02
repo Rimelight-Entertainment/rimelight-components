@@ -19,15 +19,20 @@ export function useAssetManagement() {
 
   const refreshTick = useState("assetManagement-refreshTick", () => 0);
 
-  const { data: assets, refresh: originalRefresh, status, clear } = useApi<Asset[]>(() => `/api/assets?t=${refreshTick.value}`, {
+  const {
+    data: assets,
+    refresh: originalRefresh,
+    status,
+    clear,
+  } = useApi<Asset[]>(() => `/api/assets?t=${refreshTick.value}`, {
     default: () => [],
     server: false,
     lazy: true,
     headers: {
       "Cache-Control": "no-cache",
-      "Pragma": "no-cache",
-      "Expires": "0"
-    }
+      Pragma: "no-cache",
+      Expires: "0",
+    },
   } as any);
 
   async function refresh() {
@@ -64,37 +69,41 @@ export function useAssetManagement() {
   async function uploadAsset(file: File | File[], targetPath: string, customBasename?: string) {
     const files = Array.isArray(file) ? file : [file];
     isProcessing.value = true;
-    
+
     try {
       const uploadPromises = files.map(async (f) => {
         const body = await f.arrayBuffer();
         const { extension } = splitFilename(f.name);
-        
+
         // Use customBasename only for single file uploads
-        const finalBasename = (files.length === 1 && customBasename) 
-        ? customBasename 
-        : (f.name.substring(0, f.name.lastIndexOf(".")) || f.name);
-        
-      const filename = finalBasename + extension;
-      const fullKey = targetPath ? `${targetPath}/${filename}` : filename;
+        const finalBasename =
+          files.length === 1 && customBasename
+            ? customBasename
+            : f.name.substring(0, f.name.lastIndexOf(".")) || f.name;
 
-      // Encode only segments to preserve slashes for the catch-all route
-      const encodedKey = fullKey.split("/").map(encodeURIComponent).join("/");
+        const filename = finalBasename + extension;
+        const fullKey = targetPath ? `${targetPath}/${filename}` : filename;
 
-      return $api(`/api/assets/${encodedKey}`, {
-        method: "PUT",
-        body,
-        headers: {
-          "Content-Type": f.type,
-        },
-      });
+        // Encode only segments to preserve slashes for the catch-all route
+        const encodedKey = fullKey.split("/").map(encodeURIComponent).join("/");
+
+        return $api(`/api/assets/${encodedKey}`, {
+          method: "PUT",
+          body,
+          headers: {
+            "Content-Type": f.type,
+          },
+        });
       });
 
       await Promise.all(uploadPromises);
 
-      toast.add({ 
-        color: "success", 
-        title: files.length === 1 ? "Asset uploaded successfully" : `${files.length} assets uploaded successfully` 
+      toast.add({
+        color: "success",
+        title:
+          files.length === 1
+            ? "Asset uploaded successfully"
+            : `${files.length} assets uploaded successfully`,
       });
       await refresh();
       return { success: true };
@@ -133,14 +142,14 @@ export function useAssetManagement() {
   async function moveAsset(originalKey: string, targetFolder: string, newBasename: string) {
     const ext = getExt(originalKey);
     // Remove extension if user entered it
-    const cleanBasename = newBasename.endsWith(ext) && ext !== "" 
-      ? newBasename.slice(0, -ext.length) 
-      : newBasename;
-      
+    const cleanBasename =
+      newBasename.endsWith(ext) && ext !== "" ? newBasename.slice(0, -ext.length) : newBasename;
+
     const newFilename = cleanBasename + ext;
-    
+
     // Normalize targetFolder (Root should be empty)
-    const normalizedFolder = (targetFolder === "Root" || targetFolder === "/") ? "" : targetFolder.replace(/^\/|\/$/g, "");
+    const normalizedFolder =
+      targetFolder === "Root" || targetFolder === "/" ? "" : targetFolder.replace(/^\/|\/$/g, "");
     const newKey = normalizedFolder ? `${normalizedFolder}/${newFilename}` : newFilename;
 
     if (originalKey === newKey) return true;
@@ -150,7 +159,7 @@ export function useAssetManagement() {
       const encodedOriginalKey = originalKey.split("/").map(encodeURIComponent).join("/");
       await $api(`/api/assets/${encodedOriginalKey}`, {
         method: "POST",
-        body: { to: newKey }
+        body: { to: newKey },
       });
       toast.add({ color: "success", title: "Asset moved/renamed successfully" });
       await refresh();
@@ -179,7 +188,7 @@ export function useAssetManagement() {
 
     isProcessing.value = true;
     try {
-      const deletePromises = selectedKeys.value.map(key => {
+      const deletePromises = selectedKeys.value.map((key) => {
         const encodedKey = key.split("/").map(encodeURIComponent).join("/");
         return $api(`/api/assets/${encodedKey}`, { method: "DELETE" });
       });
@@ -199,7 +208,7 @@ export function useAssetManagement() {
 
   function downloadAsset(key: string) {
     const encodedKey = key.split("/").map(encodeURIComponent).join("/");
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = `/api/assets/${encodedKey}`;
     const fileName = key.split("/").pop() || key;
     link.download = fileName;
@@ -227,7 +236,7 @@ export function useAssetManagement() {
     selectedKeys,
     localFolders,
     isProcessing,
-    
+
     // Operations
     refresh,
     uploadAsset,
@@ -236,7 +245,7 @@ export function useAssetManagement() {
     batchDelete,
     downloadAsset,
     addLocalFolder,
-    
+
     // Helpers
     splitFilename,
   };
