@@ -29,6 +29,11 @@ export default defineNuxtConfig({
         dir: "./app/assets/icons/first-party",
         normalizeIconName: false,
       },
+      {
+        prefix: "logos",
+        dir: "./app/assets/icons/first-party/logos",
+        normalizeIconName: false,
+      },
     ],
   },
   i18n: {

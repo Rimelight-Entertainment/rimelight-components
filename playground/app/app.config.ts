@@ -2,13 +2,28 @@ export default defineAppConfig({
   title: "Rimelight Components",
   description: "A Nuxt module.",
   cdn: "https://cdn.rimelight.com",
-  logomark: "first-party:logomark-white",
-  logotype: "first-party:logotype-white",
-
   rimelightComponents: {
     logos: {
-      mark: "first-party:logomark-white",
-      type: "first-party:logotype-white",
+      logomark: {
+        black: "logos:PLAYGROUND_LOGOMARK_BLACK",
+        white: "logos:PLAYGROUND_LOGOMARK_WHITE",
+        color: "logos:PLAYGROUND_LOGOMARK_COLOR",
+      },
+      logotype: {
+        black: "logos:PLAYGROUND_LOGOTYPE_BLACK",
+        white: "logos:PLAYGROUND_LOGOTYPE_WHITE",
+        color: "logos:PLAYGROUND_LOGOTYPE_COLOR",
+      },
+      combomark_horizontal: {
+        black: "logos:PLAYGROUND_COMBOMARK_HORIZONTAL_BLACK",
+        white: "logos:PLAYGROUND_COMBOMARK_HORIZONTAL_WHITE",
+        color: "logos:PLAYGROUND_COMBOMARK_HORIZONTAL_COLOR",
+      },
+      combomark_vertical: {
+        black: "logos:PLAYGROUND_COMBOMARK_VERTICAL_BLACK",
+        white: "logos:PLAYGROUND_COMBOMARK_VERTICAL_WHITE",
+        color: "logos:PLAYGROUND_COMBOMARK_VERTICAL_COLOR",
+      },
     },
     callouts: {
       info: {

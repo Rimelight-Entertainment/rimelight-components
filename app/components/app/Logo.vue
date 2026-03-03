@@ -6,18 +6,18 @@ import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
 /* region Props */
-export type LogoVariant = "mark" | "type" | "classic" | "symbol" | string;
+export type LogoVariant = "logomark" | "logotype" | "combomark_horizontal" | "combomark_vertical" | string;
 
 export interface LogoProps {
   /**
    * The variant of the logo to display.
-   * @defaultValue "mark"
+   * @defaultValue "logomark"
    */
   variant?: LogoVariant;
   /**
    * Override the color mode.
    */
-  mode?: "light" | "dark";
+  mode?: "color" | "white" | "black";
   /**
    * The URL to link to.
    * @defaultValue "/"
@@ -35,7 +35,7 @@ export interface LogoProps {
   alt?: string;
 }
 
-const { variant = "mark", to = "/", mode, rc: rcProp, alt } = defineProps<LogoProps>();
+const { variant = "logomark", to = "/", mode, rc: rcProp, alt } = defineProps<LogoProps>();
 
 const { rc } = useRC("Logo", rcProp);
 /* endregion */
@@ -69,7 +69,10 @@ const attrs = useAttrs();
 const colorMode = useColorMode();
 const appConfig = useAppConfig();
 
-const activeMode = computed(() => mode || colorMode.value || "dark");
+const activeMode = computed(() => {
+  if (mode) return mode;
+  return colorMode.value === "dark" ? "white" : "black";
+});
 
 const logoSrc = computed<string | null>(() => {
   const rcLogos = appConfig.rimelightComponents?.logos;
@@ -78,20 +81,13 @@ const logoSrc = computed<string | null>(() => {
   if (rcLogos && typeof rcLogos === "object") {
     src = (rcLogos as any)[variant];
     if (src && typeof src === "object") {
-      src = src[activeMode.value] || src.light || src.dark;
+      src = src[activeMode.value] || src.color;
     }
   }
 
   if (src && typeof src === "string" && src) return src;
 
-  // Fallback to legacy top-level properties or rimelightComponents scoped legacy
-  const legacy = appConfig.rimelightComponents as any;
-  if (variant === "mark")
-    return (appConfig.logomark as string) || (legacy?.logomark as string) || null;
-  if (variant === "type")
-    return (appConfig.logotype as string) || (legacy?.logotype as string) || null;
-
-  return (appConfig[variant] as string) || null;
+  return null;
 });
 
 const isIcon = computed(() => {
