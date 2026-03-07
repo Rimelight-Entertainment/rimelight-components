@@ -6,7 +6,12 @@ import { type VariantProps } from "tailwind-variants";
 import { useRC } from "../../composables";
 
 /* region Props */
-export type LogoVariant = "logomark" | "logotype" | "combomark_horizontal" | "combomark_vertical" | string;
+export type LogoVariant =
+  | "logomark"
+  | "logotype"
+  | "combomark_horizontal"
+  | "combomark_vertical"
+  | string;
 
 export interface LogoProps {
   /**
@@ -63,7 +68,6 @@ const logoStyles = tv({
 
 const { root } = logoStyles();
 type LogoVariants = VariantProps<typeof logoStyles>;
-/* endregion */
 
 const attrs = useAttrs();
 const colorMode = useColorMode();
@@ -98,11 +102,17 @@ const isIcon = computed(() => {
 });
 /* endregion */
 
+/* region State */
+/* endregion */
+
 /* region Meta */
 defineOptions({
   name: "Logo",
   inheritAttrs: false,
 });
+/* endregion */
+
+/* region Lifecycle */
 /* endregion */
 
 /* region Logic */

@@ -60,6 +60,9 @@ export interface PageReviewViewEmits {
 const emit = defineEmits<PageReviewViewEmits>();
 /* endregion */
 
+/* region Slots */
+/* endregion */
+
 /* region Styles */
 const reviewStyles = tv({
   slots: {
@@ -160,6 +163,12 @@ const isResizing = ref(false);
 const splitContainerRef = useTemplateRef<HTMLElement>("split-container");
 
 const isActioning = ref<string | null>(null);
+/* endregion */
+
+/* region Meta */
+/* endregion */
+
+/* region Lifecycle */
 /* endregion */
 
 /* region Logic */

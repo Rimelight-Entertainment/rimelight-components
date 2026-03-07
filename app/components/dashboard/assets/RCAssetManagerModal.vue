@@ -12,12 +12,14 @@ import { defaultWindow } from "../../../utils";
 import { useAppConfig } from "#imports";
 
 /* region Props */
-const { rc: rcProp, selectionMode = false } = defineProps<{
+export interface RCAssetManagerModalProps {
   rc?: {
     root?: string;
   };
   selectionMode?: boolean;
-}>();
+}
+
+const { rc: rcProp, selectionMode = false } = defineProps<RCAssetManagerModalProps>();
 const { rc } = useRC("RCAssetManagerModal", rcProp);
 const { t } = useI18n();
 const { copy } = useClipboard();
@@ -27,10 +29,15 @@ const appConfig = useAppConfig();
 /* endregion */
 
 /* region Emits */
-const emit = defineEmits<{
+export interface RCAssetManagerModalEmits {
   close: [];
   select: [key: string];
-}>();
+}
+
+const emit = defineEmits<RCAssetManagerModalEmits>();
+/* endregion */
+
+/* region Slots */
 /* endregion */
 
 /* region Styles */
@@ -77,6 +84,11 @@ const {
 /* endregion */
 
 /* region State */
+interface TreeItemExtended extends TreeItem {
+  fullPath: string;
+  children?: TreeItemExtended[];
+}
+
 const open = defineModel<boolean>("open", { default: false });
 const { permissions: authPermissions } = useAuth();
 
@@ -152,25 +164,6 @@ const modalMoveTargetValue = computed({
     moveTargetFolder.value = path === "Root" ? "" : path;
   },
 });
-/* endregion */
-
-/* region Tree Logic */
-interface TreeItemExtended extends TreeItem {
-  fullPath: string;
-  children?: TreeItemExtended[];
-}
-
-function findNodeByPath(path: string, nodes: TreeItemExtended[]): TreeItemExtended | undefined {
-  const normalizedPath = path === "/" || path === "Root" || !path ? "" : path;
-  for (const node of nodes) {
-    if (node.fullPath === normalizedPath) return node;
-    if (node.children?.length) {
-      const found = findNodeByPath(normalizedPath, node.children);
-      if (found) return found;
-    }
-  }
-  return undefined;
-}
 
 const treeItems = computed<TreeItemExtended[]>(() => {
   const rootNode: TreeItemExtended[] = [
@@ -275,6 +268,12 @@ const gridItems = computed(() => {
 });
 
 const localGridItems = ref<any[]>([]);
+/* endregion */
+
+/* region Meta */
+/* endregion */
+
+/* region Lifecycle */
 watch(
   gridItems,
   (val) => {
@@ -282,9 +281,25 @@ watch(
   },
   { immediate: true },
 );
+
+watch(open, (isOpen) => {
+  if (isOpen) refresh();
+});
 /* endregion */
 
-/* region UI Handlers */
+/* region Logic */
+function findNodeByPath(path: string, nodes: TreeItemExtended[]): TreeItemExtended | undefined {
+  const normalizedPath = path === "/" || path === "Root" || !path ? "" : path;
+  for (const node of nodes) {
+    if (node.fullPath === normalizedPath) return node;
+    if (node.children?.length) {
+      const found = findNodeByPath(normalizedPath, node.children);
+      if (found) return found;
+    }
+  }
+  return undefined;
+}
+
 function triggerFilePicker() {
   fileInput.value?.click();
 }
@@ -381,7 +396,6 @@ function toggleSelection(key: string) {
   }
 }
 
-// --- Drag and Drop Logic ---
 function handleDragStart(evt: any) {
   isDragging.value = true;
   if (evt.oldIndex !== undefined) {
@@ -476,10 +490,6 @@ async function copyAssetUrl(key: string) {
     });
   }
 }
-
-watch(open, (isOpen) => {
-  if (isOpen) refresh();
-});
 /* endregion */
 </script>
 

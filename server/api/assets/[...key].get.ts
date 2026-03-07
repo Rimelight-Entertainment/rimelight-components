@@ -1,4 +1,4 @@
-import { defineEventHandler, getRouterParam, createError, setHeader } from "h3";
+import { defineEventHandler, createError, setHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
   // Extract the key from the pathname to ensure we get the full catch-all path correctly

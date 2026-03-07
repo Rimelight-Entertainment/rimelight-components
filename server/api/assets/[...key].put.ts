@@ -1,4 +1,4 @@
-import { defineEventHandler, getRouterParam, getHeader, createError, readRawBody } from "h3";
+import { defineEventHandler, getHeader, createError, readRawBody } from "h3";
 
 export default defineEventHandler(async (event) => {
   const reqUrl = event.node.req.url || "";

@@ -1,5 +1,5 @@
 import { useRoute, useState, useNuxtApp } from "#imports";
-import { watch, computed, type Ref } from "vue";
+import { watch, computed } from "vue";
 
 export const useDashboard = () => {
   const nuxtApp = useNuxtApp();

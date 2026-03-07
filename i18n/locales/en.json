@@ -1,19 +1,12 @@
 {
-  "auth_sign-up": "Sign Up",
-  "auth_sign-in": "Sign In",
   "auth_sign-in_email_help": "Forgot your email?",
   "auth_sign-in_password_help": "Forgot your password?",
-  "auth_sign-out": "Sign Out",
   "auth_email_invalid": "Invalid email address.",
   "auth_password_min_length": "Password must be at least 8 characters long.",
   "auth_sign_in_failed_title": "Authentication Failed",
-  "auth_sign_in_failed_description": "Invalid email or password. Please check your details and try again.",
   "auth_sign_in_success_title": "Sign In successful.",
   "auth_sign_in_success_description": "Welcome back {name}!",
-  "auth_connection_error_title": "Connection Error",
   "auth_connection_error_description": "A network error occurred. Please try again later.",
-  "auth_no_account": "Don't have an account?",
-  "auth_sign_up_link": "Sign up",
   "auth_email_label": "Email",
   "auth_email_description": "Enter your email address.",
   "auth_email_placeholder": "email{'@'}example.com",
@@ -31,7 +24,6 @@
   "auth_lastname_length_error": "Last name must be between 2 and 24 characters long.",
   "auth_password_length_error": "Password must be between 8 and 24 characters long.",
   "auth_passwords_mismatch": "Passwords do not match.",
-  "auth_password_contains_username": "Password should not contain the username.",
   "auth_terms_required": "You must agree to the terms of service.",
   "auth_password_req_length": "At least 8 characters",
   "auth_password_req_number": "At least 1 number",
@@ -46,60 +38,26 @@
   "auth_account_creation_success_title": "Account creation successful.",
   "auth_account_creation_success_description": "Welcome!",
   "auth_sign_up_failed_title": "Failed to sign up.",
-  "auth_sign_up_failed_description": "Please check your details and try again.",
-  "auth_have_account": "Already have an account?",
-  "auth_sign_in_link": "Sign In",
-  "auth_email_help": "This will be used for signing in.",
   "auth_username_label": "Username",
-  "auth_username_description": "Enter a username.",
   "auth_firstname_label": "First Name",
-  "auth_firstname_description": "Enter your first name.",
   "auth_lastname_label": "Last Name",
-  "auth_lastname_description": "Enter your last name.",
-  "auth_password_requirements_title": "The password must contain:",
   "auth_password_confirmation_label": "Password Confirmation",
-  "auth_password_confirmation_description": "Please repeat your password.",
   "auth_terms_agreement_signup": "I have read and agree to the",
   "auth_newsletter_label": "Subscribe to our Newsletter.",
   "auth_newsletter_description": "Unsubscribe at any time.",
   "auth_sign_up_button": "Sign Up",
-  "auth_details_changeable": "All these details may be changed later in your account settings.",
-  "placeholder": "Placeholder",
-  "page": {
-    "type": {
-      "movie": "Movie"
-    }
-  },
-  "table_of_contents": "Table of Contents",
   "navigation_previous": "Previous",
   "navigation_next": "Next",
-  "callout_info_title": "Note",
-  "callout_info_description": "This callout is used for general notes.",
-  "callout_success_title": "Tip",
-  "callout_success_description": "This callout is used for tips and useful information.",
-  "callout_warning_title": "Warning",
-  "callout_warning_description": "This callout is used for important information.",
-  "callout_error_title": "Error",
-  "callout_error_description": "This callout is used for critical information and prohibitions.",
-  "callout_commentary_title": "Commentary",
-  "callout_commentary_description": "This callout is used for developer commentary.",
-  "callout_ideation_title": "Ideation",
-  "callout_ideation_description": "This alert is used for ideas and brainstorming.",
-  "callout_source_title": "Source",
-  "callout_source_description": "This alert is used for direct commentary of the author.",
   "common": {
     "cancel": "Cancel",
-    "close": "Close",
     "save": "Save",
-    "create": "Create",
-    "delete": "Delete",
-    "edit": "Edit",
-    "update": "Update",
-    "preview": "Preview",
-    "success": "Success",
     "archive": "Archive",
     "versions": "Versions",
-    "editing": "Editing"
+    "editing": "Editing",
+    "add": "",
+    "reject": "",
+    "approve": "",
+    "select": ""
   },
   "modals": {
     "assetManager": {
@@ -129,7 +87,6 @@
         "copy_url_failed": "Failed to copy URL to clipboard."
       },
       "actions": {
-        "delete_selected": "Delete",
         "new_subfolder": "New Folder"
       }
     },
@@ -205,6 +162,34 @@
           "03": "View Branding"
         }
       }
+    },
+    "blog": {
+      "actions": {
+        "create_post": {
+          "success": {
+            "title": "",
+            "description": ""
+          },
+          "error": {
+            "title": "",
+            "description": ""
+          }
+        }
+      }
+    },
+    "documents": {
+      "actions": {
+        "create_document": {
+          "success": {
+            "title": "",
+            "description": ""
+          },
+          "error": {
+            "title": "",
+            "description": ""
+          }
+        }
+      }
     }
   },
   "page_editor": {
@@ -214,9 +199,7 @@
     "publish": "Publish",
     "publish_page": "Publish Page",
     "publish_confirmation": "Are you sure you want to publish this page? This will make it visible to the public.",
-    "create_page": "Create Page",
     "delete_page": "Delete Page",
-    "viewing_version_notice": "Viewing a previous version. Changes made here will create a new version.",
     "unsaved_changes_title": "Unsaved Changes",
     "unsaved_changes_description": "You have unsaved changes. Are you sure you want to leave?",
     "leave_anyway": "Leave Anyway",
@@ -227,8 +210,11 @@
     "updated_at": "Updated At",
     "add_block": "Add Block",
     "search_blocks": "Search blocks...",
-    "append_new_block": "Append new block to page",
-    "no_blocks_found": "No blocks found matching your search."
+    "no_blocks_found": "No blocks found matching your search.",
+    "unpublish_page": "",
+    "unpublish_confirmation": "",
+    "unpublish": "",
+    "add_banner": ""
   },
   "page_properties": {
     "links": "Links",
@@ -244,7 +230,12 @@
     "page_template": "Page Template",
     "title": "Title",
     "slug": "Slug",
-    "create_and_edit": "Create & Edit"
+    "create_and_edit": "Create & Edit",
+    "images": "",
+    "edit_image_title": "",
+    "image_name_title": "",
+    "image_name": "",
+    "image_name_placeholder": ""
   },
   "todo": {
     "title": "To-do List",
@@ -259,38 +250,23 @@
     "approved_successfully": "Version approved successfully",
     "failed_to_approve": "Failed to approve version",
     "reverted_successfully": "Version reverted successfully",
-    "failed_to_revert": "Failed to revert version"
-  },
-  "section": {
-    "heading_copied": "Heading copied to clipboard!",
-    "heading_copy_failed": "Failed to copy heading to clipboard."
-  },
-  "customer": {
-    "new_customer": "New customer",
-    "name": "Name",
-    "email": "Email"
-  },
-  "focus_timer": {
-    "start": "Start",
-    "pause": "Pause"
+    "failed_to_revert": "Failed to revert version",
+    "rejected_successfully": "",
+    "failed_to_reject": ""
   },
   "label_image": "Image",
-  "blocks": {
-    "SectionBlock": {
-      "label": "Section",
-      "description": "A header section to organize your page."
-    },
-    "ParagraphBlock": {
-      "label": "Paragraph",
-      "description": "Standard text block for your content."
-    },
-    "ImageBlock": {
-      "label": "Image",
-      "description": "Embed an image from a URL."
-    },
-    "CalloutBlock": {
-      "label": "Callout",
-      "description": "Highlight important information."
-    }
-  }
+  "editor": {
+    "template_placeholder": "",
+    "delete_page_title": "",
+    "delete_confirm_label": "",
+    "delete_button": ""
+  },
+  "toast_save-post_success_title": "",
+  "toast_save-post_error_title": "",
+  "toast_publish_success": "",
+  "toast_publish_error": "",
+  "toast_unpublish_success": "",
+  "toast_unpublish_error": "",
+  "toast_delete_success": "",
+  "toast_delete_error": ""
 }

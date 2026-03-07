@@ -45,6 +45,15 @@ const {
 } = defineProps<PageEditViewProps>();
 /* endregion */
 
+/* region Emits */
+/* endregion */
+
+/* region Slots */
+/* endregion */
+
+/* region Styles */
+/* endregion */
+
 /* region State */
 const route = useRoute();
 const router = useRouter();
@@ -79,6 +88,12 @@ watch(
   },
   { immediate: true },
 );
+/* endregion */
+
+/* region Meta */
+/* endregion */
+
+/* region Lifecycle */
 /* endregion */
 
 /* region Logic */

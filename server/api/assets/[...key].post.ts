@@ -1,4 +1,5 @@
-import { defineEventHandler, createError, readBody, getRouterParam } from "h3";
+import { defineEventHandler, createError, readValidatedBody } from "h3";
+import { z } from "zod";
 
 export default defineEventHandler(async (event) => {
   const cloudflare = (event.context as any).cloudflare;
@@ -16,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
   const { env } = cloudflare;
   const BLOB = env.BLOB as any;
-  const { to } = await readBody(event);
+  const { to } = await readValidatedBody(event, (body) => z.object({ to: z.string() }).parse(body));
 
   if (!to) {
     throw createError({

@@ -35,6 +35,15 @@ const {
 } = defineProps<PageLiveViewProps>();
 /* endregion */
 
+/* region Emits */
+/* endregion */
+
+/* region Slots */
+/* endregion */
+
+/* region Styles */
+/* endregion */
+
 /* region State */
 const { locale } = useI18n();
 const appConfig = useAppConfig();
@@ -88,6 +97,15 @@ useSeoMeta({
   ogDescription: () =>
     (getLocalizedContent(page.value?.description, locale) ?? appConfig.description) as string,
 });
+/* endregion */
+
+/* region Meta */
+/* endregion */
+
+/* region Lifecycle */
+/* endregion */
+
+/* region Logic */
 /* endregion */
 </script>
 

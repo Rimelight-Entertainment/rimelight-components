@@ -24,6 +24,9 @@ export interface TeamsMenuEmits {}
 const emit = defineEmits<TeamsMenuEmits>();
 /* endregion */
 
+/* region Slots */
+/* endregion */
+
 /* region Styles */
 const teamsMenuStyles = tv({
   slots: {
@@ -102,6 +105,12 @@ const items = computed(() => {
 defineOptions({
   name: "TeamsMenu",
 });
+/* endregion */
+
+/* region Lifecycle */
+/* endregion */
+
+/* region Logic */
 /* endregion */
 </script>
 

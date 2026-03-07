@@ -1,4 +1,4 @@
-import { defineEventHandler, getRouterParam, createError } from "h3";
+import { defineEventHandler, createError } from "h3";
 
 export default defineEventHandler(async (event) => {
   const reqUrl = event.node.req.url || "";

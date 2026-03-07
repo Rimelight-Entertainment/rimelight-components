@@ -75,6 +75,7 @@ export default defineNuxtConfig({
       defaultHighlight: false,
       logIssues: false,
     },
+    // @ts-expect-error - Site config is added by SEO modules
     site: { indexable: false },
   },
 
@@ -90,6 +91,7 @@ export default defineNuxtConfig({
       minify: true,
     },
     // Switch to true on release
+    // @ts-expect-error - Site config is added by SEO modules
     site: { url: "https://rimelight-components.com", indexable: false },
     robots: {
       blockAiBots: true,
@@ -186,7 +188,7 @@ export default defineNuxtConfig({
   i18n: {
     strategy: "prefix_except_default",
     defaultLocale: "en",
-    langDir: "locales",
+    langDir: "i18n/locales",
     locales: [
       {
         code: "en",

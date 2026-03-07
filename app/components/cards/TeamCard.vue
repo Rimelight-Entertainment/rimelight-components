@@ -34,7 +34,15 @@ export interface TeamCardProps {
   };
 }
 
-const { src, alt, name, role, description, links: linksProp, rc: rcProp } = defineProps<TeamCardProps>();
+const {
+  src,
+  alt,
+  name,
+  role,
+  description,
+  links: linksProp,
+  rc: rcProp,
+} = defineProps<TeamCardProps>();
 
 const { rc } = useRC("TeamCard", rcProp);
 /* endregion */
@@ -48,6 +56,7 @@ const emit = defineEmits<TeamCardEmits>();
 /* region Slots */
 export interface TeamCardSlots {
   links: (props: {}) => any;
+  badge?: (props: {}) => any;
 }
 
 const slots = defineSlots<TeamCardSlots>();
@@ -101,7 +110,7 @@ defineOptions({
 </script>
 
 <template>
-  <UCard variant="" :ui="{ root: ['rounded-lg overflow-hidden divide-y-0 ring-0 border-0', rc.card] }">
+  <UCard :ui="{ root: ['rounded-lg overflow-hidden divide-y-0 ring-0 border-0', rc.card] }">
     <RCImage :src="src" :alt="alt" :class="rc.image" />
     <div :class="details({ class: rc.details })">
       <h3 :class="nameClass({ class: rc.name })">

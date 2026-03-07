@@ -68,7 +68,7 @@ export const useAuth = () => {
         const response = await authClient.getSession();
         const data = (response as any)?.data || response;
         return data?.user ? data : null;
-      } catch (e) {
+      } catch {
         return null;
       }
     },

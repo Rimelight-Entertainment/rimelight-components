@@ -23,6 +23,9 @@ export interface OrganizationsMenuEmits {}
 const emit = defineEmits<OrganizationsMenuEmits>();
 /* endregion */
 
+/* region Slots */
+/* endregion */
+
 /* region Styles */
 const organizationsMenuStyles = tv({
   slots: {
@@ -82,6 +85,12 @@ const items = computed(() => {
 defineOptions({
   name: "OrganizationsMenu",
 });
+/* endregion */
+
+/* region Lifecycle */
+/* endregion */
+
+/* region Logic */
 /* endregion */
 </script>
 
