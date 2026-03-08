@@ -28,7 +28,7 @@
     "./components/*": "./app/components/*"
   },
   "scripts": {
-    "sync": "git submodule update --init --recursive && git -C .rimelight-utilities fetch origin && git -C .rimelight-utilities checkout main && git -C .rimelight-utilities pull origin main && bun ./.rimelight-utilities/scripts/sync.ts && husky && nuxt prepare",
+    "sync": "git submodule update --init --recursive && git -C rimelight-utilities fetch origin && git -C rimelight-utilities checkout main && git -C rimelight-utilities pull origin main && bun ./rimelight-utilities/scripts/sync.ts && husky && nuxt prepare",
     "analyze": "nuxi analyze",
     "build": "nuxt build playground",
     "dev": "bun run dev:prepare && nuxt dev playground",
