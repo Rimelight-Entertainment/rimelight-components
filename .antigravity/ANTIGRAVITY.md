@@ -41,10 +41,10 @@ Always use `bun` to run scripts:
 
 For comprehensive guidelines, see:
 
-- [Workspace Overview](./.claude/rules/WORKSPACE.md) - Project-specific guidelines and general rules
-- [TypeScript Conventions](./.claude/rules/typescript-conventions.md) - Strict typing, interfaces, no enums, no classes
-- [Component Architecture](./.claude/rules/component-architecture.md) - Script setup order, naming, prop patterns
-- [Nuxt Specifics](./.claude/rules/nuxt-specifics.md) - Composition API, auto-imports, SSR safety, data fetching
-- [UI & Styling](./.claude/rules/ui-styling.md) - Tailwind 4, Nuxt UI components, theme variables
-- [Data Management](./.claude/rules/data-management.md) - PostgreSQL, Drizzle ORM, server API patterns
-- [Workflow](./.claude/rules/workflow.md) - Solution strategy, code delivery, verification steps
+- [Workspace Overview](./.antigravity/rules/WORKSPACE.md) - Project-specific guidelines and general rules
+- [TypeScript Conventions](./.antigravity/rules/typescript-conventions.md) - Strict typing, interfaces, no enums, no classes
+- [Component Architecture](./.antigravity/rules/component-architecture.md) - Script setup order, naming, prop patterns
+- [Nuxt Specifics](./.antigravity/rules/nuxt-specifics.md) - Composition API, auto-imports, SSR safety, data fetching
+- [UI & Styling](./.antigravity/rules/ui-styling.md) - Tailwind 4, Nuxt UI components, theme variables
+- [Data Management](./.antigravity/rules/data-management.md) - PostgreSQL, Drizzle ORM, server API patterns
+- [Workflow](./.antigravity/rules/workflow.md) - Solution strategy, code delivery, verification steps
