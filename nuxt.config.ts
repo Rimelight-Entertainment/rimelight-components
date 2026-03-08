@@ -12,15 +12,33 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 5,
   },
+  experimental: {
+    viteEnvironmentApi: false,
+    typescriptPlugin: true,
+    nitroAutoImports: true,
+    componentIslands: {
+      selectiveClient: true,
+    },
+  },
 
   modules: [
+    "@nuxtjs/seo",
     "@nuxt/a11y",
-    "@nuxt/ui",
+    "@nuxt/content",
+    "@nuxt/fonts",
+    "@nuxt/hints",
     "@nuxt/icon",
     "@nuxt/image",
-    "@nuxtjs/i18n",
-    "@vueuse/nuxt",
+    "@nuxt/test-utils",
+    "@nuxt/ui",
     "@nuxtjs/device",
+    "@nuxtjs/i18n",
+    "nuxt-llms",
+    "nuxt-security",
+    "nuxt-studio",
+    "@pinia/nuxt",
+    "@pinia/colada-nuxt",
+    "@vueuse/nuxt",
     function (options, nuxt) {
       const resolvePath = (path: string) => resolve(currentDir, path);
 
@@ -75,7 +93,6 @@ export default defineNuxtConfig({
       defaultHighlight: false,
       logIssues: false,
     },
-    // @ts-expect-error - Site config is added by SEO modules
     site: { indexable: false },
   },
 
@@ -87,12 +104,27 @@ export default defineNuxtConfig({
     devtools: { enabled: false },
     typescript: { typeCheck: false },
     nitro: {
+      experimental: {
+        websocket: true,
+        tasks: true,
+      },
       compressPublicAssets: true,
       minify: true,
+      preset: "cloudflare-module",
+      cloudflare: {
+        deployConfig: true,
+        nodeCompat: true,
+      },
+      prerender: {
+        routes: ["/"],
+        crawlLinks: true,
+      },
     },
-    // Switch to true on release
-    // @ts-expect-error - Site config is added by SEO modules
-    site: { url: "https://rimelight-components.com", indexable: false },
+    site: {
+      url: "https://rimelight-components.com",
+      // Switch to true on release
+      indexable: false,
+    },
     robots: {
       blockAiBots: true,
       blockNonSeoBots: true,
@@ -100,6 +132,25 @@ export default defineNuxtConfig({
     },
     a11y: {
       enabled: false,
+    },
+    content: {
+      database: {
+        type: "d1",
+        bindingName: "DB",
+      },
+    },
+  },
+
+  vite: {
+    clearScreen: false,
+    envPrefix: ["VITE_"],
+    server: {
+      strictPort: true,
+      hmr: {
+        protocol: "ws",
+        host: "localhost",
+        port: 3000,
+      },
     },
   },
 
@@ -118,42 +169,125 @@ export default defineNuxtConfig({
     "rimelight-components/composables": resolve(currentDir, "app/composables"),
     "rimelight-components": currentDir,
   },
+
+  ssr: true,
+
   appConfig: {
     rimelightComponents: defaultOptions,
   },
-  experimental: {
-    viteEnvironmentApi: false,
-    typescriptPlugin: true,
-    nitroAutoImports: true,
-    componentIslands: {
-      selectiveClient: true,
-    },
-  },
-  ui: {
-    prefix: "U",
-    mdc: true,
-    content: true,
-    theme: {
-      colors: [
-        "neutral",
-        "primary",
-        "secondary",
-        "info",
-        "success",
-        "warning",
-        "error",
-        "commentary",
-        "ideation",
-        "source",
-        "grandTalePrimary",
-        "grandTaleSecondary",
+
+  app: {
+    baseURL: "/",
+    head: {
+      title: "Rimelight Components",
+      titleTemplate: "%s | Rimelight Components",
+      meta: [
+        {
+          name: "description",
+          content: "A component library.",
+        },
+        {
+          name: "author",
+          content: "Rimelight Entertainment",
+        },
+        {
+          name: "creator",
+          content: "Rimelight Entertainment",
+        },
+      ],
+      link: [
+        {
+          rel: "icon",
+          type: "image/svg+xml",
+          href: "/favicon.svg",
+        },
       ],
     },
+    viewTransition: true,
   },
+
+  security: {
+    ssg: {
+      meta: false,
+      exportToPresets: false,
+    },
+    headers: {
+      contentSecurityPolicy: {
+        "img-src": [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://pub-d59ba6f09fc247e5b5215dbca8bb5841.r2.dev",
+          "https://placehold.co",
+        ],
+        "script-src": ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'"],
+        "script-src-attr": ["'none'"],
+        "connect-src": [
+          "'self'",
+          "https://pub-d59ba6f09fc247e5b5215dbca8bb5841.r2.dev",
+          "https://api.iconify.design",
+          "https://api.unisvg.com",
+          "https://api.simplesvg.com",
+        ],
+        "font-src": ["'self'", "https://fonts.gstatic.com"],
+        "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        "frame-ancestors": ["'self'"],
+        "form-action": ["'self'"],
+        "require-trusted-types-for": "'script'",
+      },
+      strictTransportSecurity: {
+        maxAge: 31536000,
+        includeSubdomains: true,
+        preload: true,
+      },
+      crossOriginOpenerPolicy: "same-origin",
+      referrerPolicy: "strict-origin-when-cross-origin",
+      xFrameOptions: "SAMEORIGIN",
+      xContentTypeOptions: "nosniff",
+    },
+  },
+
+  i18n: {
+    strategy: "prefix_except_default",
+    defaultLocale: "en",
+    langDir: "locales",
+    locales: [
+      {
+        code: "en",
+        name: "English",
+        language: "en-US",
+        file: "en.json",
+      },
+      {
+        code: "pt",
+        name: "Português",
+        language: "pt-BR",
+        file: "pt.json",
+      },
+    ],
+  },
+
+  css: [resolve(currentDir, "app/assets/css/index.css")],
+
+  components: [
+    {
+      path: resolve(currentDir, "app/components"),
+      pathPrefix: false,
+      prefix: "RC",
+      global: false,
+      ignore: ["**/index.*"],
+    },
+  ],
+
+  pages: {
+    pattern: ["**/*.vue", "!**/components/**"],
+  },
+
   colorMode: {
     preference: "dark",
     fallback: "dark",
   },
+
   fonts: {
     defaults: {
       weights: [
@@ -185,48 +319,6 @@ export default defineNuxtConfig({
     ],
   },
 
-  i18n: {
-    strategy: "prefix_except_default",
-    defaultLocale: "en",
-    langDir: "i18n/locales",
-    locales: [
-      {
-        code: "en",
-        name: "English",
-        file: "en.json",
-      },
-      {
-        code: "pt",
-        name: "Português",
-        file: "pt.json",
-      },
-    ],
-  },
-
-  css: [resolve(currentDir, "app/assets/css/index.css")],
-
-  components: [
-    {
-      path: resolve(currentDir, "app/components"),
-      pathPrefix: false,
-      prefix: "RC",
-      global: false,
-      ignore: ["**/index.*"],
-    },
-  ],
-
-  pages: {
-    pattern: ["**/*.vue", "!**/components/**"],
-  },
-
-  image: {
-    format: ["webp"],
-    provider: "cloudflare",
-    cloudflare: {
-      baseURL: "https://cdn.rimelight-components.com",
-    },
-  },
-
   icon: {
     class: "icon",
     size: "24px",
@@ -242,5 +334,65 @@ export default defineNuxtConfig({
         normalizeIconName: false,
       },
     ],
+  },
+
+  image: {
+    format: ["webp"],
+    provider: "cloudflare",
+    cloudflare: {
+      baseURL: "https://cdn.rimelight-components.com",
+    },
+  },
+
+  ogImage: {
+    zeroRuntime: true,
+  },
+
+  content: {
+    build: {
+      markdown: {
+        toc: {
+          depth: 3,
+        },
+      },
+    },
+  },
+
+  studio: {
+    i18n: {
+      defaultLocale: "en",
+    },
+    route: "/studio",
+    repository: {
+      provider: "github",
+      owner: "Rimelight-Entertainment",
+      repo: "rimelight-components",
+    },
+  },
+
+  llms: {
+    domain: "https://rimelight-components.com",
+    title: "Rimelight Components",
+    description: "A component library.",
+  },
+
+  ui: {
+    prefix: "U",
+    mdc: true,
+    content: true,
+    theme: {
+      colors: [
+        "neutral",
+        "primary",
+        "secondary",
+        "info",
+        "success",
+        "warning",
+        "error",
+        "commentary",
+        "ideation",
+        "source",
+      ],
+    },
   },
 });
