@@ -28,7 +28,9 @@
     "./components/*": "./app/components/*"
   },
   "scripts": {
-    "sync": "git submodule update --init --recursive && git -C rimelight-utilities fetch origin && git -C rimelight-utilities checkout main && git -C rimelight-utilities pull origin main && bun ./rimelight-utilities/scripts/sync.ts && husky && nuxt prepare",
+    "sync": "rimelight sync && husky && nuxt prepare",
+    "sync:agents": "rimelight sync --agents",
+    "sync:configs": "rimelight sync --configs",
     "analyze": "nuxi analyze",
     "build": "nuxt build playground",
     "dev": "bun run dev:prepare && nuxt dev playground",
@@ -96,6 +98,7 @@
     "husky": "^9.1.7",
     "oxfmt": "^0.35.0",
     "oxlint": "^1.50.0",
+    "rimelight-cli": "github:Rimelight-Entertainment/rimelight-cli",
     "sharp": "^0.34.5",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
