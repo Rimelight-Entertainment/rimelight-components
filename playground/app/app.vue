@@ -119,6 +119,7 @@ onMounted(() => {
 <template>
   <UApp lang="en" dir="ltr" :tooltip="{ delayDuration: 0 }">
     <NuxtRouteAnnouncer />
+    <NuxtAnnouncer />
     <NuxtLoadingIndicator color="primary" />
     <NuxtLayout>
       <NuxtPage />
