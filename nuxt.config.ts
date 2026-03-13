@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     componentIslands: {
       selectiveClient: true,
     },
+    viewTransition: true,
   },
 
   modules: [
@@ -39,6 +40,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@pinia/colada-nuxt",
     "@vueuse/nuxt",
+    "@nuxt/scripts",
     function (options, nuxt) {
       const resolvePath = (path: string) => resolve(currentDir, path);
 
@@ -143,15 +145,6 @@ export default defineNuxtConfig({
 
   vite: {
     clearScreen: false,
-    envPrefix: ["VITE_"],
-    server: {
-      strictPort: true,
-      hmr: {
-        protocol: "ws",
-        host: "localhost",
-        port: 3000,
-      },
-    },
   },
 
   alias: {
@@ -207,50 +200,92 @@ export default defineNuxtConfig({
   },
 
   security: {
-    ssg: {
-      meta: false,
-      exportToPresets: false,
-    },
+    strict: false,
     headers: {
       contentSecurityPolicy: {
+        "default-src": ["'none'"],
+        "base-uri": ["'none'"],
+        "font-src": ["'self'", "https:", "data:", "https://fonts.gstatic.com"],
+        "form-action": ["'self'"],
+        "frame-ancestors": ["'self'"],
         "img-src": [
           "'self'",
           "data:",
-          "blob:",
-          "https://pub-d59ba6f09fc247e5b5215dbca8bb5841.r2.dev",
+          "https://cdn.rimelight-components.com",
           "https://placehold.co",
+          "https://avatars.githubusercontent.com"
         ],
-        "script-src": ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'"],
+        "object-src": ["'none'"],
         "script-src-attr": ["'none'"],
+        "style-src": ["'self'", "https:", "'unsafe-inline'"],
+        "script-src": [
+          "'self'",
+          "https:",
+          "'unsafe-inline'",
+          "'strict-dynamic'",
+          "'nonce-{{nonce}}'",
+          "'wasm-unsafe-eval'",
+          "https://esm.sh",
+          "https://static.cloudflareinsights.com"
+        ],
         "connect-src": [
           "'self'",
-          "https://pub-d59ba6f09fc247e5b5215dbca8bb5841.r2.dev",
+          "https://rimelight-components.com",
           "https://api.iconify.design",
           "https://api.unisvg.com",
           "https://api.simplesvg.com",
-        ],
-        "font-src": ["'self'", "https://fonts.gstatic.com"],
-        "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-        "frame-ancestors": ["'self'"],
-        "form-action": ["'self'"],
-        "require-trusted-types-for": "'script'",
+          "https://cloudflareinsights.com",
+          "https://static.cloudflareinsights.com",
+          "https://nuxt.studio",
+          "https://*.nuxt.com",
+          "https://*.nuxt.dev",
+          "https://api.github.com",
+          "https://raw.githubusercontent.com",
+          "https://esm.sh"
+        ]
       },
       strictTransportSecurity: {
         maxAge: 31536000,
         includeSubdomains: true,
-        preload: true,
+        preload: true
       },
       crossOriginOpenerPolicy: "same-origin",
+      crossOriginEmbedderPolicy: "unsafe-none",
       referrerPolicy: "strict-origin-when-cross-origin",
       xFrameOptions: "SAMEORIGIN",
-      xContentTypeOptions: "nosniff",
+      xContentTypeOptions: "nosniff"
     },
+    nonce: true,
+    ssg: {
+      meta: true,
+      hashScripts: true,
+      hashStyles: false,
+      nitroHeaders: true,
+      exportToPresets: false
+    },
+    sri: true
+  },
+
+  routeRules: {
+    // Disable rate limiting for internal Nuxt endpoints
+    "/__nuxt_content/**": { security: { rateLimiter: false } },
+    "/_content/**": { security: { rateLimiter: false } },
+    "/api/_content/**": { security: { rateLimiter: false } },
+    "/__nuxt_studio/**": { security: { rateLimiter: false } },
+    "/__nuxt_hints/**": { security: { enabled: false } },
+    "/_nuxt/**": { security: { rateLimiter: false } }
   },
 
   i18n: {
     strategy: "prefix_except_default",
     defaultLocale: "en",
     langDir: "locales",
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: "i18n_redirected",
+      cookieSecure: true,
+      alwaysRedirect: false,
+    },
     locales: [
       {
         code: "en",
@@ -316,10 +351,15 @@ export default defineNuxtConfig({
         global: true,
         provider: "local",
       },
+      {
+        name: "Noto Sans",
+        provider: "google",
+      },
     ],
   },
 
   icon: {
+    mode: "svg",
     class: "icon",
     size: "24px",
     customCollections: [
@@ -339,6 +379,7 @@ export default defineNuxtConfig({
   image: {
     format: ["webp"],
     provider: "cloudflare",
+    domains: ["rimelight-components.com"],
     cloudflare: {
       baseURL: "https://cdn.rimelight-components.com",
     },

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { PAGE_MAP } from "./types/page-definitions";
 import type { Page } from "rimelight-components/types";
 import { ULink } from "#components";
+import { PiniaColadaDevtools } from "@pinia/colada-devtools";
 
 const toast = useToast();
 
@@ -132,6 +133,7 @@ onMounted(() => {
         @confirm="handleCreateConfirm"
       />
       <RCFloatingActionsOverlay />
+      <PiniaColadaDevtools />
     </ClientOnly>
   </UApp>
 </template>
