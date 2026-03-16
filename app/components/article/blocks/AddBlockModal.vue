@@ -1,53 +1,53 @@
 <script setup lang="ts">
-import { ref, computed, inject } from "vue";
+import { ref, computed, inject } from "vue"
 import {
   BLOCK_DEFINITIONS,
   CATEGORY_ORDER,
-  type BlockDefinition,
-} from "rimelight-components/utils/blocks";
-import { useRC } from "rimelight-components/composables";
-import { useI18n } from "vue-i18n";
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { SECTION_LEVEL_KEY } from "rimelight-components/app/internal/injectionKeys";
+  type BlockDefinition
+} from "rimelight-components/utils/blocks"
+import { useRC } from "rimelight-components/composables"
+import { useI18n } from "vue-i18n"
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { SECTION_LEVEL_KEY } from "rimelight-components/app/internal/injectionKeys"
 
 /* region Props */
 export interface AddBlockModalProps {
   // open?: boolean,
   rc?: {
-    header?: string;
-    headerTitle?: string;
-    closeButton?: string;
-    body?: string;
-    search?: string;
-    categoryList?: string;
-    categoryHeader?: string;
-    blockGrid?: string;
-    blockItem?: string;
-    blockIcon?: string;
-    blockLabel?: string;
-    blockDescription?: string;
-    footer?: string;
-  };
+    header?: string
+    headerTitle?: string
+    closeButton?: string
+    body?: string
+    search?: string
+    categoryList?: string
+    categoryHeader?: string
+    blockGrid?: string
+    blockItem?: string
+    blockIcon?: string
+    blockLabel?: string
+    blockDescription?: string
+    footer?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<AddBlockModalProps>();
+const { rc: rcProp } = defineProps<AddBlockModalProps>()
 
-const { rc } = useRC("AddBlockModal", rcProp);
+const { rc } = useRC("AddBlockModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface AddBlockModalEmits {
-  select: [definition: BlockDefinition];
+  select: [definition: BlockDefinition]
 }
 
-const emit = defineEmits<AddBlockModalEmits>();
+const emit = defineEmits<AddBlockModalEmits>()
 /* endregion */
 
 /* region Slots */
 export interface AddBlockModalSlots {}
 
-const slots = defineSlots<AddBlockModalSlots>();
+const slots = defineSlots<AddBlockModalSlots>()
 /* endregion */
 
 /* region Styles */
@@ -71,9 +71,9 @@ const addBlockModalStyles = tv({
     footerClass: "flex justify-end gap-2 p-4 border-t border-neutral-200 dark:border-neutral-800",
     typeBadge:
       "text-[10px] font-mono text-dimmed px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-900 rounded shrink-0",
-    emptyState: "flex flex-col items-center justify-center py-12 text-center",
-  },
-});
+    emptyState: "flex flex-col items-center justify-center py-12 text-center"
+  }
+})
 
 const {
   header: headerClass,
@@ -90,76 +90,76 @@ const {
   blockDescription,
   footerClass,
   typeBadge,
-  emptyState,
-} = addBlockModalStyles();
-type AddBlockModalVariants = VariantProps<typeof addBlockModalStyles>;
+  emptyState
+} = addBlockModalStyles()
+type AddBlockModalVariants = VariantProps<typeof addBlockModalStyles>
 /* endregion */
 
 /* region State */
-const open = defineModel<boolean>("open", { default: false });
+const open = defineModel<boolean>("open", { default: false })
 
-const { t } = useI18n();
-const searchQuery = ref("");
+const { t } = useI18n()
+const searchQuery = ref("")
 const sectionLevel = inject(
   SECTION_LEVEL_KEY,
-  computed(() => 1),
-);
+  computed(() => 1)
+)
 
 const filteredBlocks = computed(() => {
-  let blocks = BLOCK_DEFINITIONS;
+  let blocks = BLOCK_DEFINITIONS
 
   // Disable SectionBlock if we're already at max depth (H6)
   if (sectionLevel.value >= 6) {
-    blocks = blocks.filter((b) => b.type !== "SectionBlock");
+    blocks = blocks.filter((b) => b.type !== "SectionBlock")
   }
 
-  if (!searchQuery.value) return blocks;
+  if (!searchQuery.value) return blocks
 
-  const query = searchQuery.value.toLowerCase();
+  const query = searchQuery.value.toLowerCase()
   return blocks.filter(
     (block) =>
       block.label.toLowerCase().includes(query) ||
       block.type.toLowerCase().includes(query) ||
       block.category.toLowerCase().includes(query) ||
-      block.description?.toLowerCase().includes(query),
-  );
-});
+      block.description?.toLowerCase().includes(query)
+  )
+})
 
 const groupedBlocks = computed(() => {
-  const groups: Record<string, BlockDefinition[]> = {};
+  const groups: Record<string, BlockDefinition[]> = {}
 
   filteredBlocks.value.forEach((block) => {
-    const category = block.category;
+    const category = block.category
     if (!groups[category]) {
-      groups[category] = [];
+      groups[category] = []
     }
-    groups[category]!.push(block);
-  });
+    groups[category]!.push(block)
+  })
 
   // Sort keys based on CATEGORY_ORDER
-  const sortedGroups: Record<string, BlockDefinition[]> = {};
+  const sortedGroups: Record<string, BlockDefinition[]> = {}
 
   CATEGORY_ORDER.forEach((category) => {
     if (groups[category]) {
-      sortedGroups[category] = groups[category]!;
+      sortedGroups[category] = groups[category]!
     }
-  });
+  })
 
   // Add any categories not in CATEGORY_ORDER at the end
   Object.keys(groups).forEach((category) => {
     if (!sortedGroups[category]) {
-      sortedGroups[category] = groups[category]!;
+      sortedGroups[category] = groups[category]!
     }
-  });
+  })
 
-  return sortedGroups;
-});
+  return sortedGroups
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "AddBlockModal",
-});
+  name: "AddBlockModal"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -178,9 +178,9 @@ defineOptions({
 
 /* region Logic */
 const handleSelect = (block: BlockDefinition) => {
-  emit("select", block);
-  open.value = false;
-};
+  emit("select", block)
+  open.value = false
+}
 /* endregion */
 </script>
 

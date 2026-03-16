@@ -1,57 +1,57 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { getLocalizedContent } from "rimelight-components/utils";
-import { usePageRegistry, useInfobox, useRC } from "rimelight-components/composables";
-import { useToast } from "@nuxt/ui/composables/useToast";
-import type { TabsItem } from "@nuxt/ui";
-import { useI18n } from "vue-i18n";
-import { useShare, useClipboard } from "@vueuse/core";
-import { type Page } from "rimelight-components/types";
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
+import { computed } from "vue"
+import { getLocalizedContent } from "rimelight-components/utils"
+import { usePageRegistry, useInfobox, useRC } from "rimelight-components/composables"
+import { useToast } from "@nuxt/ui/composables/useToast"
+import type { TabsItem } from "@nuxt/ui"
+import { useI18n } from "vue-i18n"
+import { useShare, useClipboard } from "@vueuse/core"
+import { type Page } from "rimelight-components/types"
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface PagePropertiesRendererProps {
-  canEdit?: boolean;
-  editUrl?: string;
+  canEdit?: boolean
+  editUrl?: string
   rc?: {
-    aside?: string;
-    actions?: string;
-    icon?: string;
-    title?: string;
-    type?: string;
-    tags?: string;
-    tabs?: string;
-    image?: string;
-    groupButton?: string;
-    details?: string;
-    field?: string;
-    fieldLabel?: string;
-    fieldValue?: string;
-    list?: string;
-    listItem?: string;
-    pageArrayList?: string;
-    pageArrayItem?: string;
-    pageArrayBullet?: string;
-    links?: string;
-  };
+    aside?: string
+    actions?: string
+    icon?: string
+    title?: string
+    type?: string
+    tags?: string
+    tabs?: string
+    image?: string
+    groupButton?: string
+    details?: string
+    field?: string
+    fieldLabel?: string
+    fieldValue?: string
+    list?: string
+    listItem?: string
+    pageArrayList?: string
+    pageArrayItem?: string
+    pageArrayBullet?: string
+    links?: string
+  }
 }
 
-const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>();
+const { canEdit = false, editUrl, rc: rcProp } = defineProps<PagePropertiesRendererProps>()
 
-const { rc } = useRC("PagePropertiesRenderer", rcProp);
+const { rc } = useRC("PagePropertiesRenderer", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface PagePropertiesRendererEmits {}
 
-const emit = defineEmits<PagePropertiesRendererEmits>();
+const emit = defineEmits<PagePropertiesRendererEmits>()
 /* endregion */
 
 /* region Slots */
 export interface PagePropertiesRendererSlots {}
 
-const slots = defineSlots<PagePropertiesRendererSlots>();
+const slots = defineSlots<PagePropertiesRendererSlots>()
 /* endregion */
 
 /* region Styles */
@@ -78,9 +78,9 @@ const pagePropertiesRendererStyles = tv({
     linksClass: "flex flex-col gap-xs",
     actionGroup: "flex flex-row gap-sm",
     headerContent: "flex flex-col gap-xs items-center",
-    imageWrapper: "w-full",
-  },
-});
+    imageWrapper: "w-full"
+  }
+})
 
 const {
   asideClass,
@@ -104,43 +104,43 @@ const {
   linksClass,
   actionGroup,
   headerContent,
-  imageWrapper,
-} = pagePropertiesRendererStyles();
-type PagePropertiesRendererVariants = VariantProps<typeof pagePropertiesRendererStyles>;
+  imageWrapper
+} = pagePropertiesRendererStyles()
+type PagePropertiesRendererVariants = VariantProps<typeof pagePropertiesRendererStyles>
 /* endregion */
 
 /* region State */
-const page = defineModel<Page>({ required: true });
+const page = defineModel<Page>({ required: true })
 
-const { getTypeLabelKey } = usePageRegistry();
+const { getTypeLabelKey } = usePageRegistry()
 const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(
-  () => page.value.properties,
-);
+  () => page.value.properties
+)
 
-const { t, locale } = useI18n();
-const { share } = useShare();
-const { copy } = useClipboard();
-const toast = useToast();
+const { t, locale } = useI18n()
+const { share } = useShare()
+const { copy } = useClipboard()
+const toast = useToast()
 
 const imageTabs = computed<TabsItem[]>(() => {
-  if (!page.value.images?.length) return [];
+  if (!page.value.images?.length) return []
 
   return page.value.images.map((img, index) => {
-    const localizedName = getLocalizedContent(img.name, locale.value);
+    const localizedName = getLocalizedContent(img.name, locale.value)
 
     return {
       label: localizedName || `${t("label_image")} ${index + 1}`,
       value: `image-${index}`,
-      img,
-    };
-  });
-});
+      img
+    }
+  })
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "PagePropertiesRenderer",
-});
+  name: "PagePropertiesRenderer"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -152,40 +152,40 @@ defineOptions({
 /* region Logic */
 const sharePage = async () => {
   if (!page.value) {
-    return;
+    return
   }
 
   try {
     await share({
       title: getLocalizedContent(page.value.title, locale),
       text: getLocalizedContent(page.value.description, locale),
-      url: typeof location !== "undefined" ? location.href : "",
-    });
+      url: typeof location !== "undefined" ? location.href : ""
+    })
   } catch {
     toast.add({
       color: "error",
       title: "toast_share-page_error_title",
-      description: "toast_share-page_error_description",
-    });
+      description: "toast_share-page_error_description"
+    })
   }
-};
+}
 
 const copyLink = async () => {
   try {
-    await copy(typeof location !== "undefined" ? location.href : "");
+    await copy(typeof location !== "undefined" ? location.href : "")
     toast.add({
       color: "success",
       title: "toast_copy-page-link_success_title",
-      description: typeof location !== "undefined" ? location.href : "",
-    });
+      description: typeof location !== "undefined" ? location.href : ""
+    })
   } catch {
     toast.add({
       color: "error",
       title: "toast_copy-page-link_error_title",
-      description: "toast_copy-page-link_error_description",
-    });
+      description: "toast_copy-page-link_error_description"
+    })
   }
-};
+}
 /* endregion */
 </script>
 
@@ -211,7 +211,7 @@ const copyLink = async () => {
       :ui="{
         root: 'divide-none',
         header: 'bg-accented text-center',
-        body: 'p-0 sm:p-0 bg-muted',
+        body: 'p-0 sm:p-0 bg-muted'
       }"
     >
       <template #header>
@@ -281,7 +281,7 @@ const copyLink = async () => {
                 trailing-icon="lucide:chevron-down"
                 :ui="{
                   trailingIcon:
-                    'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                    'group-data-[state=open]:rotate-180 transition-transform duration-200'
                 }"
                 block
                 :class="groupButtonClass({ class: rc.groupButton })"
@@ -328,7 +328,7 @@ const copyLink = async () => {
                                 ? schema.defaultValue.id ||
                                     schema.defaultValue.value ||
                                     getLocalizedContent(schema.defaultValue, locale)
-                                : schema.defaultValue,
+                                : schema.defaultValue
                             )
                           "
                         />
@@ -350,7 +350,7 @@ const copyLink = async () => {
                                 String(
                                   typeof id === 'object'
                                     ? id.id || id.value || getLocalizedContent(id, locale)
-                                    : id,
+                                    : id
                                 )
                               "
                             />

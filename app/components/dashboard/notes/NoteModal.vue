@@ -1,39 +1,39 @@
 <script lang="ts" setup>
-import type { SelectMenuItem } from "@nuxt/ui";
-import { computed, reactive, ref, watch, onUnmounted } from "vue";
-import type { Label, Note } from "#rimelight-components/db";
-import { useApi, $api } from "#rimelight-components/composables";
-import { tv } from "../../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
+import type { SelectMenuItem } from "@nuxt/ui"
+import { computed, reactive, ref, watch, onUnmounted } from "vue"
+import type { Label, Note } from "#rimelight-components/db"
+import { useApi, $api } from "#rimelight-components/composables"
+import { tv } from "../../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface NoteModalProps {
-  note?: Note | null;
+  note?: Note | null
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { note, rc: rcProp } = defineProps<NoteModalProps>();
+const { note, rc: rcProp } = defineProps<NoteModalProps>()
 
-const { rc } = useRC("NoteModal", rcProp);
+const { rc } = useRC("NoteModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface NoteModalEmits {
-  saved: [note: Note];
-  close: [];
+  saved: [note: Note]
+  close: []
 }
 
-const emit = defineEmits<NoteModalEmits>();
+const emit = defineEmits<NoteModalEmits>()
 /* endregion */
 
 /* region Slots */
 export interface NoteModalSlots {
-  default: (props: {}) => any;
+  default: (props: {}) => any
 }
 
-const slots = defineSlots<NoteModalSlots>();
+const slots = defineSlots<NoteModalSlots>()
 /* endregion */
 
 /* region Styles */
@@ -49,9 +49,9 @@ const noteModalStyles = tv({
     footerWrapper: "flex items-center justify-between",
     labelActionWrapper: "flex flex-row gap-xs",
     statusWrapper: "flex flex-col gap-xs",
-    statusText: "text-xs text-dimmed",
-  },
-});
+    statusText: "text-xs text-dimmed"
+  }
+})
 
 const {
   root,
@@ -64,57 +64,57 @@ const {
   footerWrapper,
   labelActionWrapper,
   statusWrapper,
-  statusText,
-} = noteModalStyles();
-type NoteModalVariants = VariantProps<typeof noteModalStyles>;
+  statusText
+} = noteModalStyles()
+type NoteModalVariants = VariantProps<typeof noteModalStyles>
 /* endregion */
 
 /* region State */
-const open = defineModel<boolean>("open", { default: false });
+const open = defineModel<boolean>("open", { default: false })
 
 const state = reactive<{
-  id: string | undefined;
-  title: string;
-  content: string;
-  isPinned: boolean;
-  isArchived: boolean;
-  labels: string[];
+  id: string | undefined
+  title: string
+  content: string
+  isPinned: boolean
+  isArchived: boolean
+  labels: string[]
 }>({
   id: note?.id,
   title: note?.title ?? "",
   content: note?.content ?? "",
   isPinned: note?.isPinned || false,
   isArchived: note?.isArchived || false,
-  labels: note?.labels?.map((l: any) => l.label.id) || [],
-});
+  labels: note?.labels?.map((l: any) => l.label.id) || []
+})
 
 const { data: fetchedLabels } = useApi<Label[]>("/api/notes/labels", {
-  default: () => [] as any,
-});
+  default: () => [] as any
+})
 
-const allLabels = ref<Label[]>([]);
-const saveTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
-const isSaving = ref(false);
-const hasPendingSave = ref(false);
+const allLabels = ref<Label[]>([])
+const saveTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
+const isSaving = ref(false)
+const hasPendingSave = ref(false)
 
 const labelMap = computed(() => {
-  const map = new Map<string, string>();
-  allLabels.value.forEach((l: Label) => map.set(l.id, l.name));
-  return map;
-});
+  const map = new Map<string, string>()
+  allLabels.value.forEach((l: Label) => map.set(l.id, l.name))
+  return map
+})
 
 const labelItems = computed<SelectMenuItem[]>(() =>
   allLabels.value.map((l: Label) => ({
     label: l.name,
-    id: l.id,
-  })),
-);
+    id: l.id
+  }))
+)
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "NoteModal",
-});
+  name: "NoteModal"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -134,111 +134,111 @@ watch(
   () => note,
   (newNote) => {
     if (!newNote) {
-      state.id = undefined;
-      state.title = "";
-      state.content = "";
-      state.isPinned = false;
-      state.isArchived = false;
-      state.labels = [];
+      state.id = undefined
+      state.title = ""
+      state.content = ""
+      state.isPinned = false
+      state.isArchived = false
+      state.labels = []
     } else {
-      state.id = newNote.id;
-      state.title = newNote.title ?? "";
-      state.content = newNote.content ?? "";
-      state.isPinned = newNote.isPinned || false;
-      state.isArchived = newNote.isArchived || false;
-      state.labels = newNote.labels?.map((l: any) => l.label.id) || [];
+      state.id = newNote.id
+      state.title = newNote.title ?? ""
+      state.content = newNote.content ?? ""
+      state.isPinned = newNote.isPinned || false
+      state.isArchived = newNote.isArchived || false
+      state.labels = newNote.labels?.map((l: any) => l.label.id) || []
     }
   },
-  { immediate: true },
-);
+  { immediate: true }
+)
 
 watch(
   () => fetchedLabels.value,
   (newLabels) => {
     if (newLabels) {
-      allLabels.value = [...newLabels];
+      allLabels.value = [...newLabels]
     }
   },
-  { immediate: true },
-);
+  { immediate: true }
+)
 
 onUnmounted(() => {
   if (saveTimeout.value) {
-    clearTimeout(saveTimeout.value);
+    clearTimeout(saveTimeout.value)
   }
-});
+})
 /* endregion */
 
 /* region Logic */
 async function saveNote() {
-  if (!state.title && !state.content) return;
+  if (!state.title && !state.content) return
 
-  isSaving.value = true;
+  isSaving.value = true
   try {
     const payload = {
       title: state.title,
       content: state.content,
       isPinned: state.isPinned,
       isArchived: state.isArchived,
-      labels: state.labels,
-    };
+      labels: state.labels
+    }
 
-    let result: Note | undefined;
+    let result: Note | undefined
     if (state.id) {
       result = await $api<Note>(`/api/notes/${state.id}`, {
         method: "PATCH",
-        body: payload,
-      });
+        body: payload
+      })
     } else {
       result = await $api<Note>("/api/notes", {
         method: "POST",
-        body: payload,
-      });
-      state.id = result.id;
+        body: payload
+      })
+      state.id = result.id
     }
 
-    if (result) emit("saved", result);
+    if (result) emit("saved", result)
   } catch (error) {
-    console.error("Failed to save note:", error);
+    console.error("Failed to save note:", error)
   } finally {
-    isSaving.value = false;
-    hasPendingSave.value = false;
+    isSaving.value = false
+    hasPendingSave.value = false
   }
 }
 
 function debouncedSave() {
-  hasPendingSave.value = true;
-  if (saveTimeout.value) clearTimeout(saveTimeout.value);
+  hasPendingSave.value = true
+  if (saveTimeout.value) clearTimeout(saveTimeout.value)
   saveTimeout.value = setTimeout(() => {
-    saveNote();
-  }, 1000);
+    saveNote()
+  }, 1000)
 }
 
 function toggleLabel(labelId: string) {
-  const index = state.labels.indexOf(labelId);
+  const index = state.labels.indexOf(labelId)
   if (index === -1) {
-    state.labels.push(labelId);
+    state.labels.push(labelId)
   } else {
-    state.labels.splice(index, 1);
+    state.labels.splice(index, 1)
   }
-  debouncedSave();
+  debouncedSave()
 }
 
 function handleLabelUpdate(val: any) {
-  state.labels = val as string[];
-  debouncedSave();
+  state.labels = val as string[]
+  debouncedSave()
 }
 
 async function createLabel(name: string) {
   try {
     const newLabel = await $api<Label>("/api/notes/labels", {
       method: "POST",
-      body: { name },
-    });
-    allLabels.value.push(newLabel);
-    toggleLabel(newLabel.id);
+      body: { name }
+    })
+    allLabels.value.push(newLabel)
+    toggleLabel(newLabel.id)
   } catch (error) {
-    console.error("Failed to create label:", error);
+    console.error("Failed to create label:", error)
   }
 }
 
@@ -246,11 +246,11 @@ function deleteNote() {
   if (state.id) {
     $api(`/api/notes/${state.id}`, { method: "DELETE" })
       .then(() => {
-        emit("close");
+        emit("close")
       })
-      .catch((err) => console.error("Failed to delete note:", err));
+      .catch((err) => console.error("Failed to delete note:", err))
   } else {
-    emit("close");
+    emit("close")
   }
 }
 /* endregion */
@@ -304,8 +304,8 @@ function deleteNote() {
                 color="neutral"
                 :label="state.isPinned ? 'Unpin' : 'Pin'"
                 @click="
-                  state.isPinned = !state.isPinned;
-                  debouncedSave();
+                  state.isPinned = !state.isPinned
+                  debouncedSave()
                 "
               />
               <div class="flex gap-xs">
@@ -324,8 +324,8 @@ function deleteNote() {
                   size="xs"
                   class="flex-1"
                   @keydown.enter="
-                    createLabel(($event.target as HTMLInputElement).value);
-                    ($event.target as HTMLInputElement).value = '';
+                    createLabel(($event.target as HTMLInputElement).value)
+                    ;($event.target as HTMLInputElement).value = ''
                   "
                 />
               </div>
@@ -335,8 +335,8 @@ function deleteNote() {
                 color="neutral"
                 :label="state.isArchived ? 'Unarchive' : 'Archive'"
                 @click="
-                  state.isArchived = !state.isArchived;
-                  debouncedSave();
+                  state.isArchived = !state.isArchived
+                  debouncedSave()
                 "
               />
             </div>

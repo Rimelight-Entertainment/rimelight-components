@@ -1,64 +1,64 @@
 <script setup lang="ts">
-import { ref, computed, useTemplateRef, provide, watch } from "vue";
-import { navigateTo } from "#imports";
+import { ref, computed, useTemplateRef, provide, watch } from "vue"
+import { navigateTo } from "#imports"
 import {
   type Page,
   type PageSurround,
   type PageDefinition,
-  type PageVersion,
-} from "rimelight-components/types";
+  type PageVersion
+} from "rimelight-components/types"
 import {
   usePageEditor,
   usePageRegistry,
   useRC,
   useHeaderStack,
-  useConfirm,
-} from "rimelight-components/composables";
+  useConfirm
+} from "rimelight-components/composables"
 import {
   getLocalizedContent,
   syncPageWithDefinition,
   dehydratePageProperties,
   defaultDocument,
-  defaultWindow,
-} from "rimelight-components/utils";
-import { useI18n } from "vue-i18n";
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
+  defaultWindow
+} from "rimelight-components/utils"
+import { useI18n } from "vue-i18n"
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface PageEditorProps {
-  isSaving: boolean;
-  isViewingVersion?: boolean;
-  useSurround?: boolean;
-  surround?: PageSurround | null;
-  surroundStatus?: "idle" | "pending" | "success" | "error";
-  resolvePage: (id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>;
-  pageDefinitions: Record<string, PageDefinition>;
-  onDeletePage?: (id: string) => Promise<void>;
-  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>;
-  onNavigateToPage?: (slug: string) => void;
-  onViewPage?: (slug: string) => void;
-  basePath?: string;
-  isAdmin?: boolean;
+  isSaving: boolean
+  isViewingVersion?: boolean
+  useSurround?: boolean
+  surround?: PageSurround | null
+  surroundStatus?: "idle" | "pending" | "success" | "error"
+  resolvePage: (id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>
+  pageDefinitions: Record<string, PageDefinition>
+  onDeletePage?: (id: string) => Promise<void>
+  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>
+  onNavigateToPage?: (slug: string) => void
+  onViewPage?: (slug: string) => void
+  basePath?: string
+  isAdmin?: boolean
   rc?: {
-    header?: string;
-    headerGroup?: string;
-    splitContainer?: string;
-    editorColumn?: string;
-    container?: string;
-    grid?: string;
-    toc?: string;
-    properties?: string;
-    contentWrapper?: string;
-    banner?: string;
-    icon?: string;
-    title?: string;
-    surroundSkeleton?: string;
-    skeleton?: string;
-    metadata?: string;
-    resizer?: string;
-    previewColumn?: string;
-  };
+    header?: string
+    headerGroup?: string
+    splitContainer?: string
+    editorColumn?: string
+    container?: string
+    grid?: string
+    toc?: string
+    properties?: string
+    contentWrapper?: string
+    banner?: string
+    icon?: string
+    title?: string
+    surroundSkeleton?: string
+    skeleton?: string
+    metadata?: string
+    resizer?: string
+    previewColumn?: string
+  }
 }
 
 const {
@@ -75,34 +75,34 @@ const {
   basePath,
   isAdmin = false,
   pageDefinitions,
-  rc: rcProp,
-} = defineProps<PageEditorProps>();
+  rc: rcProp
+} = defineProps<PageEditorProps>()
 
-const { rc } = useRC("PageEditor", rcProp);
+const { rc } = useRC("PageEditor", rcProp)
 
-provide("page-resolver", resolvePage);
+provide("page-resolver", resolvePage)
 /*endregion */
 
 /* region Emits */
 export interface PageEditorEmits {
-  save: [value: Page];
-  "version-navigate": [version: PageVersion];
-  "version-approved": [version: PageVersion];
-  "version-rejected": [version: PageVersion];
-  "version-reverted": [version: PageVersion];
-  publish: [value: Page];
-  unpublish: [value: Page];
+  save: [value: Page]
+  "version-navigate": [version: PageVersion]
+  "version-approved": [version: PageVersion]
+  "version-rejected": [version: PageVersion]
+  "version-reverted": [version: PageVersion]
+  publish: [value: Page]
+  unpublish: [value: Page]
 }
 
-const emit = defineEmits<PageEditorEmits>();
+const emit = defineEmits<PageEditorEmits>()
 /* endregion */
 
 /* region Slots */
 export interface PageEditorSlots {
-  "header-actions"?: (props: {}) => any;
+  "header-actions"?: (props: {}) => any
 }
 
-const slots = defineSlots<PageEditorSlots>();
+const slots = defineSlots<PageEditorSlots>()
 /* endregion */
 
 /* region Styles */
@@ -131,9 +131,9 @@ const pageEditorStyles = tv({
     headerSeparator: "h-4 mx-1",
     titleWrapper: "flex flex-row gap-sm items-center w-full",
     titleInput: "text-4xl font-bold p-0 focus:ring-0 shadow-none",
-    descriptionInput: "p-0 text-lg text-dimmed focus:ring-0 shadow-none",
-  },
-});
+    descriptionInput: "p-0 text-lg text-dimmed focus:ring-0 shadow-none"
+  }
+})
 
 const {
   header,
@@ -158,63 +158,63 @@ const {
   headerSeparator,
   titleWrapper,
   titleInput,
-  descriptionInput,
-} = pageEditorStyles();
-type PageEditorVariants = VariantProps<typeof pageEditorStyles>;
+  descriptionInput
+} = pageEditorStyles()
+type PageEditorVariants = VariantProps<typeof pageEditorStyles>
 /* endregion */
 
 /* region State */
-const page = defineModel<Page>({ required: true });
-const versionId = defineModel<string | null>("currentVersionId", { default: null });
+const page = defineModel<Page>({ required: true })
+const versionId = defineModel<string | null>("currentVersionId", { default: null })
 
 const { undo, redo, canUndo, canRedo, captureSnapshot, resetHistory, pauseHistory, resumeHistory } =
-  usePageEditor(page);
-const { confirm } = useConfirm();
-const { t, locale } = useI18n();
-const { getTypeLabelKey } = usePageRegistry();
-const { totalHeight } = useHeaderStack();
+  usePageEditor(page)
+const { confirm } = useConfirm()
+const { t, locale } = useI18n()
+const { getTypeLabelKey } = usePageRegistry()
+const { totalHeight } = useHeaderStack()
 
-const showPreview = ref(false);
-const isResizing = ref(false);
-const SNAP_THRESHOLD = 1.5; // Snap if within 1.5% of the center
-const editorWidth = ref(50);
+const showPreview = ref(false)
+const isResizing = ref(false)
+const SNAP_THRESHOLD = 1.5 // Snap if within 1.5% of the center
+const editorWidth = ref(50)
 
-const isDeleteModalOpen = ref(false);
-const isDeleting = ref(false);
-const isPageTreeModalOpen = ref(false);
-const isFetchingTree = ref(false);
-const treePages = ref<Pick<Page, "title" | "slug">[]>([]);
+const isDeleteModalOpen = ref(false)
+const isDeleting = ref(false)
+const isPageTreeModalOpen = ref(false)
+const isFetchingTree = ref(false)
+const treePages = ref<Pick<Page, "title" | "slug">[]>([])
 
-const editorRef = useTemplateRef("editor");
-const containerRef = useTemplateRef<HTMLElement>("split-container");
+const editorRef = useTemplateRef("editor")
+const containerRef = useTemplateRef<HTMLElement>("split-container")
 const versionSelectorRef = useTemplateRef<{ fetchVersions: () => Promise<void> }>(
-  "version-selector",
-);
+  "version-selector"
+)
 
 // Asset management state
-const isAssetModalOpen = ref(false);
-const assetSelectionTarget = ref<"banner" | null>(null);
+const isAssetModalOpen = ref(false)
+const assetSelectionTarget = ref<"banner" | null>(null)
 
 const currentDefinition = computed(() => {
-  if (!page.value?.type || !pageDefinitions) return null;
-  return pageDefinitions[page.value.type];
-});
+  if (!page.value?.type || !pageDefinitions) return null
+  return pageDefinitions[page.value.type]
+})
 
-const previousPage = computed(() => surround?.previous);
-const nextPage = computed(() => surround?.next);
-const hasSurround = computed(() => !!(surround?.previous || surround?.next));
+const previousPage = computed(() => surround?.previous)
+const nextPage = computed(() => surround?.next)
+const hasSurround = computed(() => !!(surround?.previous || surround?.next))
 
 const cursor = computed(() => {
-  if (isResizing.value) return "cursor-grabbing";
-  return "cursor-grab";
-});
+  if (isResizing.value) return "cursor-grabbing"
+  return "cursor-grab"
+})
 
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "PageEditor",
-});
+  name: "PageEditor"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -231,27 +231,27 @@ watch(
   [() => page.value?.id, () => versionId.value, () => page.value?.type, currentDefinition],
   () => {
     if (page.value && currentDefinition.value) {
-      console.log("[PageEditor] Syncing page with definition", page.value.id, versionId.value);
-      syncPageWithDefinition(page.value, currentDefinition.value);
+      console.log("[PageEditor] Syncing page with definition", page.value.id, versionId.value)
+      syncPageWithDefinition(page.value, currentDefinition.value)
 
       if (!page.value.description) {
-        page.value.description = { en: "" };
+        page.value.description = { en: "" }
       }
     }
   },
-  { immediate: true },
-);
+  { immediate: true }
+)
 
 watch(
   () => isSaving,
   async (newVal, oldVal) => {
     if (!newVal && oldVal) {
       if (versionSelectorRef.value?.fetchVersions) {
-        await versionSelectorRef.value.fetchVersions();
+        await versionSelectorRef.value.fetchVersions()
       }
     }
-  },
-);
+  }
+)
 
 // onUnmounted(() => {
 //
@@ -266,182 +266,182 @@ const handleViewPage = async () => {
       description: t("page_editor.unsaved_changes_description"),
       confirmLabel: t("page_editor.leave_anyway"),
       cancelLabel: t("common.cancel"),
-      danger: true,
-    });
-    if (!confirmed) return;
+      danger: true
+    })
+    if (!confirmed) return
   }
 
   if (onViewPage) {
-    onViewPage(page.value.slug);
+    onViewPage(page.value.slug)
   } else {
-    navigateTo(`/${page.value.slug}`);
+    navigateTo(`/${page.value.slug}`)
   }
-};
+}
 
 const handleSave = () => {
   if (currentDefinition.value) {
-    syncPageWithDefinition(page.value, currentDefinition.value);
+    syncPageWithDefinition(page.value, currentDefinition.value)
   }
-  const dataToPersist = JSON.parse(JSON.stringify(page.value));
-  dataToPersist.properties = dehydratePageProperties(dataToPersist.properties);
-  emit("save", dataToPersist);
-};
+  const dataToPersist = JSON.parse(JSON.stringify(page.value))
+  dataToPersist.properties = dehydratePageProperties(dataToPersist.properties)
+  emit("save", dataToPersist)
+}
 
 const handlePublishToggle = async () => {
-  const isPublished = !!page.value.postedAt;
+  const isPublished = !!page.value.postedAt
 
   const title = isPublished
     ? t("page_editor.unpublish_page", "Unpublish Page")
-    : t("page_editor.publish_page", "Publish Page");
+    : t("page_editor.publish_page", "Publish Page")
 
   const description = isPublished
     ? t(
         "page_editor.unpublish_confirmation",
-        "Are you sure you want to unpublish this page? It will no longer be visible to the public.",
+        "Are you sure you want to unpublish this page? It will no longer be visible to the public."
       )
     : t(
         "page_editor.publish_confirmation",
-        "Are you sure you want to publish this page? This will make it visible to the public.",
-      );
+        "Are you sure you want to publish this page? This will make it visible to the public."
+      )
 
   const confirmLabel = isPublished
     ? t("page_editor.unpublish", "Unpublish")
-    : t("page_editor.publish", "Publish");
+    : t("page_editor.publish", "Publish")
 
-  const color = isPublished ? "error" : "primary";
+  const color = isPublished ? "error" : "primary"
 
   const confirmed = await confirm({
     title,
     description,
     confirmLabel,
     cancelLabel: t("common.cancel", "Cancel"),
-    danger: isPublished,
-  });
+    danger: isPublished
+  })
 
   if (confirmed) {
     if (currentDefinition.value) {
-      syncPageWithDefinition(page.value, currentDefinition.value);
+      syncPageWithDefinition(page.value, currentDefinition.value)
     }
-    const dataToPersist = JSON.parse(JSON.stringify(page.value));
-    dataToPersist.properties = dehydratePageProperties(dataToPersist.properties);
+    const dataToPersist = JSON.parse(JSON.stringify(page.value))
+    dataToPersist.properties = dehydratePageProperties(dataToPersist.properties)
     if (isPublished) {
-      emit("unpublish", dataToPersist);
+      emit("unpublish", dataToPersist)
     } else {
-      emit("publish", dataToPersist);
+      emit("publish", dataToPersist)
     }
   }
-};
+}
 
 const handleMouseMove = (e: MouseEvent) => {
-  if (!isResizing.value || !containerRef.value) return;
+  if (!isResizing.value || !containerRef.value) return
 
-  const containerRect = containerRef.value.getBoundingClientRect();
-  let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+  const containerRect = containerRef.value.getBoundingClientRect()
+  let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100
 
   // Constrain bounds
-  newWidth = Math.min(Math.max(newWidth, 20), 80);
+  newWidth = Math.min(Math.max(newWidth, 20), 80)
 
   // Snap logic: if near 50%, lock it to 50%
   if (Math.abs(newWidth - 50) < SNAP_THRESHOLD) {
-    editorWidth.value = 50;
+    editorWidth.value = 50
   } else {
-    editorWidth.value = newWidth;
+    editorWidth.value = newWidth
   }
-};
+}
 
 const startResizing = (e: MouseEvent) => {
-  if (!defaultWindow || !defaultDocument) return;
+  if (!defaultWindow || !defaultDocument) return
 
-  isResizing.value = true;
-  defaultWindow.addEventListener("mousemove", handleMouseMove);
-  defaultWindow.addEventListener("mouseup", stopResizing);
+  isResizing.value = true
+  defaultWindow.addEventListener("mousemove", handleMouseMove)
+  defaultWindow.addEventListener("mouseup", stopResizing)
 
   // Visual feedback
-  defaultDocument.body.style.cursor = "col-resize";
-  defaultDocument.body.style.userSelect = "none";
-};
+  defaultDocument.body.style.cursor = "col-resize"
+  defaultDocument.body.style.userSelect = "none"
+}
 
 const stopResizing = () => {
-  isResizing.value = false;
+  isResizing.value = false
 
   if (defaultWindow) {
-    defaultWindow.removeEventListener("mousemove", handleMouseMove);
-    defaultWindow.removeEventListener("mouseup", stopResizing);
+    defaultWindow.removeEventListener("mousemove", handleMouseMove)
+    defaultWindow.removeEventListener("mouseup", stopResizing)
   }
 
   if (defaultDocument) {
-    defaultDocument.body.style.cursor = "";
-    defaultDocument.body.style.userSelect = "";
+    defaultDocument.body.style.cursor = ""
+    defaultDocument.body.style.userSelect = ""
   }
-};
+}
 
 const handleDeleteConfirm = async () => {
-  if (!onDeletePage || !page.value.id) return;
+  if (!onDeletePage || !page.value.id) return
 
   try {
-    isDeleting.value = true;
-    await onDeletePage(page.value.id);
-    isDeleteModalOpen.value = false;
+    isDeleting.value = true
+    await onDeletePage(page.value.id)
+    isDeleteModalOpen.value = false
   } catch (err) {
-    console.error("Failed to delete page:", err);
+    console.error("Failed to delete page:", err)
   } finally {
-    isDeleting.value = false;
+    isDeleting.value = false
   }
-};
+}
 
 const handleOpenTree = async () => {
-  if (!onFetchPages) return;
-  isFetchingTree.value = true;
+  if (!onFetchPages) return
+  isFetchingTree.value = true
   try {
-    treePages.value = await onFetchPages();
-    isPageTreeModalOpen.value = true;
+    treePages.value = await onFetchPages()
+    isPageTreeModalOpen.value = true
   } catch (e) {
-    console.error("Failed to fetch pages for tree", e);
+    console.error("Failed to fetch pages for tree", e)
   } finally {
-    isFetchingTree.value = false;
+    isFetchingTree.value = false
   }
-};
+}
 
 const handleTreeNavigate = (slug: string) => {
   if (onNavigateToPage) {
-    onNavigateToPage(slug);
+    onNavigateToPage(slug)
   }
-};
+}
 
 const openAssetPicker = (target: "banner") => {
-  assetSelectionTarget.value = target;
-  isAssetModalOpen.value = true;
-};
+  assetSelectionTarget.value = target
+  isAssetModalOpen.value = true
+}
 
 const onAssetSelected = (key: string) => {
   const encodedKey = key
     .split("/")
     .map((seg) => encodeURIComponent(seg))
-    .join("/");
-  const src = `/api/assets/${encodedKey}`;
+    .join("/")
+  const src = `/api/assets/${encodedKey}`
 
   if (assetSelectionTarget.value === "banner") {
     page.value.banner = {
       src,
-      alt: getLocalizedContent(page.value.title, locale.value) || "Banner",
-    };
+      alt: getLocalizedContent(page.value.title, locale.value) || "Banner"
+    }
   }
 
-  isAssetModalOpen.value = false;
-  assetSelectionTarget.value = null;
-};
+  isAssetModalOpen.value = false
+  assetSelectionTarget.value = null
+}
 
 const removeBanner = () => {
-  page.value.banner = undefined;
-};
+  page.value.banner = undefined
+}
 
 defineExpose({
   undo,
   redo,
   canUndo,
   canRedo,
-  resetHistory,
-});
+  resetHistory
+})
 /* endregion */
 </script>
 
@@ -558,9 +558,9 @@ defineExpose({
                   label: t('page_editor.delete_page'),
                   icon: 'lucide:trash-2',
                   color: 'error' as const,
-                  onSelect: () => (isDeleteModalOpen = true),
-                },
-              ],
+                  onSelect: () => (isDeleteModalOpen = true)
+                }
+              ]
             ]"
           >
             <UButton icon="lucide:ellipsis-vertical" variant="ghost" color="neutral" size="xs" />
@@ -667,8 +667,8 @@ defineExpose({
               @start="pauseHistory"
               @mutation="
                 () => {
-                  resumeHistory();
-                  captureSnapshot();
+                  resumeHistory()
+                  captureSnapshot()
                 }
               "
             />
@@ -757,7 +757,7 @@ defineExpose({
       :style="{
         width: `${100 - editorWidth}%`,
         top: `${totalHeight}px`,
-        height: `calc(100vh - ${totalHeight}px)`,
+        height: `calc(100vh - ${totalHeight}px)`
       }"
     >
       <RCPageRenderer

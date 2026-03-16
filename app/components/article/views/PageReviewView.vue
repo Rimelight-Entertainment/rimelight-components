@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import { ref, computed, watch, useTemplateRef } from "vue";
-import { useRoute, useRouter, navigateTo, useAppConfig } from "#imports";
-import { type Page, type PageVersion, type PageDefinition } from "rimelight-components/types";
+import { ref, computed, watch, useTemplateRef } from "vue"
+import { useRoute, useRouter, navigateTo, useAppConfig } from "#imports"
+import { type Page, type PageVersion, type PageDefinition } from "rimelight-components/types"
 import {
   convertVersionToPage,
   syncPageWithDefinition,
   getLocalizedContent,
-  getPageResolutionPath,
-} from "rimelight-components/utils";
-import { usePageRegistry, useHeaderStack, useRC } from "rimelight-components/composables";
-import { useI18n } from "vue-i18n";
-import { useToast } from "@nuxt/ui/composables/useToast";
-import { tv } from "rimelight-components/app/internal/tv";
+  getPageResolutionPath
+} from "rimelight-components/utils"
+import { usePageRegistry, useHeaderStack, useRC } from "rimelight-components/composables"
+import { useI18n } from "vue-i18n"
+import { useToast } from "@nuxt/ui/composables/useToast"
+import { tv } from "rimelight-components/app/internal/tv"
 
 /* region Props */
 export interface PageReviewViewProps {
   /** The full lookup path for the page (e.g. franchises/grand-tale/wiki/my-page) */
-  lookupPath: string;
+  lookupPath: string
   /** Current version ID being reviewed */
-  versionId?: string | null;
+  versionId?: string | null
   /** Page definitions map */
-  pageDefinitions: Record<string, PageDefinition>;
+  pageDefinitions: Record<string, PageDefinition>
   /** Base URL for navigation (e.g. /franchises/grand-tale/wiki) */
-  baseUrl: string;
+  baseUrl: string
   /** Whether the current user is an admin who can approve/reject */
-  isAdmin?: boolean;
+  isAdmin?: boolean
   /** Custom RC styles */
   rc?: {
-    header?: string;
-    headerGroup?: string;
-    splitContainer?: string;
-    editorColumn?: string;
-    resizer?: string;
-    previewColumn?: string;
-    headerText?: string;
-    headerHighLight?: string;
-    headerSeparator?: string;
-  };
+    header?: string
+    headerGroup?: string
+    splitContainer?: string
+    editorColumn?: string
+    resizer?: string
+    previewColumn?: string
+    headerText?: string
+    headerHighLight?: string
+    headerSeparator?: string
+  }
 }
 
 const {
@@ -45,19 +45,19 @@ const {
   pageDefinitions,
   baseUrl,
   isAdmin = false,
-  rc: rcProp,
-} = defineProps<PageReviewViewProps>();
+  rc: rcProp
+} = defineProps<PageReviewViewProps>()
 
-const { rc } = useRC("PageReviewView", rcProp);
+const { rc } = useRC("PageReviewView", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface PageReviewViewEmits {
-  approved: [version: PageVersion];
-  rejected: [version: PageVersion];
+  approved: [version: PageVersion]
+  rejected: [version: PageVersion]
 }
 
-const emit = defineEmits<PageReviewViewEmits>();
+const emit = defineEmits<PageReviewViewEmits>()
 /* endregion */
 
 /* region Slots */
@@ -75,9 +75,9 @@ const reviewStyles = tv({
     previewColumn: "sticky self-start overflow-y-auto min-h-0",
     headerText: "text-xs text-neutral-500 dark:text-neutral-400 font-medium whitespace-nowrap",
     headerHighLight: "text-neutral-900 dark:text-white",
-    headerSeparator: "h-4 mx-1",
-  },
-});
+    headerSeparator: "h-4 mx-1"
+  }
+})
 
 const {
   header: headerStyles,
@@ -88,81 +88,81 @@ const {
   previewColumn,
   headerText,
   headerHighLight,
-  headerSeparator,
-} = reviewStyles();
+  headerSeparator
+} = reviewStyles()
 /* endregion */
 
 /* region State */
-const { t, locale } = useI18n();
-const { totalHeight } = useHeaderStack();
-const { registerDefinitions } = usePageRegistry();
-const toast = useToast();
-const route = useRoute();
+const { t, locale } = useI18n()
+const { totalHeight } = useHeaderStack()
+const { registerDefinitions } = usePageRegistry()
+const toast = useToast()
+const route = useRoute()
 
-registerDefinitions(pageDefinitions);
+registerDefinitions(pageDefinitions)
 
 // Fetch the base page
 const {
   data: page,
   status: pageStatus,
   error: pageError,
-  refresh: refreshPage,
+  refresh: refreshPage
 } = useApi<Page>(() => getPageResolutionPath(lookupPath), {
   method: "GET",
-  key: `review-base-${lookupPath}`,
-});
+  key: `review-base-${lookupPath}`
+})
 
 // Fetch the specific version data
 const {
   data: versionData,
   status: versionStatus,
   error: versionError,
-  refresh: refreshVersion,
+  refresh: refreshVersion
 } = useApi<PageVersion>(() => (versionId ? `/api/pages/versions/${versionId}` : ""), {
   watch: [() => versionId],
-  immediate: !!versionId,
-});
+  immediate: !!versionId
+})
 
-const localPage = ref<Page | null>(null);
+const localPage = ref<Page | null>(null)
 
 watch(
   [page, versionData],
   () => {
     if (versionId && versionData.value) {
-      const converted = convertVersionToPage(versionData.value);
+      const converted = convertVersionToPage(versionData.value)
 
       const typeKey = Object.keys(pageDefinitions).find(
-        (k) => k.toLowerCase() === converted.type?.toLowerCase(),
-      );
-      const definition = typeKey ? pageDefinitions[typeKey] : null;
+        (k) => k.toLowerCase() === converted.type?.toLowerCase()
+      )
+      const definition = typeKey ? pageDefinitions[typeKey] : null
 
       if (definition) {
-        syncPageWithDefinition(converted, definition);
+        syncPageWithDefinition(converted, definition)
       }
-      localPage.value = converted;
+      localPage.value = converted
     } else if (page.value) {
-      const cloned = JSON.parse(JSON.stringify(page.value));
+      const cloned = JSON.parse(JSON.stringify(page.value))
       const typeKey = Object.keys(pageDefinitions).find(
-        (k) => k.toLowerCase() === cloned.type?.toLowerCase(),
-      );
-      const definition = typeKey ? pageDefinitions[typeKey] : null;
+        (k) => k.toLowerCase() === cloned.type?.toLowerCase()
+      )
+      const definition = typeKey ? pageDefinitions[typeKey] : null
 
       if (definition) {
-        syncPageWithDefinition(cloned, definition);
+        syncPageWithDefinition(cloned, definition)
       }
-      localPage.value = cloned;
+      localPage.value = cloned
     }
   },
-  { immediate: true },
-);
+  { immediate: true }
+)
 
 // Compare logic
-const showCompare = ref(false);
-const leftWidth = ref(50);
-const isResizing = ref(false);
-const splitContainerRef = useTemplateRef<HTMLElement>("split-container");
+const showCompare = ref(false)
+const leftWidth = ref(50)
+const isResizing = ref(false)
+const splitContainerRef = useTemplateRef<HTMLElement>("split-container")
 
-const isActioning = ref<string | null>(null);
+const isActioning = ref<string | null>(null)
 /* endregion */
 
 /* region Meta */
@@ -173,126 +173,126 @@ const isActioning = ref<string | null>(null);
 
 /* region Logic */
 const resolvePage = async (idOrSlug: string): Promise<Pick<Page, "title" | "icon" | "slug">> => {
-  const url = getPageResolutionPath(idOrSlug);
-  if (!url) throw new Error(`[Review] Invalid page reference: ${idOrSlug}`);
+  const url = getPageResolutionPath(idOrSlug)
+  if (!url) throw new Error(`[Review] Invalid page reference: ${idOrSlug}`)
 
   try {
     const data = await $api<Page>(url, {
-      query: { select: "title,icon,slug" },
-    });
-    if (!data) throw new Error(`[Review] Page not found: ${idOrSlug}`);
-    return data;
+      query: { select: "title,icon,slug" }
+    })
+    if (!data) throw new Error(`[Review] Page not found: ${idOrSlug}`)
+    return data
   } catch (e) {
-    console.warn(`[Review] Failed to resolve page: ${idOrSlug}`, e);
-    throw e;
+    console.warn(`[Review] Failed to resolve page: ${idOrSlug}`, e)
+    throw e
   }
-};
+}
 
 const startResizing = () => {
-  isResizing.value = true;
-  document.addEventListener("mousemove", handleMouseMove);
-  document.addEventListener("mouseup", stopResizing);
-  document.body.style.cursor = "col-resize";
-  document.body.style.userSelect = "none";
-};
+  isResizing.value = true
+  document.addEventListener("mousemove", handleMouseMove)
+  document.addEventListener("mouseup", stopResizing)
+  document.body.style.cursor = "col-resize"
+  document.body.style.userSelect = "none"
+}
 
 const handleMouseMove = (e: MouseEvent) => {
-  if (!isResizing.value || !splitContainerRef.value) return;
+  if (!isResizing.value || !splitContainerRef.value) return
 
-  const containerRect = splitContainerRef.value.getBoundingClientRect();
-  let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+  const containerRect = splitContainerRef.value.getBoundingClientRect()
+  let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100
 
   // Constrain bounds
-  newWidth = Math.min(Math.max(newWidth, 20), 80);
+  newWidth = Math.min(Math.max(newWidth, 20), 80)
 
   // Snap logic
   if (Math.abs(newWidth - 50) < 1.5) {
-    leftWidth.value = 50;
+    leftWidth.value = 50
   } else {
-    leftWidth.value = newWidth;
+    leftWidth.value = newWidth
   }
-};
+}
 
 const stopResizing = () => {
-  isResizing.value = false;
-  document.removeEventListener("mousemove", handleMouseMove);
-  document.removeEventListener("mouseup", stopResizing);
-  document.body.style.cursor = "";
-  document.body.style.userSelect = "";
-};
+  isResizing.value = false
+  document.removeEventListener("mousemove", handleMouseMove)
+  document.removeEventListener("mouseup", stopResizing)
+  document.body.style.cursor = ""
+  document.body.style.userSelect = ""
+}
 
 const handleApprove = async () => {
-  if (!versionId || !isAdmin) return;
-  isActioning.value = "approving";
+  if (!versionId || !isAdmin) return
+  isActioning.value = "approving"
   try {
-    await $api(`/api/pages/versions/${versionId}/approve`, { method: "POST" });
+    await $api(`/api/pages/versions/${versionId}/approve`, { method: "POST" })
     toast.add({
       color: "success",
-      title: t("page_version.approved_successfully", "Version approved"),
-    });
-    await refreshPage();
-    emit("approved", versionData.value!);
+      title: t("page_version.approved_successfully", "Version approved")
+    })
+    await refreshPage()
+    emit("approved", versionData.value!)
     // Default navigation to live page
     if (page.value?.slug) {
-      const base = baseUrl.replace(/\/$/, "");
-      const cleanBase = base.replace(/^\//, "");
+      const base = baseUrl.replace(/\/$/, "")
+      const cleanBase = base.replace(/^\//, "")
       const slugToUse = page.value.slug.startsWith(cleanBase)
         ? page.value.slug
-        : `${cleanBase}/${page.value.slug}`;
-      await navigateTo(`/${slugToUse}`);
+        : `${cleanBase}/${page.value.slug}`
+      await navigateTo(`/${slugToUse}`)
     }
   } catch (e: any) {
     toast.add({
       color: "error",
       title: t("page_version.failed_to_approve", "Failed to approve"),
-      description: e.message,
-    });
+      description: e.message
+    })
   } finally {
-    isActioning.value = null;
+    isActioning.value = null
   }
-};
+}
 
 const handleReject = async () => {
-  if (!versionId || !isAdmin) return;
-  isActioning.value = "rejecting";
+  if (!versionId || !isAdmin) return
+  isActioning.value = "rejecting"
   try {
-    await $api(`/api/pages/versions/${versionId}/reject`, { method: "POST" });
+    await $api(`/api/pages/versions/${versionId}/reject`, { method: "POST" })
     toast.add({
       color: "success",
-      title: t("page_version.rejected_successfully", "Version rejected"),
-    });
-    await refreshPage();
-    emit("rejected", versionData.value!);
+      title: t("page_version.rejected_successfully", "Version rejected")
+    })
+    await refreshPage()
+    emit("rejected", versionData.value!)
     // Default navigation to edit page
     if (page.value?.slug) {
-      const base = baseUrl.replace(/\/$/, "");
-      const cleanBase = base.replace(/^\//, "");
+      const base = baseUrl.replace(/\/$/, "")
+      const cleanBase = base.replace(/^\//, "")
       const slugToUse = page.value.slug.startsWith(cleanBase)
         ? page.value.slug
-        : `${cleanBase}/${page.value.slug}`;
-      await navigateTo(`/${slugToUse}/edit`);
+        : `${cleanBase}/${page.value.slug}`
+      await navigateTo(`/${slugToUse}/edit`)
     }
   } catch (e: any) {
     toast.add({
       color: "error",
       title: t("page_version.failed_to_reject", "Failed to reject"),
-      description: e.message,
-    });
+      description: e.message
+    })
   } finally {
-    isActioning.value = null;
+    isActioning.value = null
   }
-};
+}
 
 const cursorClass = computed(() => {
-  if (isResizing.value) return "cursor-grabbing";
-  return "cursor-grab";
-});
+  if (isResizing.value) return "cursor-grabbing"
+  return "cursor-grab"
+})
 
 const relativeSlug = computed(() => {
-  if (page.value?.slug) return page.value.slug;
-  const base = baseUrl.replace(/^\/|\/$/g, "");
-  return lookupPath.replace(base, "").replace(/^\/|\/$/g, "");
-});
+  if (page.value?.slug) return page.value.slug
+  const base = baseUrl.replace(/^\/|\/$/g, "")
+  return lookupPath.replace(base, "").replace(/^\/|\/$/g, "")
+})
 /* endregion */
 </script>
 
@@ -312,7 +312,7 @@ const relativeSlug = computed(() => {
     :error="{
       status: 404,
       statusText: 'Version Not Found',
-      message: 'The requested page version could not be located.',
+      message: 'The requested page version could not be located.'
     }"
     :redirect="baseUrl"
   />
@@ -409,7 +409,7 @@ const relativeSlug = computed(() => {
         :class="editorColumn({ class: rc.editorColumn })"
         :style="{
           width: showCompare ? `${leftWidth}%` : '100%',
-          height: `calc(100vh - ${totalHeight}px)`,
+          height: `calc(100vh - ${totalHeight}px)`
         }"
         class="overflow-y-auto"
       >
@@ -439,7 +439,7 @@ const relativeSlug = computed(() => {
         :class="previewColumn({ class: rc.previewColumn })"
         :style="{
           width: `${100 - leftWidth}%`,
-          height: `calc(100vh - ${totalHeight}px)`,
+          height: `calc(100vh - ${totalHeight}px)`
         }"
       >
         <RCPageRenderer

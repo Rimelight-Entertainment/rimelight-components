@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import { formatTimeAgo } from "@vueuse/core";
-import type { Notification } from "../../types";
-import { useApi, useDashboard, useRC } from "../../composables";
-import { tv } from "../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
+import { formatTimeAgo } from "@vueuse/core"
+import type { Notification } from "../../types"
+import { useApi, useDashboard, useRC } from "../../composables"
+import { tv } from "../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface NotificationsSlideoverProps {
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<NotificationsSlideoverProps>();
+const { rc: rcProp } = defineProps<NotificationsSlideoverProps>()
 
-const { rc } = useRC("NotificationsSlideover", rcProp);
+const { rc } = useRC("NotificationsSlideover", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface NotificationsSlideoverEmits {}
 
-const emit = defineEmits<NotificationsSlideoverEmits>();
+const emit = defineEmits<NotificationsSlideoverEmits>()
 /* endregion */
 
 /* region Slots */
 export interface NotificationsSlideoverSlots {}
 
-const slots = defineSlots<NotificationsSlideoverSlots>();
+const slots = defineSlots<NotificationsSlideoverSlots>()
 /* endregion */
 
 /* region Styles */
@@ -39,9 +39,9 @@ const notificationsSlideoverStyles = tv({
     notificationHeader: "flex items-center justify-between",
     senderName: "font-medium text-highlighted",
     timestamp: "text-xs text-muted",
-    notificationBody: "text-sm text-dimmed",
-  },
-});
+    notificationBody: "text-sm text-dimmed"
+  }
+})
 
 const {
   root,
@@ -50,21 +50,21 @@ const {
   notificationHeader,
   senderName,
   timestamp,
-  notificationBody,
-} = notificationsSlideoverStyles();
-type NotificationsSlideoverVariants = VariantProps<typeof notificationsSlideoverStyles>;
+  notificationBody
+} = notificationsSlideoverStyles()
+type NotificationsSlideoverVariants = VariantProps<typeof notificationsSlideoverStyles>
 /* endregion */
 
 /* region State */
-const { isNotificationsSlideoverOpen } = useDashboard();
+const { isNotificationsSlideoverOpen } = useDashboard()
 
-const { data: notifications } = await useApi<Notification[]>("/api/notifications");
+const { data: notifications } = await useApi<Notification[]>("/api/notifications")
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "NotificationsSlideover",
-});
+  name: "NotificationsSlideover"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -92,7 +92,7 @@ defineOptions({
     title="Notifications"
     :ui="{
       header: 'flex items-center justify-between',
-      content: 'w-full max-w-4/5 lg:w-96 rounded-none',
+      content: 'w-full max-w-4/5 lg:w-96 rounded-none'
     }"
   >
     <template #body>

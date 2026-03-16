@@ -1,62 +1,62 @@
 <script setup lang="ts">
-import { provide, ref } from "vue";
-import { v7 as uuidv7 } from "uuid";
-import type { Block } from "rimelight-components/types";
-import { useBlockEditor, useRC } from "rimelight-components/composables";
-import { type BlockDefinition } from "rimelight-components/utils/blocks";
-import { useI18n } from "vue-i18n";
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
+import { provide, ref } from "vue"
+import { v7 as uuidv7 } from "uuid"
+import type { Block } from "rimelight-components/types"
+import { useBlockEditor, useRC } from "rimelight-components/composables"
+import { type BlockDefinition } from "rimelight-components/utils/blocks"
+import { useI18n } from "vue-i18n"
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface BlockEditorProps {
-  historyLimit?: number;
-  containerId?: string | null; // ID of container block, null for root
+  historyLimit?: number
+  containerId?: string | null // ID of container block, null for root
   rc?: {
-    root?: string;
-    content?: string;
-  };
+    root?: string
+    content?: string
+  }
 }
 
-const { historyLimit, containerId = null, rc: rcProp } = defineProps<BlockEditorProps>();
+const { historyLimit, containerId = null, rc: rcProp } = defineProps<BlockEditorProps>()
 
-const { rc } = useRC("BlockEditor", rcProp);
+const { rc } = useRC("BlockEditor", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface BlockEditorEmits {
-  save: [];
-  mutation: [];
-  start: [];
-  end: [];
-  change: [any];
+  save: []
+  mutation: []
+  start: []
+  end: []
+  change: [any]
 }
 
-const emit = defineEmits<BlockEditorEmits>();
+const emit = defineEmits<BlockEditorEmits>()
 /* endregion */
 
 /* region Slots */
 export interface BlockEditorSlots {}
 
-const slots = defineSlots<BlockEditorSlots>();
+const slots = defineSlots<BlockEditorSlots>()
 /* endregion */
 
 /* region Styles */
 const blockEditorStyles = tv({
   slots: {
     root: "flex flex-col gap-8 w-full",
-    footerClass: "flex flex-col items-center justify-center gap-md p-sm",
-  },
-});
+    footerClass: "flex flex-col items-center justify-center gap-md p-sm"
+  }
+})
 
-const { root, footerClass } = blockEditorStyles();
-type BlockEditorVariants = VariantProps<typeof blockEditorStyles>;
+const { root, footerClass } = blockEditorStyles()
+type BlockEditorVariants = VariantProps<typeof blockEditorStyles>
 /* endregion */
 
 /* region State */
-const blocks = defineModel<Block[]>({ required: true });
+const blocks = defineModel<Block[]>({ required: true })
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 const {
   removeBlock,
@@ -68,14 +68,14 @@ const {
   undo,
   redo,
   canUndo,
-  canRedo,
-} = useBlockEditor(blocks, { maxHistorySize: historyLimit, onMutation: () => emit("mutation") });
+  canRedo
+} = useBlockEditor(blocks, { maxHistorySize: historyLimit, onMutation: () => emit("mutation") })
 
-const isAddBlockModalOpen = ref(false);
+const isAddBlockModalOpen = ref(false)
 const addBlockTarget = ref<{ id: string | null; position: "before" | "after" }>({
   id: null,
-  position: "after",
-});
+  position: "after"
+})
 
 provide("block-editor-api", {
   removeBlock,
@@ -88,16 +88,16 @@ provide("block-editor-api", {
   canRedo,
   undo,
   redo,
-  openAddBlockModal,
-});
+  openAddBlockModal
+})
 
-defineExpose({ undo, redo, canUndo, canRedo });
+defineExpose({ undo, redo, canUndo, canRedo })
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "BlockEditor",
-});
+  name: "BlockEditor"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -116,44 +116,44 @@ defineOptions({
 
 /* region Logic */
 function regenerateIds(block: Block): void {
-  block.id = uuidv7();
+  block.id = uuidv7()
   if (block.props && "children" in block.props && Array.isArray(block.props.children)) {
-    block.props.children.forEach((child: Block) => regenerateIds(child));
+    block.props.children.forEach((child: Block) => regenerateIds(child))
   }
 }
 
 function openAddBlockModal(targetId: string | null = null, position: "before" | "after" = "after") {
-  addBlockTarget.value = { id: targetId, position };
-  isAddBlockModalOpen.value = true;
+  addBlockTarget.value = { id: targetId, position }
+  isAddBlockModalOpen.value = true
 }
 
 const handleBlockSelect = (definition: BlockDefinition) => {
-  insertBlock(definition.type, addBlockTarget.value.id, addBlockTarget.value.position);
-};
+  insertBlock(definition.type, addBlockTarget.value.id, addBlockTarget.value.position)
+}
 
 const handleDragStart = () => {
-  emit("start");
-};
+  emit("start")
+}
 
 const handleDragEnd = async () => {
-  emit("end");
-  emit("mutation");
-};
+  emit("end")
+  emit("mutation")
+}
 
 const handleBlockChange = (event: any) => {
   if (event.added) {
-    const block = event.added.element;
+    const block = event.added.element
     if (block) {
-      regenerateIds(block);
+      regenerateIds(block)
     }
   }
 
-  emit("change", event);
+  emit("change", event)
 
   if (event.added || event.removed || event.moved) {
-    emit("mutation");
+    emit("mutation")
   }
-};
+}
 /* endregion */
 </script>
 

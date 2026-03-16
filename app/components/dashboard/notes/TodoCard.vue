@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import type { Todo } from "#rimelight-components/db";
-import { tv } from "../../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
+import type { Todo } from "#rimelight-components/db"
+import { tv } from "../../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface TodoCardProps {
-  todo: Todo;
+  todo: Todo
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { todo, rc: rcProp } = defineProps<TodoCardProps>();
+const { todo, rc: rcProp } = defineProps<TodoCardProps>()
 
-const { rc } = useRC("TodoCard", rcProp);
+const { rc } = useRC("TodoCard", rcProp)
 /*endregion */
 
 /* region Emits */
 export interface TodoCardEmits {
-  toggle: [completed: boolean];
-  archive: [];
-  restore: [];
-  delete: [];
+  toggle: [completed: boolean]
+  archive: []
+  restore: []
+  delete: []
 }
 
-const emit = defineEmits<TodoCardEmits>();
+const emit = defineEmits<TodoCardEmits>()
 /* endregion */
 
 /* region Slots */
 export interface TodoCardSlots {}
 
-const slots = defineSlots<TodoCardSlots>();
+const slots = defineSlots<TodoCardSlots>()
 /* endregion */
 
 /* region Styles */
@@ -43,22 +43,22 @@ const todoCardStyles = tv({
     textWrapper: "flex flex-col gap-0",
     titleClass: "text-sm transition-all",
     descriptionClass: "text-xs text-dimmed transition-all",
-    actionsWrapper: "flex items-center gap-xs transition-opacity",
+    actionsWrapper: "flex items-center gap-xs transition-opacity"
   },
   variants: {
     isArchived: {
       true: {
-        root: "opacity-60",
-      },
+        root: "opacity-60"
+      }
     },
     completed: {
       true: {
         titleClass: "line-through text-dimmed",
-        descriptionClass: "line-through",
-      },
-    },
-  },
-});
+        descriptionClass: "line-through"
+      }
+    }
+  }
+})
 
 const {
   root,
@@ -68,9 +68,9 @@ const {
   textWrapper,
   titleClass,
   descriptionClass,
-  actionsWrapper,
-} = todoCardStyles();
-type TodoCardVariants = VariantProps<typeof todoCardStyles>;
+  actionsWrapper
+} = todoCardStyles()
+type TodoCardVariants = VariantProps<typeof todoCardStyles>
 /* endregion */
 
 /* region State */
@@ -83,8 +83,8 @@ type TodoCardVariants = VariantProps<typeof todoCardStyles>;
 
 /* region Meta */
 defineOptions({
-  name: "TodoCard",
-});
+  name: "TodoCard"
+})
 /* endregion */
 
 /* region Lifecycle */

@@ -1,45 +1,45 @@
 <script setup lang="ts">
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "rimelight-components/composables";
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "rimelight-components/composables"
 
 /* region Props */
 export interface PlaceholderProps {
   rc?: {
-    base?: string;
-    svg?: string;
-  };
+    base?: string
+    svg?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<PlaceholderProps>();
+const { rc: rcProp } = defineProps<PlaceholderProps>()
 
-const { rc } = useRC("Placeholder", rcProp);
+const { rc } = useRC("Placeholder", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface PlaceholderEmits {}
 
-const emit = defineEmits<PlaceholderEmits>();
+const emit = defineEmits<PlaceholderEmits>()
 /* endregion */
 
 /* region Slots */
 export interface PlaceholderSlots {
-  default: (props: {}) => any;
+  default: (props: {}) => any
 }
 
-const slots = defineSlots<PlaceholderSlots>();
+const slots = defineSlots<PlaceholderSlots>()
 /* endregion */
 
 /* region Styles */
 const placeholderStyles = tv({
   slots: {
     base: "relative flex items-center justify-center overflow-hidden rounded-sm border border-dashed border-accented px-4 opacity-75",
-    svg: "absolute inset-0 h-full w-full stroke-inverted/10",
-  },
-});
+    svg: "absolute inset-0 h-full w-full stroke-inverted/10"
+  }
+})
 
-const { base, svg } = placeholderStyles();
-type PlaceholderVariants = VariantProps<typeof placeholderStyles>;
+const { base, svg } = placeholderStyles()
+type PlaceholderVariants = VariantProps<typeof placeholderStyles>
 /* endregion */
 
 /* region State */
@@ -52,8 +52,8 @@ type PlaceholderVariants = VariantProps<typeof placeholderStyles>;
 
 /* region Meta */
 defineOptions({
-  name: "Placeholder",
-});
+  name: "Placeholder"
+})
 /* endregion */
 
 /* region Lifecycle */

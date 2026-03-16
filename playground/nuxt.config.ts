@@ -1,23 +1,33 @@
-import { defineNuxtConfig } from "nuxt/config";
+import { defineNuxtConfig } from "nuxt/config"
 
 export default defineNuxtConfig({
   compatibilityDate: "2026-02-13",
   devtools: { enabled: true },
   devServer: {
     host: "127.0.0.1",
-    port: 3000,
+    port: 3000
   },
   typescript: {
     strict: true,
-    typeCheck: false,
+    typeCheck: false
   },
   future: {
-    compatibilityVersion: 5,
+    compatibilityVersion: 5
   },
   extends: [".."],
-  modules: ["@nuxt/icon"],
+
+  modules: [],
+
+  $development: {
+    site: { indexable: false },
+  },
+
+  $test: {},
+
+  $production: {},
+
   build: {
-    transpile: ["@nuxt/ui"],
+    transpile: ["@nuxt/ui"]
   },
   css: ["~/assets/css/main.css"],
   icon: {
@@ -27,24 +37,24 @@ export default defineNuxtConfig({
       {
         prefix: "first-party",
         dir: "./app/assets/icons/first-party",
-        normalizeIconName: false,
+        normalizeIconName: false
       },
       {
         prefix: "logos",
         dir: "./app/assets/icons/first-party/logos",
-        normalizeIconName: false,
-      },
-    ],
+        normalizeIconName: false
+      }
+    ]
   },
   i18n: {
     strategy: "prefix_except_default",
-    defaultLocale: "en",
+    defaultLocale: "en"
   },
   nitro: {
     preset: "cloudflare_module",
     cloudflare: {
       deployConfig: true,
-      nodeCompat: true,
-    },
-  },
-});
+      nodeCompat: true
+    }
+  }
+})

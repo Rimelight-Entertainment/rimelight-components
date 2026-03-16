@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from "@nuxt/ui";
-import { useQuickActions } from "../../composables/dashboard/useQuickActions";
-import { computed } from "vue";
-import { tv } from "../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "../../composables";
+import type { DropdownMenuItem } from "@nuxt/ui"
+import { useQuickActions } from "../../composables/dashboard/useQuickActions"
+import { computed } from "vue"
+import { tv } from "../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "../../composables"
 
 /* region Props */
 export interface QuickActionsProps {
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<QuickActionsProps>();
+const { rc: rcProp } = defineProps<QuickActionsProps>()
 
-const { rc } = useRC("QuickActions", rcProp);
+const { rc } = useRC("QuickActions", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface QuickActionsEmits {}
 
-const emit = defineEmits<QuickActionsEmits>();
+const emit = defineEmits<QuickActionsEmits>()
 /* endregion */
 
 /* region Slots */
 export interface QuickActionsSlots {}
 
-const slots = defineSlots<QuickActionsSlots>();
+const slots = defineSlots<QuickActionsSlots>()
 /* endregion */
 
 /* region Styles */
@@ -36,40 +36,40 @@ const quickActionsStyles = tv({
     root: "",
     triggerButton:
       "rounded-full size-14 lg:size-12 justify-center shadow-lg hover:scale-110 transition-transform",
-    triggerIcon: "size-6",
-  },
-});
+    triggerIcon: "size-6"
+  }
+})
 
-const { root, triggerButton, triggerIcon } = quickActionsStyles();
-type QuickActionsVariants = VariantProps<typeof quickActionsStyles>;
+const { root, triggerButton, triggerIcon } = quickActionsStyles()
+type QuickActionsVariants = VariantProps<typeof quickActionsStyles>
 /* endregion */
 
 /* region State */
-const { registeredActions } = useQuickActions();
+const { registeredActions } = useQuickActions()
 
 const menuItems = computed<DropdownMenuItem[][]>(() => {
   const grouped = registeredActions.value.reduce(
     (acc, action) => {
-      const groupId = action.group ?? 0;
-      if (!acc[groupId]) acc[groupId] = [];
+      const groupId = action.group ?? 0
+      if (!acc[groupId]) acc[groupId] = []
       acc[groupId].push({
         label: action.label,
         icon: action.icon,
-        onSelect: action.onSelect,
-      });
-      return acc;
+        onSelect: action.onSelect
+      })
+      return acc
     },
-    {} as Record<number, DropdownMenuItem[]>,
-  );
+    {} as Record<number, DropdownMenuItem[]>
+  )
 
-  return Object.values(grouped);
-});
+  return Object.values(grouped)
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "QuickActions",
-});
+  name: "QuickActions"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -99,7 +99,7 @@ defineOptions({
         square
         :class="triggerButton()"
         :ui="{
-          leadingIcon: triggerIcon(),
+          leadingIcon: triggerIcon()
         }"
       />
     </UDropdownMenu>

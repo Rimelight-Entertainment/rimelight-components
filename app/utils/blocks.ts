@@ -1,14 +1,14 @@
-import { type BlockType } from "../types";
+import { type BlockType } from "../types"
 
 export interface BlockDefinition {
-  type: BlockType;
-  label: string;
-  icon: string;
-  category: string;
-  description?: string;
+  type: BlockType
+  label: string
+  icon: string
+  category: string
+  description?: string
 }
 
-export const CATEGORY_ORDER = ["Layout", "Text", "Media", "Special"];
+export const CATEGORY_ORDER = ["Layout", "Text", "Media", "Special"]
 
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   {
@@ -16,7 +16,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     label: "blocks.SectionBlock.label",
     icon: "lucide:heading",
     category: "Layout",
-    description: "blocks.SectionBlock.description",
+    description: "blocks.SectionBlock.description"
   },
 
   {
@@ -24,20 +24,20 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     label: "blocks.ParagraphBlock.label",
     icon: "lucide:pilcrow",
     category: "Text",
-    description: "blocks.ParagraphBlock.description",
+    description: "blocks.ParagraphBlock.description"
   },
   {
     type: "ImageBlock",
     label: "blocks.ImageBlock.label",
     icon: "lucide:image",
     category: "Media",
-    description: "blocks.ImageBlock.description",
+    description: "blocks.ImageBlock.description"
   },
   {
     type: "CalloutBlock",
     label: "blocks.CalloutBlock.label",
     icon: "lucide:info",
     category: "Special",
-    description: "blocks.CalloutBlock.description",
-  },
-];
+    description: "blocks.CalloutBlock.description"
+  }
+]

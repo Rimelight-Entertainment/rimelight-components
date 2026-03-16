@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted, markRaw } from "vue";
-import { useFloatingActions } from "../../composables/app/useFloatingActions";
-import { RCScrollToTop, RCQuickActions } from "#components";
-import { tv } from "../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
+import { onMounted, markRaw } from "vue"
+import { useFloatingActions } from "../../composables/app/useFloatingActions"
+import { RCScrollToTop, RCQuickActions } from "#components"
+import { tv } from "../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface FloatingActionsOverlayProps {
@@ -15,7 +15,7 @@ export interface FloatingActionsOverlayProps {
   // };
 }
 
-const {} = defineProps<FloatingActionsOverlayProps>();
+const {} = defineProps<FloatingActionsOverlayProps>()
 /* endregion */
 
 /* region Emits */
@@ -24,7 +24,7 @@ export interface FloatingActionsOverlayEmits {
   // update: [value: string]
 }
 
-const emit = defineEmits<FloatingActionsOverlayEmits>();
+const emit = defineEmits<FloatingActionsOverlayEmits>()
 /* endregion */
 
 /* region Slots */
@@ -32,29 +32,29 @@ export interface FloatingActionsOverlaySlots {
   // default: (props: {}) => any
 }
 
-const slots = defineSlots<FloatingActionsOverlaySlots>();
+const slots = defineSlots<FloatingActionsOverlaySlots>()
 /* endregion */
 
 /* region Styles */
 const floatingActionsOverlayStyles = tv({
   slots: {
     root: "fixed bottom-6 right-6 z-[10000] flex flex-col-reverse items-center gap-4 pointer-events-none",
-    actionWrapper: "pointer-events-auto flex items-center justify-center font-normal",
-  },
-});
+    actionWrapper: "pointer-events-auto flex items-center justify-center font-normal"
+  }
+})
 
-const { root, actionWrapper } = floatingActionsOverlayStyles();
-type FloatingActionsOverlayVariants = VariantProps<typeof floatingActionsOverlayStyles>;
+const { root, actionWrapper } = floatingActionsOverlayStyles()
+type FloatingActionsOverlayVariants = VariantProps<typeof floatingActionsOverlayStyles>
 /* endregion */
 
 /* region State */
-const { actions, registerAction } = useFloatingActions();
+const { actions, registerAction } = useFloatingActions()
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "FloatingActionsOverlay",
-});
+  name: "FloatingActionsOverlay"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -63,15 +63,15 @@ onMounted(() => {
   registerAction({
     id: "quick-actions",
     priority: 10,
-    component: markRaw(RCQuickActions),
-  });
+    component: markRaw(RCQuickActions)
+  })
 
   registerAction({
     id: "scroll-to-top",
     priority: 0,
-    component: markRaw(RCScrollToTop),
-  });
-});
+    component: markRaw(RCScrollToTop)
+  })
+})
 
 // watch(() => { }, (newValue, oldValue) => {
 //
@@ -97,7 +97,7 @@ onMounted(() => {
           square
           :ui="{
             base: 'rounded-full size-14 lg:size-12 justify-center shadow-lg hover:scale-110 transition-transform',
-            leadingIcon: 'size-6',
+            leadingIcon: 'size-6'
           }"
           @click="action.onSelect"
         />

@@ -1,27 +1,27 @@
-import { useFetch, useRuntimeConfig } from "#imports";
-import { hash } from "ohash";
-import type { UseFetchOptions, AsyncData } from "#app";
-import { defaultWindow } from "../../utils";
+import { useFetch, useRuntimeConfig } from "#imports"
+import { hash } from "ohash"
+import type { UseFetchOptions, AsyncData } from "#app"
+import { defaultWindow } from "../../utils"
 
 /**
  * $api: For imperative calls (buttons, save actions, Pinia Colada)
  */
 export const $api = async <T>(path: string, opts: any = {}) => {
-  const config = useRuntimeConfig();
-  const apiBase = config.public.apiBase as string;
-  const isTauri = config.public.isTauri as boolean;
+  const config = useRuntimeConfig()
+  const apiBase = config.public.apiBase as string
+  const isTauri = config.public.isTauri as boolean
 
   // Check if we are "external" to the API (cross-domain)
   // Logic: If not Tauri, and not Dev, and is Client...
   // check if current hostname matches apiBase hostname.
-  let isExternal = isTauri;
+  let isExternal = isTauri
   if (!isExternal && !import.meta.dev && import.meta.client && defaultWindow) {
     try {
       if (apiBase.startsWith("http")) {
-        const apiHost = new URL(apiBase).hostname;
+        const apiHost = new URL(apiBase).hostname
         // If current hostname does NOT include the API host, then we are external.
         if (!defaultWindow.location.hostname.includes(apiHost)) {
-          isExternal = true;
+          isExternal = true
         }
       }
     } catch {
@@ -29,16 +29,16 @@ export const $api = async <T>(path: string, opts: any = {}) => {
     }
   }
 
-  const baseURL = isExternal ? apiBase : "";
+  const baseURL = isExternal ? apiBase : ""
 
   // Dynamic tauri import to avoid server-side bundling issues
-  let fetchFn = undefined;
+  let fetchFn = undefined
   if (isTauri) {
     try {
-      const { fetch: tauriFetch } = await import("@tauri-apps/plugin-http");
-      fetchFn = tauriFetch;
+      const { fetch: tauriFetch } = await import("@tauri-apps/plugin-http")
+      fetchFn = tauriFetch
     } catch (e) {
-      console.error("Failed to load Tauri fetch plugin", e);
+      console.error("Failed to load Tauri fetch plugin", e)
     }
   }
 
@@ -48,30 +48,30 @@ export const $api = async <T>(path: string, opts: any = {}) => {
     fetch: fetchFn,
     headers: {
       Accept: "application/json",
-      ...opts.headers,
+      ...opts.headers
     },
-    credentials: "include", // Important for shared cookies if cross-subdomain
-  });
-};
+    credentials: "include" // Important for shared cookies if cross-subdomain
+  })
+}
 
 /**
  * useApi: For reactive data fetching in setup
  */
 export const useApi = <T>(
   path: string | (() => string),
-  opts: UseFetchOptions<T> = {},
+  opts: UseFetchOptions<T> = {}
 ): AsyncData<T, Error | null> => {
-  const config = useRuntimeConfig();
-  const apiBase = config.public.apiBase as string;
-  const isTauri = config.public.isTauri as boolean;
+  const config = useRuntimeConfig()
+  const apiBase = config.public.apiBase as string
+  const isTauri = config.public.isTauri as boolean
 
-  let isExternal = isTauri;
+  let isExternal = isTauri
   if (!isExternal && !import.meta.dev && import.meta.client && defaultWindow) {
     try {
       if (apiBase.startsWith("http")) {
-        const apiHost = new URL(apiBase).hostname;
+        const apiHost = new URL(apiBase).hostname
         if (!defaultWindow.location.hostname.includes(apiHost)) {
-          isExternal = true;
+          isExternal = true
         }
       }
     } catch {
@@ -81,13 +81,13 @@ export const useApi = <T>(
 
   const fetchOptions: any = {
     baseURL: isExternal ? apiBase : "",
-    ...opts,
-  };
+    ...opts
+  }
 
   // We only generate a static key if the path is a string.
   // If it's a function (reactive), we let useFetch handle the key generation based on the URL.
   if (!fetchOptions.key && typeof path === "string") {
-    fetchOptions.key = hash([path, opts.method || "GET", opts.query, opts.params]);
+    fetchOptions.key = hash([path, opts.method || "GET", opts.query, opts.params])
   }
 
   // We can't use async/await here easily inside useApi without making it complicated
@@ -95,8 +95,8 @@ export const useApi = <T>(
   // although for useFetch it's usually better to just let it be null on server.
   if (isTauri && import.meta.client) {
     fetchOptions.fetch = (url: string, options: any) =>
-      import("@tauri-apps/plugin-http").then((m) => m.fetch(url, options));
+      import("@tauri-apps/plugin-http").then((m) => m.fetch(url, options))
   }
 
-  return useFetch(path, fetchOptions as any) as AsyncData<T, Error | null>;
-};
+  return useFetch(path, fetchOptions as any) as AsyncData<T, Error | null>
+}

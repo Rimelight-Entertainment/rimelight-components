@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "rimelight-components/composables";
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "rimelight-components/composables"
 
 /* region Props */
 export interface H4Props {
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<H4Props>();
+const { rc: rcProp } = defineProps<H4Props>()
 
-const { rc } = useRC("H4", rcProp);
+const { rc } = useRC("H4", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface H4Emits {}
 
-const emit = defineEmits<H4Emits>();
+const emit = defineEmits<H4Emits>()
 /* endregion */
 
 /* region Slots */
 export interface H4Slots {
-  default: (props: {}) => any;
+  default: (props: {}) => any
 }
 
-const slots = defineSlots<H4Slots>();
+const slots = defineSlots<H4Slots>()
 /* endregion */
 
 /* region Styles */
 const h4Styles = tv({
   slots: {
-    root: "text-2xl font-bold text-highlighted",
-  },
-});
+    root: "text-2xl font-bold text-highlighted"
+  }
+})
 
-const { root } = h4Styles();
-type H4Variants = VariantProps<typeof h4Styles>;
+const { root } = h4Styles()
+type H4Variants = VariantProps<typeof h4Styles>
 /* endregion */
 
 /* region State */
@@ -50,8 +50,8 @@ type H4Variants = VariantProps<typeof h4Styles>;
 
 /* region Meta */
 defineOptions({
-  name: "H4",
-});
+  name: "H4"
+})
 /* endregion */
 
 /* region Lifecycle */

@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { tv } from "../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "../../composables";
+import { tv } from "../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "../../composables"
 
 /* region Props */
 export interface NewsletterSignupProps {
-  title?: string;
-  fieldLabel?: string;
-  description?: string;
-  placeholder?: string;
-  submit?: string;
-  buttonLabel?: string;
+  title?: string
+  fieldLabel?: string
+  description?: string
+  placeholder?: string
+  submit?: string
+  buttonLabel?: string
   rc?: {
-    group?: string;
-    label?: string;
-    description?: string;
-    input?: string;
-    button?: string;
-  };
+    group?: string
+    label?: string
+    description?: string
+    input?: string
+    button?: string
+  }
 }
 
 const {
@@ -27,15 +27,15 @@ const {
   placeholder = "email@domain.com",
   submit,
   buttonLabel,
-  rc: rcProp,
-} = defineProps<NewsletterSignupProps>();
+  rc: rcProp
+} = defineProps<NewsletterSignupProps>()
 
-const resolvedFieldLabel = title ?? fieldLabel ?? "Subscribe to our Newsletter";
-const resolvedButtonLabel = submit ?? buttonLabel ?? "Subscribe";
+const resolvedFieldLabel = title ?? fieldLabel ?? "Subscribe to our Newsletter"
+const resolvedButtonLabel = submit ?? buttonLabel ?? "Subscribe"
 const resolvedDescription =
-  description ?? "Stay updated on new posts and updates. Unsubscribe at any time.";
+  description ?? "Stay updated on new posts and updates. Unsubscribe at any time."
 
-const { rc } = useRC("NewsletterSignup", rcProp);
+const { rc } = useRC("NewsletterSignup", rcProp)
 /* endregion */
 
 /* region Emits */
@@ -44,7 +44,7 @@ export interface NewsletterSignupEmits {
   // update: [value: string]
 }
 
-const emit = defineEmits<NewsletterSignupEmits>();
+const emit = defineEmits<NewsletterSignupEmits>()
 /* endregion */
 
 /* region Slots */
@@ -52,18 +52,18 @@ export interface NewsletterSignupSlots {
   // default: (props: {}) => any
 }
 
-const slots = defineSlots<NewsletterSignupSlots>();
+const slots = defineSlots<NewsletterSignupSlots>()
 /* endregion */
 
 /* region Styles */
 const newsletterSignupStyles = tv({
   slots: {
-    group: "pt-2",
-  },
-});
+    group: "pt-2"
+  }
+})
 
-const { group } = newsletterSignupStyles();
-type NewsletterSignupVariants = VariantProps<typeof newsletterSignupStyles>;
+const { group } = newsletterSignupStyles()
+type NewsletterSignupVariants = VariantProps<typeof newsletterSignupStyles>
 /* endregion */
 
 /* region State */
@@ -76,8 +76,8 @@ type NewsletterSignupVariants = VariantProps<typeof newsletterSignupStyles>;
 
 /* region Meta */
 defineOptions({
-  name: "NewsletterSignup",
-});
+  name: "NewsletterSignup"
+})
 /* endregion */
 
 /* region Lifecycle */
