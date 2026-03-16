@@ -28,8 +28,8 @@ A Nuxt layer with components and utilities used internally at Rimelight Entertai
 
 Install the package from npm:
 
-```bash [bun]
-bun add rimelight-components
+```bash [pnpm]
+pnpm add rimelight-components
 ```
 
 Add the layer to your `nuxt.config.js`:
@@ -51,49 +51,49 @@ Thank you for considering contributing to Rimelight Components. Here are a few w
 
 ## Local Development
 
-```bash [bun]
+```bash
 # Install dependencies
-bun install
+pnpm install
 ```
 
-```bash [bun]
+```bash
 # Generate type stubs
-bun dev:prepare
+pnpm dev:prepare
 ```
 
-```bash [bun]
+```bash
 # Develop with the playground
-bun dev
+pnpm dev
 ```
 
-```bash [bun]
+```bash
 # Build the playground
-bun dev:build
+pnpm dev:build
 ```
 
-```bash [bun]
+```bash
 # Run Typecheck
-bun typecheck
+pnpm typecheck
 ```
 
-```bash [bun]
-# Run Oxlint
-bun lint
+```bash
+# Run Linting
+pnpm lint
 ```
 
-```bash [bun]
-# Run Prettier
-bun format
+```bash
+# Run Formatting
+pnpm format
 ```
 
-```bash [bun]
+```bash
 # Run Vitest
-npm run test
+pnpm test
 ```
 
-```bash [bun]
+```bash
 # Release new version
-bun release
+pnpm release
 ```
 
 Learn more in the [development guide](https://ui.nuxt.com/docs/getting-started/contribution#local-development).
