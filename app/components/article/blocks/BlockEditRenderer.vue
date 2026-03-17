@@ -1,44 +1,44 @@
 <script setup lang="ts">
-import { ref, inject, defineAsyncComponent } from "vue"
-import draggable from "vuedraggable/src/vuedraggable"
-import type { Block } from "rimelight-components/types"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
-import { BLOCK_EDITOR_COMPONENT_MAP } from "#build/rimelight-block-editor-map"
+import { ref, inject, defineAsyncComponent } from "vue";
+import draggable from "vuedraggable/src/vuedraggable";
+import type { Block } from "rimelight-components/types";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
+import { BLOCK_EDITOR_COMPONENT_MAP } from "#build/rimelight-block-editor-map";
 
 /* region Props */
 export interface BlockEditRendererProps {
-  blocks?: Block[]
-  containerId?: string | null
+  blocks?: Block[];
+  containerId?: string | null;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
 const {
   blocks: propsBlocks,
   containerId = null,
-  rc: rcProp
-} = defineProps<BlockEditRendererProps>()
+  rc: rcProp,
+} = defineProps<BlockEditRendererProps>();
 
-const { rc } = useRC("BlockEditRenderer", rcProp)
+const { rc } = useRC("BlockEditRenderer", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface BlockEditRendererEmits {
-  start: []
-  end: []
-  change: [any]
+  start: [];
+  end: [];
+  change: [any];
 }
 
-const emit = defineEmits<BlockEditRendererEmits>()
+const emit = defineEmits<BlockEditRendererEmits>();
 /* endregion */
 
 /* region Slots */
 export interface BlockEditRendererSlots {}
 
-const slots = defineSlots<BlockEditRendererSlots>()
+const slots = defineSlots<BlockEditRendererSlots>();
 /* endregion */
 
 /* region Styles */
@@ -49,35 +49,35 @@ const blockEditRendererStyles = tv({
     emptyContainer:
       "w-full flex items-center justify-center transition-all rounded-lg border-2 border-transparent",
     itemWrapper:
-      "w-full relative [&.ghost]:bg-blue-500 [&.ghost]:h-1 [&.ghost]:min-h-0 [&.ghost]:rounded-sm [&.ghost]:overflow-hidden [&.ghost_>_*]:hidden [&.ghost-hidden]:hidden [&.fallback]:opacity-90 [&.fallback]:shadow-lg [&.fallback]:rounded-lg [&.fallback]:bg-white [&.fallback]:z-[9999] [&.fallback]:cursor-grabbing"
+      "w-full relative [&.ghost]:bg-blue-500 [&.ghost]:h-1 [&.ghost]:min-h-0 [&.ghost]:rounded-sm [&.ghost]:overflow-hidden [&.ghost_>_*]:hidden [&.ghost-hidden]:hidden [&.fallback]:opacity-90 [&.fallback]:shadow-lg [&.fallback]:rounded-lg [&.fallback]:bg-white [&.fallback]:z-[9999] [&.fallback]:cursor-grabbing",
   },
   variants: {
     isDraggingOver: {
       true: {
-        root: "border-l-4 border-primary-500 bg-primary-50/30 ring-1 ring-primary-500/10 z-10"
-      }
-    }
-  }
-})
+        root: "border-l-4 border-primary-500 bg-primary-50/30 ring-1 ring-primary-500/10 z-10",
+      },
+    },
+  },
+});
 
-const { root, draggableClass, emptyContainer, itemWrapper } = blockEditRendererStyles()
-type BlockEditRendererVariants = VariantProps<typeof blockEditRendererStyles>
+const { root, draggableClass, emptyContainer, itemWrapper } = blockEditRendererStyles();
+type BlockEditRendererVariants = VariantProps<typeof blockEditRendererStyles>;
 /* endregion */
 
 /* region State */
-const blocks = defineModel<Block[]>("blocks", { required: true })
+const blocks = defineModel<Block[]>("blocks", { required: true });
 
-const rendererId = Math.random().toString(36).substring(7)
-const editorApi = inject<any>("block-editor-api")
+const rendererId = Math.random().toString(36).substring(7);
+const editorApi = inject<any>("block-editor-api");
 
-const isDraggingOver = ref(false)
-const dragCounter = ref(0)
+const isDraggingOver = ref(false);
+const dragCounter = ref(0);
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "BlockEditRenderer"
-})
+  name: "BlockEditRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -96,46 +96,46 @@ defineOptions({
 
 /* region Logic */
 const onDragEnter = () => {
-  dragCounter.value++
-  isDraggingOver.value = true
-}
+  dragCounter.value++;
+  isDraggingOver.value = true;
+};
 
 const onDragLeave = () => {
-  dragCounter.value--
+  dragCounter.value--;
   if (dragCounter.value <= 0) {
-    isDraggingOver.value = false
-    dragCounter.value = 0
+    isDraggingOver.value = false;
+    dragCounter.value = 0;
   }
-}
+};
 
 const onDrop = () => {
-  dragCounter.value = 0
-  isDraggingOver.value = false
-}
+  dragCounter.value = 0;
+  isDraggingOver.value = false;
+};
 
 const handleStart = () => {
-  emit("start")
-}
+  emit("start");
+};
 
 const handleEnd = () => {
-  emit("end")
-}
+  emit("end");
+};
 
 const handleChange = (event: any) => {
-  emit("change", event)
-}
+  emit("change", event);
+};
 
 const asyncEditorMap = Object.fromEntries(
   Object.entries(BLOCK_EDITOR_COMPONENT_MAP).map(([key, importFn]) => [
     key,
-    defineAsyncComponent(importFn as any)
-  ])
-)
+    defineAsyncComponent(importFn as any),
+  ]),
+);
 
 const resolveBlockEditor = (type?: string) => {
-  if (!type) return "div"
-  return asyncEditorMap[type] || "div"
-}
+  if (!type) return "div";
+  return asyncEditorMap[type] || "div";
+};
 /* endregion */
 </script>
 
@@ -158,7 +158,7 @@ const resolveBlockEditor = (type?: string) => {
       :ghost-class="blocks.length === 0 ? 'ghost-hidden' : 'ghost'"
       :class="[
         draggableClass(),
-        blocks && blocks.length > 0 ? 'gap-lg min-h-16 pb-32' : 'gap-0 min-h-32'
+        blocks && blocks.length > 0 ? 'gap-lg min-h-16 pb-32' : 'gap-0 min-h-32',
       ]"
       @change="handleChange"
       @start="handleStart"
@@ -169,7 +169,7 @@ const resolveBlockEditor = (type?: string) => {
           v-if="!blocks || blocks.length === 0"
           :class="[
             emptyContainer(),
-            isDraggingOver ? 'bg-primary-50/50 border-dashed border-primary-500/50' : ''
+            isDraggingOver ? 'bg-primary-50/50 border-dashed border-primary-500/50' : '',
           ]"
         >
           <UEmpty
@@ -180,7 +180,7 @@ const resolveBlockEditor = (type?: string) => {
             class="w-full"
             :ui="{
               root: 'transition-transform px-4',
-              title: isDraggingOver ? 'text-primary-600 font-bold' : ''
+              title: isDraggingOver ? 'text-primary-600 font-bold' : '',
             }"
             :class="[isDraggingOver ? 'scale-[1.02]' : '']"
           >

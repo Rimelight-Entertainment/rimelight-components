@@ -1,54 +1,54 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { tv } from "../../../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { computed } from "vue";
+import { tv } from "../../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface LinkNodeProps {
-  href: string
-  target?: string
-  content: string
+  href: string;
+  target?: string;
+  content: string;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { href, target, content, rc: rcProp } = defineProps<LinkNodeProps>()
+const { href, target, content, rc: rcProp } = defineProps<LinkNodeProps>();
 
-const { rc } = useRC("LinkNode", rcProp)
+const { rc } = useRC("LinkNode", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface LinkNodeEmits {}
 
-const emit = defineEmits<LinkNodeEmits>()
+const emit = defineEmits<LinkNodeEmits>();
 /* endregion */
 
 /* region Slots */
 export interface LinkNodeSlots {}
 
-const slots = defineSlots<LinkNodeSlots>()
+const slots = defineSlots<LinkNodeSlots>();
 /* endregion */
 
 /* region Styles */
 const linkNodeStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = linkNodeStyles()
-type LinkNodeVariants = VariantProps<typeof linkNodeStyles>
+const { root } = linkNodeStyles();
+type LinkNodeVariants = VariantProps<typeof linkNodeStyles>;
 /* endregion */
 
 /* region State */
-const rel = computed(() => (target === "_blank" ? "noopener noreferrer" : undefined))
+const rel = computed(() => (target === "_blank" ? "noopener noreferrer" : undefined));
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "LinkNode"
-})
+  name: "LinkNode",
+});
 /* endregion */
 
 /* region Lifecycle */

@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
-import { useI18n } from "vue-i18n"
-import { tv } from "rimelight-components/app/internal/tv"
-import { useRC } from "rimelight-components/composables"
-import { type VariantProps } from "tailwind-variants"
+import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { tv } from "rimelight-components/app/internal/tv";
+import { useRC } from "rimelight-components/composables";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface DeletePageModalProps {
-  loading?: boolean
-  pageTitle: string
+  loading?: boolean;
+  pageTitle: string;
   rc?: {
-    header?: string
-    headerTitle?: string
-    closeButton?: string
-    body?: string
-    footer?: string
-  }
+    header?: string;
+    headerTitle?: string;
+    closeButton?: string;
+    body?: string;
+    footer?: string;
+  };
 }
 
-const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>()
+const { loading, pageTitle, rc: rcProp } = defineProps<DeletePageModalProps>();
 
-const { rc } = useRC("DeletePageModal", rcProp)
+const { rc } = useRC("DeletePageModal", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface DeletePageModalEmits {
-  close: []
-  confirm: []
+  close: [];
+  confirm: [];
 }
 
-const emits = defineEmits<DeletePageModalEmits>()
+const emits = defineEmits<DeletePageModalEmits>();
 /* endregion */
 
 /* region Slots */
 export interface DeletePageModalSlots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<DeletePageModalSlots>()
+const slots = defineSlots<DeletePageModalSlots>();
 /* endregion */
 
 /* region Styles */
@@ -47,37 +47,43 @@ const deletePageModalStyles = tv({
     headerTitle: "text-base font-semibold leading-6 text-error-600",
     closeButton: "-my-1",
     bodyClass: "text-sm text-neutral-600 dark:text-neutral-400",
-    footer: "flex justify-end gap-2"
-  }
-})
+    footer: "flex justify-end gap-2",
+  },
+});
 
-const { header: headerClass, headerTitle, closeButton, bodyClass, footer } = deletePageModalStyles()
-type DeletePageModalVariants = VariantProps<typeof deletePageModalStyles>
+const {
+  header: headerClass,
+  headerTitle,
+  closeButton,
+  bodyClass,
+  footer,
+} = deletePageModalStyles();
+type DeletePageModalVariants = VariantProps<typeof deletePageModalStyles>;
 /* endregion */
 
 /* region State */
-const open = defineModel<boolean>("open", { default: false })
+const open = defineModel<boolean>("open", { default: false });
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const confirmationInput = ref("")
-const CONFIRMATION_TEXT = "DELETE"
+const confirmationInput = ref("");
+const CONFIRMATION_TEXT = "DELETE";
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "DeletePageModal"
-})
+  name: "DeletePageModal",
+});
 /* endregion */
 
 /* region Lifecycle */
 // Reset input when modal closes
 watch(open, (val) => {
   if (!val) {
-    confirmationInput.value = ""
-    emits("close")
+    confirmationInput.value = "";
+    emits("close");
   }
-})
+});
 
 // onMounted(() => {
 //
@@ -87,9 +93,9 @@ watch(open, (val) => {
 /* region Logic */
 const handleConfirm = () => {
   if (confirmationInput.value === CONFIRMATION_TEXT) {
-    emits("confirm")
+    emits("confirm");
   }
-}
+};
 /* endregion */
 </script>
 

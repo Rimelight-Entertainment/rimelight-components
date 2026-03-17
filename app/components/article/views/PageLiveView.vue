@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { useRoute, useAppConfig, useHead, useSeoMeta } from "#imports"
-import { type Page } from "rimelight-components/types"
-import { getLocalizedContent } from "rimelight-components/utils"
-import { useI18n } from "vue-i18n"
+import { computed } from "vue";
+import { useRoute, useAppConfig, useHead, useSeoMeta } from "#imports";
+import { type Page } from "rimelight-components/types";
+import { getLocalizedContent } from "rimelight-components/utils";
+import { useI18n } from "vue-i18n";
 
 /* region Props */
 export interface PageLiveViewProps {
   /** The full lookup path for the page (uses /api/pages/find/) */
-  lookupPath?: string
+  lookupPath?: string;
   /** Direct URL to fetch the page from if not using lookupPath */
-  fetchUrl?: string
+  fetchUrl?: string;
   /** Unique cache key for the API request */
-  cacheKey: string
+  cacheKey: string;
   /** Base URL for navigation (e.g. /franchises/grand-tale/wiki) */
-  baseUrl: string
+  baseUrl: string;
   /** Whether the current user can edit the page */
-  canEdit?: boolean
+  canEdit?: boolean;
   /** Custom error message/params */
   errorRedirectParams?: {
-    redirect: string
-    label: string
-    message: string
-  }
+    redirect: string;
+    label: string;
+    message: string;
+  };
 }
 
 const {
@@ -31,8 +31,8 @@ const {
   cacheKey,
   baseUrl,
   canEdit = false,
-  errorRedirectParams
-} = defineProps<PageLiveViewProps>()
+  errorRedirectParams,
+} = defineProps<PageLiveViewProps>();
 /* endregion */
 
 /* region Emits */
@@ -45,49 +45,49 @@ const {
 /* endregion */
 
 /* region State */
-const { locale } = useI18n()
-const appConfig = useAppConfig()
-const route = useRoute()
+const { locale } = useI18n();
+const appConfig = useAppConfig();
+const route = useRoute();
 
-const resolvedFetchUrl = computed(() => getPageResolutionPath(lookupPath || fetchUrl || ""))
+const resolvedFetchUrl = computed(() => getPageResolutionPath(lookupPath || fetchUrl || ""));
 
 const {
   data: page,
   status: pageStatus,
-  error: pageError
+  error: pageError,
 } = await useApi<Page>(() => resolvedFetchUrl.value, {
   key: cacheKey,
-  immediate: !!resolvedFetchUrl.value
-})
+  immediate: !!resolvedFetchUrl.value,
+});
 
 const resolvePage = async (id: string) => {
   return $api<Page>(`/api/pages/id/${id}`, {
-    query: { select: "title,icon,slug" }
-  })
-}
+    query: { select: "title,icon,slug" },
+  });
+};
 
 const editUrl = computed(() => {
-  const base = baseUrl.replace(/\/$/, "")
+  const base = baseUrl.replace(/\/$/, "");
 
   if (page.value?.slug) {
-    const slug = page.value.slug
-    const cleanBase = base.replace(/^\//, "")
+    const slug = page.value.slug;
+    const cleanBase = base.replace(/^\//, "");
     if (slug.startsWith(cleanBase)) {
-      return `/${slug}/edit`
+      return `/${slug}/edit`;
     }
-    return `${base}/${slug}/edit`
+    return `${base}/${slug}/edit`;
   }
 
-  const s = route.params.slug
-  const slugParam = Array.isArray(s) ? s.join("/") : (s as string)
-  if (!slugParam) return `${base}/edit`
-  return `${base}/${slugParam}/edit`
-})
+  const s = route.params.slug;
+  const slugParam = Array.isArray(s) ? s.join("/") : (s as string);
+  if (!slugParam) return `${base}/edit`;
+  return `${base}/${slugParam}/edit`;
+});
 
 // SEO
 useHead({
-  title: () => (getLocalizedContent(page.value?.title, locale) ?? appConfig.title) as string
-})
+  title: () => (getLocalizedContent(page.value?.title, locale) ?? appConfig.title) as string,
+});
 
 useSeoMeta({
   title: () => (getLocalizedContent(page.value?.title, locale) ?? appConfig.title) as string,
@@ -95,8 +95,8 @@ useSeoMeta({
   description: () =>
     (getLocalizedContent(page.value?.description, locale) ?? appConfig.description) as string,
   ogDescription: () =>
-    (getLocalizedContent(page.value?.description, locale) ?? appConfig.description) as string
-})
+    (getLocalizedContent(page.value?.description, locale) ?? appConfig.description) as string,
+});
 /* endregion */
 
 /* region Meta */
@@ -118,7 +118,7 @@ useSeoMeta({
     :error="{
       status: 404,
       statusText: 'Page Not Found',
-      message: errorRedirectParams?.message || 'The requested page could not be located.'
+      message: errorRedirectParams?.message || 'The requested page could not be located.',
     }"
     :redirect="errorRedirectParams?.redirect || baseUrl"
   />

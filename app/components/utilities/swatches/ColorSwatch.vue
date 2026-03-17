@@ -1,47 +1,47 @@
 <script setup lang="ts">
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { computed } from "vue"
-import { useClipboard } from "@vueuse/core"
-import { useI18n } from "vue-i18n"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import { useToast } from "@nuxt/ui/composables/useToast";
+import { computed } from "vue";
+import { useClipboard } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
 
 /* region Props */
 export interface ColorSwatchProps {
-  name?: string
-  hex?: string
-  rgb?: string
-  hsl?: string
-  oklch?: string
-  cmyk?: string
-  textColor?: string
+  name?: string;
+  hex?: string;
+  rgb?: string;
+  hsl?: string;
+  oklch?: string;
+  cmyk?: string;
+  textColor?: string;
   rc?: {
-    card?: string
-    title?: string
-    content?: string
-    preview?: string
-    details?: string
-    buttonGroup?: string
-    button?: string
-  }
+    card?: string;
+    title?: string;
+    content?: string;
+    preview?: string;
+    details?: string;
+    buttonGroup?: string;
+    button?: string;
+  };
 }
 
-const { name, hex, rgb, hsl, oklch, cmyk, textColor, rc: rcProp } = defineProps<ColorSwatchProps>()
+const { name, hex, rgb, hsl, oklch, cmyk, textColor, rc: rcProp } = defineProps<ColorSwatchProps>();
 
-const { rc } = useRC("ColorSwatch", rcProp)
+const { rc } = useRC("ColorSwatch", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface ColorSwatchEmits {}
 
-const emit = defineEmits<ColorSwatchEmits>()
+const emit = defineEmits<ColorSwatchEmits>();
 /* endregion */
 
 /* region Slots */
 export interface ColorSwatchSlots {}
 
-const slots = defineSlots<ColorSwatchSlots>()
+const slots = defineSlots<ColorSwatchSlots>();
 /* endregion */
 
 /* region Styles */
@@ -54,9 +54,9 @@ const colorSwatchStyles = tv({
     details: "flex flex-col justify-end gap-xs text-xs",
     buttonGroup: "flex w-full flex-col justify-center gap-sm",
     button: "w-full xl:w-36",
-    detailsName: "text-sm font-bold uppercase tracking-wider mb-2 border-b border-current pb-1"
-  }
-})
+    detailsName: "text-sm font-bold uppercase tracking-wider mb-2 border-b border-current pb-1",
+  },
+});
 
 const {
   card,
@@ -66,31 +66,31 @@ const {
   details,
   buttonGroup,
   button,
-  detailsName
-} = colorSwatchStyles()
-type ColorSwatchVariants = VariantProps<typeof colorSwatchStyles>
+  detailsName,
+} = colorSwatchStyles();
+type ColorSwatchVariants = VariantProps<typeof colorSwatchStyles>;
 /* endregion */
 
 /* region State */
-const { copy } = useClipboard()
-const toast = useToast()
-const { t } = useI18n()
+const { copy } = useClipboard();
+const toast = useToast();
+const { t } = useI18n();
 
 const color = computed(() => {
-  if (hex) return hex
-  if (rgb) return rgb
-  if (hsl) return hsl
-  if (cmyk) return cmyk
-  if (oklch) return oklch
+  if (hex) return hex;
+  if (rgb) return rgb;
+  if (hsl) return hsl;
+  if (cmyk) return cmyk;
+  if (oklch) return oklch;
 
-  return "var(--color-primary-500)"
-})
+  return "var(--color-primary-500)";
+});
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "ColorSwatch"
-})
+  name: "ColorSwatch",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -110,23 +110,23 @@ defineOptions({
 /* region Logic */
 const copyToClipboard = async (text: string) => {
   try {
-    await copy(`${text}`)
+    await copy(`${text}`);
     toast.add({
       title: t("swatch.color_copied"),
       description: text,
-      color: "success"
-    })
+      color: "success",
+    });
   } catch {
     toast.add({
       title: t("swatch.color_copy_failed"),
       description: t("swatch.copy_error_description"),
-      color: "error"
-    })
+      color: "error",
+    });
   }
-}
+};
 
 function formatColor(colorStr: string) {
-  return colorStr.toUpperCase().replace(/[)]/g, "").replace(/[(]/g, " ").replace(/%/g, "")
+  return colorStr.toUpperCase().replace(/[)]/g, "").replace(/[(]/g, " ").replace(/%/g, "");
 }
 /* endregion */
 </script>

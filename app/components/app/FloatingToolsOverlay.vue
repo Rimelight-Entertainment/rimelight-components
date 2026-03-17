@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useFloatingTools } from "rimelight-components/composables"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { useFloatingTools } from "rimelight-components/composables";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface FloatingToolsOverlayProps {
@@ -9,7 +9,7 @@ export interface FloatingToolsOverlayProps {
   // prop2?: number,
 }
 
-const {} = defineProps<FloatingToolsOverlayProps>()
+const {} = defineProps<FloatingToolsOverlayProps>();
 /* endregion */
 
 /* region Emits */
@@ -18,7 +18,7 @@ export interface FloatingToolsOverlayEmits {
   // update: [value: string]
 }
 
-const emit = defineEmits<FloatingToolsOverlayEmits>()
+const emit = defineEmits<FloatingToolsOverlayEmits>();
 /* endregion */
 
 /* region Slots */
@@ -26,7 +26,7 @@ export interface FloatingToolsOverlaySlots {
   // default: (props: {}) => any
 }
 
-const slots = defineSlots<FloatingToolsOverlaySlots>()
+const slots = defineSlots<FloatingToolsOverlaySlots>();
 /* endregion */
 
 /* region Styles */
@@ -41,9 +41,9 @@ const floatingToolsOverlayStyles = tv({
     headerActions: "flex items-center gap-sm",
     body: "p-sm",
     compactButton:
-      "w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
-  }
-})
+      "w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-lg",
+  },
+});
 
 const {
   root,
@@ -54,20 +54,20 @@ const {
   title,
   headerActions,
   body,
-  compactButton
-} = floatingToolsOverlayStyles()
-type FloatingToolsOverlayVariants = VariantProps<typeof floatingToolsOverlayStyles>
+  compactButton,
+} = floatingToolsOverlayStyles();
+type FloatingToolsOverlayVariants = VariantProps<typeof floatingToolsOverlayStyles>;
 /* endregion */
 
 /* region State */
 const { activeToolIds, registeredTools, isVisible, removeTool, toggleExpanded, isToolExpanded } =
-  useFloatingTools()
+  useFloatingTools();
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "FloatingToolsOverlay"
-})
+  name: "FloatingToolsOverlay",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -86,7 +86,7 @@ defineOptions({
 
 /* region Logic */
 function getTool(id: string) {
-  return registeredTools.value.get(id)
+  return registeredTools.value.get(id);
 }
 /* endregion */
 </script>

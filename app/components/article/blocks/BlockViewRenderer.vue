@@ -1,45 +1,45 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import type { Block } from "rimelight-components/types"
-import { useRC } from "rimelight-components/composables"
-import { BLOCK_RENDERER_COMPONENT_MAP } from "#build/rimelight-block-renderer-map"
+import { defineAsyncComponent } from "vue";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import type { Block } from "rimelight-components/types";
+import { useRC } from "rimelight-components/composables";
+import { BLOCK_RENDERER_COMPONENT_MAP } from "#build/rimelight-block-renderer-map";
 
 /* region Props */
 export interface BlockViewRendererProps {
-  blocks: Block[]
+  blocks: Block[];
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { blocks, rc: rcProp } = defineProps<BlockViewRendererProps>()
+const { blocks, rc: rcProp } = defineProps<BlockViewRendererProps>();
 
-const { rc } = useRC("BlockViewRenderer", rcProp)
+const { rc } = useRC("BlockViewRenderer", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface BlockViewRendererEmits {}
 
-const emit = defineEmits<BlockViewRendererEmits>()
+const emit = defineEmits<BlockViewRendererEmits>();
 /* endregion */
 
 /* region Slots */
 export interface BlockViewRendererSlots {}
 
-const slots = defineSlots<BlockViewRendererSlots>()
+const slots = defineSlots<BlockViewRendererSlots>();
 /* endregion */
 
 /* region Styles */
 const blockViewRendererStyles = tv({
   slots: {
-    root: "flex flex-col gap-lg"
-  }
-})
+    root: "flex flex-col gap-lg",
+  },
+});
 
-const { root } = blockViewRendererStyles()
-type BlockViewRendererVariants = VariantProps<typeof blockViewRendererStyles>
+const { root } = blockViewRendererStyles();
+type BlockViewRendererVariants = VariantProps<typeof blockViewRendererStyles>;
 /* endregion */
 
 /* region State */
@@ -52,8 +52,8 @@ type BlockViewRendererVariants = VariantProps<typeof blockViewRendererStyles>
 
 /* region Meta */
 defineOptions({
-  name: "BlockViewRenderer"
-})
+  name: "BlockViewRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -74,14 +74,14 @@ defineOptions({
 const asyncRendererMap = Object.fromEntries(
   Object.entries(BLOCK_RENDERER_COMPONENT_MAP).map(([key, importFn]) => [
     key,
-    defineAsyncComponent(importFn as any)
-  ])
-)
+    defineAsyncComponent(importFn as any),
+  ]),
+);
 
 const resolveBlockComponent = (type?: string) => {
-  if (!type) return "div"
-  return asyncRendererMap[type] || "div"
-}
+  if (!type) return "div";
+  return asyncRendererMap[type] || "div";
+};
 /* endregion */
 </script>
 

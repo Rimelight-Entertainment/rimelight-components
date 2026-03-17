@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
-import { useI18n } from "vue-i18n"
+import { computed } from "vue";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
+import { useI18n } from "vue-i18n";
 
 /* region Props */
 export interface ImageSwatchProps {
-  name?: string
-  jpg?: string
-  png?: string
-  webp?: string
-  svg?: string
+  name?: string;
+  jpg?: string;
+  png?: string;
+  webp?: string;
+  svg?: string;
   rc?: {
-    card?: string
-    title?: string
-    content?: string
-    image?: string
-    buttonGroup?: string
-    button?: string
-  }
+    card?: string;
+    title?: string;
+    content?: string;
+    image?: string;
+    buttonGroup?: string;
+    button?: string;
+  };
 }
 
-const { name, jpg, png, webp, svg, rc: rcProp } = defineProps<ImageSwatchProps>()
+const { name, jpg, png, webp, svg, rc: rcProp } = defineProps<ImageSwatchProps>();
 
-const { rc } = useRC("ImageSwatch", rcProp)
+const { rc } = useRC("ImageSwatch", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface ImageSwatchEmits {}
 
-const emit = defineEmits<ImageSwatchEmits>()
+const emit = defineEmits<ImageSwatchEmits>();
 /* endregion */
 
 /* region Slots */
 export interface ImageSwatchSlots {}
 
-const slots = defineSlots<ImageSwatchSlots>()
+const slots = defineSlots<ImageSwatchSlots>();
 /* endregion */
 
 /* region Styles */
@@ -47,31 +47,31 @@ const imageSwatchStyles = tv({
     content: "flex flex-col items-center gap-sm xl:flex-row xl:items-start",
     imageClass: "size-48",
     buttonGroup: "flex w-full flex-col justify-center gap-sm",
-    button: "w-full xl:w-36"
-  }
-})
+    button: "w-full xl:w-36",
+  },
+});
 
-const { card, title: titleStyle, content, imageClass, buttonGroup, button } = imageSwatchStyles()
-type ImageSwatchVariants = VariantProps<typeof imageSwatchStyles>
+const { card, title: titleStyle, content, imageClass, buttonGroup, button } = imageSwatchStyles();
+type ImageSwatchVariants = VariantProps<typeof imageSwatchStyles>;
 /* endregion */
 
 /* region State */
-const { t } = useI18n()
+const { t } = useI18n();
 
 const image = computed(() => {
-  if (webp) return webp
-  if (png) return png
-  if (jpg) return jpg
-  if (svg) return svg
+  if (webp) return webp;
+  if (png) return png;
+  if (jpg) return jpg;
+  if (svg) return svg;
 
-  return undefined
-})
+  return undefined;
+});
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "ImageSwatch"
-})
+  name: "ImageSwatch",
+});
 /* endregion */
 
 /* region Lifecycle */

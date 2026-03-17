@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
-import { PAGE_MAP } from "./types/page-definitions"
-import type { Page } from "rimelight-components/types"
-import { ULink } from "#components"
-import { PiniaColadaDevtools } from "@pinia/colada-devtools"
+import { ref, onMounted } from "vue";
+import { PAGE_MAP } from "./types/page-definitions";
+import type { Page } from "rimelight-components/types";
+import { ULink } from "#components";
+import { PiniaColadaDevtools } from "@pinia/colada-devtools";
 
-const toast = useToast()
+const toast = useToast();
 
 useSeoMeta({
   title: "Rimelight Entertainment",
@@ -14,8 +14,8 @@ useSeoMeta({
   ogDescription: "Tell your story.",
   ogImage: "https://cdn.rimelight.com/images/logos/logomark-white.webp",
   twitterImage: "https://cdn.rimelight.com/images/logos/logomark-white.webp",
-  twitterCard: "summary_large_image"
-})
+  twitterCard: "summary_large_image",
+});
 
 const descriptionComponent = h("div", [
   "This website uses ",
@@ -24,9 +24,9 @@ const descriptionComponent = h("div", [
     {
       href: "https://en.wikipedia.org/wiki/HTTP_cookie",
       class: "text-primary",
-      target: "_blank"
+      target: "_blank",
     },
-    () => "cookies"
+    () => "cookies",
   ),
   " to ensure to enhance your browsing experience. ",
   h("br"),
@@ -35,51 +35,51 @@ const descriptionComponent = h("div", [
     ULink,
     {
       href: "/documents/policies/cookie-policy/",
-      class: "text-primary"
+      class: "text-primary",
     },
-    () => "Cookie Policy"
+    () => "Cookie Policy",
   ),
-  "."
-])
+  ".",
+]);
 
 const cookie = useCookie("cookie-consent", {
   maxAge: 60 * 60 * 24 * 90,
   secure: import.meta.env.PROD,
-  sameSite: "lax"
-})
+  sameSite: "lax",
+});
 
-const isCreateModalOpen = ref(false)
-const isCreating = ref(false)
+const isCreateModalOpen = ref(false);
+const isCreating = ref(false);
 
 const handleCreateConfirm = async (newPageData: Partial<Page>) => {
   try {
-    isCreating.value = true
-    console.log("Creating page via Quick Action:", newPageData)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    isCreating.value = true;
+    console.log("Creating page via Quick Action:", newPageData);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     alert(
-      `Page created: ${JSON.stringify(newPageData.title)}. In a real app, this would navigate to the new page.`
-    )
-    isCreateModalOpen.value = false
+      `Page created: ${JSON.stringify(newPageData.title)}. In a real app, this would navigate to the new page.`,
+    );
+    isCreateModalOpen.value = false;
   } finally {
-    isCreating.value = false
+    isCreating.value = false;
   }
-}
+};
 
 onMounted(() => {
   if (typeof window !== "undefined") {
-    ;(window as any).triggerCreatePageModal = () => {
-      isCreateModalOpen.value = true
-    }
+    (window as any).triggerCreatePageModal = () => {
+      isCreateModalOpen.value = true;
+    };
   }
 
   if (typeof window !== "undefined") {
-    ;(window as any).triggerCreatePageModal = () => {
-      isCreateModalOpen.value = true
-    }
+    (window as any).triggerCreatePageModal = () => {
+      isCreateModalOpen.value = true;
+    };
   }
 
   if (cookie.value === "accepted") {
-    return
+    return;
   }
 
   toast.add({
@@ -95,10 +95,10 @@ onMounted(() => {
         color: "success",
         variant: "solid",
         onClick: (e) => {
-          e?.stopPropagation()
-          cookie.value = "accepted"
-          toast.clear()
-        }
+          e?.stopPropagation();
+          cookie.value = "accepted";
+          toast.clear();
+        },
       },
       {
         icon: "lucide:x",
@@ -106,15 +106,15 @@ onMounted(() => {
         color: "error",
         variant: "solid",
         onClick: (e) => {
-          e?.stopPropagation()
-          cookie.value = "rejected"
-          toast.clear()
-        }
-      }
+          e?.stopPropagation();
+          cookie.value = "rejected";
+          toast.clear();
+        },
+      },
     ],
-    close: false
-  })
-})
+    close: false,
+  });
+});
 </script>
 
 <template>

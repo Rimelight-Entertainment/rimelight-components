@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
-import { useI18n } from "vue-i18n"
+import { computed } from "vue";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
+import { useI18n } from "vue-i18n";
 
 /* region Props */
 export interface FontSwatchProps {
-  name?: string
-  jpg?: string
-  png?: string
-  webp?: string
-  svg?: string
+  name?: string;
+  jpg?: string;
+  png?: string;
+  webp?: string;
+  svg?: string;
   rc?: {
-    card?: string
-    title?: string
-    content?: string
-    actions?: string
-    buttonGroup?: string
-    button?: string
-  }
+    card?: string;
+    title?: string;
+    content?: string;
+    actions?: string;
+    buttonGroup?: string;
+    button?: string;
+  };
 }
 
-const { name, jpg, png, webp, svg, rc: rcProp } = defineProps<FontSwatchProps>()
+const { name, jpg, png, webp, svg, rc: rcProp } = defineProps<FontSwatchProps>();
 
-const { rc } = useRC("FontSwatch", rcProp)
+const { rc } = useRC("FontSwatch", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface FontSwatchEmits {}
 
-const emit = defineEmits<FontSwatchEmits>()
+const emit = defineEmits<FontSwatchEmits>();
 /* endregion */
 
 /* region Slots */
 export interface FontSwatchSlots {}
 
-const slots = defineSlots<FontSwatchSlots>()
+const slots = defineSlots<FontSwatchSlots>();
 /* endregion */
 
 /* region Styles */
@@ -48,9 +48,9 @@ const fontSwatchStyles = tv({
     actions: "flex flex-col items-center gap-sm xl:flex-row xl:items-start",
     buttonGroup: "flex w-full flex-col justify-center gap-sm",
     button: "w-full xl:w-36",
-    specimen: "flex flex-col gap-xs"
-  }
-})
+    specimen: "flex flex-col gap-xs",
+  },
+});
 
 const {
   card,
@@ -59,28 +59,28 @@ const {
   actions,
   buttonGroup,
   button,
-  specimen
-} = fontSwatchStyles()
-type FontSwatchVariants = VariantProps<typeof fontSwatchStyles>
+  specimen,
+} = fontSwatchStyles();
+type FontSwatchVariants = VariantProps<typeof fontSwatchStyles>;
 /* endregion */
 
 /* region State */
-const { t } = useI18n()
+const { t } = useI18n();
 
 const image = computed(() => {
-  if (webp) return webp
-  if (png) return png
-  if (jpg) return jpg
-  if (svg) return svg
+  if (webp) return webp;
+  if (png) return png;
+  if (jpg) return jpg;
+  if (svg) return svg;
 
-  return undefined
-})
+  return undefined;
+});
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "FontSwatch"
-})
+  name: "FontSwatch",
+});
 /* endregion */
 
 /* region Lifecycle */

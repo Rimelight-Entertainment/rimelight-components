@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import type { ImageBlockProps } from "rimelight-components/types"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import type { ImageBlockProps } from "rimelight-components/types";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
 
 /* region Props */
 export interface ImageBlockRendererProps extends ImageBlockProps {
   rc?: {
-    root?: string
-    image?: string
-    caption?: string
-  }
+    root?: string;
+    image?: string;
+    caption?: string;
+  };
 }
 
-const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockRendererProps>()
+const { src, alt, caption, rc: rcProp } = defineProps<ImageBlockRendererProps>();
 
-const { rc } = useRC("ImageBlockRenderer", rcProp)
+const { rc } = useRC("ImageBlockRenderer", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface ImageBlockRendererEmits {}
 
-const emit = defineEmits<ImageBlockRendererEmits>()
+const emit = defineEmits<ImageBlockRendererEmits>();
 /* endregion */
 
 /* region Slots */
 export interface ImageBlockRendererSlots {}
 
-const slots = defineSlots<ImageBlockRendererSlots>()
+const slots = defineSlots<ImageBlockRendererSlots>();
 /* endregion */
 
 /* region Styles */
@@ -35,12 +35,12 @@ const imageBlockRendererStyles = tv({
   slots: {
     root: "mx-auto",
     image: "h-auto w-full object-cover",
-    captionClass: "mt-4 text-center text-sm text-muted"
-  }
-})
+    captionClass: "mt-4 text-center text-sm text-muted",
+  },
+});
 
-const { root, image, captionClass } = imageBlockRendererStyles()
-type ImageBlockRendererVariants = VariantProps<typeof imageBlockRendererStyles>
+const { root, image, captionClass } = imageBlockRendererStyles();
+type ImageBlockRendererVariants = VariantProps<typeof imageBlockRendererStyles>;
 /* endregion */
 
 /* region State */
@@ -53,8 +53,8 @@ type ImageBlockRendererVariants = VariantProps<typeof imageBlockRendererStyles>
 
 /* region Meta */
 defineOptions({
-  name: "ImageBlockRenderer"
-})
+  name: "ImageBlockRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */

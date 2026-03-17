@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
 
 /* region Props */
 export interface H3Props {
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { rc: rcProp } = defineProps<H3Props>()
+const { rc: rcProp } = defineProps<H3Props>();
 
-const { rc } = useRC("H3", rcProp)
+const { rc } = useRC("H3", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface H3Emits {}
 
-const emit = defineEmits<H3Emits>()
+const emit = defineEmits<H3Emits>();
 /* endregion */
 
 /* region Slots */
 export interface H3Slots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<H3Slots>()
+const slots = defineSlots<H3Slots>();
 /* endregion */
 
 /* region Styles */
 const h3Styles = tv({
   slots: {
-    root: "text-3xl font-bold text-highlighted"
-  }
-})
+    root: "text-3xl font-bold text-highlighted",
+  },
+});
 
-const { root } = h3Styles()
-type H3Variants = VariantProps<typeof h3Styles>
+const { root } = h3Styles();
+type H3Variants = VariantProps<typeof h3Styles>;
 /* endregion */
 
 /* region State */
@@ -50,8 +50,8 @@ type H3Variants = VariantProps<typeof h3Styles>
 
 /* region Meta */
 defineOptions({
-  name: "H3"
-})
+  name: "H3",
+});
 /* endregion */
 
 /* region Lifecycle */

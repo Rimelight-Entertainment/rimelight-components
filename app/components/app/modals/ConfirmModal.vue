@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { useConfirm, useRC } from "rimelight-components/composables"
-import { computed } from "vue"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { useConfirm, useRC } from "rimelight-components/composables";
+import { computed } from "vue";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface ConfirmModalProps {
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { rc: rcProp } = defineProps<ConfirmModalProps>()
+const { rc: rcProp } = defineProps<ConfirmModalProps>();
 
-const { rc } = useRC("ConfirmModal", rcProp)
+const { rc } = useRC("ConfirmModal", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface ConfirmModalEmits {}
 
-const emit = defineEmits<ConfirmModalEmits>()
+const emit = defineEmits<ConfirmModalEmits>();
 /* endregion */
 
 /* region Slots */
@@ -27,36 +27,36 @@ export interface ConfirmModalSlots {
   // default: (props: {}) => any
 }
 
-const slots = defineSlots<ConfirmModalSlots>()
+const slots = defineSlots<ConfirmModalSlots>();
 /* endregion */
 
 /* region Styles */
 const confirmModalStyles = tv({
   slots: {
     root: "z-9999",
-    actions: "flex flex-row justify-between gap-sm"
-  }
-})
+    actions: "flex flex-row justify-between gap-sm",
+  },
+});
 
-const { root, actions } = confirmModalStyles()
-type ConfirmModalVariants = VariantProps<typeof confirmModalStyles>
+const { root, actions } = confirmModalStyles();
+type ConfirmModalVariants = VariantProps<typeof confirmModalStyles>;
 /* endregion */
 
 /* region State */
-const { state, handleConfirm, handleCancel } = useConfirm()
+const { state, handleConfirm, handleCancel } = useConfirm();
 
 const isOpen = computed({
   get: () => state.value.isVisible,
   set: (value) => {
-    state.value.isVisible = value
-  }
-})
+    state.value.isVisible = value;
+  },
+});
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "ConfirmModal"
-})
+  name: "ConfirmModal",
+});
 /* endregion */
 
 /* region Lifecycle */

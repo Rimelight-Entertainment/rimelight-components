@@ -1,1 +1,1 @@
-export * from "./page-definitions"
+export * from "./page-definitions";

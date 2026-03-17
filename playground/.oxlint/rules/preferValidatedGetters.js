@@ -5,15 +5,15 @@ export const preferValidatedGetters = {
       description:
         "Enforce usage of validated getters (getValidatedQuery, readValidatedBody) in Nuxt event handlers.",
       category: "Best Practices",
-      recommended: true
+      recommended: true,
     },
     schema: [],
     messages: {
       preferValidatedQuery:
         "Use getValidatedQuery(event, schema) instead of getQuery(event) for better type safety.",
       preferValidatedBody:
-        "Use readValidatedBody(event, schema) instead of readBody(event) for better type safety."
-    }
+        "Use readValidatedBody(event, schema) instead of readBody(event) for better type safety.",
+    },
   },
 
   create(context) {
@@ -23,8 +23,8 @@ export const preferValidatedGetters = {
         if (node.callee.type === "Identifier" && node.callee.name === "getQuery") {
           context.report({
             node,
-            messageId: "preferValidatedQuery"
-          })
+            messageId: "preferValidatedQuery",
+          });
         }
 
         // Handle readBody/getBody -> readValidatedBody
@@ -34,10 +34,10 @@ export const preferValidatedGetters = {
         ) {
           context.report({
             node,
-            messageId: "preferValidatedBody"
-          })
+            messageId: "preferValidatedBody",
+          });
         }
-      }
-    }
-  }
-}
+      },
+    };
+  },
+};

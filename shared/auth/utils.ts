@@ -1,5 +1,5 @@
-import { eq, count, and } from "drizzle-orm"
-import type { user as userTable } from "../db/auth"
+import { eq, count, and } from "drizzle-orm";
+import type { user as userTable } from "../db/auth";
 
 /**
  * Generate a random number between 0000 (inclusive) and 9999 (inclusive)
@@ -7,8 +7,8 @@ import type { user as userTable } from "../db/auth"
 const generateRandomTag = (): string => {
   return Math.floor(Math.random() * 10000)
     .toString()
-    .padStart(4, "0")
-}
+    .padStart(4, "0");
+};
 
 /**
  * Creates a generateUniqueTag function bound to your database and user table.
@@ -24,24 +24,24 @@ export const createGenerateUniqueTag = (db: { select: any }, user: typeof userTa
    * @returns A unique four-digit string tag for this name.
    */
   return async (userName: string): Promise<string> => {
-    const MAX_RETRIES = 50
+    const MAX_RETRIES = 50;
     for (let i = 0; i < MAX_RETRIES; i++) {
-      const newTag = generateRandomTag()
+      const newTag = generateRandomTag();
 
       const result = await db
         .select({ count: count() })
         .from(user)
-        .where(and(eq(user.name, userName), eq(user.tag, newTag)))
+        .where(and(eq(user.name, userName), eq(user.tag, newTag)));
 
-      const tagCount = result[0]?.count ?? 0
+      const tagCount = result[0]?.count ?? 0;
 
       if (tagCount === 0) {
-        return newTag
+        return newTag;
       }
     }
 
     throw new Error(
-      `Failed to generate a unique tag for user "${userName}" after ${MAX_RETRIES} attempts. Please retry the operation.`
-    )
-  }
-}
+      `Failed to generate a unique tag for user "${userName}" after ${MAX_RETRIES} attempts. Please retry the operation.`,
+    );
+  };
+};

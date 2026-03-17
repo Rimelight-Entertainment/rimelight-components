@@ -1,38 +1,38 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { useRC } from "../../composables/components/useRC"
-import { useScrollToTop } from "../../composables/app/useScrollToTop"
-import { tv } from "../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { computed } from "vue";
+import { useRC } from "../../composables/components/useRC";
+import { useScrollToTop } from "../../composables/app/useScrollToTop";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface ScrollToTopProps {
-  circleStrokeWidth?: number
-  duration?: number
+  circleStrokeWidth?: number;
+  duration?: number;
   rc?: {
-    button?: string
-    progressBase?: string
-    svg?: string
-    iconContainer?: string
-    icon?: string
-  }
+    button?: string;
+    progressBase?: string;
+    svg?: string;
+    iconContainer?: string;
+    icon?: string;
+  };
 }
 
-const { circleStrokeWidth = 4, duration = 0.1, rc: rcProp } = defineProps<ScrollToTopProps>()
+const { circleStrokeWidth = 4, duration = 0.1, rc: rcProp } = defineProps<ScrollToTopProps>();
 
-const { rc } = useRC("ScrollToTop", rcProp)
+const { rc } = useRC("ScrollToTop", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface ScrollToTopEmits {}
 
-const emit = defineEmits<ScrollToTopEmits>()
+const emit = defineEmits<ScrollToTopEmits>();
 /* endregion */
 
 /* region Slots */
 export interface ScrollToTopSlots {}
 
-const slots = defineSlots<ScrollToTopSlots>()
+const slots = defineSlots<ScrollToTopSlots>();
 /* endregion */
 
 /* region Styles */
@@ -42,29 +42,29 @@ const scrollToTopStyles = tv({
     progressBase: "progress-circle-base size-full",
     svg: "size-full",
     iconContainer: "absolute inset-0 flex items-center justify-center text-center",
-    icon: "size-6 text-white"
-  }
-})
+    icon: "size-6 text-white",
+  },
+});
 
-const { button, progressBase, svg, iconContainer, icon } = scrollToTopStyles()
-type ScrollToTopVariants = VariantProps<typeof scrollToTopStyles>
+const { button, progressBase, svg, iconContainer, icon } = scrollToTopStyles();
+type ScrollToTopVariants = VariantProps<typeof scrollToTopStyles>;
 /* endregion */
 
 /* region State */
-const { isVisible, scrollToTop, scrollPercentage } = useScrollToTop()
+const { isVisible, scrollToTop, scrollPercentage } = useScrollToTop();
 
-const circumference = 2 * Math.PI * 45
-const percentPx = circumference / 100
+const circumference = 2 * Math.PI * 45;
+const percentPx = circumference / 100;
 
-const currentPercent = computed(() => ((scrollPercentage.value - 0) / 100) * 100)
-const percentageInPx = computed(() => `${percentPx}px`)
-const durationInSeconds = computed(() => `${duration}s`)
+const currentPercent = computed(() => ((scrollPercentage.value - 0) / 100) * 100);
+const percentageInPx = computed(() => `${percentPx}px`);
+const durationInSeconds = computed(() => `${duration}s`);
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "ScrollToTop"
-})
+  name: "ScrollToTop",
+});
 /* endregion */
 
 /* region Lifecycle */

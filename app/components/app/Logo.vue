@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useAttrs, computed } from "vue"
-import { useAppConfig, useNuxtApp } from "#imports"
-import { tv } from "../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "../../composables"
+import { useAttrs, computed } from "vue";
+import { useAppConfig, useNuxtApp } from "#imports";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "../../composables";
 
 /* region Props */
 export type LogoVariant =
@@ -11,95 +11,95 @@ export type LogoVariant =
   | "logotype"
   | "combomark_horizontal"
   | "combomark_vertical"
-  | string
+  | string;
 
 export interface LogoProps {
   /**
    * The variant of the logo to display.
    * @defaultValue "logomark"
    */
-  variant?: LogoVariant
+  variant?: LogoVariant;
   /**
    * Override the color mode.
    */
-  mode?: "color" | "white" | "black"
+  mode?: "color" | "white" | "black";
   /**
    * The URL to link to.
    * @defaultValue "/"
    */
-  to?: string
+  to?: string;
   /**
    * Options for the RC design system.
    */
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
   /**
    * The alt text for the logo image.
    */
-  alt?: string
+  alt?: string;
 }
 
-const { variant = "logomark", to = "/", mode, rc: rcProp, alt } = defineProps<LogoProps>()
+const { variant = "logomark", to = "/", mode, rc: rcProp, alt } = defineProps<LogoProps>();
 
-const { rc } = useRC("Logo", rcProp)
+const { rc } = useRC("Logo", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface LogoEmits {}
 
-const emit = defineEmits<LogoEmits>()
+const emit = defineEmits<LogoEmits>();
 /* endregion */
 
 /* region Slots */
 export interface LogoSlots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<LogoSlots>()
+const slots = defineSlots<LogoSlots>();
 /* endregion */
 
 /* region Styles */
 const logoStyles = tv({
   slots: {
-    root: "flex items-center justify-center transition-opacity hover:opacity-80 shrink-0 select-none overflow-hidden"
-  }
-})
+    root: "flex items-center justify-center transition-opacity hover:opacity-80 shrink-0 select-none overflow-hidden",
+  },
+});
 
-const { root } = logoStyles()
-type LogoVariants = VariantProps<typeof logoStyles>
+const { root } = logoStyles();
+type LogoVariants = VariantProps<typeof logoStyles>;
 
-const attrs = useAttrs()
-const colorMode = useColorMode()
-const appConfig = useAppConfig()
+const attrs = useAttrs();
+const colorMode = useColorMode();
+const appConfig = useAppConfig();
 
 const activeMode = computed(() => {
-  if (mode) return mode
-  return colorMode.value === "dark" ? "white" : "black"
-})
+  if (mode) return mode;
+  return colorMode.value === "dark" ? "white" : "black";
+});
 
 const logoSrc = computed<string | null>(() => {
-  const rcLogos = appConfig.rimelightComponents?.logos
-  let src: any = null
+  const rcLogos = appConfig.rimelightComponents?.logos;
+  let src: any = null;
 
   if (rcLogos && typeof rcLogos === "object") {
-    src = (rcLogos as any)[variant]
+    src = (rcLogos as any)[variant];
     if (src && typeof src === "object") {
-      src = src[activeMode.value] || src.color
+      src = src[activeMode.value] || src.color;
     }
   }
 
-  if (src && typeof src === "string" && src) return src
+  if (src && typeof src === "string" && src) return src;
 
-  return null
-})
+  return null;
+});
 
 const isIcon = computed(() => {
-  const src = logoSrc.value
-  if (!src) return false
-  if (src.startsWith("http") || src.startsWith("/") || src.startsWith(".")) return false
-  return src.includes(":") || src.startsWith("i-")
-})
+  const src = logoSrc.value;
+  if (!src) return false;
+  if (src.startsWith("http") || src.startsWith("/") || src.startsWith(".")) return false;
+  return src.includes(":") || src.startsWith("i-");
+});
 /* endregion */
 
 /* region State */
@@ -108,8 +108,8 @@ const isIcon = computed(() => {
 /* region Meta */
 defineOptions({
   name: "Logo",
-  inheritAttrs: false
-})
+  inheritAttrs: false,
+});
 /* endregion */
 
 /* region Lifecycle */

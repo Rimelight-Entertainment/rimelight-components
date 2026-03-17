@@ -1,46 +1,46 @@
 <script setup lang="ts">
-import { computed, ref, reactive } from "vue"
-import { useI18n } from "vue-i18n"
-import { usePageRegistry, useInfobox, useRC } from "rimelight-components/composables"
-import { getLocalizedContent } from "rimelight-components/utils"
-import type { TabsItem } from "@nuxt/ui"
-import { type Page, type Link, type Localized } from "rimelight-components/types"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { computed, ref, reactive } from "vue";
+import { useI18n } from "vue-i18n";
+import { usePageRegistry, useInfobox, useRC } from "rimelight-components/composables";
+import { getLocalizedContent } from "rimelight-components/utils";
+import type { TabsItem } from "@nuxt/ui";
+import { type Page, type Link, type Localized } from "rimelight-components/types";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface PagePropertiesEditorProps {
   rc?: {
-    aside?: string
-    icon?: string
-    titleInput?: string
-    type?: string
-    tags?: string
-    tabs?: string
-    image?: string
-    groupButton?: string
-    details?: string
-    field?: string
-    links?: string
-  }
-  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>
+    aside?: string;
+    icon?: string;
+    titleInput?: string;
+    type?: string;
+    tags?: string;
+    tabs?: string;
+    image?: string;
+    groupButton?: string;
+    details?: string;
+    field?: string;
+    links?: string;
+  };
+  onFetchPages?: () => Promise<Pick<Page, "title" | "slug" | "type" | "id">[]>;
 }
 
-const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>()
+const { rc: rcProp, onFetchPages } = defineProps<PagePropertiesEditorProps>();
 
-const { rc } = useRC("PagePropertiesEditor", rcProp)
+const { rc } = useRC("PagePropertiesEditor", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface PagePropertiesEditorEmits {}
 
-const emit = defineEmits<PagePropertiesEditorEmits>()
+const emit = defineEmits<PagePropertiesEditorEmits>();
 /* endregion */
 
 /* region Slots */
 export interface PagePropertiesEditorSlots {}
 
-const slots = defineSlots<PagePropertiesEditorSlots>()
+const slots = defineSlots<PagePropertiesEditorSlots>();
 /* endregion */
 
 /* region Styles */
@@ -67,9 +67,9 @@ const pagePropertiesEditorStyles = tv({
     emptyLinks: "text-xs text-dimmed italic",
     modalBody: "flex flex-col gap-sm",
     modalGrid: "grid grid-cols-2 gap-sm",
-    modalFooter: "flex justify-end gap-sm"
-  }
-})
+    modalFooter: "flex justify-end gap-sm",
+  },
+});
 
 const {
   asideClass,
@@ -93,84 +93,84 @@ const {
   emptyLinks,
   modalBody,
   modalGrid,
-  modalFooter
-} = pagePropertiesEditorStyles()
-type PagePropertiesEditorVariants = VariantProps<typeof pagePropertiesEditorStyles>
+  modalFooter,
+} = pagePropertiesEditorStyles();
+type PagePropertiesEditorVariants = VariantProps<typeof pagePropertiesEditorStyles>;
 /* endregion */
 
 /* region State */
-const page = defineModel<Page>({ required: true })
+const page = defineModel<Page>({ required: true });
 
-const { getTypeLabelKey } = usePageRegistry()
+const { getTypeLabelKey } = usePageRegistry();
 const { isFieldVisible, shouldRenderGroup, getSortedFields, getSortedGroups } = useInfobox(
-  () => page.value.properties
-)
+  () => page.value.properties,
+);
 
-const { locale, t } = useI18n()
+const { locale, t } = useI18n();
 
 const { data: allPages } = useAsyncData(
   "page-registry-editor",
   async () => {
-    if (!onFetchPages) return []
-    return await onFetchPages()
+    if (!onFetchPages) return [];
+    return await onFetchPages();
   },
   {
     server: false,
-    lazy: true
-  }
-)
+    lazy: true,
+  },
+);
 
 const pageItems = computed(() => {
-  if (!allPages.value) return []
+  if (!allPages.value) return [];
   return (allPages.value as any[]).map((p) => ({
     label: getLocalizedContent(p.title as any, locale.value),
     value: p.id,
     type: p.type,
-    slug: p.slug
-  }))
-})
+    slug: p.slug,
+  }));
+});
 
 const imageTabs = computed<TabsItem[]>(() => {
-  if (!page.value.images?.length) return []
+  if (!page.value.images?.length) return [];
 
   return page.value.images.map((img, index) => {
-    const localizedName = getLocalizedContent(img.name, locale.value)
+    const localizedName = getLocalizedContent(img.name, locale.value);
 
     return {
       label: localizedName || `${t("label_image")} ${index + 1}`,
       value: `image-${index}`,
-      img
-    }
-  })
-})
+      img,
+    };
+  });
+});
 
 // Link editing state
-const isLinkModalOpen = ref(false)
-const editingLinkIndex = ref<number | null>(null)
+const isLinkModalOpen = ref(false);
+const editingLinkIndex = ref<number | null>(null);
 const linkDraft = reactive<Partial<Link>>({
   label: "",
   to: "",
   icon: "",
   color: "neutral",
-  variant: "link"
-})
+  variant: "link",
+});
 
 // Asset management state
-const isAssetModalOpen = ref(false)
-const assetSelectionTarget = ref<"icon" | "images" | "property-image" | null>(null)
-const activePropertySchema = ref<any>(null)
+const isAssetModalOpen = ref(false);
+const assetSelectionTarget = ref<"icon" | "images" | "property-image" | null>(null);
+const activePropertySchema = ref<any>(null);
 
 // Image naming state
-const isNamingModalOpen = ref(false)
-const editingImageIndex = ref<number | null>(null)
-const pendingImageSrc = ref("")
-const imageDraftName = ref("")
+const isNamingModalOpen = ref(false);
+const editingImageIndex = ref<number | null>(null);
+const pendingImageSrc = ref("");
+const imageDraftName = ref("");
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "PagePropertiesEditor"
-})
+  name: "PagePropertiesEditor",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -184,75 +184,75 @@ defineOptions({
  * Returns a subset of pageItems filtered by the provided allowed types.
  */
 function getFilteredPageItems(allowedTypes?: string[]) {
-  if (!allowedTypes || !allowedTypes.length) return pageItems.value
-  return pageItems.value.filter((item) => allowedTypes.includes(item.type))
+  if (!allowedTypes || !allowedTypes.length) return pageItems.value;
+  return pageItems.value.filter((item) => allowedTypes.includes(item.type));
 }
 
 /**
  * Handles text-array updates specifically for the 'en' locale.
  */
 function updateTextArray(schema: any, vals: (string | Localized)[]) {
-  const currentDefault = (schema.defaultValue as Localized[]) || []
+  const currentDefault = (schema.defaultValue as Localized[]) || [];
   schema.defaultValue = vals.map((val) => {
     if (typeof val === "object" && val !== null) {
-      return val
+      return val;
     }
 
-    const str = val as string
+    const str = val as string;
     // Preserve other locales if they exist
-    const existing = currentDefault.find((i: any) => i && typeof i === "object" && i.en === str)
+    const existing = currentDefault.find((i: any) => i && typeof i === "object" && i.en === str);
     if (existing) {
-      return { ...existing, en: str }
+      return { ...existing, en: str };
     }
 
-    return { en: str }
-  })
+    return { en: str };
+  });
 }
 
 function openLinkModal(index: number | null = null) {
-  editingLinkIndex.value = index
+  editingLinkIndex.value = index;
   if (index !== null && page.value.links?.[index]) {
-    const link = page.value.links[index]
-    linkDraft.label = link.label
-    linkDraft.to = link.to
-    linkDraft.icon = link.icon
-    linkDraft.color = link.color || "neutral"
-    linkDraft.variant = link.variant || "link"
+    const link = page.value.links[index];
+    linkDraft.label = link.label;
+    linkDraft.to = link.to;
+    linkDraft.icon = link.icon;
+    linkDraft.color = link.color || "neutral";
+    linkDraft.variant = link.variant || "link";
   } else {
-    linkDraft.label = ""
-    linkDraft.to = ""
-    linkDraft.icon = ""
-    linkDraft.color = "neutral"
-    linkDraft.variant = "link"
+    linkDraft.label = "";
+    linkDraft.to = "";
+    linkDraft.icon = "";
+    linkDraft.color = "neutral";
+    linkDraft.variant = "link";
   }
-  isLinkModalOpen.value = true
+  isLinkModalOpen.value = true;
 }
 
 function saveLink() {
-  if (!linkDraft.label || !linkDraft.to) return
+  if (!linkDraft.label || !linkDraft.to) return;
 
-  if (!page.value.links) page.value.links = []
+  if (!page.value.links) page.value.links = [];
 
   const newLink: Link = {
     label: linkDraft.label,
     to: linkDraft.to!,
     icon: linkDraft.icon,
     color: (linkDraft.color as any) || "neutral",
-    variant: (linkDraft.variant as any) || "link"
-  }
+    variant: (linkDraft.variant as any) || "link",
+  };
 
   if (editingLinkIndex.value !== null) {
-    page.value.links[editingLinkIndex.value] = newLink
+    page.value.links[editingLinkIndex.value] = newLink;
   } else {
-    page.value.links.push(newLink)
+    page.value.links.push(newLink);
   }
 
-  isLinkModalOpen.value = false
+  isLinkModalOpen.value = false;
 }
 
 function removeLink(index: number) {
   if (page.value.links) {
-    page.value.links.splice(index, 1)
+    page.value.links.splice(index, 1);
   }
 }
 
@@ -260,104 +260,104 @@ function removeLink(index: number) {
  * Robust object comparison for USelectMenu
  */
 function compareValues(a: any, b: any) {
-  if (a === b) return true
-  if (a == null || b == null) return false
+  if (a === b) return true;
+  if (a == null || b == null) return false;
 
   // If both are objects, try stringified comparison first
   if (typeof a === "object" && typeof b === "object") {
-    if (JSON.stringify(a) === JSON.stringify(b)) return true
+    if (JSON.stringify(a) === JSON.stringify(b)) return true;
   }
 
   // Fallback to localized string comparison for mixed or complex types
-  const valA = typeof a === "object" ? getLocalizedContent(a, locale.value) : String(a)
-  const valB = typeof b === "object" ? getLocalizedContent(b, locale.value) : String(b)
+  const valA = typeof a === "object" ? getLocalizedContent(a, locale.value) : String(a);
+  const valB = typeof b === "object" ? getLocalizedContent(b, locale.value) : String(b);
 
-  return valA === valB && valA !== ""
+  return valA === valB && valA !== "";
 }
 
 function normalizePageValue(val: any) {
-  if (!val) return undefined
-  const str = typeof val === "object" ? getLocalizedContent(val, locale.value) : String(val)
+  if (!val) return undefined;
+  const str = typeof val === "object" ? getLocalizedContent(val, locale.value) : String(val);
   // Find matching item by ID or Slug
-  const matched = pageItems.value.find((p) => p.slug === str || p.value === str)
-  return matched ? matched.value : str
+  const matched = pageItems.value.find((p) => p.slug === str || p.value === str);
+  return matched ? matched.value : str;
 }
 
 function normalizePageArrayValue(val: any) {
-  if (!Array.isArray(val)) return []
-  return val.map((v) => normalizePageValue(v))
+  if (!Array.isArray(val)) return [];
+  return val.map((v) => normalizePageValue(v));
 }
 
 function openAssetPicker(target: "icon" | "images") {
-  assetSelectionTarget.value = target
-  isAssetModalOpen.value = true
+  assetSelectionTarget.value = target;
+  isAssetModalOpen.value = true;
 }
 
 function onAssetSelected(key: string) {
   const encodedKey = key
     .split("/")
     .map((seg) => encodeURIComponent(seg))
-    .join("/")
-  const src = `/api/assets/${encodedKey}`
+    .join("/");
+  const src = `/api/assets/${encodedKey}`;
 
   if (assetSelectionTarget.value === "icon") {
-    page.value.icon = { src, alt: page.value.title.en || "Icon" }
+    page.value.icon = { src, alt: page.value.title.en || "Icon" };
   } else if (assetSelectionTarget.value === "images") {
-    const images = page.value.images
-    const index = editingImageIndex.value
+    const images = page.value.images;
+    const index = editingImageIndex.value;
     if (images && index !== null) {
-      const targetImg = images[index]
+      const targetImg = images[index];
       if (targetImg) {
-        targetImg.src = src
+        targetImg.src = src;
       }
     } else {
-      pendingImageSrc.value = src
-      imageDraftName.value = ""
-      isNamingModalOpen.value = true
+      pendingImageSrc.value = src;
+      imageDraftName.value = "";
+      isNamingModalOpen.value = true;
     }
   }
 
-  isAssetModalOpen.value = false
-  assetSelectionTarget.value = null
+  isAssetModalOpen.value = false;
+  assetSelectionTarget.value = null;
 }
 
 function openImageEditor(index: number) {
-  const img = page.value.images?.[index]
-  if (!img) return
+  const img = page.value.images?.[index];
+  if (!img) return;
 
-  editingImageIndex.value = index
-  pendingImageSrc.value = img.src
-  imageDraftName.value = getLocalizedContent(img.name, locale.value) || ""
-  isNamingModalOpen.value = true
+  editingImageIndex.value = index;
+  pendingImageSrc.value = img.src;
+  imageDraftName.value = getLocalizedContent(img.name, locale.value) || "";
+  isNamingModalOpen.value = true;
 }
 
 function confirmImageAddition() {
-  if (!page.value.images) page.value.images = []
+  if (!page.value.images) page.value.images = [];
 
   const imageData = {
     src: pendingImageSrc.value,
     alt: page.value.title.en || "Page Image",
-    name: { en: imageDraftName.value || `Image ${page.value.images.length + 1}` }
-  }
+    name: { en: imageDraftName.value || `Image ${page.value.images.length + 1}` },
+  };
 
   if (editingImageIndex.value !== null) {
     page.value.images[editingImageIndex.value] = {
       ...page.value.images[editingImageIndex.value],
-      ...imageData
-    }
+      ...imageData,
+    };
   } else {
-    page.value.images.push(imageData)
+    page.value.images.push(imageData);
   }
 
-  isNamingModalOpen.value = false
-  editingImageIndex.value = null
-  pendingImageSrc.value = ""
-  imageDraftName.value = ""
+  isNamingModalOpen.value = false;
+  editingImageIndex.value = null;
+  pendingImageSrc.value = "";
+  imageDraftName.value = "";
 }
 
 function removeImage(index: number) {
   if (page.value.images) {
-    page.value.images.splice(index, 1)
+    page.value.images.splice(index, 1);
   }
 }
 /* endregion */
@@ -370,7 +370,7 @@ function removeImage(index: number) {
       :ui="{
         root: 'divide-none',
         header: 'bg-accented text-center',
-        body: 'p-0 sm:p-0 bg-muted'
+        body: 'p-0 sm:p-0 bg-muted',
       }"
     >
       <template #header>
@@ -526,7 +526,7 @@ function removeImage(index: number) {
                 trailing-icon="lucide:chevron-down"
                 :ui="{
                   trailingIcon:
-                    'group-data-[state=open]:rotate-180 transition-transform duration-200'
+                    'group-data-[state=open]:rotate-180 transition-transform duration-200',
                 }"
                 block
                 :class="groupButtonClass({ class: rc.groupButton })"
@@ -558,9 +558,9 @@ function removeImage(index: number) {
                         @update:model-value="
                           (val: string) => {
                             if (typeof schema.defaultValue === 'object') {
-                              schema.defaultValue[locale] = val
+                              schema.defaultValue[locale] = val;
                             } else {
-                              schema.defaultValue = val
+                              schema.defaultValue = val;
                             }
                           }
                         "
@@ -581,7 +581,7 @@ function removeImage(index: number) {
                           schema.options.map((opt: any) =>
                             typeof opt === 'string'
                               ? { label: opt, value: opt }
-                              : { label: getLocalizedContent(opt, locale), value: opt }
+                              : { label: getLocalizedContent(opt, locale), value: opt },
                           )
                         "
                         value-key="value"
@@ -632,7 +632,7 @@ function removeImage(index: number) {
                               pageItems.find(
                                 (p) =>
                                   compareValues(p.value, schema.defaultValue) ||
-                                  compareValues(p.slug, schema.defaultValue)
+                                  compareValues(p.slug, schema.defaultValue),
                               )?.label ||
                               (typeof schema.defaultValue === "object"
                                 ? getLocalizedContent(schema.defaultValue, locale)
@@ -762,7 +762,7 @@ function removeImage(index: number) {
                       'warning',
                       'success',
                       'info',
-                      'info'
+                      'info',
                     ]"
                     class="w-full"
                   />
@@ -854,8 +854,8 @@ function removeImage(index: number) {
               color="neutral"
               @click="
                 () => {
-                  isNamingModalOpen = false
-                  editingImageIndex = null
+                  isNamingModalOpen = false;
+                  editingImageIndex = null;
                 }
               "
             />

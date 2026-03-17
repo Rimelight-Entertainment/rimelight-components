@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import { tv } from "../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "../../composables"
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "../../composables";
 
 /* region Props */
 export interface TeamCardLink {
-  icon: string
-  to?: string
-  href?: string
-  target?: string
-  ariaLabel?: string
+  icon: string;
+  to?: string;
+  href?: string;
+  target?: string;
+  ariaLabel?: string;
 }
 
 export interface TeamCardProps {
-  src: string
-  alt: string
-  name: string
-  role: string
-  description: string
-  links?: TeamCardLink[]
+  src: string;
+  alt: string;
+  name: string;
+  role: string;
+  description: string;
+  links?: TeamCardLink[];
   rc?: {
-    card?: string
-    image?: string
-    details?: string
-    name?: string
-    role?: string
-    badge?: string
-    badgeItem?: string
-    description?: string
-    links?: string
-    link?: string
-    footer?: string
-  }
+    card?: string;
+    image?: string;
+    details?: string;
+    name?: string;
+    role?: string;
+    badge?: string;
+    badgeItem?: string;
+    description?: string;
+    links?: string;
+    link?: string;
+    footer?: string;
+  };
 }
 
 const {
@@ -41,25 +41,25 @@ const {
   role,
   description,
   links: linksProp,
-  rc: rcProp
-} = defineProps<TeamCardProps>()
+  rc: rcProp,
+} = defineProps<TeamCardProps>();
 
-const { rc } = useRC("TeamCard", rcProp)
+const { rc } = useRC("TeamCard", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface TeamCardEmits {}
 
-const emit = defineEmits<TeamCardEmits>()
+const emit = defineEmits<TeamCardEmits>();
 /* endregion */
 
 /* region Slots */
 export interface TeamCardSlots {
-  links: (props: {}) => any
-  badge?: (props: {}) => any
+  links: (props: {}) => any;
+  badge?: (props: {}) => any;
 }
 
-const slots = defineSlots<TeamCardSlots>()
+const slots = defineSlots<TeamCardSlots>();
 /* endregion */
 
 /* region Styles */
@@ -69,12 +69,12 @@ const teamCardStyles = tv({
     nameClass: "text-xl font-bold",
     roleClass: "text-sm",
     descriptionClass: "text-md",
-    linksClass: "flex flex-row gap-md"
-  }
-})
+    linksClass: "flex flex-row gap-md",
+  },
+});
 
-const { details, nameClass, roleClass, descriptionClass, linksClass } = teamCardStyles()
-type TeamCardVariants = VariantProps<typeof teamCardStyles>
+const { details, nameClass, roleClass, descriptionClass, linksClass } = teamCardStyles();
+type TeamCardVariants = VariantProps<typeof teamCardStyles>;
 /* endregion */
 
 /* region State */
@@ -87,8 +87,8 @@ type TeamCardVariants = VariantProps<typeof teamCardStyles>
 
 /* region Meta */
 defineOptions({
-  name: "TeamCard"
-})
+  name: "TeamCard",
+});
 /* endregion */
 
 /* region Lifecycle */

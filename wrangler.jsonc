@@ -5,13 +5,13 @@
   "compatibility_date": "2026-02-14",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
-    "directory": "playground/.output/public"
+    "directory": "playground/.output/public",
   },
   "observability": {
     "logs": {
       "enabled": true,
       "head_sampling_rate": 1,
-      "invocation_logs": true
-    }
-  }
+      "invocation_logs": true,
+    },
+  },
 }

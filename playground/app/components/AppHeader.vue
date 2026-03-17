@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import type { DropdownMenuItem, NavigationMenuItem } from "@nuxt/ui"
-import { useHeaderStack } from "rimelight-components/composables"
-import { type VariantProps } from "tailwind-variants"
-import { computed, inject, reactive, ref } from "vue"
-import { tv } from "../../../app/internal/tv"
-import { MOCK_PAGES_LIST } from "../mocks/pages"
+import type { DropdownMenuItem, NavigationMenuItem } from "@nuxt/ui";
+import { useHeaderStack } from "rimelight-components/composables";
+import { type VariantProps } from "tailwind-variants";
+import { computed, inject, reactive, ref } from "vue";
+import { tv } from "../../../app/internal/tv";
+import { MOCK_PAGES_LIST } from "../mocks/pages";
 
 /* region Props */
 export interface AppHeaderProps {
   // prop1: string,
 }
 
-const {} = defineProps<AppHeaderProps>()
+const {} = defineProps<AppHeaderProps>();
 /* endregion */
 
 /* region Emits */
 export interface AppHeaderEmits {}
 
-const emit = defineEmits<AppHeaderEmits>()
+const emit = defineEmits<AppHeaderEmits>();
 /* endregion */
 
 /* region Slots */
 export interface AppHeaderSlots {}
 
-const slots = defineSlots<AppHeaderSlots>()
+const slots = defineSlots<AppHeaderSlots>();
 /* endregion */
 
 /* region Styles */
@@ -54,9 +54,9 @@ const appHeaderStyles = tv({
     collapsedLeftSlideover: "w-full max-w-4/5 rounded-none",
     collapsedContent: "flex size-full flex-col items-start gap-md",
     collapsedRightSlideover: "w-full max-w-4/5 rounded-none",
-    collapsedRightBody: "flex flex-col gap-md"
-  }
-})
+    collapsedRightBody: "flex flex-col gap-md",
+  },
+});
 
 const {
   root,
@@ -82,22 +82,22 @@ const {
   collapsedLeftSlideover,
   collapsedContent,
   collapsedRightSlideover,
-  collapsedRightBody
-} = appHeaderStyles()
-type AppHeaderVariants = VariantProps<typeof appHeaderStyles>
+  collapsedRightBody,
+} = appHeaderStyles();
+type AppHeaderVariants = VariantProps<typeof appHeaderStyles>;
 /* endregion */
 
 /* region State */
-const { bottomOffsets } = useHeaderStack()
-const headerLayerId = inject<string>("header_layer_id", "global-header")
+const { bottomOffsets } = useHeaderStack();
+const headerLayerId = inject<string>("header_layer_id", "global-header");
 
-const route = useRoute()
+const route = useRoute();
 
 const slideoverState = reactive({
   left: false,
   right: false,
-  notifications: false
-})
+  notifications: false,
+});
 
 // Mock Session Data
 const session = ref({
@@ -106,14 +106,14 @@ const session = ref({
     tag: "0000",
     image: "https://github.com/idantitydotme.png",
     status: "Accessing me.",
-    availability: "available"
-  }
-})
+    availability: "available",
+  },
+});
 
 const availabilityChip = computed(() => ({
   color: "success" as const,
-  position: "bottom-right" as const
-}))
+  position: "bottom-right" as const,
+}));
 
 const items = computed<NavigationMenuItem[]>(() => [
   {
@@ -130,68 +130,68 @@ const items = computed<NavigationMenuItem[]>(() => [
         (child) => ({
           label: child.title.en,
           description: child.description?.en,
-          to: `/${child.slug}`
-        })
-      )
-    }))
+          to: `/${child.slug}`,
+        }),
+      ),
+    })),
   },
   {
     label: "Components",
     to: "/components",
-    active: route.path === "/components"
+    active: route.path === "/components",
   },
 
   {
     label: "Branding",
     to: "/branding",
-    active: route.path === "/branding"
-  }
-])
+    active: route.path === "/branding",
+  },
+]);
 
 const accountMenuItems = computed<DropdownMenuItem[][]>(() => [
   [
     {
-      slot: "user" as const
+      slot: "user" as const,
     },
     {
       label: "Dashboard",
       icon: "lucide:layout-dashboard",
-      to: "/components"
-    }
+      to: "/components",
+    },
   ],
   [
     {
       label: "Profile",
-      icon: "lucide:user"
+      icon: "lucide:user",
     },
     {
       label: "Billing",
-      icon: "lucide:credit-card"
-    }
+      icon: "lucide:credit-card",
+    },
   ],
   [
     {
       label: "Team",
-      icon: "lucide:users"
+      icon: "lucide:users",
     },
     {
       label: "Settings",
       icon: "lucide:cog",
-      kbds: [","]
+      kbds: [","],
     },
     {
       label: "Logout",
       icon: "lucide:log-out",
-      kbds: ["shift", "meta", "q"]
-    }
-  ]
-])
+      kbds: ["shift", "meta", "q"],
+    },
+  ],
+]);
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "AppHeader"
-})
+  name: "AppHeader",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -209,7 +209,7 @@ defineOptions({
 /* endregion */
 
 /* region Logic */
-defineShortcuts(extractShortcuts(accountMenuItems.value))
+defineShortcuts(extractShortcuts(accountMenuItems.value));
 /* endregion */
 </script>
 
@@ -230,7 +230,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
             :ui="{
               viewportWrapper:
                 'top-[var(--header-bottom-boundary)] flex fixed w-screen mt-[var(--ui-header-height)]',
-              viewport: 'rounded-none'
+              viewport: 'rounded-none',
             }"
           >
             <template #megamenu-content="{ item }">
@@ -294,7 +294,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                     size="md"
                     :avatar="{
                       src: session.user.image,
-                      alt: session.user.name
+                      alt: session.user.name,
                     }"
                     :name="session.user.name"
                     :description="session.user.status"
@@ -310,7 +310,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                       size="md"
                       :avatar="{
                         src: session.user.image,
-                        alt: session.user.name
+                        alt: session.user.name,
                       }"
                       :description="session.user.status"
                       :ui="{ name: 'text-left', description: 'text-left' }"
@@ -366,7 +366,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
             :handle="false"
             :ui="{
               header: 'flex items-center justify-between',
-              content: collapsedLeftSlideover()
+              content: collapsedLeftSlideover(),
             }"
           >
             <UButton
@@ -422,7 +422,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
               :handle="false"
               :ui="{
                 header: 'flex items-center justify-between',
-                content: collapsedRightSlideover()
+                content: collapsedRightSlideover(),
               }"
             >
               <UButton
@@ -436,7 +436,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                   size="md"
                   :avatar="{
                     src: session.user.image,
-                    alt: session.user.name
+                    alt: session.user.name,
                   }"
                   :description="session.user.status"
                   :ui="{ description: 'text-left' }"

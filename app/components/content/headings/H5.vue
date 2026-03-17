@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
 
 /* region Props */
 export interface H5Props {
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { rc: rcProp } = defineProps<H5Props>()
+const { rc: rcProp } = defineProps<H5Props>();
 
-const { rc } = useRC("H5", rcProp)
+const { rc } = useRC("H5", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface H5Emits {}
 
-const emit = defineEmits<H5Emits>()
+const emit = defineEmits<H5Emits>();
 /* endregion */
 
 /* region Slots */
 export interface H5Slots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<H5Slots>()
+const slots = defineSlots<H5Slots>();
 /* endregion */
 
 /* region Styles */
 const h5Styles = tv({
   slots: {
-    root: "text-xl font-bold text-highlighted"
-  }
-})
+    root: "text-xl font-bold text-highlighted",
+  },
+});
 
-const { root } = h5Styles()
-type H5Variants = VariantProps<typeof h5Styles>
+const { root } = h5Styles();
+type H5Variants = VariantProps<typeof h5Styles>;
 /* endregion */
 
 /* region State */
@@ -50,8 +50,8 @@ type H5Variants = VariantProps<typeof h5Styles>
 
 /* region Meta */
 defineOptions({
-  name: "H5"
-})
+  name: "H5",
+});
 /* endregion */
 
 /* region Lifecycle */

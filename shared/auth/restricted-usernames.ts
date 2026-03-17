@@ -14,8 +14,8 @@ const HOMOGLYPH_MAP: Record<string, string> = {
   "@": "a",
   "!": "i",
   $: "s",
-  "|": "i"
-}
+  "|": "i",
+};
 
 const SKELETON_MAP: Record<string, string> = {
   // Leetspeak & Numbers
@@ -54,8 +54,8 @@ const SKELETON_MAP: Record<string, string> = {
   ο: "o",
   ρ: "p",
   υ: "y",
-  χ: "x"
-}
+  χ: "x",
+};
 
 /**
  * Generates a "Skeleton" of the username.
@@ -64,7 +64,7 @@ const SKELETON_MAP: Record<string, string> = {
 export const generateUsernameSkeleton = (input: string): string => {
   // 1. Normalize Unicode (Compatibility Decomposition)
   // This handles characters like 'ⓔ' or 'é'
-  const normalized = input.normalize("NFKD")
+  const normalized = input.normalize("NFKD");
 
   return (
     normalized
@@ -72,16 +72,16 @@ export const generateUsernameSkeleton = (input: string): string => {
       .split("")
       .map((char) => {
         // 2. Remove non-spacing marks (accents/diacritics)
-        if (char.match(/[\u0300-\u036f]/)) return ""
+        if (char.match(/[\u0300-\u036f]/)) return "";
 
         // 3. Map visually similar characters to their base
-        return SKELETON_MAP[char] || char
+        return SKELETON_MAP[char] || char;
       })
       .join("")
       // 4. Final sanitization: keep only base alphanumeric
       .replace(/[^a-z0-9]/g, "")
-  )
-}
+  );
+};
 
 /**
  * Normalizes a string by:
@@ -95,8 +95,8 @@ export const normalizeUsername = (input: string): string => {
     .split("")
     .map((char) => HOMOGLYPH_MAP[char] || char)
     .join("")
-    .replace(/[^a-z0-9]/g, "")
-}
+    .replace(/[^a-z0-9]/g, "");
+};
 
 // Standard restricted username groups that apply to all apps
 export const STANDARD_RESTRICTED_GROUPS = {
@@ -142,7 +142,7 @@ export const STANDARD_RESTRICTED_GROUPS = {
     "council",
     "ceo",
     "founder",
-    "owner"
+    "owner",
   ],
   LEGAL_FINANCIAL: [
     "checkout",
@@ -175,7 +175,7 @@ export const STANDARD_RESTRICTED_GROUPS = {
     "trademark",
     "dmca",
     "abuse",
-    "report"
+    "report",
   ],
   TECHNICAL: [
     "null",
@@ -240,7 +240,7 @@ export const STANDARD_RESTRICTED_GROUPS = {
     "security-alert",
     "mail",
     "email",
-    "postmaster"
+    "postmaster",
   ],
   LEETSPEAK: [
     "4dmin",
@@ -263,23 +263,23 @@ export const STANDARD_RESTRICTED_GROUPS = {
     "d3veloper",
     "@dministrator",
     "adm1n",
-    "adm1nistrator"
-  ]
-} as const
+    "adm1nistrator",
+  ],
+} as const;
 
 // Generate the standard normalized set
 export const STANDARD_RESTRICTED_USERNAMES = Object.values(STANDARD_RESTRICTED_GROUPS)
   .flat()
-  .map((name) => normalizeUsername(name))
+  .map((name) => normalizeUsername(name));
 
 /**
  * Creates a restricted username set with optional app-specific additions.
  * Use this in your app to extend the standard set.
  */
 export const createRestrictedSet = (appSpecificUsernames: string[] = []): Set<string> => {
-  const normalizedAppSpecific = appSpecificUsernames.map((name) => normalizeUsername(name))
-  return new Set([...STANDARD_RESTRICTED_USERNAMES, ...normalizedAppSpecific])
-}
+  const normalizedAppSpecific = appSpecificUsernames.map((name) => normalizeUsername(name));
+  return new Set([...STANDARD_RESTRICTED_USERNAMES, ...normalizedAppSpecific]);
+};
 
 // Default set (standard only) for quick access
-export const RESTRICTED_SET = new Set(STANDARD_RESTRICTED_USERNAMES)
+export const RESTRICTED_SET = new Set(STANDARD_RESTRICTED_USERNAMES);

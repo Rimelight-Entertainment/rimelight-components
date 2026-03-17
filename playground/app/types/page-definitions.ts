@@ -1,4 +1,4 @@
-import { definePageDefinition } from "rimelight-components/utils"
+import { definePageDefinition } from "rimelight-components/utils";
 
 export const MOVIE_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.movie",
@@ -15,15 +15,15 @@ export const MOVIE_DEFINITION = definePageDefinition({
           value: "",
           label: { en: "Sequel" },
           type: "page",
-          allowedPageTypes: ["Movie"]
+          allowedPageTypes: ["Movie"],
         },
         relatedMedia: {
           value: [],
           label: { en: "Related Media" },
           type: "page-array",
-          allowedPageTypes: ["Movie", "Default"]
-        }
-      }
+          allowedPageTypes: ["Movie", "Default"],
+        },
+      },
     },
     production: {
       label: { en: "Production & Distribution" },
@@ -32,44 +32,44 @@ export const MOVIE_DEFINITION = definePageDefinition({
         studio: {
           value: { en: "Warner Bros." },
           label: { en: "Lead Studio" },
-          type: "text"
+          type: "text",
         },
         budget: {
           value: 63000000,
           label: { en: "Budget (USD)" },
-          type: "number"
+          type: "number",
         },
         status: {
           value: "Released",
           label: { en: "Current Status" },
           type: "enum",
-          options: ["Pre-Production", "Filming", "Post-Production", "Released"]
+          options: ["Pre-Production", "Filming", "Post-Production", "Released"],
         },
         locations: {
           value: [{ en: "Sydney, Australia" }, { en: "San Francisco, USA" }],
           label: { en: "Filming Locations" },
-          type: "text-array"
-        }
-      }
-    }
+          type: "text-array",
+        },
+      },
+    },
   },
-  initialBlocks: () => []
-})
+  initialBlocks: () => [],
+});
 
 export const WIKI_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.wiki",
   properties: {},
-  initialBlocks: () => []
-})
+  initialBlocks: () => [],
+});
 
 declare global {
   interface RimelightRegisterPageTypes {
-    Movie: typeof MOVIE_DEFINITION.properties
-    Wiki: typeof WIKI_DEFINITION.properties
+    Movie: typeof MOVIE_DEFINITION.properties;
+    Wiki: typeof WIKI_DEFINITION.properties;
   }
 }
 
 export const PAGE_MAP = {
   Movie: MOVIE_DEFINITION,
-  Wiki: WIKI_DEFINITION
-}
+  Wiki: WIKI_DEFINITION,
+};

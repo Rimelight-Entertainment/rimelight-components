@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import { inject } from "vue"
-import { getLocalizedContent } from "rimelight-components/utils"
-import { useI18n } from "vue-i18n"
-import { type Page } from "rimelight-components/types"
-import { useAsyncData } from "#imports"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import { inject } from "vue";
+import { getLocalizedContent } from "rimelight-components/utils";
+import { useI18n } from "vue-i18n";
+import { type Page } from "rimelight-components/types";
+import { useAsyncData } from "#imports";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
 
 /* region Props */
 export interface PageMentionProps {
-  pageId: string
+  pageId: string;
   rc?: {
-    link?: string
-    icon?: string
-    text?: string
-    skeleton?: string
-  }
+    link?: string;
+    icon?: string;
+    text?: string;
+    skeleton?: string;
+  };
 }
 
-const { pageId, rc: rcProp } = defineProps<PageMentionProps>()
+const { pageId, rc: rcProp } = defineProps<PageMentionProps>();
 
-const { rc } = useRC("PageMention", rcProp)
+const { rc } = useRC("PageMention", rcProp);
 /*endregion */
 
 /* region Emits */
 export interface PageMentionEmits {}
 
-const emit = defineEmits<PageMentionEmits>()
+const emit = defineEmits<PageMentionEmits>();
 /* endregion */
 
 /* region Slots */
 export interface PageMentionSlots {}
 
-const slots = defineSlots<PageMentionSlots>()
+const slots = defineSlots<PageMentionSlots>();
 /* endregion */
 
 /* region Styles */
@@ -44,52 +44,52 @@ const pageMentionStyles = tv({
     iconClass: "w-4 h-4 rounded-full object-cover shrink-0",
     textClass: "truncate font-medium",
     skeletonClass: "h-3 w-24",
-    unresolvedText: "text-xs text-dimmed italic"
-  }
-})
+    unresolvedText: "text-xs text-dimmed italic",
+  },
+});
 
-const { linkClass, iconClass, textClass, skeletonClass, unresolvedText } = pageMentionStyles()
-type PageMentionVariants = VariantProps<typeof pageMentionStyles>
+const { linkClass, iconClass, textClass, skeletonClass, unresolvedText } = pageMentionStyles();
+type PageMentionVariants = VariantProps<typeof pageMentionStyles>;
 /* endregion */
 
 /* region State */
-const { locale } = useI18n()
-const isServer = import.meta.server
-const isClient = import.meta.client
+const { locale } = useI18n();
+const isServer = import.meta.server;
+const isClient = import.meta.client;
 
 const resolver =
-  inject<(id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>>("page-resolver")
+  inject<(id: string) => Promise<Pick<Page, "title" | "icon" | "slug">>>("page-resolver");
 
 const { data: linkedPage, status } = useAsyncData(
   () => `page-mention-${pageId}`,
   async () => {
     if (!resolver) {
       if (isClient) {
-        console.warn("RCPageMention: No page resolver provided in RCPageRenderer")
+        console.warn("RCPageMention: No page resolver provided in RCPageRenderer");
       }
-      return null
+      return null;
     }
     try {
-      const page = await resolver(pageId)
-      return page
+      const page = await resolver(pageId);
+      return page;
     } catch (e) {
       if (isClient) {
-        console.warn("RCPageMention: Failed to resolve page", pageId, e)
+        console.warn("RCPageMention: Failed to resolve page", pageId, e);
       }
-      return null
+      return null;
     }
   },
   {
     lazy: true,
-    watch: [() => pageId]
-  }
-)
+    watch: [() => pageId],
+  },
+);
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "PageMention"
-})
+  name: "PageMention",
+});
 /* endregion */
 
 /* region Lifecycle */

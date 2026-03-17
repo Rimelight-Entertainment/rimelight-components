@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { inject, computed } from "vue"
-import { useI18n } from "vue-i18n"
-import type { CalloutBlockProps, CalloutVariant, Block } from "rimelight-components/types"
-import { useAppConfig } from "#imports"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import { inject, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import type { CalloutBlockProps, CalloutVariant, Block } from "rimelight-components/types";
+import { useAppConfig } from "#imports";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
 
 /* region Props */
 export interface CalloutBlockEditorProps extends CalloutBlockProps {
-  id: string
+  id: string;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { id, rc: rcProp, children, variant, to, target } = defineProps<CalloutBlockEditorProps>()
+const { id, rc: rcProp, children, variant, to, target } = defineProps<CalloutBlockEditorProps>();
 
-const { rc } = useRC("CalloutBlockEditor", rcProp)
+const { rc } = useRC("CalloutBlockEditor", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface CalloutBlockEditorEmits {}
 
-const emit = defineEmits<CalloutBlockEditorEmits>()
+const emit = defineEmits<CalloutBlockEditorEmits>();
 /* endregion */
 
 /* region Slots */
 export interface CalloutBlockEditorSlots {}
 
-const slots = defineSlots<CalloutBlockEditorSlots>()
+const slots = defineSlots<CalloutBlockEditorSlots>();
 /* endregion */
 
 /* region Styles */
@@ -42,9 +42,9 @@ const calloutBlockEditorStyles = tv({
     itemIcon: "size-4 text-dimmed mt-0.5 shrink-0",
     itemContent: "flex flex-col gap-0.5 min-w-0",
     itemLabel: "font-medium text-sm truncate",
-    itemDescription: "text-xs text-dimmed font-normal leading-snug whitespace-normal"
-  }
-})
+    itemDescription: "text-xs text-dimmed font-normal leading-snug whitespace-normal",
+  },
+});
 
 const {
   root,
@@ -54,15 +54,15 @@ const {
   itemIcon,
   itemContent,
   itemLabel,
-  itemDescription
-} = calloutBlockEditorStyles()
-type CalloutBlockEditorVariants = VariantProps<typeof calloutBlockEditorStyles>
+  itemDescription,
+} = calloutBlockEditorStyles();
+type CalloutBlockEditorVariants = VariantProps<typeof calloutBlockEditorStyles>;
 /* endregion */
 
 /* region State */
-const editorApi = inject<any>("block-editor-api")
-const appConfig = useAppConfig()
-const { t } = useI18n()
+const editorApi = inject<any>("block-editor-api");
+const appConfig = useAppConfig();
+const { t } = useI18n();
 
 const variants: CalloutVariant[] = [
   "info",
@@ -71,41 +71,41 @@ const variants: CalloutVariant[] = [
   "error",
   "commentary",
   "ideation",
-  "source"
-]
+  "source",
+];
 
 const items = computed(() => [
   variants.map((type) => {
-    const config = getVariantConfig(type)
+    const config = getVariantConfig(type);
     return {
       label: t(config.title),
       icon: config.icon,
       description: t(config.tooltip),
       onSelect: () => {
         if (editorApi) {
-          editorApi.updateBlockProps(id, { variant: type })
+          editorApi.updateBlockProps(id, { variant: type });
         }
-      }
-    }
-  })
-])
+      },
+    };
+  }),
+]);
 
 // Use a computed property to bridge vuedraggable and the central store directly
 const localChildren = computed({
   get: () => children ?? [],
   set: (newChildren) => {
     if (editorApi && id) {
-      const childrenCopy = JSON.parse(JSON.stringify(newChildren))
-      editorApi.updateBlockProps(id, { children: childrenCopy })
+      const childrenCopy = JSON.parse(JSON.stringify(newChildren));
+      editorApi.updateBlockProps(id, { children: childrenCopy });
     }
-  }
-})
+  },
+});
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "CalloutBlockEditor"
-})
+  name: "CalloutBlockEditor",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -128,13 +128,13 @@ function getVariantConfig(variant: CalloutVariant) {
     (appConfig.rimelightComponents as any)?.callouts?.[variant] ?? {
       icon: "lucide:alert-circle",
       title: "Callout",
-      tooltip: "Callout"
+      tooltip: "Callout",
     }
-  )
+  );
 }
 
 function handleChildrenMutation() {
-  console.log("[CalloutBlockEditor] Mutation event received (handled by setter)")
+  console.log("[CalloutBlockEditor] Mutation event received (handled by setter)");
 }
 /* endregion */
 </script>

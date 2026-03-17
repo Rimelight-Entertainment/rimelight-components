@@ -1,43 +1,43 @@
-import { computed, reactive, ref, watch } from "vue"
-import type { Page, PageType } from "#rimelight-components/types"
-import { usePaginatedPages } from "./usePaginatedPages"
-import { slugify } from "#rimelight-components/utils"
+import { computed, reactive, ref, watch } from "vue";
+import type { Page, PageType } from "#rimelight-components/types";
+import { usePaginatedPages } from "./usePaginatedPages";
+import { slugify } from "#rimelight-components/utils";
 
 export interface NewPostState {
-  title: string
-  slug: string
+  title: string;
+  slug: string;
 }
 
 export interface UseBlogIndexOptions {
   /** Initial limit for drafts fetch */
-  draftsInitialLimit?: number
+  draftsInitialLimit?: number;
   /** Initial limit for posts fetch */
-  postsInitialLimit?: number
+  postsInitialLimit?: number;
   /** Number of items to fetch on subsequent loads */
-  nextLimit?: number
+  nextLimit?: number;
   /** Whether to immediately fetch drafts (default: based on user role) */
-  fetchDraftsImmediate?: boolean
+  fetchDraftsImmediate?: boolean;
   /** Optional toast callback for success/error messages */
-  onToast?: (options: { color: "success" | "error"; title: string; description?: string }) => void
+  onToast?: (options: { color: "success" | "error"; title: string; description?: string }) => void;
 }
 
 export interface UseBlogIndexReturn {
   /** Current user session */
-  session: ReturnType<typeof useAuth>["session"]
+  session: ReturnType<typeof useAuth>["session"];
   /** Whether user is authorized to view drafts */
-  isAuthorizedForDrafts: ComputedRef<boolean>
+  isAuthorizedForDrafts: ComputedRef<boolean>;
   /** Drafts pagination state and methods */
-  drafts: ReturnType<typeof usePaginatedPages>
+  drafts: ReturnType<typeof usePaginatedPages>;
   /** Published posts pagination state and methods */
-  posts: ReturnType<typeof usePaginatedPages>
+  posts: ReturnType<typeof usePaginatedPages>;
   /** State for new post form */
-  newPostState: NewPostState
+  newPostState: NewPostState;
   /** Whether the create modal is open */
-  isCreateModalOpen: Ref<boolean>
+  isCreateModalOpen: Ref<boolean>;
   /** Whether currently creating a post */
-  isCreating: Ref<boolean>
+  isCreating: Ref<boolean>;
   /** Submit handler for creating a new post */
-  handleCreateSubmit: () => Promise<void>
+  handleCreateSubmit: () => Promise<void>;
 }
 
 /**
@@ -66,20 +66,20 @@ export function useBlogIndex(options: UseBlogIndexOptions = {}): UseBlogIndexRet
     postsInitialLimit = 10,
     nextLimit = 9,
     fetchDraftsImmediate,
-    onToast
-  } = options
+    onToast,
+  } = options;
 
-  const { session } = useAuth()
-  const { t, locale } = useI18n()
+  const { session } = useAuth();
+  const { t, locale } = useI18n();
 
   /**
    * Check if user is authorized to view drafts
    * (owner, member, or employee roles)
    */
   const isAuthorizedForDrafts = computed(() => {
-    const role = session.value?.user?.role
-    return role === "owner" || role === "member" || role === "employee"
-  })
+    const role = session.value?.user?.role;
+    return role === "owner" || role === "member" || role === "employee";
+  });
 
   /**
    * Drafts pagination
@@ -90,8 +90,8 @@ export function useBlogIndex(options: UseBlogIndexOptions = {}): UseBlogIndexRet
     status: "draft",
     initialLimit: draftsInitialLimit,
     nextLimit,
-    immediate: fetchDraftsImmediate ?? isAuthorizedForDrafts.value
-  })
+    immediate: fetchDraftsImmediate ?? isAuthorizedForDrafts.value,
+  });
 
   /**
    * Published posts pagination
@@ -102,19 +102,19 @@ export function useBlogIndex(options: UseBlogIndexOptions = {}): UseBlogIndexRet
     status: "published",
     initialLimit: postsInitialLimit,
     nextLimit,
-    immediate: true
-  })
+    immediate: true,
+  });
 
   /**
    * State for new post form
    */
   const newPostState = reactive<NewPostState>({
     title: "",
-    slug: ""
-  })
+    slug: "",
+  });
 
-  const isCreateModalOpen = ref(false)
-  const isCreating = ref(false)
+  const isCreateModalOpen = ref(false);
+  const isCreating = ref(false);
 
   /**
    * Auto-generate slug from title when title changes
@@ -122,20 +122,20 @@ export function useBlogIndex(options: UseBlogIndexOptions = {}): UseBlogIndexRet
   watch(
     () => newPostState.title,
     (newTitle, oldTitle) => {
-      const oldGeneratedSlug = slugify(oldTitle || "")
+      const oldGeneratedSlug = slugify(oldTitle || "");
       // Only auto-update slug if it matches the old title's slug
       // (i.e., user hasn't manually edited it)
       if (!newPostState.slug || newPostState.slug === oldGeneratedSlug) {
-        newPostState.slug = slugify(newTitle)
+        newPostState.slug = slugify(newTitle);
       }
-    }
-  )
+    },
+  );
 
   /**
    * Create a new blog post
    */
   const handleCreateSubmit = async (): Promise<void> => {
-    isCreating.value = true
+    isCreating.value = true;
 
     try {
       const createdPage = await $api<Page>("/api/pages", {
@@ -147,29 +147,29 @@ export function useBlogIndex(options: UseBlogIndexOptions = {}): UseBlogIndexRet
           description: { [locale.value]: "" },
           content: {
             properties: {},
-            blocks: []
-          }
-        }
-      })
+            blocks: [],
+          },
+        },
+      });
 
       onToast?.({
         color: "success",
         title: t("pages.blog.actions.create_post.success.title"),
-        description: t("pages.blog.actions.create_post.success.description")
-      })
+        description: t("pages.blog.actions.create_post.success.description"),
+      });
 
-      isCreateModalOpen.value = false
-      await navigateTo(`/company/blog/${createdPage.slug}/edit`)
+      isCreateModalOpen.value = false;
+      await navigateTo(`/company/blog/${createdPage.slug}/edit`);
     } catch (e: any) {
       onToast?.({
         color: "error",
         title: t("pages.blog.actions.create_post.error.title"),
-        description: e.message || t("pages.blog.actions.create_post.error.description")
-      })
+        description: e.message || t("pages.blog.actions.create_post.error.description"),
+      });
     } finally {
-      isCreating.value = false
+      isCreating.value = false;
     }
-  }
+  };
 
   return {
     session,
@@ -179,6 +179,6 @@ export function useBlogIndex(options: UseBlogIndexOptions = {}): UseBlogIndexRet
     newPostState,
     isCreateModalOpen,
     isCreating,
-    handleCreateSubmit
-  }
+    handleCreateSubmit,
+  };
 }

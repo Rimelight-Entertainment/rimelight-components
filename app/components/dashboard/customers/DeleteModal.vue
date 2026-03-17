@@ -1,56 +1,56 @@
 <script setup lang="ts">
-import { ref } from "vue"
-import { tv } from "../../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "../../../composables"
+import { ref } from "vue";
+import { tv } from "../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "../../../composables";
 
 /* region Props */
 export interface DeleteModalProps {
-  count?: number
+  count?: number;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { count = 0, rc: rcProp } = defineProps<DeleteModalProps>()
+const { count = 0, rc: rcProp } = defineProps<DeleteModalProps>();
 
-const { rc } = useRC("DeleteModal", rcProp)
+const { rc } = useRC("DeleteModal", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface DeleteModalEmits {}
 
-const emit = defineEmits<DeleteModalEmits>()
+const emit = defineEmits<DeleteModalEmits>();
 /* endregion */
 
 /* region Slots */
 export interface DeleteModalSlots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<DeleteModalSlots>()
+const slots = defineSlots<DeleteModalSlots>();
 /* endregion */
 
 /* region Styles */
 const deleteModalStyles = tv({
   slots: {
     root: "",
-    actions: "flex justify-end gap-2"
-  }
-})
+    actions: "flex justify-end gap-2",
+  },
+});
 
-const { root, actions } = deleteModalStyles()
-type DeleteModalVariants = VariantProps<typeof deleteModalStyles>
+const { root, actions } = deleteModalStyles();
+type DeleteModalVariants = VariantProps<typeof deleteModalStyles>;
 /* endregion */
 
 /* region State */
-const open = ref(false)
+const open = ref(false);
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "DeleteModal"
-})
+  name: "DeleteModal",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -69,8 +69,8 @@ defineOptions({
 
 /* region Logic */
 async function onSubmit() {
-  await new Promise((resolve) => setTimeout(resolve, 1000))
-  open.value = false
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  open.value = false;
 }
 /* endregion */
 </script>

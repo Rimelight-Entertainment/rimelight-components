@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { normalizeUsername, RESTRICTED_SET } from "rimelight-components/auth/restricted-usernames"
-import { z } from "zod"
-import { reactive, ref, computed, useTemplateRef } from "vue"
-import type { FormSubmitEvent, StepperItem } from "#ui/types"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { useAuth } from "../../composables/auth/useAuth"
-import { tv } from "../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { normalizeUsername, RESTRICTED_SET } from "rimelight-components/auth/restricted-usernames";
+import { z } from "zod";
+import { reactive, ref, computed, useTemplateRef } from "vue";
+import type { FormSubmitEvent, StepperItem } from "#ui/types";
+import { useToast } from "@nuxt/ui/composables/useToast";
+import { useAuth } from "../../composables/auth/useAuth";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface AuthSignUpFormProps {
   rc?: {
-    root?: string
-    content?: string
-  }
+    root?: string;
+    content?: string;
+  };
 }
 
-const { rc } = defineProps<AuthSignUpFormProps>()
+const { rc } = defineProps<AuthSignUpFormProps>();
 /* endregion */
 
 /* region Emits */
 export interface AuthSignUpFormEmits {}
 
-const emit = defineEmits<AuthSignUpFormEmits>()
+const emit = defineEmits<AuthSignUpFormEmits>();
 /* endregion */
 
 /* region Slots */
@@ -30,7 +30,7 @@ export interface AuthSignUpFormSlots {
   // default: (props: {}) => any
 }
 
-const slots = defineSlots<AuthSignUpFormSlots>()
+const slots = defineSlots<AuthSignUpFormSlots>();
 /* endregion */
 
 /* region Styles */
@@ -48,9 +48,9 @@ const authSignUpFormStyles = tv({
     strengthList: "space-y-1",
     strengthItem: "flex items-center gap-xs text-xs",
     strengthIcon: "size-4 shrink-0",
-    termsLink: "font-medium text-primary"
-  }
-})
+    termsLink: "font-medium text-primary",
+  },
+});
 
 const {
   stepperClass,
@@ -65,16 +65,16 @@ const {
   strengthList,
   strengthItem,
   strengthIcon,
-  termsLink
-} = authSignUpFormStyles()
-type AuthSignUpFormVariants = VariantProps<typeof authSignUpFormStyles>
+  termsLink,
+} = authSignUpFormStyles();
+type AuthSignUpFormVariants = VariantProps<typeof authSignUpFormStyles>;
 /* endregion */
 
 /* region State */
-const { signUp, isLoading } = useAuth()
-const toast = useToast()
-const { t } = useI18n()
-const route = useRoute()
+const { signUp, isLoading } = useAuth();
+const toast = useToast();
+const { t } = useI18n();
+const route = useRoute();
 
 const step1Schema = z.object({
   username: z
@@ -83,19 +83,19 @@ const step1Schema = z.object({
     .max(24, t("auth_username_length_error"))
     .transform((val) => val.trim())
     .refine((val) => !/\s/.test(val), {
-      message: t("auth_username_no_spaces")
+      message: t("auth_username_no_spaces"),
     })
     .refine((val) => /^[a-zA-Z0-9._]+$/.test(val), {
-      message: t("auth_username_format_error")
+      message: t("auth_username_format_error"),
     })
     .refine(
       (val) => {
-        const normalizedInput = normalizeUsername(val)
-        return !RESTRICTED_SET.has(normalizedInput)
+        const normalizedInput = normalizeUsername(val);
+        return !RESTRICTED_SET.has(normalizedInput);
       },
       {
-        message: t("auth_username_restricted_error")
-      }
+        message: t("auth_username_restricted_error"),
+      },
     ),
   firstName: z
     .string()
@@ -106,8 +106,8 @@ const step1Schema = z.object({
     .min(2, t("auth_lastname_length_error"))
     .max(24, t("auth_lastname_length_error")),
   email: z.string().email(t("auth_email_invalid")),
-  emailConfirmation: z.string().max(0) // Honeypot
-})
+  emailConfirmation: z.string().max(0), // Honeypot
+});
 
 const step2Schema = z
   .object({
@@ -115,28 +115,28 @@ const step2Schema = z
       .string()
       .min(8, t("auth_password_length_error"))
       .max(24, t("auth_password_length_error")),
-    passwordConfirmation: z.string()
+    passwordConfirmation: z.string(),
   })
   .superRefine((data, ctx) => {
     if (data.password !== data.passwordConfirmation) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["passwordConfirmation"],
-        message: t("auth_passwords_mismatch")
-      })
+        message: t("auth_passwords_mismatch"),
+      });
     }
-  })
+  });
 
 const step3Schema = z.object({
   terms: z.boolean().refine((val) => val, {
-    message: t("auth_terms_required")
+    message: t("auth_terms_required"),
   }),
-  newsletter: z.boolean().optional()
-})
+  newsletter: z.boolean().optional(),
+});
 
-const schema = z.intersection(step1Schema, z.intersection(step2Schema, step3Schema))
+const schema = z.intersection(step1Schema, z.intersection(step2Schema, step3Schema));
 
-type Schema = z.output<typeof schema>
+type Schema = z.output<typeof schema>;
 
 const state = reactive<Partial<Schema>>({
   username: "",
@@ -147,30 +147,30 @@ const state = reactive<Partial<Schema>>({
   password: "",
   passwordConfirmation: "",
   terms: false,
-  newsletter: false
-})
+  newsletter: false,
+});
 
-const stepperControl = useTemplateRef<any>("stepper")
-const currentStep = ref(0)
+const stepperControl = useTemplateRef<any>("stepper");
+const currentStep = ref(0);
 
-const step1Form = useTemplateRef<any>("step1Form")
-const step2Form = useTemplateRef<any>("step2Form")
-const step3Form = useTemplateRef<any>("step3Form")
+const step1Form = useTemplateRef<any>("step1Form");
+const step2Form = useTemplateRef<any>("step2Form");
+const step3Form = useTemplateRef<any>("step3Form");
 
 const visibility = reactive({
   password: false,
-  confirmation: false
-})
+  confirmation: false,
+});
 
-const strength = computed(() => checkStrength(state.password ?? ""))
-const score = computed(() => strength.value.filter((req) => req.met).length)
+const strength = computed(() => checkStrength(state.password ?? ""));
+const score = computed(() => strength.value.filter((req) => req.met).length);
 
 const strengthColor = computed(() => {
-  if (score.value === 0) return "neutral"
-  if (score.value <= 2) return "error"
-  if (score.value === 3) return "warning"
-  return "success"
-})
+  if (score.value === 0) return "neutral";
+  if (score.value <= 2) return "error";
+  if (score.value === 3) return "warning";
+  return "success";
+});
 
 const stepperItems = computed<StepperItem[]>(() => [
   { slot: "identity" as const, title: t("auth_stepper_identity"), icon: "lucide:user-circle" },
@@ -178,15 +178,15 @@ const stepperItems = computed<StepperItem[]>(() => [
   {
     slot: "preferences" as const,
     title: t("auth_stepper_preferences"),
-    icon: "lucide:check-circle"
-  }
-])
+    icon: "lucide:check-circle",
+  },
+]);
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "AuthSignUpForm"
-})
+  name: "AuthSignUpForm",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -210,67 +210,67 @@ function checkStrength(str: string) {
     { regex: /\d/, text: t("auth_password_req_number") },
     { regex: /[a-z]/, text: t("auth_password_req_lowercase") },
     { regex: /[A-Z]/, text: t("auth_password_req_uppercase") },
-    { regex: /[^\w\s]/, text: t("auth_password_req_special") }
-  ]
+    { regex: /[^\w\s]/, text: t("auth_password_req_special") },
+  ];
   return requirements.map((req) => ({
     met: req.regex.test(str),
-    text: req.text
-  }))
+    text: req.text,
+  }));
 }
 
 async function nextStep() {
-  let isValid = false
-  const forms = [step1Form.value, step2Form.value, step3Form.value]
-  const currentForm = forms[currentStep.value]
+  let isValid = false;
+  const forms = [step1Form.value, step2Form.value, step3Form.value];
+  const currentForm = forms[currentStep.value];
 
   if (currentForm) {
-    isValid = await currentForm.validate()
+    isValid = await currentForm.validate();
   }
 
   if (isValid) {
-    stepperControl.value?.next()
-    currentStep.value++
+    stepperControl.value?.next();
+    currentStep.value++;
   } else {
     toast.add({
       color: "error",
       title: t("auth_validation_error_title"),
-      description: t("auth_validation_error_description")
-    })
+      description: t("auth_validation_error_description"),
+    });
   }
 }
 
 function prevStep() {
-  stepperControl.value?.prev()
-  currentStep.value--
+  stepperControl.value?.prev();
+  currentStep.value--;
 }
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  const redirect = route.query.redirect as string | undefined
+  const redirect = route.query.redirect as string | undefined;
   const { data, error } = await signUp(
     {
       name: event.data.username,
       firstName: event.data.firstName,
       lastName: event.data.lastName,
       email: event.data.email,
-      password: event.data.password
+      password: event.data.password,
     },
-    redirect
-  )
+    redirect,
+  );
 
   if (error) {
     toast.add({
       color: "error",
       title: t("auth_sign_up_failed_title"),
-      description: error.message || t("auth_connection_error_description")
-    })
-    return
+      description: error.message || t("auth_connection_error_description"),
+    });
+    return;
   }
 
   toast.add({
     color: "success",
     title: t("auth_account_creation_success_title"),
-    description: t("auth_account_creation_success_description")
-  })
+    description: t("auth_account_creation_success_description"),
+  });
 }
 /* endregion */
 </script>

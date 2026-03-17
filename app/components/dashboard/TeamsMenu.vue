@@ -1,27 +1,27 @@
 <script lang="ts" setup>
-import { computed, watch } from "vue"
-import { tv } from "../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "../../composables"
-import { useDashboard } from "../../composables/dashboard/useDashboard"
+import { computed, watch } from "vue";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "../../composables";
+import { useDashboard } from "../../composables/dashboard/useDashboard";
 
 /* region Props */
 export interface TeamsMenuProps {
-  collapsed?: boolean
+  collapsed?: boolean;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { collapsed, rc: rcProp } = defineProps<TeamsMenuProps>()
+const { collapsed, rc: rcProp } = defineProps<TeamsMenuProps>();
 
-const { rc } = useRC("TeamsMenu", rcProp)
+const { rc } = useRC("TeamsMenu", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface TeamsMenuEmits {}
 
-const emit = defineEmits<TeamsMenuEmits>()
+const emit = defineEmits<TeamsMenuEmits>();
 /* endregion */
 
 /* region Slots */
@@ -32,60 +32,60 @@ const teamsMenuStyles = tv({
   slots: {
     root: "",
     triggerButton: "data-[state=open]:bg-elevated",
-    buttonTrailing: "text-dimmed"
-  }
-})
+    buttonTrailing: "text-dimmed",
+  },
+});
 
-const { root, triggerButton, buttonTrailing } = teamsMenuStyles()
+const { root, triggerButton, buttonTrailing } = teamsMenuStyles();
 /* endregion */
 
 /* region State */
-const nuxtApp = useNuxtApp()
-const authClient = (nuxtApp as any).$authClient
-const { activeOrganization, activeTeamId, setActiveTeam } = useDashboard()
+const nuxtApp = useNuxtApp();
+const authClient = (nuxtApp as any).$authClient;
+const { activeOrganization, activeTeamId, setActiveTeam } = useDashboard();
 
-const activeOrgId = computed(() => activeOrganization.value?.id)
+const activeOrgId = computed(() => activeOrganization.value?.id);
 
 // 1. Fetch only teams the user is a part of
 const { data: userTeamsRes, refresh: refreshUserTeams } = useAsyncData(
   "user-membership-teams",
   async () => {
-    if (!authClient?.organization?.listUserTeams) return []
-    const { data } = await authClient.organization.listUserTeams()
-    return data || []
+    if (!authClient?.organization?.listUserTeams) return [];
+    const { data } = await authClient.organization.listUserTeams();
+    return data || [];
   },
   {
     watch: [activeOrgId],
-    default: () => []
-  }
-)
+    default: () => [],
+  },
+);
 
 // 2. Filter teams by the active organization
 const teams = computed(() => {
-  const allUserTeams = userTeamsRes.value || []
-  if (!activeOrgId.value) return []
-  return allUserTeams.filter((team: any) => team.organizationId === activeOrgId.value)
-})
+  const allUserTeams = userTeamsRes.value || [];
+  if (!activeOrgId.value) return [];
+  return allUserTeams.filter((team: any) => team.organizationId === activeOrgId.value);
+});
 
 // 3. Current selection
 const selectedTeam = computed(() => {
   if (activeTeamId.value) {
-    const found = teams.value.find((t: any) => t.id === activeTeamId.value)
-    if (found) return found
+    const found = teams.value.find((t: any) => t.id === activeTeamId.value);
+    if (found) return found;
   }
-  return teams.value[0] || null
-})
+  return teams.value[0] || null;
+});
 
 // Auto-select first team if none selected
 watch(
   teams,
   (newTeams) => {
     if (newTeams.length > 0 && !activeTeamId.value) {
-      setActiveTeam(newTeams[0].id)
+      setActiveTeam(newTeams[0].id);
     }
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 const items = computed(() => {
   const list = teams.value.map((team: any) => ({
@@ -93,18 +93,18 @@ const items = computed(() => {
     avatar: team.logo ? { src: team.logo, alt: team.name } : undefined,
     icon: !team.logo ? "lucide:users" : undefined,
     onSelect: () => {
-      setActiveTeam(team.id)
-    }
-  }))
+      setActiveTeam(team.id);
+    },
+  }));
 
-  return [list]
-})
+  return [list];
+});
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "TeamsMenu"
-})
+  name: "TeamsMenu",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -120,14 +120,14 @@ defineOptions({
       :content="{ align: 'center', collisionPadding: 12 }"
       :items="items"
       :ui="{
-        content: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)'
+        content: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)',
       }"
     >
       <UButton
         :class="[triggerButton(), !collapsed && 'py-2']"
         :square="collapsed"
         :ui="{
-          trailingIcon: buttonTrailing()
+          trailingIcon: buttonTrailing(),
         }"
         block
         color="neutral"
@@ -142,7 +142,7 @@ defineOptions({
               : selectedTeam?.name
                 ? undefined
                 : 'lucide:users',
-          trailingIcon: collapsed ? undefined : 'lucide:chevrons-up-down'
+          trailingIcon: collapsed ? undefined : 'lucide:chevrons-up-down',
         }"
         variant="ghost"
       />

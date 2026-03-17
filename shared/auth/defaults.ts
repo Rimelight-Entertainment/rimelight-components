@@ -4,6 +4,6 @@ export const defaultAuthOptions = {
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
-    freshAge: 60 * 15 // 15 minutes
-  }
-}
+    freshAge: 60 * 15, // 15 minutes
+  },
+};

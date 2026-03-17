@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import type { FooterColumn } from "@nuxt/ui"
-import { ar, en, es, fr, ja, ko, pt, ro, zh_cn } from "@nuxt/ui/locale"
-import { tv } from "../../../app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import type { FooterColumn } from "@nuxt/ui";
+import { ar, en, es, fr, ja, ko, pt, ro, zh_cn } from "@nuxt/ui/locale";
+import { tv } from "../../../app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface AppFooterProps {
   // prop1: string,
 }
 
-const {} = defineProps<AppFooterProps>()
+const {} = defineProps<AppFooterProps>();
 /* endregion */
 
 /* region Emits */
 export interface AppFooterEmits {}
 
-const emit = defineEmits<AppFooterEmits>()
+const emit = defineEmits<AppFooterEmits>();
 /* endregion */
 
 /* region Slots */
 export interface AppFooterSlots {}
 
-const slots = defineSlots<AppFooterSlots>()
+const slots = defineSlots<AppFooterSlots>();
 /* endregion */
 
 /* region Styles */
@@ -36,9 +36,9 @@ const appFooterStyles = tv({
     settings: "flex flex-col gap-sm lg:items-end",
     colorMode: "rounded-none",
     localeSelect: "w-48 rounded-none",
-    socials: "flex flex-row gap-sm lg:items-end"
-  }
-})
+    socials: "flex flex-row gap-sm lg:items-end",
+  },
+});
 
 const {
   root,
@@ -50,16 +50,16 @@ const {
   settings,
   colorMode,
   localeSelect,
-  socials
-} = appFooterStyles()
-type AppFooterVariants = VariantProps<typeof appFooterStyles>
+  socials,
+} = appFooterStyles();
+type AppFooterVariants = VariantProps<typeof appFooterStyles>;
 /* endregion */
 
 /* region State */
-const appConfig = useAppConfig()
-const { locale, setLocale } = useI18n()
+const appConfig = useAppConfig();
+const { locale, setLocale } = useI18n();
 
-type Locale = "en"
+type Locale = "en";
 
 const columns: FooterColumn[] = [
   {
@@ -67,40 +67,40 @@ const columns: FooterColumn[] = [
     children: [
       {
         label: "Branding",
-        to: "/branding"
+        to: "/branding",
       },
       {
-        label: "API"
-      }
-    ]
+        label: "API",
+      },
+    ],
   },
   {
     label: "Documents",
     children: [
       {
-        label: "Privacy Policy"
+        label: "Privacy Policy",
       },
       {
-        label: "Cookie Policy"
+        label: "Cookie Policy",
       },
       {
-        label: "Terms of Service"
+        label: "Terms of Service",
       },
       {
-        label: "Code of Conduct"
+        label: "Code of Conduct",
       },
       {
-        label: "Other Documents"
-      }
-    ]
-  }
-]
+        label: "Other Documents",
+      },
+    ],
+  },
+];
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "AppFooter"
-})
+  name: "AppFooter",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -120,7 +120,7 @@ defineOptions({
 /* region Logic */
 function onLocaleUpdate(newLocale: string | undefined) {
   if (typeof newLocale === "string") {
-    setLocale(newLocale as Locale)
+    setLocale(newLocale as Locale);
   }
 }
 /* endregion */

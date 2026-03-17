@@ -1,45 +1,45 @@
 <script lang="ts" setup>
-import { formatDistanceToNow } from "date-fns"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { computed, ref, watch } from "vue"
-import { useRC, $api } from "rimelight-components/composables"
-import { useI18n } from "vue-i18n"
-import { tv } from "rimelight-components/app/internal/tv"
-import type { PageVersion } from "rimelight-components/types"
-import { type VariantProps } from "tailwind-variants"
+import { formatDistanceToNow } from "date-fns";
+import { useToast } from "@nuxt/ui/composables/useToast";
+import { computed, ref, watch } from "vue";
+import { useRC, $api } from "rimelight-components/composables";
+import { useI18n } from "vue-i18n";
+import { tv } from "rimelight-components/app/internal/tv";
+import type { PageVersion } from "rimelight-components/types";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface PageVersionSelectorProps {
-  pageId: string
-  isAdmin?: boolean
+  pageId: string;
+  isAdmin?: boolean;
   rc?: {
-    root?: string
-    button?: string
-    popover?: string
-    versionItem?: string
-  }
+    root?: string;
+    button?: string;
+    popover?: string;
+    versionItem?: string;
+  };
 }
 
-const { pageId, isAdmin = false, rc: rcProp } = defineProps<PageVersionSelectorProps>()
+const { pageId, isAdmin = false, rc: rcProp } = defineProps<PageVersionSelectorProps>();
 
-const { rc } = useRC("PageVersionSelector", rcProp)
+const { rc } = useRC("PageVersionSelector", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface PageVersionSelectorEmits {
-  "version-selected": [version: PageVersion]
-  "version-approved": [version: PageVersion]
-  "version-rejected": [version: PageVersion]
-  "version-reverted": [version: PageVersion]
+  "version-selected": [version: PageVersion];
+  "version-approved": [version: PageVersion];
+  "version-rejected": [version: PageVersion];
+  "version-reverted": [version: PageVersion];
 }
 
-const emit = defineEmits<PageVersionSelectorEmits>()
+const emit = defineEmits<PageVersionSelectorEmits>();
 /* endregion */
 
 /* region Slots */
 export interface PageVersionSelectorSlots {}
 
-const slots = defineSlots<PageVersionSelectorSlots>()
+const slots = defineSlots<PageVersionSelectorSlots>();
 /* endregion */
 
 /* region Styles */
@@ -68,9 +68,9 @@ const pageVersionSelectorStyles = tv({
     versionEntryApproval: "text-xs text-gray-500 dark:text-gray-400 mt-1",
     versionEntryActions: "shrink-0 flex items-center gap-1",
     pendingFooter: "px-3 py-2 border-t border-gray-200 dark:border-gray-800 mt-2",
-    pendingText: "text-xs text-gray-500 dark:text-gray-400"
-  }
-})
+    pendingText: "text-xs text-gray-500 dark:text-gray-400",
+  },
+});
 
 const {
   root,
@@ -96,53 +96,53 @@ const {
   versionEntryApproval,
   versionEntryActions,
   pendingFooter,
-  pendingText
-} = pageVersionSelectorStyles()
-type PageVersionSelectorVariants = VariantProps<typeof pageVersionSelectorStyles>
+  pendingText,
+} = pageVersionSelectorStyles();
+type PageVersionSelectorVariants = VariantProps<typeof pageVersionSelectorStyles>;
 /* endregion */
 
 /* region State */
 const selectedVersionId = defineModel<string | null>("currentVersionId", {
-  default: null
-})
+  default: null,
+});
 
-const versions = ref<PageVersion[]>([])
-const isLoading = ref(false)
-const isApproving = ref<string | null>(null)
-const isRejecting = ref<string | null>(null)
-const isReverting = ref<string | null>(null)
-const isOpen = ref(false)
+const versions = ref<PageVersion[]>([]);
+const isLoading = ref(false);
+const isApproving = ref<string | null>(null);
+const isRejecting = ref<string | null>(null);
+const isReverting = ref<string | null>(null);
+const isOpen = ref(false);
 
-const toast = useToast()
-const { t } = useI18n()
+const toast = useToast();
+const { t } = useI18n();
 
 const pendingVersions = computed(() => {
-  return versions.value.filter((v) => v.status === "pending")
-})
+  return versions.value.filter((v) => v.status === "pending");
+});
 
 const currentVersionStatus = computed(() => {
-  if (!selectedVersionId.value) return "approved"
-  const v = versions.value.find((v) => v.id === selectedVersionId.value)
-  return v?.status || "pending"
-})
+  if (!selectedVersionId.value) return "approved";
+  const v = versions.value.find((v) => v.id === selectedVersionId.value);
+  return v?.status || "pending";
+});
 
-const currentVersion = computed(() => versions.value.find((v) => v.id === selectedVersionId.value))
+const currentVersion = computed(() => versions.value.find((v) => v.id === selectedVersionId.value));
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "PageVersionSelector"
-})
+  name: "PageVersionSelector",
+});
 /* endregion */
 
 /* region Lifecycle */
 watch(
   () => pageId,
   () => {
-    if (pageId) fetchVersions()
+    if (pageId) fetchVersions();
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 // onMounted(() => {
 //
@@ -151,147 +151,147 @@ watch(
 
 /* region Logic */
 async function fetchVersions() {
-  if (!pageId) return
+  if (!pageId) return;
 
-  isLoading.value = true
+  isLoading.value = true;
   try {
-    versions.value = await $api<PageVersion[]>(`/api/pages/id/${pageId}/versions`)
+    versions.value = await $api<PageVersion[]>(`/api/pages/id/${pageId}/versions`);
   } catch (error) {
-    console.error("Failed to fetch versions:", error)
+    console.error("Failed to fetch versions:", error);
     try {
-      toast.add({ color: "error", title: t("page_version.failed_to_load") })
+      toast.add({ color: "error", title: t("page_version.failed_to_load") });
     } catch (e) {}
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 }
 
 function selectVersion(version: PageVersion) {
-  selectedVersionId.value = version.id
-  emit("version-selected", version)
-  isOpen.value = false
+  selectedVersionId.value = version.id;
+  emit("version-selected", version);
+  isOpen.value = false;
 }
 
 async function approveVersion(version: PageVersion) {
-  if (!isAdmin) return
+  if (!isAdmin) return;
 
-  isApproving.value = version.id
+  isApproving.value = version.id;
   try {
     const result = await $api<{ message?: string }>(`/api/pages/versions/${version.id}/approve`, {
-      method: "POST"
-    })
+      method: "POST",
+    });
 
     try {
       toast.add({
         color: "success",
         title: t("page_version.approved_successfully"),
-        description: result?.message || "The page has been updated with the approved version"
-      })
+        description: result?.message || "The page has been updated with the approved version",
+      });
     } catch (e) {}
 
-    emit("version-approved", version)
-    await fetchVersions()
+    emit("version-approved", version);
+    await fetchVersions();
 
     if (selectedVersionId.value === version.id) {
-      selectedVersionId.value = null
+      selectedVersionId.value = null;
     }
   } catch (error: any) {
-    console.error("Failed to approve version:", error)
+    console.error("Failed to approve version:", error);
     try {
       toast.add({
         color: "error",
         title: t("page_version.failed_to_approve"),
-        description: error.message || "An error occurred"
-      })
+        description: error.message || "An error occurred",
+      });
     } catch (e) {}
   } finally {
-    isApproving.value = null
+    isApproving.value = null;
   }
 }
 
 async function rejectVersion(version: PageVersion) {
-  if (!isAdmin) return
+  if (!isAdmin) return;
 
-  isRejecting.value = version.id
+  isRejecting.value = version.id;
   try {
     const result = await $api<{ message?: string }>(`/api/pages/versions/${version.id}/reject`, {
-      method: "POST"
-    })
+      method: "POST",
+    });
 
     try {
       toast.add({
         color: "success",
         title: t("page_version.rejected_successfully", "Version rejected"),
-        description: result?.message || "the version has been rejected"
-      })
+        description: result?.message || "the version has been rejected",
+      });
     } catch (e) {}
 
-    emit("version-rejected", version)
-    await fetchVersions()
+    emit("version-rejected", version);
+    await fetchVersions();
   } catch (error: any) {
-    console.error("Failed to reject version:", error)
+    console.error("Failed to reject version:", error);
     try {
       toast.add({
         color: "error",
         title: t("page_version.failed_to_reject", "Failed to reject version"),
-        description: error.message || "An error occurred"
-      })
+        description: error.message || "An error occurred",
+      });
     } catch (e) {}
   } finally {
-    isRejecting.value = null
+    isRejecting.value = null;
   }
 }
 
 async function revertVersion(version: PageVersion) {
-  if (!isAdmin) return
+  if (!isAdmin) return;
 
-  isReverting.value = version.id
+  isReverting.value = version.id;
   try {
     const result = await $api<{ message?: string }>(`/api/pages/versions/${version.id}/revert`, {
-      method: "POST"
-    })
+      method: "POST",
+    });
 
     try {
       toast.add({
         color: "success",
         title: t("page_version.reverted_successfully"),
-        description: result?.message || "The page has been reverted to this version."
-      })
+        description: result?.message || "The page has been reverted to this version.",
+      });
     } catch (e) {}
 
-    emit("version-reverted", version)
-    await fetchVersions()
-    selectedVersionId.value = null
+    emit("version-reverted", version);
+    await fetchVersions();
+    selectedVersionId.value = null;
   } catch (error: any) {
-    console.error("Failed to revert version:", error)
+    console.error("Failed to revert version:", error);
     try {
       toast.add({
         color: "error",
         title: t("page_version.failed_to_revert"),
-        description: error.message || "An error occurred"
-      })
+        description: error.message || "An error occurred",
+      });
     } catch (e) {}
   } finally {
-    isReverting.value = null
+    isReverting.value = null;
   }
 }
 
 function formatDate(date: Date | string | null | undefined) {
-  if (!date) return ""
-  const d = typeof date === "string" ? new Date(date) : date
-  return formatDistanceToNow(d, { addSuffix: true })
+  if (!date) return "";
+  const d = typeof date === "string" ? new Date(date) : date;
+  return formatDistanceToNow(d, { addSuffix: true });
 }
 
 function getStatusColor(status: string) {
   switch (status) {
     case "approved":
-      return "success"
+      return "success";
     case "pending":
-      return "warning"
+      return "warning";
     case "rejected":
-      return "error"
+      return "error";
     default:
-      return "neutral"
+      return "neutral";
   }
 }
 
@@ -301,8 +301,8 @@ defineExpose({
   revertVersion,
   fetchVersions,
   currentVersionStatus,
-  currentVersion
-})
+  currentVersion,
+});
 /* endregion */
 </script>
 
@@ -333,11 +333,11 @@ defineExpose({
           <div
             :class="[
               versionItemClass({ class: rc.versionItem }),
-              { 'bg-primary-50 dark:bg-primary-900/20': !selectedVersionId }
+              { 'bg-primary-50 dark:bg-primary-900/20': !selectedVersionId },
             ]"
             @click="
-              selectedVersionId = null
-              isOpen = false
+              selectedVersionId = null;
+              isOpen = false;
             "
           >
             <div :class="liveVersionItem()">
@@ -364,7 +364,7 @@ defineExpose({
               :key="version.id"
               :class="[
                 versionItemClass({ class: rc.versionItem }),
-                { 'bg-primary-50 dark:bg-primary-900/20': selectedVersionId === version.id }
+                { 'bg-primary-50 dark:bg-primary-900/20': selectedVersionId === version.id },
               ]"
               @click="selectVersion(version)"
             >

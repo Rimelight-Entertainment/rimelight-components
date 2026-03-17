@@ -1,32 +1,32 @@
 <script setup lang="ts">
-import { watch } from "vue"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { useFocusTimer, useRC } from "../../../composables"
-import { tv } from "../../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { watch } from "vue";
+import { useToast } from "@nuxt/ui/composables/useToast";
+import { useFocusTimer, useRC } from "../../../composables";
+import { tv } from "../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface FocusTimerToolProps {
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { rc: rcProp } = defineProps<FocusTimerToolProps>()
+const { rc: rcProp } = defineProps<FocusTimerToolProps>();
 
-const { rc } = useRC("FocusTimerTool", rcProp)
+const { rc } = useRC("FocusTimerTool", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface FocusTimerToolEmits {}
 
-const emit = defineEmits<FocusTimerToolEmits>()
+const emit = defineEmits<FocusTimerToolEmits>();
 /* endregion */
 
 /* region Slots */
 export interface FocusTimerToolSlots {}
 
-const slots = defineSlots<FocusTimerToolSlots>()
+const slots = defineSlots<FocusTimerToolSlots>();
 /* endregion */
 
 /* region Styles */
@@ -36,23 +36,23 @@ const focusTimerToolStyles = tv({
     timerDisplay: "flex flex-col items-center",
     timeValue: "text-4xl font-bold tabular-nums",
     modeLabel: "text-md text-muted uppercase",
-    controls: "flex items-center gap-sm"
-  }
-})
+    controls: "flex items-center gap-sm",
+  },
+});
 
-const { root, timerDisplay, timeValue, modeLabel, controls } = focusTimerToolStyles()
-type FocusTimerToolVariants = VariantProps<typeof focusTimerToolStyles>
+const { root, timerDisplay, timeValue, modeLabel, controls } = focusTimerToolStyles();
+type FocusTimerToolVariants = VariantProps<typeof focusTimerToolStyles>;
 /* endregion */
 
 /* region State */
-const focusTimer = useFocusTimer()
-const toast = useToast()
+const focusTimer = useFocusTimer();
+const toast = useToast();
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "FocusTimerTool"
-})
+  name: "FocusTimerTool",
+});
 /* endregion */
 
 /* region Lifecycle */
@@ -70,11 +70,11 @@ watch(
           focusTimer.mode.value === "work"
             ? "Great work! Take a break."
             : "Break is over! Time to focus.",
-        color: "success"
-      })
+        color: "success",
+      });
     }
-  }
-)
+  },
+);
 
 // onUnmounted(() => {
 //

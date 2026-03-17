@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface H6Props {
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { rc: rcProp } = defineProps<H6Props>()
+const { rc: rcProp } = defineProps<H6Props>();
 
-const { rc } = useRC("H6", rcProp)
+const { rc } = useRC("H6", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface H6Emits {}
 
-const emit = defineEmits<H6Emits>()
+const emit = defineEmits<H6Emits>();
 /* endregion */
 
 /* region Slots */
 export interface H6Slots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<H6Slots>()
+const slots = defineSlots<H6Slots>();
 /* endregion */
 
 /* region Styles */
 const h6Styles = tv({
   slots: {
-    root: "text-lg font-bold text-highlighted"
-  }
-})
+    root: "text-lg font-bold text-highlighted",
+  },
+});
 
-const { root } = h6Styles()
-type H6Variants = VariantProps<typeof h6Styles>
+const { root } = h6Styles();
+type H6Variants = VariantProps<typeof h6Styles>;
 /* endregion */
 
 /* region State */
@@ -49,8 +49,8 @@ type H6Variants = VariantProps<typeof h6Styles>
 
 /* region Meta */
 defineOptions({
-  name: "H6"
-})
+  name: "H6",
+});
 /* endregion */
 
 /* region Lifecycle */

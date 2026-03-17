@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import type { Note } from "#rimelight-components/db"
-import { ref } from "vue"
-import { tv } from "../../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import type { Note } from "#rimelight-components/db";
+import { ref } from "vue";
+import { tv } from "../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface NoteCardProps {
-  note: Note
+  note: Note;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { note, rc: rcProp } = defineProps<NoteCardProps>()
+const { note, rc: rcProp } = defineProps<NoteCardProps>();
 
-const { rc } = useRC("NoteCard", rcProp)
+const { rc } = useRC("NoteCard", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface NoteCardEmits {
-  click: []
-  togglePin: []
-  archive: []
-  delete: []
+  click: [];
+  togglePin: [];
+  archive: [];
+  delete: [];
 }
 
-const emit = defineEmits<NoteCardEmits>()
+const emit = defineEmits<NoteCardEmits>();
 /* endregion */
 
 /* region Slots */
 export interface NoteCardSlots {}
 
-const slots = defineSlots<NoteCardSlots>()
+const slots = defineSlots<NoteCardSlots>();
 /* endregion */
 
 /* region Styles */
@@ -49,9 +49,9 @@ const noteCardStyles = tv({
     selectionWrapper: "absolute top-2 left-2 z-20 transition-opacity duration-200",
     actionsWrapper:
       "absolute top-2 right-2 z-20 flex flex-col gap-xs transition-opacity duration-200",
-    pinButton: "transition-opacity"
-  }
-})
+    pinButton: "transition-opacity",
+  },
+});
 
 const {
   root,
@@ -63,20 +63,20 @@ const {
   labelBadge,
   selectionWrapper,
   actionsWrapper,
-  pinButton
-} = noteCardStyles()
-type NoteCardVariants = VariantProps<typeof noteCardStyles>
+  pinButton,
+} = noteCardStyles();
+type NoteCardVariants = VariantProps<typeof noteCardStyles>;
 /* endregion */
 
 /* region State */
-const selected = defineModel<boolean>("selected", { default: false })
-const isHovered = ref(false)
+const selected = defineModel<boolean>("selected", { default: false });
+const isHovered = ref(false);
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "NoteCard"
-})
+  name: "NoteCard",
+});
 /* endregion */
 
 /* region Lifecycle */

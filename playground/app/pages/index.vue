@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import { type ButtonProps } from "#ui/types"
-import { ref } from "vue"
+import { type ButtonProps } from "#ui/types";
+import { ref } from "vue";
 
 /* region State */
-const { t } = useI18n()
+const { t } = useI18n();
 
 const heroLinks = ref<ButtonProps[]>([
   {
     icon: "lucide:layout-template",
     label: t("pages.home.hero.links.01"),
-    to: "/components"
+    to: "/components",
   },
   {
     color: "neutral",
     variant: "outline",
     icon: "lucide:book",
     label: t("pages.home.hero.links.02"),
-    to: "/matrix"
+    to: "/matrix",
   },
   {
     color: "neutral",
     variant: "ghost",
     icon: "lucide:palette",
     label: t("pages.home.hero.links.03"),
-    to: "/branding"
-  }
-])
+    to: "/branding",
+  },
+]);
 /* endregion */
 
 /* region Meta */
 useHead({
-  title: t("pages.home.meta.title")
-})
+  title: t("pages.home.meta.title"),
+});
 /* endregion */
 
 /* region Lifecycle */

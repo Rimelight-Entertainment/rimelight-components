@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import { tv } from "../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "../../composables"
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "../../composables";
 
 /* region Props */
 export interface FooterProps {
-  contain?: boolean
+  contain?: boolean;
   rc?: {
-    root?: string
-    container?: string
-    left?: string
-    center?: string
-    right?: string
-  }
+    root?: string;
+    container?: string;
+    left?: string;
+    center?: string;
+    right?: string;
+  };
 }
 
-const { contain = true, rc: rcProp } = defineProps<FooterProps>()
+const { contain = true, rc: rcProp } = defineProps<FooterProps>();
 
-const { rc } = useRC("Footer", rcProp)
+const { rc } = useRC("Footer", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface FooterEmits {}
 
-const emit = defineEmits<FooterEmits>()
+const emit = defineEmits<FooterEmits>();
 /* endregion */
 
 /* region Slots */
 export interface FooterSlots {
-  left: (props: {}) => any
-  center: (props: {}) => any
-  right: (props: {}) => any
+  left: (props: {}) => any;
+  center: (props: {}) => any;
+  right: (props: {}) => any;
 }
 
-const slots = defineSlots<FooterSlots>()
+const slots = defineSlots<FooterSlots>();
 /* endregion */
 
 /* region Styles */
@@ -44,19 +44,19 @@ const footerStyles = tv({
     left: "order-last flex flex-col items-center justify-between gap-xl lg:order-1 lg:flex-none lg:items-start",
     center: "flex flex-col items-center justify-start lg:order-2 lg:flex-1",
     right:
-      "order-first flex flex-col items-center justify-between gap-xl lg:order-3 lg:flex-none lg:items-end"
+      "order-first flex flex-col items-center justify-between gap-xl lg:order-3 lg:flex-none lg:items-end",
   },
   variants: {
     contain: {
       false: {
-        container: "max-w-none"
-      }
-    }
-  }
-})
+        container: "max-w-none",
+      },
+    },
+  },
+});
 
-const { root, container, left, center, right } = footerStyles({ contain })
-type FooterVariants = VariantProps<typeof footerStyles>
+const { root, container, left, center, right } = footerStyles({ contain });
+type FooterVariants = VariantProps<typeof footerStyles>;
 /* endregion */
 
 /* region State */
@@ -69,8 +69,8 @@ type FooterVariants = VariantProps<typeof footerStyles>
 
 /* region Meta */
 defineOptions({
-  name: "Footer"
-})
+  name: "Footer",
+});
 /* endregion */
 
 /* region Lifecycle */

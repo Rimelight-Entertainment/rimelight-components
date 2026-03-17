@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm"
+import { relations } from "drizzle-orm";
 import {
   type AnyPgColumn,
   bigint,
@@ -10,10 +10,10 @@ import {
   text,
   timestamp,
   uniqueIndex,
-  uuid
-} from "drizzle-orm/pg-core"
-import { id, timestamps } from "./helpers"
-import type { UserAvailability } from "#rimelight-components/types"
+  uuid,
+} from "drizzle-orm/pg-core";
+import { id, timestamps } from "./helpers";
+import type { UserAvailability } from "#rimelight-components/types";
 
 // ============================================================================
 // Core Auth Tables
@@ -39,12 +39,12 @@ export const user = pgTable(
     banExpires: timestamp("ban_expires"),
     publicKey: text("public_key"),
     encryptedPrivateKey: text("encrypted_private_key"),
-    derivationSalt: text("derivation_salt")
+    derivationSalt: text("derivation_salt"),
   },
   (table) => ({
-    nameTagUnique: uniqueIndex("user_name_tag_unique").on(table.name, table.tag)
-  })
-)
+    nameTagUnique: uniqueIndex("user_name_tag_unique").on(table.name, table.tag),
+  }),
+);
 
 export const session = pgTable(
   "session",
@@ -60,10 +60,10 @@ export const session = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     impersonatedBy: text("impersonated_by"),
     activeOrganizationId: uuid("active_organization_id"),
-    activeTeamId: uuid("active_team_id")
+    activeTeamId: uuid("active_team_id"),
   },
-  (table) => [index("session_userId_idx").on(table.userId)]
-)
+  (table) => [index("session_userId_idx").on(table.userId)],
+);
 
 export const account = pgTable(
   "account",
@@ -81,10 +81,10 @@ export const account = pgTable(
     refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
     scope: text("scope"),
     password: text("password"),
-    ...timestamps
+    ...timestamps,
   },
-  (table) => [index("account_userId_idx").on(table.userId)]
-)
+  (table) => [index("account_userId_idx").on(table.userId)],
+);
 
 export const verification = pgTable(
   "verification",
@@ -93,17 +93,17 @@ export const verification = pgTable(
     identifier: text("identifier").notNull(),
     value: text("value").notNull(),
     expiresAt: timestamp("expires_at").notNull(),
-    ...timestamps
+    ...timestamps,
   },
-  (table) => [index("verification_identifier_idx").on(table.identifier)]
-)
+  (table) => [index("verification_identifier_idx").on(table.identifier)],
+);
 
 export const rateLimit = pgTable("rate_limit", {
   id: id.primaryKey(),
   key: text("key"),
   count: integer("count"),
-  lastRequest: bigint("last_request", { mode: "number" })
-})
+  lastRequest: bigint("last_request", { mode: "number" }),
+});
 
 // ============================================================================
 // Organization Tables
@@ -115,8 +115,8 @@ export const organization = pgTable("organization", {
   slug: text("slug").notNull().unique(),
   logo: text("logo"),
   ...timestamps,
-  metadata: text("metadata")
-})
+  metadata: text("metadata"),
+});
 
 export const member = pgTable(
   "member",
@@ -129,13 +129,13 @@ export const member = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     role: text("role").default("member").notNull(),
-    ...timestamps
+    ...timestamps,
   },
   (table) => [
     index("member_organizationId_idx").on(table.organizationId),
-    index("member_userId_idx").on(table.userId)
-  ]
-)
+    index("member_userId_idx").on(table.userId),
+  ],
+);
 
 export const invitation = pgTable(
   "invitation",
@@ -151,13 +151,13 @@ export const invitation = pgTable(
     ...timestamps,
     inviterId: uuid("inviter_id")
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" })
+      .references(() => user.id, { onDelete: "cascade" }),
   },
   (table) => [
     index("invitation_organizationId_idx").on(table.organizationId),
-    index("invitation_email_idx").on(table.email)
-  ]
-)
+    index("invitation_email_idx").on(table.email),
+  ],
+);
 
 export const team = pgTable(
   "team",
@@ -168,13 +168,13 @@ export const team = pgTable(
       .notNull()
       .references(() => organization.id, { onDelete: "cascade" }),
     parentId: uuid("parent_id").references((): AnyPgColumn => team.id, {
-      onDelete: "cascade"
+      onDelete: "cascade",
     }),
     ...timestamps,
-    metadata: text("metadata")
+    metadata: text("metadata"),
   },
-  (table) => [index("team_organizationId_idx").on(table.organizationId)]
-)
+  (table) => [index("team_organizationId_idx").on(table.organizationId)],
+);
 
 export const teamMember = pgTable("team_member", {
   id: id.primaryKey(),
@@ -185,8 +185,8 @@ export const teamMember = pgTable("team_member", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   role: text("role").notNull(),
-  ...timestamps
-})
+  ...timestamps,
+});
 
 // ============================================================================
 // Note Tables (shared feature)
@@ -202,8 +202,8 @@ export const todo = pgTable("todo", {
   completed: boolean("completed").default(false).notNull(),
   completedAt: timestamp("completed_at"),
   isArchived: boolean("is_archived").default(false).notNull(),
-  ...timestamps
-})
+  ...timestamps,
+});
 
 export const note = pgTable("note", {
   id: id.primaryKey(),
@@ -214,8 +214,8 @@ export const note = pgTable("note", {
   content: text("content"),
   isPinned: boolean("is_pinned").default(false).notNull(),
   isArchived: boolean("is_archived").default(false).notNull(),
-  ...timestamps
-})
+  ...timestamps,
+});
 
 export const noteLabel = pgTable("noteLabel", {
   id: id.primaryKey(),
@@ -223,8 +223,8 @@ export const noteLabel = pgTable("noteLabel", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
-  ...timestamps
-})
+  ...timestamps,
+});
 
 export const note_noteLabel = pgTable(
   "note_noteLabel",
@@ -234,12 +234,12 @@ export const note_noteLabel = pgTable(
       .references(() => note.id, { onDelete: "cascade" }),
     labelId: uuid("label_id")
       .notNull()
-      .references(() => noteLabel.id, { onDelete: "cascade" })
+      .references(() => noteLabel.id, { onDelete: "cascade" }),
   },
   (t) => ({
-    pk: primaryKey({ columns: [t.noteId, t.labelId] })
-  })
-)
+    pk: primaryKey({ columns: [t.noteId, t.labelId] }),
+  }),
+);
 
 // ============================================================================
 // Relations
@@ -253,129 +253,129 @@ export const userRelations = relations(user, ({ many }) => ({
   notes: many(note),
   noteLabels: many(noteLabel),
   todos: many(todo),
-  teamMembers: many(teamMember)
-}))
+  teamMembers: many(teamMember),
+}));
 
 export const sessionRelations = relations(session, ({ one }) => ({
   user: one(user, {
     fields: [session.userId],
-    references: [user.id]
-  })
-}))
+    references: [user.id],
+  }),
+}));
 
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
-    references: [user.id]
-  })
-}))
+    references: [user.id],
+  }),
+}));
 
 export const organizationRelations = relations(organization, ({ many }) => ({
   members: many(member),
   invitations: many(invitation),
-  teams: many(team)
-}))
+  teams: many(team),
+}));
 
 export const memberRelations = relations(member, ({ one }) => ({
   organization: one(organization, {
     fields: [member.organizationId],
-    references: [organization.id]
+    references: [organization.id],
   }),
   user: one(user, {
     fields: [member.userId],
-    references: [user.id]
-  })
-}))
+    references: [user.id],
+  }),
+}));
 
 export const invitationRelations = relations(invitation, ({ one }) => ({
   organization: one(organization, {
     fields: [invitation.organizationId],
-    references: [organization.id]
+    references: [organization.id],
   }),
   user: one(user, {
     fields: [invitation.inviterId],
-    references: [user.id]
-  })
-}))
+    references: [user.id],
+  }),
+}));
 
 export const teamRelations = relations(team, ({ one, many }) => ({
   organization: one(organization, {
     fields: [team.organizationId],
-    references: [organization.id]
+    references: [organization.id],
   }),
   parentTeam: one(team, {
     fields: [team.parentId],
     references: [team.id],
-    relationName: "subteams"
+    relationName: "subteams",
   }),
   subteams: many(team, { relationName: "subteams" }),
-  members: many(teamMember)
-}))
+  members: many(teamMember),
+}));
 
 export const teamMemberRelations = relations(teamMember, ({ one }) => ({
   team: one(team, {
     fields: [teamMember.teamId],
-    references: [team.id]
+    references: [team.id],
   }),
   user: one(user, {
     fields: [teamMember.userId],
-    references: [user.id]
-  })
-}))
+    references: [user.id],
+  }),
+}));
 
 export const noteRelations = relations(note, ({ one, many }) => ({
   user: one(user, {
     fields: [note.userId],
-    references: [user.id]
+    references: [user.id],
   }),
-  noteLabels: many(note_noteLabel)
-}))
+  noteLabels: many(note_noteLabel),
+}));
 
 export const noteLabelRelations = relations(noteLabel, ({ one, many }) => ({
   user: one(user, {
     fields: [noteLabel.userId],
-    references: [user.id]
+    references: [user.id],
   }),
-  noteLabels: many(note_noteLabel)
-}))
+  noteLabels: many(note_noteLabel),
+}));
 
 export const note_noteLabelRelations = relations(note_noteLabel, ({ one }) => ({
   note: one(note, {
     fields: [note_noteLabel.noteId],
-    references: [note.id]
+    references: [note.id],
   }),
   label: one(noteLabel, {
     fields: [note_noteLabel.labelId],
-    references: [noteLabel.id]
-  })
-}))
+    references: [noteLabel.id],
+  }),
+}));
 
 export const todoRelations = relations(todo, ({ one }) => ({
   user: one(user, {
     fields: [todo.userId],
-    references: [user.id]
-  })
-}))
+    references: [user.id],
+  }),
+}));
 
 // ============================================================================
 // Type Exports
 // ============================================================================
 
-export type User = typeof user.$inferSelect
-export type Session = typeof session.$inferSelect
-export type Account = typeof account.$inferSelect
-export type Verification = typeof verification.$inferSelect
-export type Organization = typeof organization.$inferSelect
-export type Member = typeof member.$inferSelect
-export type Invitation = typeof invitation.$inferSelect
-export type Team = typeof team.$inferSelect
-export type TeamMember = typeof teamMember.$inferSelect
+export type User = typeof user.$inferSelect;
+export type Session = typeof session.$inferSelect;
+export type Account = typeof account.$inferSelect;
+export type Verification = typeof verification.$inferSelect;
+export type Organization = typeof organization.$inferSelect;
+export type Member = typeof member.$inferSelect;
+export type Invitation = typeof invitation.$inferSelect;
+export type Team = typeof team.$inferSelect;
+export type TeamMember = typeof teamMember.$inferSelect;
 export type Note = typeof note.$inferSelect & {
   labels: Array<
     typeof note_noteLabel.$inferSelect & {
-      label: typeof noteLabel.$inferSelect
+      label: typeof noteLabel.$inferSelect;
     }
-  >
-}
-export type Label = typeof noteLabel.$inferSelect
-export type Todo = typeof todo.$inferSelect
+  >;
+};
+export type Label = typeof noteLabel.$inferSelect;
+export type Todo = typeof todo.$inferSelect;

@@ -1,41 +1,41 @@
 <script setup lang="ts">
-import { tv } from "../../../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { tv } from "../../../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface TextNodeProps {
-  content: string
+  content: string;
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { content, rc: rcProp } = defineProps<TextNodeProps>()
+const { content, rc: rcProp } = defineProps<TextNodeProps>();
 
-const { rc } = useRC("TextNode", rcProp)
+const { rc } = useRC("TextNode", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface TextNodeEmits {}
 
-const emit = defineEmits<TextNodeEmits>()
+const emit = defineEmits<TextNodeEmits>();
 /* endregion */
 
 /* region Slots */
 export interface TextNodeSlots {}
 
-const slots = defineSlots<TextNodeSlots>()
+const slots = defineSlots<TextNodeSlots>();
 /* endregion */
 
 /* region Styles */
 const textNodeStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = textNodeStyles()
-type TextNodeVariants = VariantProps<typeof textNodeStyles>
+const { root } = textNodeStyles();
+type TextNodeVariants = VariantProps<typeof textNodeStyles>;
 /* endregion */
 
 /* region State */
@@ -48,8 +48,8 @@ type TextNodeVariants = VariantProps<typeof textNodeStyles>
 
 /* region Meta */
 defineOptions({
-  name: "TextNode"
-})
+  name: "TextNode",
+});
 /* endregion */
 
 /* region Lifecycle */

@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
-import { useI18n } from "vue-i18n"
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
+import { useI18n } from "vue-i18n";
 
 /* region Props */
 export interface PageSurroundProps {
-  pageType: string
-  previousTitle?: string
-  previousDescription?: string
-  previousTo?: string
-  nextTitle?: string
-  nextDescription?: string
-  nextTo?: string
+  pageType: string;
+  previousTitle?: string;
+  previousDescription?: string;
+  previousTo?: string;
+  nextTitle?: string;
+  nextDescription?: string;
+  nextTo?: string;
   rc?: {
-    grid?: string
-    card?: string
-    cardContent?: string
-    headingGroup?: string
-    button?: string
-    typeLabel?: string
-    infoGroup?: string
-    title?: string
-    description?: string
-  }
+    grid?: string;
+    card?: string;
+    cardContent?: string;
+    headingGroup?: string;
+    button?: string;
+    typeLabel?: string;
+    infoGroup?: string;
+    title?: string;
+    description?: string;
+  };
 }
 
 const {
@@ -34,22 +34,22 @@ const {
   nextTitle,
   nextDescription,
   nextTo,
-  rc: rcProp
-} = defineProps<PageSurroundProps>()
+  rc: rcProp,
+} = defineProps<PageSurroundProps>();
 
-const { rc } = useRC("PageSurround", rcProp)
+const { rc } = useRC("PageSurround", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface PageSurroundEmits {}
 
-const emit = defineEmits<PageSurroundEmits>()
+const emit = defineEmits<PageSurroundEmits>();
 /* endregion */
 
 /* region Slots */
 export interface PageSurroundSlots {}
 
-const slots = defineSlots<PageSurroundSlots>()
+const slots = defineSlots<PageSurroundSlots>();
 /* endregion */
 
 /* region Styles */
@@ -69,9 +69,9 @@ const pageSurroundStyles = tv({
     title: "text-primary text-sm group-hover:text-highlighted",
     titleEnd: "text-right",
     description: "text-toned text-xs",
-    descriptionEnd: "text-right"
-  }
-})
+    descriptionEnd: "text-right",
+  },
+});
 
 const {
   grid,
@@ -87,19 +87,19 @@ const {
   title,
   titleEnd,
   description,
-  descriptionEnd
-} = pageSurroundStyles()
-type PageSurroundVariants = VariantProps<typeof pageSurroundStyles>
+  descriptionEnd,
+} = pageSurroundStyles();
+type PageSurroundVariants = VariantProps<typeof pageSurroundStyles>;
 /* endregion */
 
 /* region State */
-const { t } = useI18n()
+const { t } = useI18n();
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "PageSurround"
-})
+  name: "PageSurround",
+});
 /* endregion */
 
 /* region Lifecycle */

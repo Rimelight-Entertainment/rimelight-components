@@ -1,40 +1,40 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import type { TabsItem } from "@nuxt/ui"
-import { tv } from "../../internal/tv"
-import { type VariantProps } from "tailwind-variants"
+import { computed } from "vue";
+import type { TabsItem } from "@nuxt/ui";
+import { tv } from "../../internal/tv";
+import { type VariantProps } from "tailwind-variants";
 
 /* region Props */
 export interface AuthLayoutProps {
-  tabs: TabsItem[]
-  backgroundMobile?: string
-  backgroundDesktop?: string
+  tabs: TabsItem[];
+  backgroundMobile?: string;
+  backgroundDesktop?: string;
   rc?: {
-    root?: string
-    content?: string
-  }
+    root?: string;
+    content?: string;
+  };
 }
 
 const {
   tabs = [],
   backgroundMobile = "",
   backgroundDesktop = "",
-  rc
-} = defineProps<AuthLayoutProps>()
+  rc,
+} = defineProps<AuthLayoutProps>();
 /* endregion */
 
 /* region Emits */
 export interface AuthLayoutEmits {}
 
-const emit = defineEmits<AuthLayoutEmits>()
+const emit = defineEmits<AuthLayoutEmits>();
 /* endregion */
 
 /* region Slots */
 export interface AuthLayoutSlots {
-  default: (props: {}) => any
+  default: (props: {}) => any;
 }
 
-const slots = defineSlots<AuthLayoutSlots>()
+const slots = defineSlots<AuthLayoutSlots>();
 /* endregion */
 
 /* region Styles */
@@ -47,33 +47,33 @@ const authLayoutStyles = tv({
     overlay: "absolute inset-0 bg-black/15",
     container: "flex z-10 min-h-screen items-center justify-center",
     card: "bg-white",
-    tabsClass: "w-full"
-  }
-})
+    tabsClass: "w-full",
+  },
+});
 
 const { root, bgWrapper, bgMobile, bgDesktop, overlay, container, card, tabsClass } =
-  authLayoutStyles()
-type AuthLayoutVariants = VariantProps<typeof authLayoutStyles>
+  authLayoutStyles();
+type AuthLayoutVariants = VariantProps<typeof authLayoutStyles>;
 /* endregion */
 
 /* region State */
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
 const activeTab = computed({
   get() {
-    return tabs.find((i) => i.value === route.path)?.value || tabs[0]?.value
+    return tabs.find((i) => i.value === route.path)?.value || tabs[0]?.value;
   },
   set(path) {
-    if (path) router.push(path as string)
-  }
-})
+    if (path) router.push(path as string);
+  },
+});
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "AuthLayout"
-})
+  name: "AuthLayout",
+});
 /* endregion */
 
 /* region Lifecycle */

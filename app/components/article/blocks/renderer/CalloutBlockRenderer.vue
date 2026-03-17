@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import type { CalloutBlockProps } from "rimelight-components/types"
-import { tv } from "rimelight-components/app/internal/tv"
-import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import type { CalloutBlockProps } from "rimelight-components/types";
+import { tv } from "rimelight-components/app/internal/tv";
+import { type VariantProps } from "tailwind-variants";
+import { useRC } from "rimelight-components/composables";
 
 /* region Props */
 export interface CalloutBlockRendererProps extends CalloutBlockProps {
   rc?: {
-    root?: string
-  }
+    root?: string;
+  };
 }
 
-const { variant, children, to, target, rc: rcProp } = defineProps<CalloutBlockRendererProps>()
+const { variant, children, to, target, rc: rcProp } = defineProps<CalloutBlockRendererProps>();
 
-const { rc } = useRC("CalloutBlockRenderer", rcProp)
+const { rc } = useRC("CalloutBlockRenderer", rcProp);
 /* endregion */
 
 /* region Emits */
 export interface CalloutBlockRendererEmits {}
 
-const emit = defineEmits<CalloutBlockRendererEmits>()
+const emit = defineEmits<CalloutBlockRendererEmits>();
 /* endregion */
 
 /* region Slots */
 export interface CalloutBlockRendererSlots {}
 
-const slots = defineSlots<CalloutBlockRendererSlots>()
+const slots = defineSlots<CalloutBlockRendererSlots>();
 /* endregion */
 
 /* region Styles */
 const calloutBlockRendererStyles = tv({
   slots: {
-    root: ""
-  }
-})
+    root: "",
+  },
+});
 
-const { root } = calloutBlockRendererStyles()
-type CalloutBlockRendererVariants = VariantProps<typeof calloutBlockRendererStyles>
+const { root } = calloutBlockRendererStyles();
+type CalloutBlockRendererVariants = VariantProps<typeof calloutBlockRendererStyles>;
 /* endregion */
 
 /* region State */
@@ -49,8 +49,8 @@ type CalloutBlockRendererVariants = VariantProps<typeof calloutBlockRendererStyl
 
 /* region Meta */
 defineOptions({
-  name: "CalloutBlockRenderer"
-})
+  name: "CalloutBlockRenderer",
+});
 /* endregion */
 
 /* region Lifecycle */

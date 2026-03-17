@@ -1,7 +1,7 @@
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id")
+  const id = getRouterParam(event, "id");
 
-  await new Promise((resolve) => setTimeout(resolve, 500))
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   return [
     {
@@ -15,8 +15,8 @@ export default defineEventHandler(async (event) => {
       updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
       content: {
         blocks: [],
-        properties: {}
-      }
+        properties: {},
+      },
     },
     {
       id: "v2",
@@ -29,8 +29,8 @@ export default defineEventHandler(async (event) => {
       updatedAt: new Date().toISOString(),
       content: {
         blocks: [],
-        properties: {}
-      }
-    }
-  ]
-})
+        properties: {},
+      },
+    },
+  ];
+});
