@@ -48,7 +48,6 @@ export default defineNuxtConfig({
     "nuxt-llms",
     "nuxt-security",
     "@nuxt/scripts",
-    "@vite-pwa/nuxt",
     "@pinia/nuxt",
     "@pinia/colada-nuxt",
     "@vueuse/nuxt",
@@ -123,7 +122,10 @@ export default defineNuxtConfig({
         include: ["../*.ts", "../test/e2e/**/*.ts"],
       },
     },
-    site: { indexable: false },
+    site: {
+      indexable: false,
+      trailingSlash: false
+    },
     a11y: {
       enabled: true,
       defaultHighlight: false,
@@ -162,6 +164,7 @@ export default defineNuxtConfig({
       url: "https://rimelight-components.com",
       // Switch to true on release
       indexable: false,
+      trailingSlash: false
     },
     robots: {
       blockAiBots: true,
