@@ -1,6 +1,9 @@
+import { defu } from "defu"
+import { rimelightViteConfig } from "./.rimelight\rimelight.vite"
 import { defineNuxtConfig } from "nuxt/config"
 
 export default defineNuxtConfig({
+  vite: defu({}, rimelightViteConfig),
   compatibilityDate: "2026-02-13",
   devtools: { enabled: true },
   devServer: {

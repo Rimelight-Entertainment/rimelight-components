@@ -33,7 +33,7 @@
   },
   "scripts": {
     "analyze": "nuxi analyze",
-    "build": "nuxt build playground",
+    "build": "nuxt build --profile=verbose playground",
     "dev": "pnpm dev:prepare && nuxt dev playground",
     "dev:build": "nuxt build playground",
     "dev:prepare": "nuxt prepare playground",
@@ -85,7 +85,7 @@
     "motion-v": "^2.0.1",
     "nuxt": "^4.4.2",
     "nuxt-llms": "^0.2.0",
-    "nuxt-og-image": "^6.0.1",
+    "nuxt-og-image": "^6.0.2",
     "nuxt-security": "^2.5.1",
     "nuxt-studio": "^1.4.0",
     "perfect-debounce": "2.1.0",
@@ -102,7 +102,7 @@
   },
   "devDependencies": {
     "@nuxt/a11y": "1.0.0-alpha.1",
-    "@nuxt/devtools": "^3.2.3",
+    "@nuxt/devtools": "^3.2.4",
     "@nuxt/hints": "^1.0.0",
     "@nuxt/test-utils": "^4.0.0",
     "@types/chroma-js": "^3.1.2",
@@ -113,13 +113,13 @@
     "@vue/test-utils": "^2.4.6",
     "@vueuse/core": "^14.2.1",
     "changelogen": "^0.6.2",
-    "drizzle-kit": "^0.31.9",
+    "drizzle-kit": "^0.31.10",
     "knip": "^5.87.0",
     "rimelight-cli": "github:Rimelight-Entertainment/rimelight-cli",
     "typescript": "^5.9.3",
     "vitest": "npm:@voidzero-dev/vite-plus-test@0.0.0-gd42e0ca6.20260225-0619",
     "vue-i18n-extract": "^2.0.7",
-    "vue-tsc": "^3.2.5",
+    "vue-tsc": "^3.2.6",
     "wrangler": "^4.74.0"
   },
   "peerDependencies": {
