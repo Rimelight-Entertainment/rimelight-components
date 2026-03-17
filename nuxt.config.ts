@@ -159,6 +159,10 @@ export default defineNuxtConfig({
         routes: ["/"],
         crawlLinks: true,
       },
+      routeRules: {
+        // ISR Rules
+        "/api/**": { isr: 60 },
+      }
     },
     site: {
       url: "https://rimelight-components.com",
@@ -248,46 +252,6 @@ export default defineNuxtConfig({
       ],
     },
     viewTransition: true,
-  },
-
-  pwa: {
-    // Disable service worker
-    disable: true,
-    pwaAssets: {
-      disabled: false,
-      config: false,
-    },
-    manifest: {
-      name: "Rimelight Components",
-      short_name: "Rimelight",
-      description: "A component library.",
-      theme_color: "#0a0a0a",
-      background_color: "#0a0a0a",
-      icons: [
-        {
-          src: "pwa-64x64.png",
-          sizes: "64x64",
-          type: "image/png",
-        },
-        {
-          src: "pwa-192x192.png",
-          sizes: "192x192",
-          type: "image/png",
-        },
-        {
-          src: "pwa-512x512.png",
-          sizes: "512x512",
-          type: "image/png",
-          purpose: "any",
-        },
-        {
-          src: "maskable-icon-512x512.png",
-          sizes: "512x512",
-          type: "image/png",
-          purpose: "maskable",
-        },
-      ],
-    },
   },
 
   htmlValidator: {
@@ -385,10 +349,6 @@ export default defineNuxtConfig({
     "/__nuxt_studio/**": { security: { rateLimiter: false } },
     "/__nuxt_hints/**": { security: { enabled: false } },
     "/_nuxt/**": { security: { rateLimiter: false } },
-
-    // ISR Rules
-    "/": { prerender: true },
-    "/api/**": { isr: 60 },
   },
 
   i18n: {
