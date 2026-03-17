@@ -440,9 +440,6 @@ export default defineNuxtConfig({
   },
 
   fonts: {
-    providers: {
-      fontshare: false,
-    },
     families: [
       {
         name: "JetBrains Mono",
