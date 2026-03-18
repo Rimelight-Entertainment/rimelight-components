@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import type { NavigationMenuItem } from "#ui/types";
-import { useRC, useHeaderStack } from "../../../composables";
-import { tv } from "../../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
+import { computed } from "vue"
+import type { NavigationMenuItem } from "#ui/types"
+import { useRC, useHeaderStack } from "../../../composables"
+import { tv } from "../../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface BaseDashboardLayoutProps {
-  id?: string;
-  sidebarOpen?: boolean;
-  links: NavigationMenuItem[] | NavigationMenuItem[][];
-  footerLinks?: NavigationMenuItem[] | NavigationMenuItem[][];
-  searchGroups?: any[];
-  headerLayerId?: string;
-  headerOrder?: number;
+  id?: string
+  sidebarOpen?: boolean
+  links: NavigationMenuItem[] | NavigationMenuItem[][]
+  footerLinks?: NavigationMenuItem[] | NavigationMenuItem[][]
+  searchGroups?: any[]
+  headerLayerId?: string
+  headerOrder?: number
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
 const {
@@ -27,32 +27,32 @@ const {
   searchGroups = [],
   headerLayerId = "global-header",
   headerOrder = 2,
-  rc: rcProp,
-} = defineProps<BaseDashboardLayoutProps>();
+  rc: rcProp
+} = defineProps<BaseDashboardLayoutProps>()
 
-const { rc } = useRC("BaseDashboardLayout", rcProp);
+const { rc } = useRC("BaseDashboardLayout", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface BaseDashboardLayoutEmits {
-  "update:sidebarOpen": [value: boolean];
+  "update:sidebarOpen": [value: boolean]
 }
 
-const emit = defineEmits<BaseDashboardLayoutEmits>();
+const emit = defineEmits<BaseDashboardLayoutEmits>()
 /* endregion */
 
 /* region Slots */
 export interface BaseDashboardLayoutSlots {
-  header: (props: {}) => any;
-  "sidebar-header": (props: { collapsed: boolean }) => any;
-  "sidebar-content": (props: { collapsed: boolean }) => any;
-  "sidebar-footer": (props: { collapsed: boolean }) => any;
-  "sidebar-footer-actions": (props: { collapsed: boolean }) => any;
-  default: (props: {}) => any;
-  modals: (props: {}) => any;
+  header: (props: {}) => any
+  "sidebar-header": (props: { collapsed: boolean }) => any
+  "sidebar-content": (props: { collapsed: boolean }) => any
+  "sidebar-footer": (props: { collapsed: boolean }) => any
+  "sidebar-footer-actions": (props: { collapsed: boolean }) => any
+  default: (props: {}) => any
+  modals: (props: {}) => any
 }
 
-const slots = defineSlots<BaseDashboardLayoutSlots>();
+const slots = defineSlots<BaseDashboardLayoutSlots>()
 /* endregion */
 
 /* region Styles */
@@ -62,28 +62,28 @@ const baseDashboardLayoutStyles = tv({
     dashboardGroup: "bg-dimmed",
     sidebar: "bg-muted",
     sidebarFooterWrapper: "flex flex-col gap-sm w-full",
-    footerActions: "flex flex-row gap-xs justify-between",
-  },
-});
+    footerActions: "flex flex-row gap-xs justify-between"
+  }
+})
 
 const { root, dashboardGroup, sidebar, sidebarFooterWrapper, footerActions } =
-  baseDashboardLayoutStyles();
-type BaseDashboardLayoutVariants = VariantProps<typeof baseDashboardLayoutStyles>;
+  baseDashboardLayoutStyles()
+type BaseDashboardLayoutVariants = VariantProps<typeof baseDashboardLayoutStyles>
 /* endregion */
 
 /* region State */
 const sidebarOpenModel = computed({
   get: () => sidebarOpen,
-  set: (val) => emit("update:sidebarOpen", val),
-});
+  set: (val) => emit("update:sidebarOpen", val)
+})
 
-const { totalHeight } = useHeaderStack();
+const { totalHeight } = useHeaderStack()
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "BaseDashboardLayout",
-});
+  name: "BaseDashboardLayout"
+})
 /* endregion */
 
 /* region Lifecycle */

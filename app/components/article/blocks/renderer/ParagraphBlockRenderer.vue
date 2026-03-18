@@ -1,42 +1,42 @@
 <script setup lang="ts">
-import type { ParagraphBlockProps } from "rimelight-components/types";
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "rimelight-components/composables";
+import type { ParagraphBlockProps } from "rimelight-components/types"
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "rimelight-components/composables"
 
 /* region Props */
 export interface ParagraphBlockRendererProps extends ParagraphBlockProps {
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>();
+const { text, rc: rcProp } = defineProps<ParagraphBlockRendererProps>()
 
-const { rc } = useRC("ParagraphBlockRenderer", rcProp);
+const { rc } = useRC("ParagraphBlockRenderer", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface ParagraphBlockRendererEmits {}
 
-const emit = defineEmits<ParagraphBlockRendererEmits>();
+const emit = defineEmits<ParagraphBlockRendererEmits>()
 /* endregion */
 
 /* region Slots */
 export interface ParagraphBlockRendererSlots {}
 
-const slots = defineSlots<ParagraphBlockRendererSlots>();
+const slots = defineSlots<ParagraphBlockRendererSlots>()
 /* endregion */
 
 /* region Styles */
 const paragraphBlockRendererStyles = tv({
   slots: {
-    root: "",
-  },
-});
+    root: ""
+  }
+})
 
-const { root } = paragraphBlockRendererStyles();
-type ParagraphBlockRendererVariants = VariantProps<typeof paragraphBlockRendererStyles>;
+const { root } = paragraphBlockRendererStyles()
+type ParagraphBlockRendererVariants = VariantProps<typeof paragraphBlockRendererStyles>
 /* endregion */
 
 /* region State */
@@ -49,8 +49,8 @@ type ParagraphBlockRendererVariants = VariantProps<typeof paragraphBlockRenderer
 
 /* region Meta */
 defineOptions({
-  name: "ParagraphBlockRenderer",
-});
+  name: "ParagraphBlockRenderer"
+})
 /* endregion */
 
 /* region Lifecycle */

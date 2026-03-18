@@ -1,61 +1,55 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import type { SectionBlockProps } from "rimelight-components/types";
-import { slugify } from "rimelight-components/utils";
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "rimelight-components/composables";
+import { computed } from "vue"
+import type { SectionBlockProps } from "rimelight-components/types"
+import { slugify } from "rimelight-components/utils"
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "rimelight-components/composables"
 
 /* region Props */
 export interface SectionBlockRendererProps extends SectionBlockProps {
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const {
-  level,
-  title,
-  description,
-  children,
-  rc: rcProp,
-} = defineProps<SectionBlockRendererProps>();
+const { level, title, description, children, rc: rcProp } = defineProps<SectionBlockRendererProps>()
 
-const { rc } = useRC("SectionBlockRenderer", rcProp);
+const { rc } = useRC("SectionBlockRenderer", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface SectionBlockRendererEmits {}
 
-const emit = defineEmits<SectionBlockRendererEmits>();
+const emit = defineEmits<SectionBlockRendererEmits>()
 /* endregion */
 
 /* region Slots */
 export interface SectionBlockRendererSlots {}
 
-const slots = defineSlots<SectionBlockRendererSlots>();
+const slots = defineSlots<SectionBlockRendererSlots>()
 /* endregion */
 
 /* region Styles */
 const sectionBlockRendererStyles = tv({
   slots: {
-    root: "",
-  },
-});
+    root: ""
+  }
+})
 
-const { root } = sectionBlockRendererStyles();
-type SectionBlockRendererVariants = VariantProps<typeof sectionBlockRendererStyles>;
+const { root } = sectionBlockRendererStyles()
+type SectionBlockRendererVariants = VariantProps<typeof sectionBlockRendererStyles>
 /* endregion */
 
 /* region State */
-const headingId = computed(() => (title ? slugify(title) : undefined));
-const hasChildren = computed(() => children && children.length > 0);
+const headingId = computed(() => (title ? slugify(title) : undefined))
+const hasChildren = computed(() => children && children.length > 0)
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "SectionBlockRenderer",
-});
+  name: "SectionBlockRenderer"
+})
 /* endregion */
 
 /* region Lifecycle */

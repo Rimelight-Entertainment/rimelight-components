@@ -1,36 +1,36 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useTodos } from "#rimelight-components/composables";
-import type { Todo } from "#rimelight-components/db";
-import { useI18n } from "vue-i18n";
-import { tv } from "../../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
+import { ref } from "vue"
+import { useTodos } from "#rimelight-components/composables"
+import type { Todo } from "#rimelight-components/db"
+import { useI18n } from "vue-i18n"
+import { tv } from "../../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface TodoListProps {
-  todos: Todo[];
-  archivedTodos?: Todo[];
-  loading?: boolean;
+  todos: Todo[]
+  archivedTodos?: Todo[]
+  loading?: boolean
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { todos, archivedTodos = [], loading = false, rc: rcProp } = defineProps<TodoListProps>();
+const { todos, archivedTodos = [], loading = false, rc: rcProp } = defineProps<TodoListProps>()
 
-const { rc } = useRC("TodoList", rcProp);
+const { rc } = useRC("TodoList", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface TodoListEmits {}
 
-const emit = defineEmits<TodoListEmits>();
+const emit = defineEmits<TodoListEmits>()
 /* endregion */
 
 /* region Slots */
 export interface TodoListSlots {}
 
-const slots = defineSlots<TodoListSlots>();
+const slots = defineSlots<TodoListSlots>()
 /* endregion */
 
 /* region Styles */
@@ -45,9 +45,9 @@ const todoListStyles = tv({
     descriptionRow: "pl-0",
     todoGrid: "flex flex-col gap-xs",
     emptyText: "text-xs text-dimmed text-center py-sm",
-    archivedGrid: "flex flex-col gap-xs",
-  },
-});
+    archivedGrid: "flex flex-col gap-xs"
+  }
+})
 
 const {
   root,
@@ -59,25 +59,25 @@ const {
   descriptionRow,
   todoGrid,
   emptyText,
-  archivedGrid,
-} = todoListStyles();
-type TodoListVariants = VariantProps<typeof todoListStyles>;
+  archivedGrid
+} = todoListStyles()
+type TodoListVariants = VariantProps<typeof todoListStyles>
 /* endregion */
 
 /* region State */
-const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos();
-const { t } = useI18n();
+const { toggleTodo, archiveTodo, restoreTodo, deleteTodo, createTodo } = useTodos()
+const { t } = useI18n()
 
-const newTodoTitle = ref("");
-const newTodoDescription = ref("");
-const isAdding = ref(false);
-const showArchived = ref(false);
+const newTodoTitle = ref("")
+const newTodoDescription = ref("")
+const isAdding = ref(false)
+const showArchived = ref(false)
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "TodoList",
-});
+  name: "TodoList"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -96,16 +96,16 @@ defineOptions({
 
 /* region Logic */
 const handleAddTodo = async () => {
-  if (!newTodoTitle.value.trim()) return;
-  isAdding.value = true;
+  if (!newTodoTitle.value.trim()) return
+  isAdding.value = true
   try {
-    await createTodo(newTodoTitle.value.trim(), newTodoDescription.value.trim() || undefined);
-    newTodoTitle.value = "";
-    newTodoDescription.value = "";
+    await createTodo(newTodoTitle.value.trim(), newTodoDescription.value.trim() || undefined)
+    newTodoTitle.value = ""
+    newTodoDescription.value = ""
   } finally {
-    isAdding.value = false;
+    isAdding.value = false
   }
-};
+}
 /* endregion */
 </script>
 

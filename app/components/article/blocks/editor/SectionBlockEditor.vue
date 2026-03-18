@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { inject, ref, computed, watch } from "vue";
-import { type SectionBlockProps } from "rimelight-components/types";
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "rimelight-components/composables";
-import { SECTION_LEVEL_KEY } from "rimelight-components/app/internal/injectionKeys";
+import { inject, ref, computed, watch } from "vue"
+import { type SectionBlockProps } from "rimelight-components/types"
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "rimelight-components/composables"
+import { SECTION_LEVEL_KEY } from "rimelight-components/app/internal/injectionKeys"
 
 /* region Props */
 export interface SectionBlockEditorProps extends SectionBlockProps {
-  id: string;
+  id: string
   rc?: {
-    root?: string;
-    headerContainer?: string;
-    titleInput?: string;
-  };
+    root?: string
+    headerContainer?: string
+    titleInput?: string
+  }
 }
 
 const {
@@ -22,22 +22,22 @@ const {
   title,
   description,
   children,
-  level,
-} = defineProps<SectionBlockEditorProps>();
+  level
+} = defineProps<SectionBlockEditorProps>()
 
-const { rc } = useRC("SectionBlockEditor", rcProp);
+const { rc } = useRC("SectionBlockEditor", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface SectionBlockEditorEmits {}
 
-const emit = defineEmits<SectionBlockEditorEmits>();
+const emit = defineEmits<SectionBlockEditorEmits>()
 /* endregion */
 
 /* region Slots */
 export interface SectionBlockEditorSlots {}
 
-const slots = defineSlots<SectionBlockEditorSlots>();
+const slots = defineSlots<SectionBlockEditorSlots>()
 /* endregion */
 
 /* region Styles */
@@ -46,25 +46,25 @@ const sectionBlockEditorStyles = tv({
     root: "flex flex-col gap-sm",
     headerContainer: "flex flex-row items-center gap-xs",
     titleInput: "w-full",
-    levelBadge: "text-xs font-mono text-dimmed shrink-0 leading-none",
-  },
-});
+    levelBadge: "text-xs font-mono text-dimmed shrink-0 leading-none"
+  }
+})
 
-const { root, headerContainer, titleInput, levelBadge } = sectionBlockEditorStyles();
-type SectionBlockEditorVariants = VariantProps<typeof sectionBlockEditorStyles>;
+const { root, headerContainer, titleInput, levelBadge } = sectionBlockEditorStyles()
+type SectionBlockEditorVariants = VariantProps<typeof sectionBlockEditorStyles>
 /* endregion */
 
 /* region State */
-const localTitle = ref(title);
-const localDescription = ref(description);
+const localTitle = ref(title)
+const localDescription = ref(description)
 
-const editorApi = inject<any>("block-editor-api");
+const editorApi = inject<any>("block-editor-api")
 
 const parentLevel = inject(
   SECTION_LEVEL_KEY,
-  computed(() => 1),
-);
-const currentLevel = computed(() => Math.min(6, parentLevel.value + 1));
+  computed(() => 1)
+)
+const currentLevel = computed(() => Math.min(6, parentLevel.value + 1))
 
 // Use a computed property to bridge vuedraggable and the central store directly
 // This avoids maintaining a separate local state that can get out of sync
@@ -73,17 +73,17 @@ const localChildren = computed({
   set: (newChildren) => {
     if (editorApi && id) {
       // Deep copy to ensure we break references before sending to store
-      const childrenCopy = JSON.parse(JSON.stringify(newChildren));
-      editorApi.updateBlockProps(id, { children: childrenCopy });
+      const childrenCopy = JSON.parse(JSON.stringify(newChildren))
+      editorApi.updateBlockProps(id, { children: childrenCopy })
     }
-  },
-});
+  }
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "SectionBlockEditor",
-});
+  name: "SectionBlockEditor"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -95,29 +95,29 @@ watch(
   () => currentLevel.value,
   (newLevel) => {
     if (editorApi && id && newLevel !== level) {
-      editorApi.updateBlockProps(id, { level: newLevel });
+      editorApi.updateBlockProps(id, { level: newLevel })
     }
   },
-  { immediate: true },
-);
+  { immediate: true }
+)
 
 watch(
   () => title,
   (newVal) => {
     if (newVal !== localTitle.value) {
-      localTitle.value = newVal;
+      localTitle.value = newVal
     }
-  },
-);
+  }
+)
 
 watch(
   () => description,
   (newVal) => {
     if (newVal !== localDescription.value) {
-      localDescription.value = newVal;
+      localDescription.value = newVal
     }
-  },
-);
+  }
+)
 
 // watch(() => { }, (newValue, oldValue) => {
 //
@@ -133,34 +133,34 @@ watch(
  * Updates the local title buffer on every keystroke for instant feedback.
  */
 const updateLocalTitle = (e: Event) => {
-  localTitle.value = (e.target as HTMLInputElement).value;
-};
+  localTitle.value = (e.target as HTMLInputElement).value
+}
 
 /**
  * Commits the final local title value to the global store when the input loses focus.
  */
 const commitTitleOnBlur = () => {
   if (editorApi && id && localTitle.value !== title) {
-    editorApi.updateBlockProps(id, { title: localTitle.value });
+    editorApi.updateBlockProps(id, { title: localTitle.value })
   }
-};
+}
 
 const updateLocalDescription = (e: Event) => {
-  localDescription.value = (e.target as HTMLInputElement).value;
-};
+  localDescription.value = (e.target as HTMLInputElement).value
+}
 
 const commitDescriptionOnBlur = () => {
   if (editorApi && id && localDescription.value !== description) {
-    editorApi.updateBlockProps(id, { description: localDescription.value });
+    editorApi.updateBlockProps(id, { description: localDescription.value })
   }
-};
+}
 
 // We no longer need to manually handle mutations since the setter does it immediately
 const handleChildrenMutation = () => {
   // This might still be called by RCBlockEditor's events, but the work is done in the setter.
   // We can keep it empty or log for debugging.
-  console.log("[SectionBlockEditor] Mutation event received (handled by setter)");
-};
+  console.log("[SectionBlockEditor] Mutation event received (handled by setter)")
+}
 /* endregion */
 </script>
 

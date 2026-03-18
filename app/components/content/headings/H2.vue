@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { tv } from "rimelight-components/app/internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "rimelight-components/composables";
+import { tv } from "rimelight-components/app/internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "rimelight-components/composables"
 
 /* region Props */
 export interface H2Props {
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<H2Props>();
+const { rc: rcProp } = defineProps<H2Props>()
 
-const { rc } = useRC("H2", rcProp);
+const { rc } = useRC("H2", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface H2Emits {}
 
-const emit = defineEmits<H2Emits>();
+const emit = defineEmits<H2Emits>()
 /* endregion */
 
 /* region Slots */
 export interface H2Slots {
-  default: (props: {}) => any;
+  default: (props: {}) => any
 }
 
-const slots = defineSlots<H2Slots>();
+const slots = defineSlots<H2Slots>()
 /* endregion */
 
 /* region Styles */
 const h2Styles = tv({
   slots: {
-    root: "text-4xl font-bold text-highlighted",
-  },
-});
+    root: "text-4xl font-bold text-highlighted"
+  }
+})
 
-const { root } = h2Styles();
-type H2Variants = VariantProps<typeof h2Styles>;
+const { root } = h2Styles()
+type H2Variants = VariantProps<typeof h2Styles>
 /* endregion */
 
 /* region State */
@@ -50,8 +50,8 @@ type H2Variants = VariantProps<typeof h2Styles>;
 
 /* region Meta */
 defineOptions({
-  name: "H2",
-});
+  name: "H2"
+})
 /* endregion */
 
 /* region Lifecycle */

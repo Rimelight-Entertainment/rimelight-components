@@ -1,53 +1,53 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useRC } from "rimelight-components/composables";
-import { tv } from "rimelight-components/app/internal/tv";
-import { getLocalizedContent } from "rimelight-components/utils";
-import { useI18n } from "vue-i18n";
-import type { Page } from "rimelight-components/types";
-import { type VariantProps } from "tailwind-variants";
+import { computed, ref } from "vue"
+import { useRC } from "rimelight-components/composables"
+import { tv } from "rimelight-components/app/internal/tv"
+import { getLocalizedContent } from "rimelight-components/utils"
+import { useI18n } from "vue-i18n"
+import type { Page } from "rimelight-components/types"
+import { type VariantProps } from "tailwind-variants"
 
 /* region Props */
 export interface TreeItem {
-  label: string;
-  icon?: string;
-  slug?: string;
-  path: string;
-  children?: TreeItem[];
-  defaultExpanded?: boolean;
+  label: string
+  icon?: string
+  slug?: string
+  path: string
+  children?: TreeItem[]
+  defaultExpanded?: boolean
 }
 
 export interface PageTreeModalProps {
-  loading?: boolean;
-  pages?: Pick<Page, "title" | "slug">[];
-  basePath?: string;
+  loading?: boolean
+  pages?: Pick<Page, "title" | "slug">[]
+  basePath?: string
   rc?: {
-    header?: string;
-    headerTitle?: string;
-    closeButton?: string;
-    body?: string;
-    footer?: string;
-  };
+    header?: string
+    headerTitle?: string
+    closeButton?: string
+    body?: string
+    footer?: string
+  }
 }
 
-const { loading, pages = [], basePath, rc: rcProp } = defineProps<PageTreeModalProps>();
+const { loading, pages = [], basePath, rc: rcProp } = defineProps<PageTreeModalProps>()
 
-const { rc } = useRC("PageTreeModal", rcProp);
+const { rc } = useRC("PageTreeModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface PageTreeModalEmits {
-  close: [];
-  navigate: [slug: string];
+  close: []
+  navigate: [slug: string]
 }
 
-const emit = defineEmits<PageTreeModalEmits>();
+const emit = defineEmits<PageTreeModalEmits>()
 /* endregion */
 
 /* region Slots */
 export interface PageTreeModalSlots {}
 
-const slots = defineSlots<PageTreeModalSlots>();
+const slots = defineSlots<PageTreeModalSlots>()
 /* endregion */
 
 /* region Styles */
@@ -61,9 +61,9 @@ const pageTreeModalStyles = tv({
     loadingWrapper: "p-4 flex justify-center",
     emptyWrapper: "p-4 text-center text-gray-500",
     itemWrapper: "flex items-center gap-2 py-1 w-full",
-    itemLabel: "",
-  },
-});
+    itemLabel: ""
+  }
+})
 
 const {
   headerClass,
@@ -73,105 +73,105 @@ const {
   footerClass,
   loadingWrapper,
   emptyWrapper,
-  itemWrapper,
-} = pageTreeModalStyles();
-type PageTreeModalVariants = VariantProps<typeof pageTreeModalStyles>;
+  itemWrapper
+} = pageTreeModalStyles()
+type PageTreeModalVariants = VariantProps<typeof pageTreeModalStyles>
 /* endregion */
 
 /* region State */
-const open = defineModel<boolean>("open", { default: false });
+const open = defineModel<boolean>("open", { default: false })
 
-const { t, locale } = useI18n();
+const { t, locale } = useI18n()
 
 const treeItems = computed<TreeItem[]>(() => {
-  if (!pages || pages.length === 0) return [];
+  if (!pages || pages.length === 0) return []
 
-  const nodeMap = new Map<string, TreeItem>();
-  const rootNodes: TreeItem[] = [];
+  const nodeMap = new Map<string, TreeItem>()
+  const rootNodes: TreeItem[] = []
 
   // Sanitize basePath (remove leading/trailing slashes)
-  const cleanBasePath = basePath ? basePath.replace(/^\/|\/$/g, "") : "";
+  const cleanBasePath = basePath ? basePath.replace(/^\/|\/$/g, "") : ""
 
   // Helper to get or create node
   const getNode = (path: string, partLabel: string, pageObj?: Pick<Page, "title" | "slug">) => {
     if (!nodeMap.has(path)) {
       const label = pageObj
         ? getLocalizedContent(pageObj.title, locale.value) || partLabel
-        : partLabel.charAt(0).toUpperCase() + partLabel.slice(1);
+        : partLabel.charAt(0).toUpperCase() + partLabel.slice(1)
 
       const newNode: TreeItem = {
         label,
         path,
         slug: pageObj ? pageObj.slug : undefined,
         icon: pageObj ? "lucide:file" : "lucide:folder",
-        children: [],
-      };
-      nodeMap.set(path, newNode);
+        children: []
+      }
+      nodeMap.set(path, newNode)
     } else if (pageObj) {
       // Upgrade virtual node to real page
-      const node = nodeMap.get(path)!;
-      node.label = getLocalizedContent(pageObj.title, locale.value) || node.label;
-      node.slug = pageObj.slug;
-      node.icon = "lucide:file-text";
+      const node = nodeMap.get(path)!
+      node.label = getLocalizedContent(pageObj.title, locale.value) || node.label
+      node.slug = pageObj.slug
+      node.icon = "lucide:file-text"
     }
-    return nodeMap.get(path)!;
-  };
+    return nodeMap.get(path)!
+  }
 
   // Iterate over all pages to build the tree
   pages.forEach((page) => {
     // Sanitize current slug
-    const cleanSlug = page.slug.replace(/^\/|\/$/g, "");
+    const cleanSlug = page.slug.replace(/^\/|\/$/g, "")
 
-    let relativePath = cleanSlug;
+    let relativePath = cleanSlug
     if (cleanBasePath && cleanSlug.startsWith(cleanBasePath)) {
-      relativePath = cleanSlug.slice(cleanBasePath.length).replace(/^\//, "");
+      relativePath = cleanSlug.slice(cleanBasePath.length).replace(/^\//, "")
     } else if (cleanBasePath) {
       // If it doesn't start with basePath but we HAVE a basePath,
       // check if it's the basePath itself
       if (cleanSlug === cleanBasePath) {
-        relativePath = "";
+        relativePath = ""
       } else {
         // Just show it as is, maybe under a separate root or ignored if strictly filtering
         // For now, we keep it as is.
       }
     }
 
-    const parts = relativePath.split("/").filter(Boolean);
+    const parts = relativePath.split("/").filter(Boolean)
 
     // If empty after slicing (meaning the page is exactly the basePath)
     if (parts.length === 0) {
-      const node = getNode("__root__", "Overview", page);
-      if (!rootNodes.includes(node)) rootNodes.push(node);
-      return;
+      const node = getNode("__root__", "Overview", page)
+      if (!rootNodes.includes(node)) rootNodes.push(node)
+      return
     }
 
-    let currentPath = "";
-    let parent: TreeItem | null = null;
+    let currentPath = ""
+    let parent: TreeItem | null = null
 
     parts.forEach((part, index) => {
-      currentPath = currentPath ? `${currentPath}/${part}` : part;
-      const isLast = index === parts.length - 1;
-      const pageObj = isLast ? page : undefined;
+      currentPath = currentPath ? `${currentPath}/${part}` : part
+      const isLast = index === parts.length - 1
+      const pageObj = isLast ? page : undefined
 
-      const node = getNode(currentPath, part, pageObj);
+      const node = getNode(currentPath, part, pageObj)
 
       if (index === 0) {
         if (!rootNodes.includes(node)) {
-          rootNodes.push(node);
+          rootNodes.push(node)
         }
       } else {
         if (parent && !parent.children?.some((c) => c.path === node.path)) {
-          if (!parent.children) parent.children = [];
-          parent.children.push(node);
+          if (!parent.children) parent.children = []
+          parent.children.push(node)
         }
       }
-      parent = node;
-    });
-  });
+      parent = node
+    })
+  })
 
   // Sort and process hierarchy
   const processNodes = (nodes: TreeItem[]) => {
-    nodes.sort((a, b) => a.label.localeCompare(b.label));
+    nodes.sort((a, b) => a.label.localeCompare(b.label))
 
     for (const node of nodes) {
       // If this node is both a page AND has children, we add a synthetic child
@@ -182,33 +182,33 @@ const treeItems = computed<TreeItem[]>(() => {
           slug: node.slug,
           path: `${node.path}:index`,
           icon: "lucide:file-text",
-          children: [],
-        };
+          children: []
+        }
         // Avoid duplicate index nodes if re-processing (though computed should be fresh)
         if (!node.children.some((c) => c.path === indexNode.path)) {
-          node.children.unshift(indexNode);
+          node.children.unshift(indexNode)
         }
 
         // Convert parent to folder-only in UI
-        node.slug = undefined;
-        node.icon = "lucide:folder";
+        node.slug = undefined
+        node.icon = "lucide:folder"
       }
 
       if (node.children && node.children.length > 0) {
-        processNodes(node.children);
+        processNodes(node.children)
       }
     }
-  };
+  }
 
-  processNodes(rootNodes);
-  return rootNodes;
-});
+  processNodes(rootNodes)
+  return rootNodes
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "PageTreeModal",
-});
+  name: "PageTreeModal"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -220,13 +220,13 @@ defineOptions({
 /* region Logic */
 const handleSelect = (node: TreeItem) => {
   if (node.slug) {
-    emit("navigate", node.slug);
-    open.value = false;
+    emit("navigate", node.slug)
+    open.value = false
   }
-};
+}
 
 // UTree requires keys
-const getKey = (item: TreeItem) => item.path;
+const getKey = (item: TreeItem) => item.path
 /* endregion */
 </script>
 
@@ -260,7 +260,7 @@ const getKey = (item: TreeItem) => item.path;
             :get-key="getKey"
             :ui="{
               item: 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800',
-              linkLabel: 'w-full',
+              linkLabel: 'w-full'
             }"
             @select="(e: Event, item: TreeItem) => handleSelect(item)"
           >
@@ -269,7 +269,7 @@ const getKey = (item: TreeItem) => item.path;
                 <span
                   :class="{
                     'text-gray-900 dark:text-gray-100 font-medium': item.slug,
-                    'text-gray-400': !item.slug,
+                    'text-gray-400': !item.slug
                   }"
                 >
                   {{ item.label }}

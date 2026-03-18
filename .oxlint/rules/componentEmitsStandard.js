@@ -4,66 +4,66 @@ export const componentEmitsStandard = {
     docs: {
       description: "Enforce standard component emit declaration using interface and tuple syntax.",
       category: "Best Practices",
-      recommended: true,
+      recommended: true
     },
     fixable: "code",
     messages: {
       standardizeEmits:
-        "Component emits must be exported as an interface '{{expectedName}}' using property-tuple syntax.",
-    },
+        "Component emits must be exported as an interface '{{expectedName}}' using property-tuple syntax."
+    }
   },
 
   create(context) {
-    const filename = context.filename;
-    const basename = filename.split(/[\\/]/).pop().replace(/\..*$/, "");
+    const filename = context.filename
+    const basename = filename.split(/[\\/]/).pop().replace(/\..*$/, "")
 
     const componentName = basename
       .split(/[-_]/)
       .filter(Boolean)
       .map((part) => {
         if (part.toUpperCase() === part && part.length > 1) {
-          return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+          return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
         }
-        return part.charAt(0).toUpperCase() + part.slice(1);
+        return part.charAt(0).toUpperCase() + part.slice(1)
       })
-      .join("");
+      .join("")
 
-    const expectedName = `${componentName}Emits`;
+    const expectedName = `${componentName}Emits`
 
     return {
       CallExpression(node) {
-        if (node.callee.type !== "Identifier" || node.callee.name !== "defineEmits") return;
+        if (node.callee.type !== "Identifier" || node.callee.name !== "defineEmits") return
 
         // Skip if this line already has a comment referencing this rule
-        const sourceCode = context.sourceCode;
-        const nodeRange = node.range;
+        const sourceCode = context.sourceCode
+        const nodeRange = node.range
         const textBeforeNode = sourceCode
           .getText()
-          .slice(Math.max(0, nodeRange[0] - 200), nodeRange[0]);
+          .slice(Math.max(0, nodeRange[0] - 200), nodeRange[0])
         if (
           textBeforeNode.includes("TODO") &&
           textBeforeNode.includes("component-emits-standard")
         ) {
-          return;
+          return
         }
 
-        const typeParams = node.typeParameters || node.typeArguments;
-        let needsFix = false;
-        let typeArg = null;
+        const typeParams = node.typeParameters || node.typeArguments
+        let needsFix = false
+        let typeArg = null
 
         if (typeParams && typeParams.params && typeParams.params.length > 0) {
-          typeArg = typeParams.params[0];
+          typeArg = typeParams.params[0]
 
           if (typeArg.type === "TSTypeLiteral") {
-            needsFix = true;
+            needsFix = true
           } else if (
             typeArg.type === "TSTypeReference" &&
             (typeArg.typeName.type !== "Identifier" || typeArg.typeName.name !== expectedName)
           ) {
-            needsFix = true;
+            needsFix = true
           }
         } else {
-          needsFix = true;
+          needsFix = true
         }
 
         if (needsFix) {
@@ -72,28 +72,28 @@ export const componentEmitsStandard = {
             messageId: "standardizeEmits",
             data: { expectedName },
             fix(fixer) {
-              let interfaceBody = "{\n";
-              let hasComplexSignature = false;
-              let convertedMembers = [];
+              let interfaceBody = "{\n"
+              let hasComplexSignature = false
+              let convertedMembers = []
 
               if (typeArg && typeArg.type === "TSTypeLiteral") {
                 typeArg.members.forEach((member) => {
                   // Handle Case: (e: 'change', data: RoutineCategory[]): void
                   if (member.type === "TSCallSignatureDeclaration") {
-                    const eventParam = member.params[0];
-                    const additionalParams = member.params.slice(1);
+                    const eventParam = member.params[0]
+                    const additionalParams = member.params.slice(1)
 
                     // Try to extract event name from first param if it's a literal string
-                    let eventName = null;
+                    let eventName = null
                     if (
                       eventParam &&
                       eventParam.type === "TSParameterProperty" &&
                       eventParam.parameter?.type === "Identifier" &&
                       eventParam.parameter.typeAnnotation?.typeAnnotation?.type === "TSLiteralType"
                     ) {
-                      const literal = eventParam.parameter.typeAnnotation.typeAnnotation.literal;
+                      const literal = eventParam.parameter.typeAnnotation.typeAnnotation.literal
                       if (literal && literal.type === "Literal") {
-                        eventName = literal.value;
+                        eventName = literal.value
                       }
                     }
 
@@ -104,17 +104,17 @@ export const componentEmitsStandard = {
                           param.type === "TSParameterProperty" &&
                           param.parameter.typeAnnotation
                         ) {
-                          return sourceCode.getText(param.parameter.typeAnnotation.typeAnnotation);
+                          return sourceCode.getText(param.parameter.typeAnnotation.typeAnnotation)
                         }
-                        return sourceCode.getText(param);
-                      });
+                        return sourceCode.getText(param)
+                      })
                       const tupleType =
-                        payloadTypes.length > 0 ? `[${payloadTypes.join(", ")}]` : "[]";
-                      convertedMembers.push(`  ${eventName}: ${tupleType}`);
+                        payloadTypes.length > 0 ? `[${payloadTypes.join(", ")}]` : "[]"
+                      convertedMembers.push(`  ${eventName}: ${tupleType}`)
                     } else {
                       // Can't extract event name, mark as complex
-                      hasComplexSignature = true;
-                      interfaceBody += `  /* TODO: Manual conversion required for complex signature */\n`;
+                      hasComplexSignature = true
+                      interfaceBody += `  /* TODO: Manual conversion required for complex signature */\n`
                     }
                   }
                   // Handle Case: change: [id: number] (Already correct, just transferring)
@@ -122,36 +122,36 @@ export const componentEmitsStandard = {
                     member.type === "TSPropertySignature" &&
                     member.key.type === "Identifier"
                   ) {
-                    const key = member.key.name;
+                    const key = member.key.name
                     const type = member.typeAnnotation
                       ? sourceCode.getText(member.typeAnnotation.typeAnnotation)
-                      : "[]";
-                    convertedMembers.push(`  ${key}: ${type}`);
+                      : "[]"
+                    convertedMembers.push(`  ${key}: ${type}`)
                   }
-                });
+                })
 
                 // Add converted members to interface body
                 if (convertedMembers.length > 0) {
-                  interfaceBody = "{\n" + convertedMembers.join("\n") + "\n";
+                  interfaceBody = "{\n" + convertedMembers.join("\n") + "\n"
                   if (hasComplexSignature) {
-                    interfaceBody += "}";
+                    interfaceBody += "}"
                   } else {
-                    interfaceBody += "}";
+                    interfaceBody += "}"
                   }
                 } else if (!hasComplexSignature) {
-                  interfaceBody += "}";
+                  interfaceBody += "}"
                 } else {
-                  interfaceBody += "}";
+                  interfaceBody += "}"
                 }
               } else {
-                interfaceBody = "{\n  // TODO: Define emits here\n}";
+                interfaceBody = "{\n  // TODO: Define emits here\n}"
               }
 
-              const interfaceCode = `export interface ${expectedName} ${interfaceBody}\n\n`;
-              const newDeclaration = `const emit = defineEmits<${expectedName}>()`;
+              const interfaceCode = `export interface ${expectedName} ${interfaceBody}\n\n`
+              const newDeclaration = `const emit = defineEmits<${expectedName}>()`
 
-              const parent = node.parent;
-              const targetNode = parent.type === "VariableDeclarator" ? parent.parent : node;
+              const parent = node.parent
+              const targetNode = parent.type === "VariableDeclarator" ? parent.parent : node
 
               // If there's a complex signature we couldn't fully convert, keep the original defineEmits
               // functional and add a comment explaining what needs to be done manually
@@ -159,15 +159,15 @@ export const componentEmitsStandard = {
                 // Keep original functional, just add interface + comment referencing the rule
                 return fixer.insertTextBefore(
                   targetNode,
-                  `${interfaceCode}// TODO: See custom linting rule 'component-emits-standard' for manual conversion\n`,
-                );
+                  `${interfaceCode}// TODO: See custom linting rule 'component-emits-standard' for manual conversion\n`
+                )
               }
 
-              return fixer.replaceText(targetNode, `${interfaceCode}${newDeclaration}`);
-            },
-          });
+              return fixer.replaceText(targetNode, `${interfaceCode}${newDeclaration}`)
+            }
+          })
         }
-      },
-    };
-  },
-};
+      }
+    }
+  }
+}

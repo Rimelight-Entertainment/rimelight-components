@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useAppConfig, computed } from "#imports";
-import { useI18n } from "vue-i18n";
-import { tv } from "../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "../../composables";
+import { useAppConfig, computed } from "#imports"
+import { useI18n } from "vue-i18n"
+import { tv } from "../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "../../composables"
 
 /* region Props */
 export type CalloutVariant =
@@ -13,73 +13,73 @@ export type CalloutVariant =
   | "error"
   | "commentary"
   | "ideation"
-  | "source";
+  | "source"
 
 export interface CalloutProps {
-  variant: CalloutVariant;
-  to?: string;
-  target?: string;
+  variant: CalloutVariant
+  to?: string
+  target?: string
   rc?: {
-    icon?: string;
-    tooltipIcon?: string;
-  };
+    icon?: string
+    tooltipIcon?: string
+  }
 }
 
-const { variant, to, target, rc: rcProp } = defineProps<CalloutProps>();
+const { variant, to, target, rc: rcProp } = defineProps<CalloutProps>()
 
-const { rc } = useRC("Callout", rcProp);
+const { rc } = useRC("Callout", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface CalloutEmits {}
 
-const emit = defineEmits<CalloutEmits>();
+const emit = defineEmits<CalloutEmits>()
 /* endregion */
 
 /* region Slots */
 export interface CalloutSlots {
-  default: (props: {}) => any;
-  leading: (props: { icon: string; iconClass: string }) => any;
+  default: (props: {}) => any
+  leading: (props: { icon: string; iconClass: string }) => any
 }
 
-const slots = defineSlots<CalloutSlots>();
+const slots = defineSlots<CalloutSlots>()
 /* endregion */
 
 /* region Styles */
 const calloutStyles = tv({
   slots: {
     iconClass: "size-6",
-    tooltipIcon: "pointer-events-auto size-5",
-  },
-});
+    tooltipIcon: "pointer-events-auto size-5"
+  }
+})
 
-const { iconClass, tooltipIcon } = calloutStyles();
-type CalloutVariants = VariantProps<typeof calloutStyles>;
+const { iconClass, tooltipIcon } = calloutStyles()
+type CalloutVariants = VariantProps<typeof calloutStyles>
 /* endregion */
 
 /* region State */
-const { t } = useI18n();
-const appConfig = useAppConfig();
+const { t } = useI18n()
+const appConfig = useAppConfig()
 
 const config = computed(() => {
   return (
     (appConfig.rimelightComponents as any)?.callouts?.[variant] ?? {
       icon: "lucide:alert-circle",
       title: "Callout",
-      tooltip: "Callout",
+      tooltip: "Callout"
     }
-  );
-});
+  )
+})
 
-const icon = computed(() => config.value.icon);
-const title = computed(() => config.value.title);
-const tooltip = computed(() => config.value.tooltip);
+const icon = computed(() => config.value.icon)
+const title = computed(() => config.value.title)
+const tooltip = computed(() => config.value.tooltip)
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "Callout",
-});
+  name: "Callout"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -107,7 +107,7 @@ defineOptions({
       :color="variant"
       variant="subtle"
       :close="{
-        class: 'pointer-events-none focus-visible:outline-none',
+        class: 'pointer-events-none focus-visible:outline-none'
       }"
     >
       <template #leading>

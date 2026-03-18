@@ -1,7 +1,7 @@
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path"
+import { fileURLToPath } from "node:url"
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export const rimelightViteConfig = {
   clearScreen: false,
@@ -15,21 +15,21 @@ export const rimelightViteConfig = {
           alias: {
             "~": resolve(__dirname, "..", "app"),
             "#shared": resolve(__dirname, "..", "shared"),
-            "#server": resolve(__dirname, "..", "server"),
-          },
+            "#server": resolve(__dirname, "..", "server")
+          }
         },
         test: {
           name: "unit",
           include: ["test/unit/**/*.{test,spec}.ts"],
-          environment: "node",
-        },
-      },
+          environment: "node"
+        }
+      }
     ],
     coverage: {
       enabled: true,
       provider: "v8",
-      exclude: ["**/node_modules/**", "dist/**", ".agent/**", "src-tauri/**"],
-    },
+      exclude: ["**/node_modules/**", "dist/**", ".agent/**", "src-tauri/**"]
+    }
   },
   lint: {
     jsPlugins: [resolve(__dirname, "..", ".oxlint", "rimelight.js")],
@@ -40,11 +40,11 @@ export const rimelightViteConfig = {
       "CLAUDE.md",
       "GEMINI.md",
       ".drizzle/",
-      "src-tauri/",
+      "src-tauri/"
     ],
     options: {
       typeAware: true,
-      typeCheck: true,
+      typeCheck: true
     },
     rules: {
       "no-empty-pattern": "off",
@@ -53,8 +53,8 @@ export const rimelightViteConfig = {
       "rimelight/component-props-standard": "warn",
       "rimelight/iconify-standard-format": "warn",
       "rimelight/vue-component-structure": "warn",
-      "rimelight/vue-page-structure": "warn",
-    },
+      "rimelight/vue-page-structure": "warn"
+    }
   },
   fmt: {
     ignorePatterns: [".agent/", "AGENTS.md", "CLAUDE.md", "GEMINI.md", ".drizzle/", "src-tauri/"],
@@ -66,9 +66,9 @@ export const rimelightViteConfig = {
     trailingComma: "none",
     bracketSpacing: true,
     insertFinalNewline: true,
-    experimentalSortPackageJson: true,
+    experimentalSortPackageJson: true
   },
   run: {},
   pack: {},
-  staged: {},
-};
+  staged: {}
+}
