@@ -1,34 +1,34 @@
 <script setup lang="ts">
-import * as z from "zod";
-import type { FormSubmitEvent } from "@nuxt/ui";
-import { ref, reactive } from "vue";
-import { useToast } from "@nuxt/ui/composables/useToast";
-import { tv } from "../../../internal/tv";
-import { type VariantProps } from "tailwind-variants";
-import { useRC } from "../../../composables";
+import * as v from "valibot"
+import type { FormSubmitEvent } from "@nuxt/ui"
+import { ref, reactive } from "vue"
+import { useToast } from "@nuxt/ui/composables/useToast"
+import { tv } from "../../../internal/tv"
+import { type VariantProps } from "tailwind-variants"
+import { useRC } from "../../../composables"
 
 /* region Props */
 export interface AddModalProps {
   rc?: {
-    root?: string;
-  };
+    root?: string
+  }
 }
 
-const { rc: rcProp } = defineProps<AddModalProps>();
+const { rc: rcProp } = defineProps<AddModalProps>()
 
-const { rc } = useRC("AddModal", rcProp);
+const { rc } = useRC("AddModal", rcProp)
 /* endregion */
 
 /* region Emits */
 export interface AddModalEmits {}
 
-const emit = defineEmits<AddModalEmits>();
+const emit = defineEmits<AddModalEmits>()
 /* endregion */
 
 /* region Slots */
 export interface AddModalSlots {}
 
-const slots = defineSlots<AddModalSlots>();
+const slots = defineSlots<AddModalSlots>()
 /* endregion */
 
 /* region Styles */
@@ -36,35 +36,35 @@ const addModalStyles = tv({
   slots: {
     root: "",
     form: "space-y-4",
-    actions: "flex justify-end gap-2",
-  },
-});
+    actions: "flex justify-end gap-2"
+  }
+})
 
-const { root, form, actions } = addModalStyles();
-type AddModalVariants = VariantProps<typeof addModalStyles>;
+const { root, form, actions } = addModalStyles()
+type AddModalVariants = VariantProps<typeof addModalStyles>
 /* endregion */
 
 /* region State */
-const open = ref(false);
-const toast = useToast();
+const open = ref(false)
+const toast = useToast()
 
-const schema = z.object({
-  name: z.string().min(2, "Too short"),
-  email: z.string().email("Invalid email"),
-});
+const schema = v.object({
+  name: v.pipe(v.string(), v.minLength(2, "Too short")),
+  email: v.pipe(v.string(), v.email("Invalid email"))
+})
 
-type Schema = z.output<typeof schema>;
+type Schema = v.InferOutput<typeof schema>
 
 const state = reactive<Partial<Schema>>({
   name: undefined,
-  email: undefined,
-});
+  email: undefined
+})
 /* endregion */
 
 /* region Meta */
 defineOptions({
-  name: "AddModal",
-});
+  name: "AddModal"
+})
 /* endregion */
 
 /* region Lifecycle */
@@ -86,9 +86,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   toast.add({
     title: "Success",
     description: `New customer ${event.data.name} added`,
-    color: "success",
-  });
-  open.value = false;
+    color: "success"
+  })
+  open.value = false
 }
 /* endregion */
 </script>
