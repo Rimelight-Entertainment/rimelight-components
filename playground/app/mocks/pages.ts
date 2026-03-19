@@ -1,4 +1,4 @@
-import { type Page, type PageSurround } from "rimelight-components/types"
+import { type Page, type PageSurround } from "#layers/rimelight-components/app/types"
 
 /*
  * Mock Page Data

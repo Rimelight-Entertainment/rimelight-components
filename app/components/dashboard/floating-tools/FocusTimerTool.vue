@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { watch } from "vue"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { useFocusTimer, useRC } from "../../../composables"
 import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 

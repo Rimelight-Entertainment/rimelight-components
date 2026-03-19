@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { PAGE_MAP } from "./types/page-definitions"
-import type { Page } from "rimelight-components/types"
+import type { Page } from "#layers/rimelight-components/app/types"
 import { ULink } from "#components"
 import { PiniaColadaDevtools } from "@pinia/colada-devtools"
 

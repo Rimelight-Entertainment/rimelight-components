@@ -4,8 +4,9 @@ import { addTemplate } from "@nuxt/kit"
  * Generates and adds the component map templates (JS and DTS) to the Nuxt build.
  *
  * @param blockNames An array of component names (e.g., ['ParagraphBlock', 'ImageBlock']).
+ * @param basePath The absolute base path of the layer.
  */
-export function addBlockMapTemplates(blockNames: string[]) {
+export function addBlockMapTemplates(blockNames: string[], basePath: string) {
   // Generate the Component Map Template
   const template = addTemplate({
     filename: "rimelight-block-renderer-map.mjs",
@@ -14,7 +15,11 @@ export function addBlockMapTemplates(blockNames: string[]) {
 
       blockNames.forEach((name) => {
         const fullComponentName = `${name}Renderer` // e.g., 'SectionBlockRenderer'
-        const componentPath = `rimelight-components/app/components/article/blocks/renderer/${fullComponentName}.vue`
+        const componentPath =
+          `${basePath}/app/components/article/blocks/renderer/${fullComponentName}.vue`.replace(
+            /\\/g,
+            "/"
+          )
 
         content += `  '${name}': () => import('${componentPath}'),\n`
       })
@@ -55,8 +60,9 @@ export function addBlockMapTemplates(blockNames: string[]) {
  * Editor Blocks to the Nuxt build.
  *
  * @param blockNames An array of component names (e.g., ['ParagraphBlock', 'ImageBlock']).
+ * @param basePath The absolute base path of the layer.
  */
-export function addEditorBlockMapTemplates(blockNames: string[]) {
+export function addEditorBlockMapTemplates(blockNames: string[], basePath: string) {
   // Define the type for the dynamic import functions
   // Explicitly defining this once helps with reusability and clarity.
   const componentImporterType = '() => Promise<{ default: import("vue").Component }>'
@@ -69,7 +75,11 @@ export function addEditorBlockMapTemplates(blockNames: string[]) {
 
       blockNames.forEach((name) => {
         const fullComponentName = `${name}Editor` // e.g., 'SectionBlockEditor'
-        const componentPath = `rimelight-components/app/components/article/blocks/editor/${fullComponentName}.vue`
+        const componentPath =
+          `${basePath}/app/components/article/blocks/editor/${fullComponentName}.vue`.replace(
+            /\\/g,
+            "/"
+          )
 
         // The dynamic import function
         content += `  '${name}': () => import('${componentPath}'),\n`

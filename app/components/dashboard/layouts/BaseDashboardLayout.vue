@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue"
 import type { NavigationMenuItem } from "#ui/types"
-import { useRC, useHeaderStack } from "../../../composables"
 import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 

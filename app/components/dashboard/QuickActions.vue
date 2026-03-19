@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from "@nuxt/ui"
-import { useQuickActions } from "../../composables/dashboard/useQuickActions"
-import { computed } from "vue"
 import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "../../composables"
 
 /* region Props */
 export interface QuickActionsProps {

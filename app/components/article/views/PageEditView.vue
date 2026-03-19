@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, nextTick } from "vue"
-import { useRoute, useRouter, navigateTo } from "#imports"
-import { type Page, type PageVersion, type PageDefinition } from "rimelight-components/types"
-import { getLocalizedContent, getPageResolutionPath } from "rimelight-components/utils"
-import { useI18n } from "vue-i18n"
-import { useToast } from "@nuxt/ui/composables/useToast"
+import { type Page, type PageVersion, type PageDefinition } from "../../../types"
+import { getLocalizedContent, getPageResolutionPath } from "../../../utils"
 
 /* region Props */
 export interface PageEditViewProps {

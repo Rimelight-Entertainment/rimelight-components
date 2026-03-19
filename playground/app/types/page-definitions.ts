@@ -1,4 +1,4 @@
-import { definePageDefinition } from "rimelight-components/utils"
+import { definePageDefinition } from "#layers/rimelight-components/app/utils"
 
 export const MOVIE_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.movie",

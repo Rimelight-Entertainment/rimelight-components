@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { useRoute } from "#imports"
-import { useToast } from "@nuxt/ui/composables/useToast"
-import { computed, inject, provide } from "vue"
-import { useClipboard } from "@vueuse/core"
 import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "../../composables"
-import { slugify, defaultWindow } from "../../utils"
 import { SECTION_LEVEL_KEY } from "../../internal/injectionKeys"
 
 /* region Props */

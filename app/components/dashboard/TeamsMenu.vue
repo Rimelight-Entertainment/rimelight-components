@@ -1,9 +1,6 @@
 <script lang="ts" setup>
-import { computed, watch } from "vue"
 import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "../../composables"
-import { useDashboard } from "../../composables/dashboard/useDashboard"
 
 /* region Props */
 export interface TeamsMenuProps {

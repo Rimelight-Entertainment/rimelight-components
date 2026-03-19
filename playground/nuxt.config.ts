@@ -3,15 +3,6 @@ import { defineNuxtConfig } from "nuxt/config"
 export default defineNuxtConfig({
   extends: [["..", { install: true }]],
 
-  devServer: {
-    host: "127.0.0.1",
-    port: 3000
-  },
-
-  typescript: {
-    strict: true
-  },
-
   css: ["~/assets/css/main.css"],
 
   app: {
@@ -55,6 +46,23 @@ export default defineNuxtConfig({
       owner: "Rimelight-Entertainment",
       repo: "rimelight-components"
     }
+  },
+
+  fonts: {
+    families: [
+      {
+        name: "JetBrains Mono",
+        global: true,
+        provider: "local",
+        preload: true
+      },
+      {
+        name: "Noto Sans",
+        provider: "google",
+        preload: true,
+        global: true
+      }
+    ]
   },
 
   llms: {

@@ -5,11 +5,11 @@ import {
   type InlineText,
   type InlineLink,
   type InlineMention
-} from "rimelight-components/types"
+} from "../../../types"
 import { RCTextNode, RCLinkNode, RCPageMention } from "#components"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import { useRC } from "../../../composables"
 
 /* region Props */
 export interface TextRendererProps {

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { ImageBlockProps } from "rimelight-components/types"
-import { tv } from "rimelight-components/app/internal/tv"
+import type { ImageBlockProps } from "../../../../types"
+import { tv } from "../../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
 
 /* region Props */
 export interface ImageBlockRendererProps extends ImageBlockProps {

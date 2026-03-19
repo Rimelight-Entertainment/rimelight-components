@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { inject } from "vue"
-import { getLocalizedContent } from "rimelight-components/utils"
+import { getLocalizedContent } from "../../utils"
 import { useI18n } from "vue-i18n"
-import { type Page } from "rimelight-components/types"
+import { type Page } from "../../types"
 import { useAsyncData } from "#imports"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import { useRC } from "../../composables"
 
 /* region Props */
 export interface PageMentionProps {

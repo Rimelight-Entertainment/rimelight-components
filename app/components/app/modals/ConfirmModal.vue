@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useConfirm, useRC } from "rimelight-components/composables"
+import { useConfirm, useRC } from "../../../composables"
 import { computed } from "vue"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 
 /* region Props */

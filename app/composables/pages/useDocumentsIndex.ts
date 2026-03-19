@@ -1,7 +1,7 @@
 import { computed, reactive, ref, watch } from "vue"
-import type { Page, PageType } from "#rimelight-components/types"
+import type { Page, PageType } from "../../types"
 import { usePaginatedPages } from "./usePaginatedPages"
-import { slugify } from "#rimelight-components/utils"
+import { slugify } from "../../utils"
 
 export interface NewDocumentState {
   title: string

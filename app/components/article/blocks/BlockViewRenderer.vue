@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import type { Block } from "rimelight-components/types"
-import { useRC } from "rimelight-components/composables"
+import type { Block } from "../../../types"
+import { useRC } from "../../../composables"
 import { BLOCK_RENDERER_COMPONENT_MAP } from "#build/rimelight-block-renderer-map"
 
 /* region Props */

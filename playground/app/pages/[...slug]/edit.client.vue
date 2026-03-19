@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { PAGE_MAP } from "../../types/page-definitions"
 import { MOCK_PAGES_LIST, MOCK_MOVIE_SURROUND } from "../../mocks/pages"
-import { type Page, type PageSurround, type PageVersion } from "rimelight-components/types"
-import { convertVersionToPage } from "rimelight-components/utils"
+import {
+  type Page,
+  type PageSurround,
+  type PageVersion
+} from "#layers/rimelight-components/app/types"
+import { convertVersionToPage } from "#layers/rimelight-components/app/utils"
 
 const route = useRoute()
 const { t, locale } = useI18n()
@@ -77,9 +81,10 @@ const handleSave = (updatedPage: Page) => {
   }, 1500)
 }
 
+export interface EditPageEmits {}
 const handleFetchPages = async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000))
-  return MOCK_PAGES_LIST.map((p) => ({ title: p.title, slug: p.slug }))
+  return MOCK_PAGES_LIST.map((p) => ({ title: p.title, slug: p.slug, id: p.id, type: p.type }))
 }
 
 const handleCreatePage = async (pageData: Partial<Page>) => {

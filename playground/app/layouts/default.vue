@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useHeaderStack } from "rimelight-components/composables"
+import { useHeaderStack } from "#layers/rimelight-components/app/composables"
 
 const { totalHeight } = useHeaderStack()
 </script>

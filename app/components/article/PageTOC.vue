@@ -2,10 +2,10 @@
 import { computed, ref, onMounted, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { useIntersectionObserver } from "@vueuse/core"
-import { tv } from "rimelight-components/app/internal/tv"
-import { useRC } from "rimelight-components/composables"
-import type { Block, SectionBlockProps, HeadingLevel } from "rimelight-components/types"
-import { slugify, defaultDocument } from "rimelight-components/utils"
+import { tv } from "../../internal/tv"
+import { useRC } from "../../composables"
+import type { Block, SectionBlockProps, HeadingLevel } from "../../types"
+import { slugify, defaultDocument } from "../../utils"
 import { type VariantProps } from "tailwind-variants"
 
 /* region Props */

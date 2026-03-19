@@ -1,4 +1,4 @@
-import { definePageDefinition } from "#rimelight-components/utils/cms"
+import { definePageDefinition } from "../utils/cms"
 
 export const DOCUMENT_DEFINITION = definePageDefinition({
   typeLabelKey: "page.type.document",

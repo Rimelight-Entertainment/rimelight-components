@@ -1,22 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, useTemplateRef, provide, watch } from "vue"
-import { navigateTo } from "#imports"
 import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types"
-import {
-  usePageEditor,
-  usePageRegistry,
-  useRC,
-  useHeaderStack,
-  useConfirm
-} from "../../composables"
-import {
-  getLocalizedContent,
-  syncPageWithDefinition,
-  dehydratePageProperties,
-  defaultDocument,
-  defaultWindow
-} from "../../utils"
-import { useI18n } from "vue-i18n"
 import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 

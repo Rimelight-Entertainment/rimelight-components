@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
-import { useRC } from "rimelight-components/composables"
-import { tv } from "rimelight-components/app/internal/tv"
-import { getLocalizedContent } from "rimelight-components/utils"
+import { useRC } from "../../../composables"
+import { tv } from "../../../internal/tv"
+import { getLocalizedContent } from "../../../utils"
 import { useI18n } from "vue-i18n"
-import type { Page } from "rimelight-components/types"
+import type { Page } from "../../../types"
 import { type VariantProps } from "tailwind-variants"
 
 /* region Props */

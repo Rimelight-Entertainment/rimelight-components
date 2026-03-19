@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { inject, ref, computed, watch } from "vue"
-import { type SectionBlockProps } from "rimelight-components/types"
-import { tv } from "rimelight-components/app/internal/tv"
+import { type SectionBlockProps } from "../../../../types"
+import { tv } from "../../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
-import { SECTION_LEVEL_KEY } from "rimelight-components/app/internal/injectionKeys"
+import { SECTION_LEVEL_KEY } from "../../../../internal/injectionKeys"
 
 /* region Props */
 export interface SectionBlockEditorProps extends SectionBlockProps {

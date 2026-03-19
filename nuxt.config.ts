@@ -3,15 +3,19 @@ import { fileURLToPath } from "node:url"
 import { dirname, resolve, basename } from "node:path"
 import { readdirSync } from "node:fs"
 import { addBlockMapTemplates, addEditorBlockMapTemplates } from "./scripts/templates"
-import { defaultOptions } from "./scripts/defaults"
 
 const currentDir = dirname(fileURLToPath(import.meta.url))
 
 export default defineNuxtConfig({
+  $meta: {
+    name: "rimelight-components"
+  },
+
   compatibilityDate: "2026-02-13",
   future: {
     compatibilityVersion: 5
   },
+
   experimental: {
     viteEnvironmentApi: true,
     typescriptPlugin: true,
@@ -63,7 +67,7 @@ export default defineNuxtConfig({
       })
 
       // Generate the Component Map Template
-      const blockRendererTemplate = addBlockMapTemplates(blockRendererNames)
+      const blockRendererTemplate = addBlockMapTemplates(blockRendererNames, currentDir)
 
       // Expose the map template to the runtime via an alias
       nuxt.options.alias["#build/rimelight-block-renderer-map"] = blockRendererTemplate.dst
@@ -78,7 +82,7 @@ export default defineNuxtConfig({
       })
 
       // Generate the Component Map Template
-      const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames)
+      const blockEditorTemplate = addEditorBlockMapTemplates(blockEditorNames, currentDir)
 
       // Expose the map template to the runtime via an alias
       nuxt.options.alias["#build/rimelight-block-editor-map"] = blockEditorTemplate.dst
@@ -160,7 +164,8 @@ export default defineNuxtConfig({
       }
     },
     site: {
-      indexable: false,
+      url: "https://rimelight-components.com",
+      indexable: true,
       trailingSlash: false
     },
     robots: {
@@ -170,12 +175,6 @@ export default defineNuxtConfig({
     },
     a11y: {
       enabled: false
-    },
-    content: {
-      database: {
-        type: "d1",
-        bindingName: "DB"
-      }
     }
   },
 
@@ -186,34 +185,37 @@ export default defineNuxtConfig({
     }
   },
 
-  alias: {
-    "#rimelight-components/types": resolve(currentDir, "app/types"),
-    "#rimelight-components/utils": resolve(currentDir, "app/utils"),
-    "rimelight-components/types": resolve(currentDir, "app/types"),
-    "rimelight-components/utils": resolve(currentDir, "app/utils"),
-    "#rimelight-components/validators": resolve(currentDir, "shared/validators"),
-    "rimelight-components/validators": resolve(currentDir, "shared/validators"),
-    "#rimelight-components/auth": resolve(currentDir, "shared/auth"),
-    "rimelight-components/auth": resolve(currentDir, "shared/auth"),
-    "#rimelight-components/db": resolve(currentDir, "shared/db"),
-    "rimelight-components/db": resolve(currentDir, "shared/db"),
-    "#rimelight-components/composables": resolve(currentDir, "app/composables"),
-    "rimelight-components/composables": resolve(currentDir, "app/composables"),
-    "rimelight-components": currentDir
-  },
-
   ssr: true,
 
   app: {
     baseURL: "/",
     head: {
-      htmlAttrs: { lang: "en-US" }
+      htmlAttrs: { lang: "en-US" },
+      title: "Rimelight Components",
+      titleTemplate: "%s | Rimelight Components",
+      meta: [
+        {
+          name: "description",
+          content: "A component library."
+        },
+        {
+          name: "author",
+          content: "Rimelight Entertainment"
+        },
+        {
+          name: "creator",
+          content: "Rimelight Entertainment"
+        }
+      ],
+      link: [
+        {
+          rel: "icon",
+          type: "image/svg+xml",
+          href: "/favicon.svg"
+        }
+      ]
     },
     viewTransition: true
-  },
-
-  appConfig: {
-    rimelightComponents: defaultOptions
   },
 
   htmlValidator: {
@@ -224,67 +226,6 @@ export default defineNuxtConfig({
   },
 
   security: {
-    strict: false,
-    headers: {
-      contentSecurityPolicy: {
-        "default-src": ["'none'"],
-        "base-uri": ["'none'"],
-        "font-src": ["'self'", "https:", "data:", "https://fonts.gstatic.com"],
-        "form-action": ["'self'"],
-        "frame-ancestors": ["'self'"],
-        "img-src": [
-          "'self'",
-          "data:",
-          "https://cdn.rimelight-components.com",
-          "https://placehold.co",
-          "https://avatars.githubusercontent.com",
-          "https://i.ytimg.com",
-          "https://*.youtube.com"
-        ],
-        "object-src": ["'none'"],
-        "script-src-attr": ["'none'"],
-        "style-src": ["'self'", "https:", "'unsafe-inline'"],
-        "script-src": [
-          "'self'",
-          "https:",
-          "'unsafe-inline'",
-          "'strict-dynamic'",
-          "'nonce-{{nonce}}'",
-          "'wasm-unsafe-eval'",
-          "https://esm.sh",
-          "https://static.cloudflareinsights.com",
-          "https://www.youtube.com",
-          "https://s.ytimg.com"
-        ],
-        "frame-src": ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
-        "connect-src": [
-          "'self'",
-          "https://rimelight-components.com",
-          "https://api.iconify.design",
-          "https://api.unisvg.com",
-          "https://api.simplesvg.com",
-          "https://cloudflareinsights.com",
-          "https://static.cloudflareinsights.com",
-          "https://nuxt.studio",
-          "https://*.nuxt.com",
-          "https://*.nuxt.dev",
-          "https://api.github.com",
-          "https://raw.githubusercontent.com",
-          "https://esm.sh",
-          "https://*.youtube.com"
-        ]
-      },
-      strictTransportSecurity: {
-        maxAge: 31536000,
-        includeSubdomains: true,
-        preload: true
-      },
-      crossOriginOpenerPolicy: "same-origin",
-      crossOriginEmbedderPolicy: "unsafe-none",
-      referrerPolicy: "strict-origin-when-cross-origin",
-      xFrameOptions: "SAMEORIGIN",
-      xContentTypeOptions: "nosniff"
-    },
     nonce: true,
     ssg: {
       meta: true,
@@ -338,43 +279,18 @@ export default defineNuxtConfig({
     ]
   },
 
-  css: [],
-
   components: [
     {
       path: resolve(currentDir, "app/components"),
       pathPrefix: false,
-      prefix: "RC",
-      global: false,
-      ignore: ["**/index.*"]
+      prefix: "RC"
     }
   ],
-
-  pages: {
-    pattern: ["**/*.vue", "!**/components/**"]
-  },
 
   colorMode: {
     preference: "system",
     fallback: "dark",
     dataValue: "theme"
-  },
-
-  fonts: {
-    families: [
-      {
-        name: "JetBrains Mono",
-        global: true,
-        provider: "local",
-        preload: true
-      },
-      {
-        name: "Noto Sans",
-        provider: "google",
-        preload: true,
-        global: true
-      }
-    ]
   },
 
   icon: {
@@ -392,6 +308,10 @@ export default defineNuxtConfig({
     zeroRuntime: true
   },
 
+  sitemap: {
+    zeroRuntime: true
+  },
+
   content: {
     build: {
       markdown: {
@@ -406,7 +326,18 @@ export default defineNuxtConfig({
     i18n: {
       defaultLocale: "en"
     },
-    route: "/studio"
+    route: "/studio",
+    repository: {
+      provider: "github",
+      owner: "Rimelight-Entertainment",
+      repo: "rimelight-components"
+    }
+  },
+
+  llms: {
+    domain: "https://rimelight-components.com",
+    title: "Rimelight Components",
+    description: "A component library."
   },
 
   ui: {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { normalizeUsername, RESTRICTED_SET } from "rimelight-components/auth/restricted-usernames"
+import { normalizeUsername, RESTRICTED_SET } from "../../../shared/auth/restricted-usernames"
 import * as v from "valibot"
 import { reactive, ref, computed, useTemplateRef } from "vue"
 import type { FormSubmitEvent, StepperItem } from "#ui/types"

@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { useRoute, useAppConfig, useHead, useSeoMeta } from "#imports"
-import { type Page } from "rimelight-components/types"
-import { getLocalizedContent } from "rimelight-components/utils"
-import { useI18n } from "vue-i18n"
+import { type Page } from "../../../types"
+import { getLocalizedContent, getPageResolutionPath } from "../../../utils"
 
 /* region Props */
 export interface PageLiveViewProps {

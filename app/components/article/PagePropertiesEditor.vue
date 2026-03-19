@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { computed, ref, reactive } from "vue"
-import { useI18n } from "vue-i18n"
-import { usePageRegistry, useInfobox, useRC } from "../../composables"
-import { getLocalizedContent } from "../../utils"
 import type { TabsItem } from "@nuxt/ui"
 import { type Page, type Link, type Localized } from "../../types"
 import { tv } from "../../internal/tv"

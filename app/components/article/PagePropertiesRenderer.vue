@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import { computed } from "vue"
-import { getLocalizedContent } from "rimelight-components/utils"
-import { usePageRegistry, useInfobox, useRC } from "rimelight-components/composables"
-import { useToast } from "@nuxt/ui/composables/useToast"
 import type { TabsItem } from "@nuxt/ui"
-import { useI18n } from "vue-i18n"
-import { useShare, useClipboard } from "@vueuse/core"
-import { type Page } from "rimelight-components/types"
-import { tv } from "rimelight-components/app/internal/tv"
+import { type Page } from "../../types"
+import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 
 /* region Props */

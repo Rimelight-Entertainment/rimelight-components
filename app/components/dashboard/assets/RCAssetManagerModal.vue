@@ -1,15 +1,7 @@
 <script lang="ts" setup>
-import { ref, watch, computed } from "vue"
-import { useRC, useAuth, useAssetManagement } from "#rimelight-components/composables"
-import { tv } from "../../../internal/tv"
 import type { TreeItem } from "@nuxt/ui"
 import draggable from "vuedraggable/src/vuedraggable"
-import { useI18n } from "vue-i18n"
 import { useClipboard } from "@vueuse/core"
-import { useRoute } from "#imports"
-import { useToast } from "@nuxt/ui/composables"
-import { defaultWindow } from "../../../utils"
-import { useAppConfig } from "#imports"
 
 /* region Props */
 export interface RCAssetManagerModalProps {

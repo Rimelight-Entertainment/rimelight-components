@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MOCK_PAGES_LIST, MOCK_MOVIE_SURROUND } from "../../mocks/pages"
-import { type Page, type PageSurround } from "rimelight-components/types"
+import { type Page, type PageSurround } from "#layers/rimelight-components/app/types"
 
 const route = useRoute()
 const { locale } = useI18n()

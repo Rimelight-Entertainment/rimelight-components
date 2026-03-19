@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { DropdownMenuItem, NavigationMenuItem } from "@nuxt/ui"
-import { useHeaderStack } from "rimelight-components/composables"
+import { useHeaderStack } from "#layers/rimelight-components/app/composables"
 import { type VariantProps } from "tailwind-variants"
 import { computed, inject, reactive, ref } from "vue"
-import { tv } from "../../../app/internal/tv"
+import { tv } from "#layers/rimelight-components/app/internal/tv"
 import { MOCK_PAGES_LIST } from "../mocks/pages"
 
 /* region Props */

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useFloatingTools } from "rimelight-components/composables"
-import { tv } from "rimelight-components/app/internal/tv"
+import { useFloatingTools } from "../../composables"
+import { tv } from "../../internal/tv"
+import { useRC } from "../../composables"
 import { type VariantProps } from "tailwind-variants"
 
 /* region Props */

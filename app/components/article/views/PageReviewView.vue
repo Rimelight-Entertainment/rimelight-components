@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref, computed, watch, useTemplateRef } from "vue"
 import { useRoute, useRouter, navigateTo, useAppConfig } from "#imports"
-import { type Page, type PageVersion, type PageDefinition } from "rimelight-components/types"
+import { type Page, type PageVersion, type PageDefinition } from "../../../types"
 import {
   convertVersionToPage,
   syncPageWithDefinition,
   getLocalizedContent,
   getPageResolutionPath
-} from "rimelight-components/utils"
-import { usePageRegistry, useHeaderStack, useRC } from "rimelight-components/composables"
+} from "../../../utils"
+import { usePageRegistry, useHeaderStack, useRC } from "../../../composables"
 import { useI18n } from "vue-i18n"
 import { useToast } from "@nuxt/ui/composables/useToast"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../../internal/tv"
 
 /* region Props */
 export interface PageReviewViewProps {

@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, inject } from "vue"
-import {
-  BLOCK_DEFINITIONS,
-  CATEGORY_ORDER,
-  type BlockDefinition
-} from "rimelight-components/utils/blocks"
-import { useRC } from "rimelight-components/composables"
+import { BLOCK_DEFINITIONS, CATEGORY_ORDER, type BlockDefinition } from "../../../utils/blocks"
+import { useRC } from "../../../composables"
 import { useI18n } from "vue-i18n"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { SECTION_LEVEL_KEY } from "rimelight-components/app/internal/injectionKeys"
+import { SECTION_LEVEL_KEY } from "../../../internal/injectionKeys"
 
 /* region Props */
 export interface AddBlockModalProps {

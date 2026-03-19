@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { ParagraphBlockProps } from "rimelight-components/types"
-import { tv } from "rimelight-components/app/internal/tv"
+import type { ParagraphBlockProps } from "../../../../types"
+import { tv } from "../../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
 
 /* region Props */
 export interface ParagraphBlockRendererProps extends ParagraphBlockProps {
