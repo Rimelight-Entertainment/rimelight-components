@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, provide, watch } from "vue"
-import { type Page, type PageSurround } from "rimelight-components/types"
-import { getLocalizedContent, syncPageWithDefinition } from "rimelight-components/utils"
+import { type Page, type PageSurround } from "../../types"
+import { getLocalizedContent, syncPageWithDefinition } from "../../utils"
 import { useI18n } from "vue-i18n"
-import { usePageRegistry, useRC } from "rimelight-components/composables"
-import { tv } from "rimelight-components/app/internal/tv"
+import { usePageRegistry, useRC } from "../../composables"
+import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 
 /* region Props */

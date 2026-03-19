@@ -14,7 +14,9 @@ type ComponentImporter = () => Promise<{ default: Component }>
  */
 const rendererCache = new Map<string, Component>()
 
-export const getBlockRendererComponent = (type: BlockType | string): Component | undefined => {
+export const getBlockRendererComponent = (
+  type: BlockType | (string & {})
+): Component | undefined => {
   if (rendererCache.has(type)) return rendererCache.get(type)
 
   const componentImporter = BLOCK_RENDERER_COMPONENT_MAP[type] as ComponentImporter | undefined
@@ -37,7 +39,7 @@ export const getBlockRendererComponent = (type: BlockType | string): Component |
 
 const editorCache = new Map<string, Component>()
 
-export const getBlockEditorComponent = (type: BlockType | string): Component | undefined => {
+export const getBlockEditorComponent = (type: BlockType | (string & {})): Component | undefined => {
   if (editorCache.has(type)) return editorCache.get(type)
 
   const componentImporter = BLOCK_EDITOR_COMPONENT_MAP[type] as ComponentImporter | undefined

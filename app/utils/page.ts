@@ -9,7 +9,7 @@ import {
 } from "#rimelight-components/types"
 
 export const getLocalizedContent = <T = string>(
-  field: Localized<T> | T | any | undefined,
+  field: Localized<T> | T | undefined,
   currentLocale: MaybeRefOrGetter<string>
 ): T | string => {
   if (field === undefined || field === null) return ""

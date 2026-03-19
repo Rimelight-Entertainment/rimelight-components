@@ -15,7 +15,7 @@ export interface FloatingActionsOverlayProps {
   // };
 }
 
-const {} = defineProps<FloatingActionsOverlayProps>()
+defineProps<FloatingActionsOverlayProps>()
 /* endregion */
 
 /* region Emits */

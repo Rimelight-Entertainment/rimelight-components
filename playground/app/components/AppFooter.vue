@@ -9,7 +9,7 @@ export interface AppFooterProps {
   // prop1: string,
 }
 
-const {} = defineProps<AppFooterProps>()
+defineProps<AppFooterProps>()
 /* endregion */
 
 /* region Emits */

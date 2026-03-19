@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import chroma from "chroma-js"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC, useHeaderStack } from "rimelight-components/composables"
+import { useRC, useHeaderStack } from "../../../composables"
 
 /* region Props */
 export interface SwatchData {

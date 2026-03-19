@@ -68,7 +68,7 @@ export interface BasePage {
   postedAt?: Date | null
   createdAt: Date
   updatedAt: Date
-  status?: "published" | "draft" | "archived" | string
+  status?: "published" | "draft" | "archived" | (string & {})
 }
 
 /**

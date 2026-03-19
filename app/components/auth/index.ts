@@ -1,3 +1,3 @@
-export { default as AuthLayout } from "rimelight-components/app/components/auth/AuthLayout.vue"
-export { default as AuthSignInForm } from "rimelight-components/app/components/auth/AuthSignInForm.vue"
-export { default as AuthSignUpForm } from "rimelight-components/app/components/auth/AuthSignUpForm.vue"
+export { default as AuthLayout } from "./AuthLayout.vue"
+export { default as AuthSignInForm } from "./AuthSignInForm.vue"
+export { default as AuthSignUpForm } from "./AuthSignUpForm.vue"

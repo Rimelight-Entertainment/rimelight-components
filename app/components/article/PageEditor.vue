@@ -1,28 +1,23 @@
 <script setup lang="ts">
 import { ref, computed, useTemplateRef, provide, watch } from "vue"
 import { navigateTo } from "#imports"
-import {
-  type Page,
-  type PageSurround,
-  type PageDefinition,
-  type PageVersion
-} from "rimelight-components/types"
+import { type Page, type PageSurround, type PageDefinition, type PageVersion } from "../../types"
 import {
   usePageEditor,
   usePageRegistry,
   useRC,
   useHeaderStack,
   useConfirm
-} from "rimelight-components/composables"
+} from "../../composables"
 import {
   getLocalizedContent,
   syncPageWithDefinition,
   dehydratePageProperties,
   defaultDocument,
   defaultWindow
-} from "rimelight-components/utils"
+} from "../../utils"
 import { useI18n } from "vue-i18n"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 
 /* region Props */

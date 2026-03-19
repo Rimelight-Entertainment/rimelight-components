@@ -1,7 +1,4 @@
-import { defu } from "defu"
-import { rimelightViteConfig } from "./.rimelight\rimelight.vite"
 import { defineNuxtConfig } from "nuxt/config"
-import { isCI } from "std-env"
 import { fileURLToPath } from "node:url"
 import { dirname, resolve, basename } from "node:path"
 import { readdirSync } from "node:fs"
@@ -163,8 +160,6 @@ export default defineNuxtConfig({
       }
     },
     site: {
-      url: "https://rimelight-components.com",
-      // Switch to true on release
       indexable: false,
       trailingSlash: false
     },
@@ -212,30 +207,7 @@ export default defineNuxtConfig({
   app: {
     baseURL: "/",
     head: {
-      htmlAttrs: { lang: "en-US" },
-      title: "Rimelight Components",
-      titleTemplate: "%s | Rimelight Components",
-      meta: [
-        {
-          name: "description",
-          content: "A component library."
-        },
-        {
-          name: "author",
-          content: "Rimelight Entertainment"
-        },
-        {
-          name: "creator",
-          content: "Rimelight Entertainment"
-        }
-      ],
-      link: [
-        {
-          rel: "icon",
-          type: "image/svg+xml",
-          href: "/favicon.svg"
-        }
-      ]
+      htmlAttrs: { lang: "en-US" }
     },
     viewTransition: true
   },
@@ -366,7 +338,7 @@ export default defineNuxtConfig({
     ]
   },
 
-  css: [resolve(currentDir, "app/assets/css/main.css")],
+  css: [],
 
   components: [
     {
@@ -408,28 +380,12 @@ export default defineNuxtConfig({
   icon: {
     mode: "svg",
     class: "icon",
-    size: "24px",
-    customCollections: [
-      {
-        prefix: "first-party",
-        dir: "./app/assets/icons/first-party",
-        normalizeIconName: false
-      },
-      {
-        prefix: "third-party",
-        dir: "./app/assets/icons/third-party",
-        normalizeIconName: false
-      }
-    ]
+    size: "24px"
   },
 
   image: {
     format: ["webp"],
-    provider: "cloudflare",
-    domains: ["rimelight-components.com"],
-    cloudflare: {
-      baseURL: "https://cdn.rimelight-components.com"
-    }
+    provider: "cloudflare"
   },
 
   ogImage: {
@@ -450,18 +406,7 @@ export default defineNuxtConfig({
     i18n: {
       defaultLocale: "en"
     },
-    route: "/studio",
-    repository: {
-      provider: "github",
-      owner: "Rimelight-Entertainment",
-      repo: "rimelight-components"
-    }
-  },
-
-  llms: {
-    domain: "https://rimelight-components.com",
-    title: "Rimelight Components",
-    description: "A component library."
+    route: "/studio"
   },
 
   ui: {

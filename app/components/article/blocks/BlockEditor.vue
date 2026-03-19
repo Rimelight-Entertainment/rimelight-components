@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { provide, ref } from "vue"
 import { v7 as uuidv7 } from "uuid"
-import type { Block } from "rimelight-components/types"
-import { useBlockEditor, useRC } from "rimelight-components/composables"
-import { type BlockDefinition } from "rimelight-components/utils/blocks"
+import type { Block } from "../../../types"
+import { useBlockEditor, useRC } from "../../../composables"
+import { type BlockDefinition } from "../../../utils/blocks"
 import { useI18n } from "vue-i18n"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 
 /* region Props */

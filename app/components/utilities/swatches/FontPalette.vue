@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue"
 import chroma from "chroma-js"
-import { useRC, useHeaderStack } from "rimelight-components/composables"
-import { tv } from "rimelight-components/app/internal/tv"
+import { useRC, useHeaderStack } from "../../../composables"
+import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 import { useI18n } from "vue-i18n"
 

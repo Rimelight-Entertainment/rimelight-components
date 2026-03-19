@@ -11,7 +11,7 @@ export interface AppHeaderProps {
   // prop1: string,
 }
 
-const {} = defineProps<AppHeaderProps>()
+defineProps<AppHeaderProps>()
 /* endregion */
 
 /* region Emits */

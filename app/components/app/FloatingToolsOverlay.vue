@@ -9,7 +9,7 @@ export interface FloatingToolsOverlayProps {
   // prop2?: number,
 }
 
-const {} = defineProps<FloatingToolsOverlayProps>()
+defineProps<FloatingToolsOverlayProps>()
 /* endregion */
 
 /* region Emits */

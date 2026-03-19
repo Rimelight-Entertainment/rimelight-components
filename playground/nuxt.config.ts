@@ -1,41 +1,33 @@
-import { defu } from "defu"
-import { rimelightViteConfig } from "./.rimelight\rimelight.vite"
 import { defineNuxtConfig } from "nuxt/config"
 
 export default defineNuxtConfig({
-  vite: defu({}, rimelightViteConfig),
-  compatibilityDate: "2026-02-13",
-  devtools: { enabled: true },
+  extends: [["..", { install: true }]],
+
   devServer: {
     host: "127.0.0.1",
     port: 3000
   },
+
   typescript: {
-    strict: true,
-    typeCheck: false
-  },
-  future: {
-    compatibilityVersion: 5
-  },
-  extends: [".."],
-
-  modules: [],
-
-  $development: {
-    site: { indexable: false }
+    strict: true
   },
 
-  $test: {},
-
-  $production: {},
-
-  build: {
-    transpile: ["@nuxt/ui"]
-  },
   css: ["~/assets/css/main.css"],
+
+  app: {
+    head: {
+      title: "Rimelight Components",
+      titleTemplate: "%s | Rimelight Components",
+      meta: [
+        { name: "description", content: "A component library." },
+        { name: "author", content: "Rimelight Entertainment" },
+        { name: "creator", content: "Rimelight Entertainment" }
+      ],
+      link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }]
+    }
+  },
+
   icon: {
-    class: "icon",
-    size: "24px",
     customCollections: [
       {
         prefix: "first-party",
@@ -49,15 +41,31 @@ export default defineNuxtConfig({
       }
     ]
   },
-  i18n: {
-    strategy: "prefix_except_default",
-    defaultLocale: "en"
-  },
-  nitro: {
-    preset: "cloudflare_module",
+
+  image: {
+    domains: ["rimelight-components.com"],
     cloudflare: {
-      deployConfig: true,
-      nodeCompat: true
+      baseURL: "https://cdn.rimelight-components.com"
+    }
+  },
+
+  studio: {
+    repository: {
+      provider: "github",
+      owner: "Rimelight-Entertainment",
+      repo: "rimelight-components"
+    }
+  },
+
+  llms: {
+    domain: "https://rimelight-components.com",
+    title: "Rimelight Components",
+    description: "A component library."
+  },
+
+  $production: {
+    site: {
+      url: "https://rimelight-components.com"
     }
   }
 })

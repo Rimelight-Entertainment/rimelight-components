@@ -96,22 +96,30 @@ export const MOCK_MOVIE_PAGE: Page = {
       label: { en: "Movie Information" },
       defaultOpen: true,
       fields: {
-        director: { value: { en: "The Wachowskis" }, label: { en: "Director" }, type: "text" },
-        releaseYear: { value: 1999, label: { en: "Release Year" }, type: "number" },
-        genre: { value: { en: "Sci-Fi" }, label: { en: "Genre" }, type: "text" },
+        director: {
+          defaultValue: { en: "The Wachowskis" },
+          label: { en: "Director" },
+          type: "text"
+        },
+        releaseYear: { defaultValue: 1999, label: { en: "Release Year" }, type: "number" },
+        genre: { defaultValue: { en: "Sci-Fi" }, label: { en: "Genre" }, type: "text" },
         cast: {
-          value: [{ en: "Keanu Reeves" }, { en: "Laurence Fishburne" }, { en: "Carrie-Anne Moss" }],
+          defaultValue: [
+            { en: "Keanu Reeves" },
+            { en: "Laurence Fishburne" },
+            { en: "Carrie-Anne Moss" }
+          ],
           label: { en: "Cast" },
           type: "text-array"
         },
         sequel: {
-          value: "movie-2",
+          defaultValue: "movie-2",
           label: { en: "Sequel" },
           type: "page",
           allowedPageTypes: ["Movie"]
         },
         relatedMedia: {
-          value: ["movie-1", "movie-1"],
+          defaultValue: ["movie-1", "movie-1"],
           label: { en: "Related Media" },
           type: "page-array",
           allowedPageTypes: ["Movie"]
@@ -123,23 +131,23 @@ export const MOCK_MOVIE_PAGE: Page = {
       defaultOpen: false,
       fields: {
         studio: {
-          value: { en: "Warner Bros." },
+          defaultValue: { en: "Warner Bros." },
           label: { en: "Lead Studio" },
           type: "text"
         },
         budget: {
-          value: 63000000,
+          defaultValue: 63000000,
           label: { en: "Budget (USD)" },
           type: "number"
         },
         status: {
-          value: "Released",
+          defaultValue: "Released",
           label: { en: "Current Status" },
           type: "enum",
           options: ["Pre-Production", "Filming", "Post-Production", "Released"]
         },
         locations: {
-          value: [{ en: "Sydney, Australia" }, { en: "San Francisco, USA" }],
+          defaultValue: [{ en: "Sydney, Australia" }, { en: "San Francisco, USA" }],
           label: { en: "Filming Locations" },
           type: "text-array"
         }
@@ -198,7 +206,7 @@ export const MOCK_PAGES_LIST: Page[] = [
         ...MOCK_MOVIE_PAGE.properties.info,
         fields: {
           ...MOCK_MOVIE_PAGE.properties.info?.fields,
-          releaseYear: { value: 2003, label: { en: "Release Year" }, type: "number" }
+          releaseYear: { defaultValue: 2003, label: { en: "Release Year" }, type: "number" }
         }
       }
     }
@@ -227,7 +235,7 @@ export const MOCK_PAGES_LIST: Page[] = [
         ...MOCK_MOVIE_PAGE.properties.info,
         fields: {
           ...MOCK_MOVIE_PAGE.properties.info?.fields,
-          releaseYear: { value: 2003, label: { en: "Release Year" }, type: "number" }
+          releaseYear: { defaultValue: 2003, label: { en: "Release Year" }, type: "number" }
         }
       }
     }

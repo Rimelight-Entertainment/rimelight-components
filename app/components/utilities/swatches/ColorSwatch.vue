@@ -3,9 +3,9 @@ import { useToast } from "@nuxt/ui/composables/useToast"
 import { computed } from "vue"
 import { useClipboard } from "@vueuse/core"
 import { useI18n } from "vue-i18n"
-import { tv } from "rimelight-components/app/internal/tv"
+import { tv } from "../../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "rimelight-components/composables"
+import { useRC } from "../../../composables"
 
 /* region Props */
 export interface ColorSwatchProps {

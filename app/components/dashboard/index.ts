@@ -1,7 +1,7 @@
-export { default as NotificationsSlideover } from "rimelight-components/app/components/dashboard/NotificationsSlideover.vue"
-export { default as QuickActions } from "rimelight-components/app/components/dashboard/QuickActions.vue"
-export { default as TeamsMenu } from "rimelight-components/app/components/dashboard/TeamsMenu.vue"
-export { default as OrganizationsMenu } from "rimelight-components/app/components/dashboard/OrganizationsMenu.vue"
+export { default as NotificationsSlideover } from "./NotificationsSlideover.vue"
+export { default as QuickActions } from "./QuickActions.vue"
+export { default as TeamsMenu } from "./TeamsMenu.vue"
+export { default as OrganizationsMenu } from "./OrganizationsMenu.vue"
 
 export * from "./assets"
 export * from "./customers"

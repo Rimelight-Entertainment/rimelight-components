@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, onMounted, useTemplateRef, watch, nextTick } from "vue"
+import { reactive, onMounted, useTemplateRef, watch, nextTick, computed } from "vue"
 import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
 import { useRC } from "../../composables"
