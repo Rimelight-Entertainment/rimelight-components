@@ -5,24 +5,24 @@ export default defineAppConfig({
   rimelightComponents: {
     logos: {
       logomark: {
-        black: "logos:PLAYGROUND_LOGOMARK_BLACK",
-        white: "logos:PLAYGROUND_LOGOMARK_WHITE",
-        color: "logos:PLAYGROUND_LOGOMARK_COLOR"
+        black: "first-party:logomark-white",
+        white: "first-party:logomark-white",
+        color: "first-party:logomark-white"
       },
       logotype: {
-        black: "logos:PLAYGROUND_LOGOTYPE_BLACK",
-        white: "logos:PLAYGROUND_LOGOTYPE_WHITE",
-        color: "logos:PLAYGROUND_LOGOTYPE_COLOR"
+        black: "first-party:logotype-white",
+        white: "first-party:logotype-white",
+        color: "first-party:logotype-white"
       },
       combomark_horizontal: {
-        black: "logos:PLAYGROUND_COMBOMARK_HORIZONTAL_BLACK",
-        white: "logos:PLAYGROUND_COMBOMARK_HORIZONTAL_WHITE",
-        color: "logos:PLAYGROUND_COMBOMARK_HORIZONTAL_COLOR"
+        black: "first-party:logotype-white",
+        white: "first-party:logotype-white",
+        color: "first-party:logotype-white"
       },
       combomark_vertical: {
-        black: "logos:PLAYGROUND_COMBOMARK_VERTICAL_BLACK",
-        white: "logos:PLAYGROUND_COMBOMARK_VERTICAL_WHITE",
-        color: "logos:PLAYGROUND_COMBOMARK_VERTICAL_COLOR"
+        black: "first-party:logotype-white",
+        white: "first-party:logotype-white",
+        color: "first-party:logotype-white"
       }
     },
     callouts: {

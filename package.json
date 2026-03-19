@@ -29,6 +29,7 @@
     "./auth": "./shared/auth/index.ts",
     "./auth/*": "./shared/auth/*",
     "./db": "./shared/db/index.ts",
+    "./validators/*": "./shared/validators/*",
     "./components/*": "./app/components/*"
   },
   "scripts": {

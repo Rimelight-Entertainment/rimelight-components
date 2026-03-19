@@ -51,12 +51,13 @@ type ScrollToTopVariants = VariantProps<typeof scrollToTopStyles>
 /* endregion */
 
 /* region State */
+const { t } = useI18n()
 const { isVisible, scrollToTop, scrollPercentage } = useScrollToTop()
 
 const circumference = 2 * Math.PI * 45
 const percentPx = circumference / 100
 
-const currentPercent = computed(() => ((scrollPercentage.value - 0) / 100) * 100)
+const currentPercent = computed(() => ((scrollPercentage.value) / 100) * 100)
 const percentageInPx = computed(() => `${percentPx}px`)
 const durationInSeconds = computed(() => `${duration}s`)
 /* endregion */
@@ -97,6 +98,7 @@ defineOptions({
       <UButton
         variant="ghost"
         :class="button({ class: [rc.button, 'hover:scale-110 transition-transform'] })"
+        :aria-label="t?.('app.scroll_to_top') || 'Scroll to top'"
         @click="scrollToTop"
       >
         <div :class="progressBase({ class: rc.progressBase })">

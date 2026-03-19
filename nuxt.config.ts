@@ -226,6 +226,69 @@ export default defineNuxtConfig({
   },
 
   security: {
+    strict: false,
+    headers: {
+      contentSecurityPolicy: {
+        "default-src": ["'none'"],
+        "base-uri": ["'none'"],
+        "font-src": ["'self'", "https:", "data:", "https://fonts.gstatic.com"],
+        "form-action": ["'self'"],
+        "frame-ancestors": ["'self'"],
+        "img-src": [
+          "'self'",
+          "data:",
+          "https://cdn.rimelight-components.com",
+          "https://cdn.rimelight.com",
+          "https://placehold.co",
+          "https://avatars.githubusercontent.com",
+          "https://i.ytimg.com",
+          "https://*.youtube.com"
+        ],
+        "object-src": ["'none'"],
+        "script-src-attr": ["'none'"],
+        "style-src": ["'self'", "https:", "'unsafe-inline'"],
+        "script-src": [
+          "'self'",
+          "https:",
+          "'unsafe-inline'",
+          "https://esm.sh",
+          "https://static.cloudflareinsights.com",
+          "https://www.youtube.com",
+          "https://s.ytimg.com",
+          "'wasm-unsafe-eval'",
+          "'unsafe-eval'",
+          "'strict-dynamic'",
+          "'nonce-{{nonce}}'"
+        ],
+        "frame-src": ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
+        "connect-src": [
+          "'self'",
+          "https://danielmarchi.dev",
+          "https://api.iconify.design",
+          "https://api.unisvg.com",
+          "https://api.simplesvg.com",
+          "https://cloudflareinsights.com",
+          "https://static.cloudflareinsights.com",
+          "https://nuxt.studio",
+          "https://*.nuxt.com",
+          "https://*.nuxt.dev",
+          "https://api.github.com",
+          "https://raw.githubusercontent.com",
+          "https://esm.sh",
+          "https://*.youtube.com"
+        ]
+      },
+      strictTransportSecurity: {
+        maxAge: 31536000,
+        includeSubdomains: true,
+        preload: true
+      },
+      crossOriginOpenerPolicy: "same-origin",
+      crossOriginEmbedderPolicy: "unsafe-none",
+      referrerPolicy: "strict-origin-when-cross-origin",
+      xFrameOptions: "SAMEORIGIN",
+      xContentTypeOptions: "nosniff"
+    },
     nonce: true,
     ssg: {
       meta: true,

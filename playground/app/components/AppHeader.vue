@@ -214,11 +214,11 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
 </script>
 
 <template>
-  <RCHeader :contain="false" :class="root()">
+  <RCHeader :contain="false" :class="root()" aria-label="Global Header">
     <template #left>
       <div :class="leftGroup()">
         <ClientOnly>
-          <RCLogo variant="mark" :class="logo()" />
+          <RCLogo variant="logomark" :class="logo()" />
         </ClientOnly>
         <div
           :style="{ '--header-bottom-boundary': `${(bottomOffsets[headerLayerId] || 0) - 64}px` }"
@@ -227,6 +227,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
           <UNavigationMenu
             :items="items"
             variant="link"
+            aria-label="Main navigation"
             :ui="{
               viewportWrapper:
                 'top-[var(--header-bottom-boundary)] flex fixed w-screen mt-[var(--ui-header-height)]',
@@ -234,36 +235,36 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
             }"
           >
             <template #megamenu-content="{ item }">
-              <UContainer>
-                <div :class="megaMenuWrapper()">
-                  <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
-                  <ul v-if="(item as NavigationMenuItem).children" :class="megaMenuList()">
-                    <li
-                      v-for="parent in (item as NavigationMenuItem).children"
-                      :key="parent.label"
-                      :class="megaMenuParent()"
-                    >
-                      <ULink :to="parent.to" :class="megaMenuLink()">
-                        <p :class="megaMenuHeading()">
-                          {{ parent.label }}
-                        </p>
-                        <p :class="megaMenuDescription()">
-                          {{ parent.description }}
-                        </p>
-                      </ULink>
+                <UContainer>
+                  <div :class="megaMenuWrapper()">
+                    <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
+                    <ul v-if="(item as NavigationMenuItem).children" :class="megaMenuList()">
+                      <li
+                        v-for="parent in (item as NavigationMenuItem).children"
+                        :key="parent.label"
+                        :class="megaMenuParent()"
+                      >
+                        <ULink :to="parent.to" :class="megaMenuLink()">
+                          <p :class="megaMenuHeading()">
+                            {{ parent.label }}
+                          </p>
+                          <p :class="megaMenuDescription()">
+                            {{ parent.description }}
+                          </p>
+                        </ULink>
 
-                      <ul v-if="parent.children" :class="megaMenuSubList()">
-                        <li v-for="child in parent.children" :key="child.label">
-                          <ULink :to="child.to" :class="megaMenuSubLink()">
-                            <span :class="megaMenuSlash()">/</span>
-                            <span :class="megaMenuLabel()">{{ child.label }}</span>
-                          </ULink>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </div>
-              </UContainer>
+                        <ul v-if="parent.children" :class="megaMenuSubList()">
+                          <li v-for="child in parent.children" :key="child.label">
+                            <ULink :to="child.to" :class="megaMenuSubLink()">
+                              <span :class="megaMenuSlash()">/</span>
+                              <span :class="megaMenuLabel()">{{ child.label }}</span>
+                            </ULink>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+                </UContainer>
             </template>
           </UNavigationMenu>
         </div>
@@ -281,6 +282,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                 variant="ghost"
                 square
                 @click="slideoverState.notifications = true"
+                aria-label="View Notifications"
               >
                 <UChip color="error" inset>
                   <UIcon name="lucide:bell" class="size-5 shrink-0" />
@@ -289,7 +291,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
             </UTooltip>
             <UPopover mode="hover" arrow :ui="{ content: 'w-64' }">
               <template #default>
-                <UButton variant="ghost">
+                <UButton variant="ghost" aria-label="Open user menu">
                   <UUser
                     size="md"
                     :avatar="{
@@ -374,19 +376,26 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
               variant="ghost"
               icon="lucide:menu"
               @click="slideoverState.left = true"
+              aria-label="Open navigation menu"
             />
             <template #header>
-              <RCLogo variant="mark" :class="logo()" />
+              <RCLogo variant="logomark" :class="logo()" />
               <UButton
                 color="neutral"
                 variant="ghost"
                 icon="lucide:x"
                 @click="slideoverState.left = false"
+                aria-label="Close navigation menu"
               />
             </template>
             <template #body>
               <div :class="collapsedContent()">
-                <UNavigationMenu :items="items" variant="link" orientation="vertical" />
+                <UNavigationMenu
+                  :items="items"
+                  variant="link"
+                  orientation="vertical"
+                  aria-label="Mobile main navigation"
+                />
               </div>
             </template>
           </USlideover>
@@ -396,7 +405,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
 
     <template #collapsed-center>
       <ClientOnly>
-        <RCLogo variant="mark" class="h-6" />
+        <RCLogo variant="logomark" class="h-6" />
       </ClientOnly>
     </template>
 
@@ -410,6 +419,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                 variant="ghost"
                 square
                 @click="slideoverState.notifications = true"
+                aria-label="View notifications"
               >
                 <UChip color="error" inset>
                   <UIcon name="lucide:bell" class="size-5 shrink-0" />
@@ -430,6 +440,7 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                 variant="ghost"
                 icon="lucide:user"
                 @click="slideoverState.right = true"
+                aria-label="Open user menu"
               />
               <template #header>
                 <UUser
@@ -453,11 +464,16 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
                   variant="ghost"
                   icon="lucide:x"
                   @click="slideoverState.right = false"
+                  aria-label="Close user menu"
                 />
               </template>
               <template #body>
                 <div :class="collapsedRightBody()">
-                  <UNavigationMenu orientation="vertical" :items="accountMenuItems" />
+                  <UNavigationMenu
+                    orientation="vertical"
+                    :items="accountMenuItems"
+                    aria-label="Account navigation"
+                  />
                 </div>
               </template>
             </USlideover>

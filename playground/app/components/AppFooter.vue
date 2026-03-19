@@ -127,11 +127,16 @@ function onLocaleUpdate(newLocale: string | undefined) {
 </script>
 
 <template>
-  <RCFooter :contain="false" :rc="{ center: 'lg:items-start' }" :class="root()">
+  <RCFooter
+    :contain="false"
+    :rc="{ center: 'lg:items-start' }"
+    :class="root()"
+    aria-label="Global Footer"
+  >
     <template #left>
       <RCNewsletterSignup :class="signup()" />
       <div :class="branding()">
-        <RCLogo variant="type" :class="logo()" />
+        <RCLogo variant="logotype" :class="logo()" />
         <p :class="tagline()">Tell your story.</p>
         <span :class="copyright()"> © {{ new Date().getFullYear() }} {{ appConfig.title }} </span>
       </div>
@@ -152,11 +157,35 @@ function onLocaleUpdate(newLocale: string | undefined) {
         />
       </div>
       <div :class="socials()">
-        <UButton size="xl" variant="ghost" color="neutral" icon="mdi:instagram" />
-        <UButton size="xl" variant="ghost" color="neutral" icon="ic:baseline-discord" />
-        <UButton size="xl" variant="ghost" color="neutral" icon="mdi:spotify" />
-        <UButton size="xl" variant="ghost" color="neutral" icon="mdi:github" />
-        <UButton size="xl" variant="ghost" color="neutral" icon="mdi:linkedin" />
+        <UButton
+          size="xl"
+          variant="ghost"
+          color="neutral"
+          icon="mdi:instagram"
+          aria-label="Instagram"
+        />
+        <UButton
+          size="xl"
+          variant="ghost"
+          color="neutral"
+          icon="ic:baseline-discord"
+          aria-label="Discord"
+        />
+        <UButton
+          size="xl"
+          variant="ghost"
+          color="neutral"
+          icon="mdi:spotify"
+          aria-label="Spotify"
+        />
+        <UButton size="xl" variant="ghost" color="neutral" icon="mdi:github" aria-label="GitHub" />
+        <UButton
+          size="xl"
+          variant="ghost"
+          color="neutral"
+          icon="mdi:linkedin"
+          aria-label="LinkedIn"
+        />
       </div>
     </template>
   </RCFooter>

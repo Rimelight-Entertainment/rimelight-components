@@ -42,6 +42,7 @@ type QuickActionsVariants = VariantProps<typeof quickActionsStyles>
 /* endregion */
 
 /* region State */
+const { t } = useI18n()
 const { registeredActions } = useQuickActions()
 
 const menuItems = computed<DropdownMenuItem[][]>(() => {
@@ -98,6 +99,7 @@ defineOptions({
         :ui="{
           leadingIcon: triggerIcon()
         }"
+        :aria-label="t?.('app.quick_actions') || 'Quick Actions'"
       />
     </UDropdownMenu>
   </div>

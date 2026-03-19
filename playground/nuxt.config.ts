@@ -14,7 +14,7 @@ export default defineNuxtConfig({
         { name: "author", content: "Rimelight Entertainment" },
         { name: "creator", content: "Rimelight Entertainment" }
       ],
-      link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }]
+      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
     }
   },
 

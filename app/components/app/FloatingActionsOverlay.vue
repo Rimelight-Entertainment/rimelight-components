@@ -95,6 +95,7 @@ onMounted(() => {
           :icon="action.icon"
           color="primary"
           square
+          :aria-label="action.label || 'Action'"
           :ui="{
             base: 'rounded-full size-14 lg:size-12 justify-center shadow-lg hover:scale-110 transition-transform',
             leadingIcon: 'size-6'

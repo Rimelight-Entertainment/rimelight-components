@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useAttrs, computed } from "vue"
-import { useAppConfig, useNuxtApp } from "#imports"
 import { tv } from "../../internal/tv"
 import { type VariantProps } from "tailwind-variants"
-import { useRC } from "../../composables"
 
 /* region Props */
 export type LogoVariant =
@@ -123,7 +121,7 @@ defineOptions({
   <NuxtLink
     v-bind="attrs"
     :to="to"
-    :class="root({ class: [rc.root, attrs.class as string] })"
+    :class="root({ class: [rc.root] })"
     :aria-label="alt || variant"
   >
     <template v-if="logoSrc">

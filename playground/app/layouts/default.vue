@@ -11,6 +11,7 @@ const { totalHeight } = useHeaderStack()
         icon="lucide:construction"
         title="This module is under constant development, you may see placeholder or incomplete content."
         class="bg-accented"
+        aria-label="Construction Banner"
       />
     </RCHeaderLayer>
 
