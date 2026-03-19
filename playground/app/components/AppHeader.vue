@@ -235,36 +235,36 @@ defineShortcuts(extractShortcuts(accountMenuItems.value))
             }"
           >
             <template #megamenu-content="{ item }">
-                <UContainer>
-                  <div :class="megaMenuWrapper()">
-                    <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
-                    <ul v-if="(item as NavigationMenuItem).children" :class="megaMenuList()">
-                      <li
-                        v-for="parent in (item as NavigationMenuItem).children"
-                        :key="parent.label"
-                        :class="megaMenuParent()"
-                      >
-                        <ULink :to="parent.to" :class="megaMenuLink()">
-                          <p :class="megaMenuHeading()">
-                            {{ parent.label }}
-                          </p>
-                          <p :class="megaMenuDescription()">
-                            {{ parent.description }}
-                          </p>
-                        </ULink>
+              <UContainer>
+                <div :class="megaMenuWrapper()">
+                  <NuxtImg src="https://placehold.co/256x256" alt="Placeholder" />
+                  <ul v-if="(item as NavigationMenuItem).children" :class="megaMenuList()">
+                    <li
+                      v-for="parent in (item as NavigationMenuItem).children"
+                      :key="parent.label"
+                      :class="megaMenuParent()"
+                    >
+                      <ULink :to="parent.to" :class="megaMenuLink()">
+                        <p :class="megaMenuHeading()">
+                          {{ parent.label }}
+                        </p>
+                        <p :class="megaMenuDescription()">
+                          {{ parent.description }}
+                        </p>
+                      </ULink>
 
-                        <ul v-if="parent.children" :class="megaMenuSubList()">
-                          <li v-for="child in parent.children" :key="child.label">
-                            <ULink :to="child.to" :class="megaMenuSubLink()">
-                              <span :class="megaMenuSlash()">/</span>
-                              <span :class="megaMenuLabel()">{{ child.label }}</span>
-                            </ULink>
-                          </li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </div>
-                </UContainer>
+                      <ul v-if="parent.children" :class="megaMenuSubList()">
+                        <li v-for="child in parent.children" :key="child.label">
+                          <ULink :to="child.to" :class="megaMenuSubLink()">
+                            <span :class="megaMenuSlash()">/</span>
+                            <span :class="megaMenuLabel()">{{ child.label }}</span>
+                          </ULink>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </UContainer>
             </template>
           </UNavigationMenu>
         </div>

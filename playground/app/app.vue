@@ -132,7 +132,7 @@ onMounted(() => {
         :loading="isCreating"
         @confirm="handleCreateConfirm"
       />
-        <RCFloatingActionsOverlay />
+      <RCFloatingActionsOverlay />
       <PiniaColadaDevtools />
     </ClientOnly>
   </UApp>

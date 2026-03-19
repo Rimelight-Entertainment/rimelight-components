@@ -78,7 +78,7 @@ const tooltip = computed(() => config.value.tooltip)
 
 /* region Meta */
 defineOptions({
-  name: "Callout"
+  name: "RCCallout"
 })
 /* endregion */
 

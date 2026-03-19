@@ -57,7 +57,7 @@ const { isVisible, scrollToTop, scrollPercentage } = useScrollToTop()
 const circumference = 2 * Math.PI * 45
 const percentPx = circumference / 100
 
-const currentPercent = computed(() => ((scrollPercentage.value) / 100) * 100)
+const currentPercent = computed(() => (scrollPercentage.value / 100) * 100)
 const percentageInPx = computed(() => `${percentPx}px`)
 const durationInSeconds = computed(() => `${duration}s`)
 /* endregion */

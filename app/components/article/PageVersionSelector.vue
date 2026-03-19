@@ -276,6 +276,11 @@ async function revertVersion(version: PageVersion) {
   }
 }
 
+function selectLiveVersion() {
+  selectedVersionId.value = null
+  isOpen.value = false
+}
+
 function formatDate(date: Date | string | null | undefined) {
   if (!date) return ""
   const d = typeof date === "string" ? new Date(date) : date
@@ -335,10 +340,7 @@ defineExpose({
               versionItemClass({ class: rc.versionItem }),
               { 'bg-primary-50 dark:bg-primary-900/20': !selectedVersionId }
             ]"
-            @click="
-              selectedVersionId = null
-              isOpen = false
-            "
+            @click="selectLiveVersion"
           >
             <div :class="liveVersionItem()">
               <div class="flex-1">

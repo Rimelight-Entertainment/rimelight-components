@@ -113,7 +113,7 @@ const fullSectionUrl = computed(() => {
 
 /* region Meta */
 defineOptions({
-  name: "SectionComponent"
+  name: "Section"
 })
 /* endregion */
 
