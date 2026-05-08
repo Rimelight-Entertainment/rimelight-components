@@ -28,28 +28,16 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    // Dev Modules
-    "@nuxt/a11y",
-    "@nuxt/test-utils",
-    "@nuxtjs/html-validator",
     // Must go before Content
     "@nuxtjs/i18n",
     "@nuxt/image",
     // SEO Modules
-    "@nuxtjs/robots",
-    "@nuxtjs/sitemap",
     "nuxt-og-image",
     // Must go before UI
     "@nuxt/content",
     // Must go after Content
     "@nuxt/ui",
-    "nuxt-studio",
-    "@nuxtjs/device",
-    "nuxt-llms",
     "@nuxt/scripts",
-    "nuxt-security",
-    "@pinia/nuxt",
-    "@pinia/colada-nuxt",
     "@vueuse/nuxt",
     function (options, nuxt) {
       const resolvePath = (path: string) => resolve(currentDir, path)
@@ -141,40 +129,6 @@ export default defineNuxtConfig({
     },
     typescript: {
       typeCheck: false
-    },
-    nitro: {
-      experimental: {
-        websocket: true,
-        tasks: true
-      },
-      compressPublicAssets: true,
-      minify: true,
-      preset: "cloudflare-module",
-      cloudflare: {
-        deployConfig: true,
-        nodeCompat: true
-      },
-      prerender: {
-        routes: ["/"],
-        crawlLinks: true
-      },
-      routeRules: {
-        // ISR Rules
-        "/api/**": { isr: 60 }
-      }
-    },
-    site: {
-      url: "https://rimelight-components.com",
-      indexable: true,
-      trailingSlash: false
-    },
-    robots: {
-      blockAiBots: true,
-      blockNonSeoBots: true,
-      disallow: ["/dashboard"]
-    },
-    a11y: {
-      enabled: false
     }
   },
 
@@ -218,102 +172,10 @@ export default defineNuxtConfig({
     viewTransition: true
   },
 
-  htmlValidator: {
-    options: {
-      rules: { "meta-refresh": "off" }
-    },
-    failOnError: false
-  },
-
-  security: {
-    strict: false,
-    headers: {
-      contentSecurityPolicy: {
-        "default-src": ["'none'"],
-        "base-uri": ["'none'"],
-        "font-src": ["'self'", "https:", "data:", "https://fonts.gstatic.com"],
-        "form-action": ["'self'"],
-        "frame-ancestors": ["'self'"],
-        "img-src": [
-          "'self'",
-          "data:",
-          "https://cdn.rimelight-components.com",
-          "https://cdn.rimelight.com",
-          "https://placehold.co",
-          "https://avatars.githubusercontent.com",
-          "https://i.ytimg.com",
-          "https://*.youtube.com"
-        ],
-        "object-src": ["'none'"],
-        "script-src-attr": ["'none'"],
-        "style-src": ["'self'", "https:", "'unsafe-inline'"],
-        "script-src": [
-          "'self'",
-          "https:",
-          "'unsafe-inline'",
-          "https://esm.sh",
-          "https://static.cloudflareinsights.com",
-          "https://www.youtube.com",
-          "https://s.ytimg.com",
-          "'wasm-unsafe-eval'",
-          "'unsafe-eval'",
-          "'strict-dynamic'",
-          "'nonce-{{nonce}}'"
-        ],
-        "frame-src": ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com"],
-        "connect-src": [
-          "'self'",
-          "https://danielmarchi.dev",
-          "https://api.iconify.design",
-          "https://api.unisvg.com",
-          "https://api.simplesvg.com",
-          "https://cloudflareinsights.com",
-          "https://static.cloudflareinsights.com",
-          "https://nuxt.studio",
-          "https://*.nuxt.com",
-          "https://*.nuxt.dev",
-          "https://api.github.com",
-          "https://raw.githubusercontent.com",
-          "https://esm.sh",
-          "https://*.youtube.com"
-        ]
-      },
-      strictTransportSecurity: {
-        maxAge: 31536000,
-        includeSubdomains: true,
-        preload: true
-      },
-      crossOriginOpenerPolicy: "same-origin",
-      crossOriginEmbedderPolicy: "unsafe-none",
-      referrerPolicy: "strict-origin-when-cross-origin",
-      xFrameOptions: "SAMEORIGIN",
-      xContentTypeOptions: "nosniff"
-    },
-    nonce: true,
-    ssg: {
-      meta: true,
-      hashScripts: true,
-      hashStyles: false,
-      nitroHeaders: true,
-      exportToPresets: false
-    },
-    sri: true
-  },
-
   router: {
     options: {
       scrollBehaviorType: "smooth"
     }
-  },
-
-  routeRules: {
-    // Disable rate limiting for internal Nuxt endpoints
-    "/__nuxt_content/**": { security: { rateLimiter: false } },
-    "/_content/**": { security: { rateLimiter: false } },
-    "/api/_content/**": { security: { rateLimiter: false } },
-    "/__nuxt_studio/**": { security: { rateLimiter: false } },
-    "/__nuxt_hints/**": { security: { enabled: false } },
-    "/_nuxt/**": { security: { rateLimiter: false } }
   },
 
   i18n: {
@@ -369,38 +231,6 @@ export default defineNuxtConfig({
 
   ogImage: {
     zeroRuntime: true
-  },
-
-  sitemap: {
-    zeroRuntime: true
-  },
-
-  content: {
-    build: {
-      markdown: {
-        toc: {
-          depth: 3
-        }
-      }
-    }
-  },
-
-  studio: {
-    i18n: {
-      defaultLocale: "en"
-    },
-    route: "/studio",
-    repository: {
-      provider: "github",
-      owner: "Rimelight-Entertainment",
-      repo: "rimelight-components"
-    }
-  },
-
-  llms: {
-    domain: "https://rimelight-components.com",
-    title: "Rimelight Components",
-    description: "A component library."
   },
 
   ui: {
